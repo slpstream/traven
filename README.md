@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/traven-wordmark.svg" alt="Traven Wordmark" width="450">
+  <img src="assets/images/traven-wordmark.svg" alt="Traven Wordmark" width="450">
 </p>
 
 <p align="center">

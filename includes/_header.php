@@ -13,7 +13,7 @@
   <div class="brand-section">
     <a href="https://traven.dev/" style="display: flex; align-items: center; text-decoration: none;">
       <div class="logo-container">
-        <?php readfile('assets/traven-wordmark.svg'); ?>
+        <?php readfile('assets/images/traven-wordmark.svg'); ?>
       </div>
     </a>
   </div>
