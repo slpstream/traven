@@ -322,3 +322,12 @@
   border-right: 1px solid #cbd5e1;
 }
 
+/* Caret color overrides for colorful light theme */
+.cm-editor .cm-cursor {
+  border-left-color: #cc4a0a !important; /* Rust accent color caret */
+}
+.cm-editor .cm-fat-cursor {
+  background-color: #cc4a0a !important;
+}
+
+

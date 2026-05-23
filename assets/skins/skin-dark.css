@@ -319,3 +319,12 @@
   border-left: 1px solid #334155;
   border-right: 1px solid #334155;
 }
+
+/* Caret color overrides for dark theme to prevent invisible cursor */
+.cm-editor .cm-cursor {
+  border-left-color: #38bdf8 !important; /* Sky Blue accent caret */
+}
+.cm-editor .cm-fat-cursor {
+  background-color: #38bdf8 !important;
+}
+

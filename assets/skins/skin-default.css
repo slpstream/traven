@@ -322,3 +322,12 @@
   border-right: 1px solid #e2e8f0;
 }
 
+/* Caret color overrides for default light theme */
+.cm-editor .cm-cursor {
+  border-left-color: #0f172a !important; /* Slate 900 caret */
+}
+.cm-editor .cm-fat-cursor {
+  background-color: #0f172a !important;
+}
+
+
