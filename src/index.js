@@ -20,10 +20,10 @@ import {
 import {
   foldKeymap,
   syntaxHighlighting,
-  defaultHighlightStyle,
   bracketMatching,
   foldGutter
 } from "@codemirror/language";
+import { classHighlighter } from "@lezer/highlight";
 import { markdown } from "@codemirror/lang-markdown";
 import { yamlFrontmatter } from "@codemirror/lang-yaml";
 import { undo, redo } from "@codemirror/commands";
@@ -44,7 +44,7 @@ function buildBaseSetup(options = {}) {
     drawSelection(),
     dropCursor(),
     EditorState.allowMultipleSelections.of(true),
-    syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
+    syntaxHighlighting(classHighlighter),
     bracketMatching(),
     rectangularSelection(),
     crosshairCursor(),

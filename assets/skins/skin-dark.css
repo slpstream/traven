@@ -335,12 +335,12 @@
 .cm-editor .cmt-meta,
 .cm-editor .tok-punctuation,
 .cm-editor .cmt-punctuation {
-  color: #cbd5e1 !important; /* Slate 300 - very bright and readable Markdown delimiter markers */
+  color: #ffffff !important; /* Pure white - bright and readable Markdown delimiter markers */
 }
 
 .cm-editor .tok-list,
 .cm-editor .cmt-list {
-  color: #e2e8f0 !important; /* Slate 200 - exactly matches text body color as list markers are content */
+  color: #ffffff !important; /* Pure white - matches content brightness */
 }
 
 .cm-editor .tok-comment,

@@ -330,4 +330,39 @@
   background-color: #cc4a0a !important;
 }
 
+/* Syntax Highlighting for Colorful Theme */
+.cm-editor .tok-markup,
+.cm-editor .cmt-markup,
+.cm-editor .tok-meta,
+.cm-editor .cmt-meta,
+.cm-editor .tok-punctuation,
+.cm-editor .cmt-punctuation,
+.cm-editor .tok-list,
+.cm-editor .cmt-list {
+  color: #1e293b !important; /* Dark Slate to match body text */
+}
+
+.cm-editor .tok-keyword,
+.cm-editor .cmt-keyword {
+  color: #cc4a0a !important; /* Rust keyword color */
+  font-weight: 600;
+}
+
+.cm-editor .tok-string,
+.cm-editor .cmt-string {
+  color: #15803d !important; /* Muted Green strings */
+}
+
+.cm-editor .tok-comment,
+.cm-editor .cmt-comment {
+  color: #8c7f70 !important; /* Muted brown/gray comments */
+  font-style: italic;
+}
+
+.cm-editor .tok-number,
+.cm-editor .cmt-number {
+  color: #cc4a0a !important;
+}
+
+
 

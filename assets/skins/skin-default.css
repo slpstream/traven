@@ -330,4 +330,39 @@
   background-color: #0f172a !important;
 }
 
+/* Syntax Highlighting for Default Light Theme */
+.cm-editor .tok-markup,
+.cm-editor .cmt-markup,
+.cm-editor .tok-meta,
+.cm-editor .cmt-meta,
+.cm-editor .tok-punctuation,
+.cm-editor .cmt-punctuation,
+.cm-editor .tok-list,
+.cm-editor .cmt-list {
+  color: #1e293b !important; /* Dark Slate to match body text */
+}
+
+.cm-editor .tok-comment,
+.cm-editor .cmt-comment {
+  color: #64748b !important; /* Slate 500 comment text */
+  font-style: italic;
+}
+
+.cm-editor .tok-keyword,
+.cm-editor .cmt-keyword {
+  color: #0f172a !important;
+  font-weight: 600;
+}
+
+.cm-editor .tok-string,
+.cm-editor .cmt-string {
+  color: #1e293b !important;
+}
+
+.cm-editor .tok-number,
+.cm-editor .cmt-number {
+  color: #0f172a !important;
+}
+
+
 
