@@ -6,7 +6,7 @@ Traven is designed with a strict, privacy-first philosophy.
 * **No Analytics:** There are no tracking scripts, no Google Analytics, and no marketing pixels included in the library.
 * **No Cookies:** Traven does not set, read, or require any cookies.
 
-By default, the core editor theme (`default.css`) loads absolutely nothing from external servers and works out-of-the-box using standard system fonts. Some alternative themes (like `colorful.css`) or the pre-built distribution bundle (`dist/traven.css`) may include a default `@import` rule fetching accessible typography from the Google Fonts CDN for ease of deployment.
+By default, the core editor theme (`skin-default.css`) loads absolutely nothing from external servers and works out-of-the-box using standard system fonts. Some alternative themes (like `skin-colorful.css`) or the pre-built distribution bundle (`dist/traven.css`) may include a default `@import` rule fetching accessible typography from the Google Fonts CDN for ease of deployment.
 
 ---
 
@@ -14,7 +14,7 @@ By default, the core editor theme (`default.css`) loads absolutely nothing from 
 
 If you are deploying Traven in a strictly firewalled, offline, or high-privacy environment, but still want to use alternative themes which use external fonts, you can easily disable the calls to Google Fonts.
 
-For demo themes the sample `colorful.css`, all the required font files are already included in the Traven repository. Follow these simple steps to make your editor completely self-contained:
+For demo themes like the sample `skin-colorful.css`, all the required font files are already included in the Traven repository. Follow these simple steps to make your editor completely self-contained:
 
 ### Step 1: Copy the Font Files
 Copy these two items from the Traven project into your own website or application's public assets folder:
@@ -57,16 +57,16 @@ However, because these settings are contained entirely within modular CSS theme 
 
 Traven supports customizable layout skins. Each skin handles asset loading depending on developer preferences:
 
-### Default Skin (`default.css`)
+### Default Skin (`skin-default.css`)
 This is the default theme skin.
 * **No Network Footprint:** It does not link or import any external fonts or styles.
 * **Fallback Behavior:** It uses your local system font stack by default (rendering `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto` for the body, and `monospace` for code blocks).
 * **Self-Hosting Option:** You can still load custom self-hosted fonts alongside this theme by manually linking `assets/fonts.css` in your HTML.
 
-### Colorful Skin (`colorful.css`)
+### Colorful Skin (`skin-colorful.css`)
 This is a sample alternative theme skin.
 * **Default Behavior:** It imports Atkinson Hyperlegible Next and Fira Code from the Google Fonts CDN for quick visual polish out-of-the-box.
-* **Self-Hosting Option:** To make this theme 100% offline-ready, change the Google Fonts import at the top of `colorful.css` to import your local stylesheet instead:
+* **Self-Hosting Option:** To make this theme 100% offline-ready, change the Google Fonts import at the top of `skin-colorful.css` to import your local stylesheet instead:
   ```css
   @import url('../fonts.css');
   ```

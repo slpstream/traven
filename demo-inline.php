@@ -11,9 +11,9 @@
   <link rel="preload" href="assets/fonts/mozilla-headline-v1-latin-700.woff2" as="font" type="font/woff2" crossorigin>
   
   <link rel="stylesheet" href="assets/fonts.css">
-  <link rel="stylesheet" href="assets/skins/default.css" id="editor-skin-link">
+  <link rel="stylesheet" href="assets/skins/skin-default.css" id="editor-skin-link">
   
-  <link rel="stylesheet" href="assets/toolbars/default.css">
+  <link rel="stylesheet" href="assets/toolbars/toolbar-default.css">
   <link rel="stylesheet" href="assets/demo.css">
 </head>
 <body class="inline-demo">
@@ -66,8 +66,8 @@
               Heading
             </button>
             <select id="skin-select" class="toolbar-btn btn-skin-select" style="padding: 4px 8px; font-family: inherit;">
-              <option value="neutral">Neutral Skin</option>
-              <option value="colorful">Colorful Skin</option>
+              <option value="skin-default">Default Skin</option>
+              <option value="skin-colorful">Colorful Skin</option>
             </select>
           </div>
         </div>

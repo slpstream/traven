@@ -109,8 +109,8 @@
             Heading
           </button>
           <select id="skin-select" class="toolbar-btn btn-skin-select" style="padding: 4px 8px; font-family: inherit;">
-            <option value="neutral">Neutral Skin</option>
-            <option value="colorful">Colorful Skin</option>
+            <option value="skin-default">Default Skin</option>
+            <option value="skin-colorful">Colorful Skin</option>
           </select>
         </div>
         <div id="editor" class="editor-mount"></div>
