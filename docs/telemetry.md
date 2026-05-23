@@ -12,9 +12,9 @@ By default, the core editor theme (`neutral.css`) loads absolutely nothing from 
 
 ## Going 100% Offline (Self-Hosting Fonts)
 
-If you are deploying Traven in a strictly firewalled, offline, or high-privacy environment, you can easily disable the external calls to Google Fonts.
+If you are deploying Traven in a strictly firewalled, offline, or high-privacy environment, but still want to use alternative themes which use external fonts, you can easily disable the calls to Google Fonts.
 
-All the required font files are already included in the Traven repository. Follow these simple steps to make your editor completely self-contained:
+For demo themes the sample `colorful.css`, all the required font files are already included in the Traven repository. Follow these simple steps to make your editor completely self-contained:
 
 ### Step 1: Copy the Font Files
 Copy these two items from the Traven project into your own website or application's public assets folder:
