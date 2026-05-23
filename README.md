@@ -28,7 +28,7 @@ The project is named in honor of **B. Traven**, the famously anonymous author of
 
 *   **WYSIWYM Collapsing**: Formatting syntax markers (like `**` for bold and `*` for italic) display dynamically only when the cursor is inside the formatted text. When the cursor leaves, they transition smoothly into clean, styled blocks.
 *   **Optimistic Media Uploads**: Drag and drop or paste image files directly into the editor. The view immediately embeds an optimistic spinner loader and replaces it with the final URL once your upload handler resolves.
-*   **Decoupled Styling (Skins)**: Theme aesthetics (colors, padding, borders) are decoupled from the JavaScript logic. Swap between a slate **Neutral Skin** and a bold **Colorful Skin** by changing a single `<link>` stylesheet, with no rebuilding required.
+*   **Decoupled Styling (Skins)**: Theme aesthetics (colors, padding, borders) are decoupled from the JavaScript logic. Swap between the neutral **Default Skin** and optional skins such as a **Dark Skin** and a contemporary **Colorful Skin** by changing a single `<link>` stylesheet, with no rebuilding required.
 *   **Bidirectional Raw Sync**: Easily bind a secondary raw Markdown viewer/editor in split-screen layouts. Changes flow incrementally between editors, maintaining cursor positions and separate histories without circular synchronization loops.
 *   **Smart Keyboard Utilities**: Includes keyboard helpers that prevent cursors from getting trapped inside collapsed markdown delimiters during arrow navigation.
 *   **Zero Peer Dependencies**: Bundles CodeMirror modules internally using `esbuild`. Simply drop in the compiled script and a stylesheet to start editing.
