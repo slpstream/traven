@@ -21,10 +21,10 @@
 .cm-gutters {
   background-color: transparent !important;
   border-right: none !important;
-  color: #475569 !important; /* Slate 600 line numbers */
+  color: #64748b !important; /* Readable Slate 500 line numbers */
   font-family: 'Fira Code', monospace !important;
   font-size: 0.85em !important;
-  opacity: 0.7;
+  opacity: 1; /* Keep line numbers crisp and readable */
 }
 
 .cm-gutterElement {
@@ -33,7 +33,7 @@
 
 /* Active line highlighting */
 .cm-activeLine {
-  background-color: rgba(30, 41, 59, 0.4) !important; /* Subtle Slate 800 active line */
+  background-color: rgba(30, 41, 59, 0.5) !important; /* Subtle Slate 800 active line */
 }
 
 .cm-activeLineGutter {
@@ -43,14 +43,14 @@
   opacity: 1;
 }
 
-/* Selection highlight - clean slate/sky blue translucency */
+/* Selection highlight - highly visible sky blue translucency */
 .cm-selectionBackground, 
 .cm-native-selection {
-  background-color: rgba(56, 189, 248, 0.15) !important;
+  background-color: rgba(56, 189, 248, 0.3) !important;
 }
 
 .cm-editor.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground {
-  background-color: rgba(56, 189, 248, 0.25) !important;
+  background-color: rgba(56, 189, 248, 0.45) !important;
 }
 
 /* Token hiding with smooth transition properties */
@@ -326,5 +326,62 @@
 }
 .cm-editor .cm-fat-cursor {
   background-color: #38bdf8 !important;
+}
+
+/* Premium Dark Syntax Highlighting overrides (prevents dark delimiters/list markers) */
+.cm-editor .tok-markup,
+.cm-editor .cmt-markup,
+.cm-editor .tok-meta,
+.cm-editor .cmt-meta,
+.cm-editor .tok-punctuation,
+.cm-editor .cmt-punctuation,
+.cm-editor .tok-list,
+.cm-editor .cmt-list {
+  color: #94a3b8 !important; /* Soft Slate 400 - clean and readable Markdown markers/lists */
+}
+
+.cm-editor .tok-comment,
+.cm-editor .cmt-comment {
+  color: #64748b !important; /* Slate 500 comment text */
+  font-style: italic;
+}
+
+.cm-editor .tok-keyword,
+.cm-editor .cmt-keyword {
+  color: #fb923c !important; /* Vibrant Orange keywords */
+}
+
+.cm-editor .tok-string,
+.cm-editor .cmt-string {
+  color: #4ade80 !important; /* Soft Emerald strings */
+}
+
+.cm-editor .tok-number,
+.cm-editor .cmt-number,
+.cm-editor .tok-boolean,
+.cm-editor .cmt-boolean {
+  color: #a78bfa !important; /* Violet numbers & constants */
+}
+
+.cm-editor .tok-variableName,
+.cm-editor .cmt-variableName {
+  color: #f8fafc !important; /* White variables */
+}
+
+.cm-editor .tok-propertyName,
+.cm-editor .cmt-propertyName {
+  color: #38bdf8 !important; /* Sky blue properties */
+}
+
+.cm-editor .tok-operator,
+.cm-editor .cmt-operator {
+  color: #cbd5e1 !important; /* Light Slate operators */
+}
+
+.cm-editor .tok-url,
+.cm-editor .cmt-url,
+.cm-editor .tok-link,
+.cm-editor .cmt-link {
+  color: #38bdf8 !important; /* Sky blue links */
 }
 
