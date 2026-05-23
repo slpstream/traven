@@ -20,7 +20,7 @@
 
 ### Naming & Philosophy
 
-The project is inspired by **B. Traven**, the anonymous author of *The Treasure of the Sierra Madre*. Traven spent his career proving that the work outlasts the author, communicating with publishers pseudonymously and letting his writing speak for itself. For a framework-agnostic, open-source editor meant to be embedded, customized, and handed to the commons, a patron saint using a nym is fitting.
+The project is inspired by the anonymous author of *The Treasure of the Sierra Madre*. Using the nym **B. Traven**, he spent his career proving that the work outlasts the author, communicating with publishers pseudonymously and letting his writing speak for itself. For a framework-agnostic, open-source editor meant to be embedded, customized, and handed to the commons, we couldn't think of a better patron saint.
 
 ---
 
