@@ -5,20 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Traven Editor — Form-Managed Metadata Demo</title>
   
-  <!-- Premium Fonts & Preloads -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  
   <!-- Preload Critical Fonts & Styles -->
-  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,200..800;1,200..800&family=Fira+Code:wght@400..500&display=swap" as="style">
-  <link rel="preload" href="https://cdn.jsdelivr.net/npm/@fontsource/mozilla-headline@5/files/mozilla-headline-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="https://cdn.jsdelivr.net/npm/@fontsource/mozilla-headline@5/files/mozilla-headline-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="https://cdn.jsdelivr.net/npm/@fontsource/mozilla-headline@5/500.css" as="style">
-  <link rel="preload" href="https://cdn.jsdelivr.net/npm/@fontsource/mozilla-headline@5/700.css" as="style">
+  <link rel="preload" href="assets/fonts.css" as="style">
+  <link rel="preload" href="assets/fonts/AtkinsonHyperlegibleNext-Regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/mozilla-headline-v1-latin-700.woff2" as="font" type="font/woff2" crossorigin>
   
-  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,200..800;1,200..800&family=Fira+Code:wght@400..500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/mozilla-headline@5/500.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/mozilla-headline@5/700.css">
+  <link rel="stylesheet" href="assets/fonts.css">
   <link rel="stylesheet" href="assets/skins/neutral.css" id="editor-skin-link">
   
   <link rel="stylesheet" href="assets/toolbar.css">

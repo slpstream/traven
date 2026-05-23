@@ -394,3 +394,9 @@ header {
 .form-demo .editor-mount .cm-scroller {
   outline: none;
 }
+
+@media (max-width: 768px) {
+  header {
+    padding: 12px 10px;
+  }
+}

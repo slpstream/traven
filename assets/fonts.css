@@ -1,0 +1,60 @@
+/* Traven Editor - Self-hosted Fonts Definition */
+
+/* Atkinson Hyperlegible Next */
+@font-face {
+  font-family: 'Atkinson Hyperlegible Next';
+  src: url('fonts/AtkinsonHyperlegibleNext-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Atkinson Hyperlegible Next';
+  src: url('fonts/AtkinsonHyperlegibleNext-RegularItalic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Atkinson Hyperlegible Next';
+  src: url('fonts/AtkinsonHyperlegibleNext-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Atkinson Hyperlegible Next';
+  src: url('fonts/AtkinsonHyperlegibleNext-BoldItalic.woff2') format('woff2');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Fira Code */
+@font-face {
+  font-family: 'Fira Code';
+  src: url('fonts/fira-code-v27-latin-regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Fira Code';
+  src: url('fonts/fira-code-v27-latin-700.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Mozilla Headline */
+@font-face {
+  font-family: 'Mozilla Headline';
+  src: url('fonts/mozilla-headline-v1-latin-700.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
