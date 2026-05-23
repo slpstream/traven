@@ -78,6 +78,11 @@
   color: #334155;
 }
 
+.cm-wysiwym-strikethrough {
+  text-decoration: line-through;
+  color: #64748b;
+}
+
 /* Inline code pill styling - Neutral Slate */
 .cm-wysiwym-inline-code {
   font-family: 'Fira Code', ui-monospace, monospace !important;

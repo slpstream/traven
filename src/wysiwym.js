@@ -28,6 +28,7 @@ const collapseDeco = Decoration.replace({});
 const boldDeco = Decoration.mark({ class: "cm-wysiwym-bold" });
 const italicDeco = Decoration.mark({ class: "cm-wysiwym-italic" });
 const codeDeco = Decoration.mark({ class: "cm-wysiwym-inline-code" });
+const strikethroughDeco = Decoration.mark({ class: "cm-wysiwym-strikethrough" });
 
 // Block/Frontmatter styled decorations
 const frontmatterLineDeco = Decoration.line({ class: "cm-wysiwym-frontmatter" });
@@ -120,6 +121,20 @@ function buildWysiwymDecorations(state) {
             collected.push({ from: node.to - 1, to: node.to, deco: collapseDeco });
             // Style content
             collected.push({ from: node.from + 1, to: node.to - 1, deco: italicDeco });
+          }
+        }
+
+        // 2.5 Strikethrough (Strikethrough)
+        if (node.name === "Strikethrough") {
+          const isCursorInside = cursorHead >= node.from && cursorHead <= node.to;
+          const isSuppressed = suppressed && suppressed.from === node.from && suppressed.to === node.to;
+
+          if (!isCursorInside || isSuppressed) {
+            // Collapse delimiters (first 2 and last 2 characters '~~')
+            collected.push({ from: node.from, to: node.from + 2, deco: collapseDeco });
+            collected.push({ from: node.to - 2, to: node.to, deco: collapseDeco });
+            // Style content
+            collected.push({ from: node.from + 2, to: node.to - 2, deco: strikethroughDeco });
           }
         }
 

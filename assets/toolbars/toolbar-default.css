@@ -18,6 +18,14 @@
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
 }
 
+button.toolbar-btn {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
 .toolbar-btn svg {
   width: 14px;
   height: 14px;
@@ -68,6 +76,14 @@
   gap: 6px;
   transition: all 0.2s;
   box-shadow: none;
+}
+
+.form-demo button.toolbar-btn {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .form-demo .toolbar-btn:hover {

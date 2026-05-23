@@ -78,6 +78,11 @@
   color: #334155;
 }
 
+.cm-wysiwym-strikethrough {
+  text-decoration: line-through;
+  color: #8c7f70; /* Muted brown/gray to match the colorful palette */
+}
+
 /* Inline code pill styling - Vibrant Rose */
 .cm-wysiwym-inline-code {
   font-family: 'Fira Code', ui-monospace, monospace !important;

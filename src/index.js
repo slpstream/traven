@@ -25,6 +25,7 @@ import {
 } from "@codemirror/language";
 import { classHighlighter } from "@lezer/highlight";
 import { markdown } from "@codemirror/lang-markdown";
+import { Strikethrough } from "@lezer/markdown";
 import { yamlFrontmatter } from "@codemirror/lang-yaml";
 import { undo, redo } from "@codemirror/commands";
 import { wysiwymPlugin } from "./wysiwym.js";
@@ -107,7 +108,7 @@ export class TravenEditor {
         lineNumbers: showLineNumbers,
         foldGutter: showLineNumbers
       }),
-      yamlFrontmatter({ content: markdown() }),
+      yamlFrontmatter({ content: markdown({ extensions: [Strikethrough] }) }),
       wysiwymPlugin(),
       delimiterSkipKeymap(),
       imageDecorationPlugin(),

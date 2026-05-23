@@ -76,6 +76,11 @@
   color: #cbd5e1 !important;
 }
 
+.cm-wysiwym-strikethrough {
+  text-decoration: line-through;
+  color: #94a3b8 !important; /* Soft white/Slate 400 */
+}
+
 /* Inline code pill styling - Slate Dark */
 .cm-wysiwym-inline-code {
   font-family: 'Fira Code', ui-monospace, monospace !important;
