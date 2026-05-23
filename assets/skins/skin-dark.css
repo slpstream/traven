@@ -46,11 +46,11 @@
 /* Selection highlight - highly visible sky blue translucency */
 .cm-selectionBackground, 
 .cm-native-selection {
-  background-color: rgba(56, 189, 248, 0.3) !important;
+  background-color: rgba(56, 189, 248, 0.35) !important;
 }
 
 .cm-editor.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground {
-  background-color: rgba(56, 189, 248, 0.45) !important;
+  background-color: rgba(56, 189, 248, 0.6) !important;
 }
 
 /* Token hiding with smooth transition properties */
@@ -334,10 +334,13 @@
 .cm-editor .tok-meta,
 .cm-editor .cmt-meta,
 .cm-editor .tok-punctuation,
-.cm-editor .cmt-punctuation,
+.cm-editor .cmt-punctuation {
+  color: #cbd5e1 !important; /* Slate 300 - very bright and readable Markdown delimiter markers */
+}
+
 .cm-editor .tok-list,
 .cm-editor .cmt-list {
-  color: #94a3b8 !important; /* Soft Slate 400 - clean and readable Markdown markers/lists */
+  color: #e2e8f0 !important; /* Slate 200 - exactly matches text body color as list markers are content */
 }
 
 .cm-editor .tok-comment,
