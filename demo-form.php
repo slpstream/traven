@@ -6,15 +6,15 @@
   <title>Traven Editor — Form-Managed Metadata Demo</title>
   
   <!-- Preload Critical Fonts & Styles -->
-  <link rel="preload" href="assets/fonts.css" as="style">
+  <link rel="preload" href="assets/fonts/fonts.css" as="style">
   <link rel="preload" href="assets/fonts/AtkinsonHyperlegibleNext-Regular.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/mozilla-headline-v1-latin-700.woff2" as="font" type="font/woff2" crossorigin>
   
-  <link rel="stylesheet" href="assets/fonts.css">
-  <link rel="stylesheet" href="assets/skins/default.css" id="editor-skin-link">
+  <link rel="stylesheet" href="assets/fonts/fonts.css">
+  <link rel="stylesheet" href="assets/skins/skin-default.css" id="editor-skin-link">
   
-  <link rel="stylesheet" href="assets/toolbars/default.css">
-  <link rel="stylesheet" href="assets/demo.css">
+  <link rel="stylesheet" href="assets/toolbars/toolbar-default.css">
+  <link rel="stylesheet" href="assets/css/demo.css">
 </head>
 <body class="form-demo">
   

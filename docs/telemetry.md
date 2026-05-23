@@ -16,17 +16,13 @@ If you are deploying Traven in a strictly firewalled, offline, or high-privacy e
 
 For demo themes like the sample `skin-colorful.css`, all the required font files are already included in the Traven repository. Follow these simple steps to make your editor completely self-contained:
 
-### Step 1: Copy the Font Files
-Copy these two items from the Traven project into your own website or application's public assets folder:
-1. The **`assets/fonts/`** folder (which contains the raw font files like `AtkinsonHyperlegibleNext-Regular.woff2`).
-2. The **`assets/fonts.css`** file (which defines where the browser should find those font files).
-
-*Make sure `fonts.css` and the `fonts/` folder stay in the same directory relative to each other.*
+### Step 1: Copy the Font Folder
+Copy the **`assets/fonts/`** folder (which contains both the raw font files and the `fonts.css` configuration file) from the Traven project into your own website or application's public assets folder.
 
 ### Step 2: Load the Fonts in Your HTML
 In the `<head>` of your website or app pages where the editor is used, load your local `fonts.css`:
 ```html
-<link rel="stylesheet" href="path/to/your/assets/fonts.css">
+<link rel="stylesheet" href="path/to/your/assets/fonts/fonts.css">
 ```
 
 ### Step 3: Tell the Editor to Use Your Local Fonts
@@ -61,12 +57,12 @@ Traven supports customizable layout skins. Each skin handles asset loading depen
 This is the default theme skin.
 * **No Network Footprint:** It does not link or import any external fonts or styles.
 * **Fallback Behavior:** It uses your local system font stack by default (rendering `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto` for the body, and `monospace` for code blocks).
-* **Self-Hosting Option:** You can still load custom self-hosted fonts alongside this theme by manually linking `assets/fonts.css` in your HTML.
+* **Self-Hosting Option:** You can still load custom self-hosted fonts alongside this theme by manually linking `assets/fonts/fonts.css` in your HTML.
 
 ### Colorful Skin (`skin-colorful.css`)
 This is a sample alternative theme skin.
 * **Default Behavior:** It imports Atkinson Hyperlegible Next and Fira Code from the Google Fonts CDN for quick visual polish out-of-the-box.
 * **Self-Hosting Option:** To make this theme 100% offline-ready, change the Google Fonts import at the top of `skin-colorful.css` to import your local stylesheet instead:
   ```css
-  @import url('../fonts.css');
+  @import url('../fonts/fonts.css');
   ```
