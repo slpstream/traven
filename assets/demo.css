@@ -1,0 +1,396 @@
+/* Traven Editor Demo Pages Layout & Chrome Styling */
+
+:root {
+  --bg-main: #f8fafc;
+  --bg-card: #ffffff;
+  --border-color: #e2e8f0;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+
+  /* Accent System - Blood Rust */
+  --accent: #cc4a0a;
+  --accent-hover: #a83808;
+  --accent-light: #fff0e8;
+  --accent-on-dark: #e8631a;
+
+  /* Secondary Accent System - Acid Green */
+  --accent-2: #8fcc00;
+  --accent-2-dark: #6aaa00;
+  --accent-2-light: #f0fad0;
+  --accent-2-on-dark: #a8e000;
+
+  --terminal-bg: #0f172a;
+}
+
+/* Base Styles */
+body {
+  font-family: 'Atkinson Hyperlegible Next', sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Premium Brand Header Navigation */
+header {
+  background-color: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
+  padding: 16px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.brand-section {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+}
+
+.logo-container svg {
+  height: 32px;
+  width: auto;
+  display: block;
+}
+
+.logo-container svg .s1 {
+  fill: var(--bg-card) !important;
+}
+
+.brand-name {
+  font-family: 'Mozilla Headline', 'Outfit', sans-serif;
+  font-size: 1.95em;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: #64748b;
+}
+
+.nav-links {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.nav-btn {
+  text-decoration: none;
+  font-size: 0.9em;
+  font-weight: 600;
+  color: var(--text-secondary);
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.nav-btn:hover {
+  color: var(--text-primary);
+  background-color: #f1f5f9;
+}
+
+/* Common Card Styles */
+.sandbox-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 12px 20px;
+  background-color: #fafafa;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.card-title {
+  font-family: 'Mozilla Headline', sans-serif;
+  font-size: 0.9em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+
+.editor-mount {
+  flex: 1;
+  padding: 16px 20px;
+  outline: none;
+  overflow: hidden;
+}
+
+.editor-mount .cm-editor {
+  height: 100%;
+}
+
+/* ==========================================================================
+   Inline Demo Page (index.php) Styles
+   ========================================================================== */
+.inline-demo main {
+  flex: 1;
+  padding: 40px;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.description-text {
+  color: var(--text-secondary);
+  font-size: 1.05em;
+  max-width: 700px;
+  margin: 0 0 8px 0;
+  line-height: 1.6;
+}
+
+.inline-demo .sandbox-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  align-items: stretch;
+}
+
+@media (max-width: 1024px) {
+  .inline-demo .sandbox-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.inline-demo .sandbox-card {
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
+  resize: vertical;
+  min-height: 400px;
+  height: 600px;
+}
+
+
+.raw-editor-mount {
+  flex: 1;
+  overflow: hidden;
+  background-color: #ffffff;
+}
+
+.raw-editor-mount .cm-editor {
+  height: 100%;
+  background-color: #ffffff !important;
+  color: #1e293b !important;
+  font-family: 'Fira Code', monospace !important;
+  font-size: 0.88em !important;
+}
+
+.raw-editor-mount .cm-scroller {
+  line-height: 1.7 !important;
+  padding: 16px 20px !important;
+}
+
+.raw-editor-mount .cm-gutters {
+  background-color: transparent !important;
+  border-right: none !important;
+  color: #94a3b8 !important;
+  font-family: 'Fira Code', monospace !important;
+  font-size: 0.85em !important;
+  opacity: 0.7;
+}
+
+.raw-editor-mount .cm-gutterElement {
+  padding: 0 16px 0 8px !important;
+}
+
+.raw-editor-mount .cm-activeLine {
+  background-color: rgba(241, 245, 249, 0.6) !important;
+}
+
+.raw-editor-mount .cm-activeLineGutter {
+  background-color: transparent !important;
+  color: var(--accent) !important;
+  font-weight: 500;
+  opacity: 1;
+}
+
+.raw-editor-mount .cm-selectionBackground {
+  background-color: rgba(204, 74, 10, 0.15) !important;
+}
+
+.output-label-badge {
+  background-color: rgba(204, 74, 10, 0.1);
+  color: var(--accent);
+  font-size: 0.72em;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+/* ==========================================================================
+   Form Demo Page (index2.php) Styles
+   ========================================================================== */
+.form-demo main {
+  flex: 1;
+  padding: 30px;
+  max-width: 1440px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 30px;
+}
+
+@media (max-width: 1024px) {
+  .form-demo main {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-demo .sandbox-card {
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03);
+}
+
+.form-demo .card-header {
+  padding: 16px 20px;
+}
+
+.form-demo .card-title {
+  font-size: 0.95em;
+  letter-spacing: 0.03em;
+}
+
+.form-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-label {
+  font-size: 0.82em;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.form-input {
+  font-family: inherit;
+  font-size: 0.9em;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  outline: none;
+  transition: all 0.2s;
+  background-color: #f8fafc;
+}
+
+.form-input:focus {
+  border-color: var(--accent);
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(204, 74, 10, 0.15);
+}
+
+.terminal-container {
+  flex: 1;
+  padding: 16px;
+  background-color: var(--terminal-bg);
+  display: flex;
+  flex-direction: column;
+}
+
+.terminal-titlebar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.dot.red {
+  background-color: #ef4444;
+}
+
+.dot.yellow {
+  background-color: #f59e0b;
+}
+
+.dot.green {
+  background-color: #10b981;
+}
+
+.terminal-view {
+  flex: 1;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.85em;
+  color: #94a3b8;
+  background-color: transparent;
+  border: none;
+  resize: none;
+  outline: none;
+  line-height: 1.5;
+  width: 100%;
+  height: 250px;
+  box-sizing: border-box;
+}
+
+.editor-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.editor-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  margin: 20px;
+  overflow: hidden;
+  background-color: #ffffff;
+}
+
+
+.form-demo .editor-mount {
+  flex: 1;
+  overflow: hidden;
+  height: 500px;
+}
+
+.form-demo .editor-mount .cm-editor {
+  height: 100%;
+  font-family: 'Atkinson Hyperlegible Next', sans-serif;
+}
+
+.form-demo .editor-mount .cm-scroller {
+  outline: none;
+}

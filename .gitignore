@@ -1,0 +1,19 @@
+# Dependency directories
+node_modules/
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# IDE configuration files
+.idea/
+.vscode/
+
+# Local playground / Scratch files
+scratch/
+
+# Marketing landing page (kept out of repository)
+index.php
+
+# Ignored private documents
+docs-gitignore/
