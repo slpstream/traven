@@ -52,8 +52,8 @@ Copy `dist/traven.js` and your preferred skin stylesheet (from `assets/skins/`) 
   <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;700&display=swap" rel="stylesheet">
   
   <!-- Load the stylesheet skin -->
-  <link rel="stylesheet" href="assets/skins/neutral.css">
-  <link rel="stylesheet" href="assets/toolbar.css">
+  <link rel="stylesheet" href="assets/skins/default.css">
+  <link rel="stylesheet" href="assets/toolbars/default.css">
 </head>
 <body>
 
@@ -187,7 +187,7 @@ Skins are configured as plain CSS files, letting developers override colors and 
 Simply swap the styling link in your HTML document:
 ```html
 <!-- For a slate, clean typography-focused feel: -->
-<link rel="stylesheet" href="assets/skins/neutral.css">
+<link rel="stylesheet" href="assets/skins/default.css">
 
 <!-- For a warm, rust-tinted brand feel: -->
 <link rel="stylesheet" href="assets/skins/colorful.css">
