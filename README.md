@@ -191,6 +191,9 @@ Simply swap the styling link in your HTML document:
 
 <!-- For a warm, rust-tinted brand feel: -->
 <link rel="stylesheet" href="assets/skins/skin-colorful.css">
+
+<!-- For a premium slate dark theme feel: -->
+<link rel="stylesheet" href="assets/skins/skin-dark.css">
 ```
 
 ### CUSTOMIZING THE TOOLBAR

@@ -66,3 +66,9 @@ This is a sample alternative theme skin.
   ```css
   @import url('../fonts/fonts.css');
   ```
+
+### Dark Skin (`skin-dark.css`)
+This is a premium dark theme skin.
+* **No Network Footprint:** It does not link or import any external fonts or styles.
+* **Fallback Behavior:** It uses your local system font stack by default (rendering `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto` for the body, and `monospace` for code blocks).
+* **Self-Hosting Option:** You can still load custom self-hosted fonts alongside this theme by manually linking `assets/fonts/fonts.css` in your HTML.
