@@ -77,6 +77,8 @@ function buildBaseSetup(options = {}) {
  * @property {string} initialValue - The initial markdown document string.
  * @property {boolean} [lineNumbers=false] - Show line numbers in the primary editor.
  * @property {boolean} [sourceLineNumbers=false] - Show line numbers in the raw source editor.
+ * @property {boolean} [lineWrapping=true] - Enable soft line wrapping in the primary editor.
+ * @property {boolean} [sourceLineWrapping=true] - Enable soft line wrapping in the raw source editor.
  * @property {function(string): void} [onChange] - Callback fired on document changes.
  * @property {function(string): void} [onSave] - Callback fired on manual save command (Cmd+S / Ctrl+S).
  * @property {function(File): Promise<string>} [onUploadImage] - Callback handling image uploads.
@@ -102,13 +104,16 @@ export class TravenEditor {
 
     const showLineNumbers = !!options.lineNumbers;
     const showSourceLineNumbers = !!options.sourceLineNumbers;
+    const wrapLines = options.lineWrapping !== false;
+    const wrapSourceLines = options.sourceLineWrapping !== false;
 
     const extensions = [
       ...buildBaseSetup({
         lineNumbers: showLineNumbers,
         foldGutter: showLineNumbers
       }),
-      yamlFrontmatter({ content: markdown({ extensions: [Strikethrough] }) }),
+      ...(wrapLines ? [EditorView.lineWrapping] : []),
+      yamlFrontmatter({ content: markdown({ extensions: [Strikethrough, { remove: ["SetextHeading"] }] }) }),
       wysiwymPlugin(),
       delimiterSkipKeymap(),
       imageDecorationPlugin(),
@@ -176,6 +181,7 @@ export class TravenEditor {
           lineNumbers: showSourceLineNumbers,
           foldGutter: showSourceLineNumbers
         }),
+        ...(wrapSourceLines ? [EditorView.lineWrapping] : []),
         EditorView.updateListener.of((update) => {
           if (update.docChanged) {
             // Propagate change back to primary editor
@@ -279,6 +285,14 @@ export class TravenEditor {
         : { anchor: range.from + lead.length + before.length + selectedText.length + after.length }
     });
     this.#view.focus();
+  }
+
+  /**
+   * Returns the primary CodeMirror EditorView instance.
+   * @returns {EditorView}
+   */
+  getView() {
+    return this.#view;
   }
 
   /**

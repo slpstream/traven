@@ -43,14 +43,6 @@ button.toolbar-btn {
   transform: translateY(0);
 }
 
-/* Inline Demo Page (index.php) Toolbar */
-.editor-toolbar {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
 /* Form Demo Page (index2.php) Toolbar */
 .traven-toolbar-container {
   background-color: #f8fafc;
@@ -95,3 +87,114 @@ button.toolbar-btn {
   width: 13px;
   height: 13px;
 }
+
+/* Heading Dropdown Styles */
+.toolbar-dropdown {
+  position: relative;
+  display: inline-flex;
+}
+
+/* Wider trigger button for heading with caret */
+button.btn-heading {
+  width: auto;
+  padding: 0 8px;
+  gap: 4px;
+}
+
+.form-demo button.btn-heading {
+  width: auto;
+  padding: 0 6px;
+  gap: 4px;
+}
+
+.dropdown-caret {
+  width: 8px !important;
+  height: 8px !important;
+  opacity: 0.5;
+  transition: transform 0.2s ease;
+}
+
+.toolbar-dropdown.is-open .dropdown-caret {
+  transform: rotate(180deg);
+}
+
+/* Dropdown Menu Panel */
+.toolbar-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 100;
+  display: none;
+  flex-direction: row;
+  gap: 4px;
+  background-color: #ffffff;
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 4px;
+  margin-top: 4px;
+}
+
+.toolbar-dropdown.is-open .toolbar-dropdown-menu {
+  display: flex;
+}
+
+/* Dropdown Items */
+.toolbar-dropdown-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: none;
+  border: none;
+  padding: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--text-secondary, #475569);
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.form-demo .toolbar-dropdown-item {
+  width: 28px;
+  height: 28px;
+}
+
+.toolbar-dropdown-item svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  flex-shrink: 0;
+}
+
+.form-demo .toolbar-dropdown-item svg {
+  width: 13px;
+  height: 13px;
+}
+
+.toolbar-dropdown-item:hover {
+  background-color: #f8fafc;
+  color: var(--text-primary, #0f172a);
+}
+
+/* Skin-specific adaptations */
+.skin-dark .toolbar-dropdown-menu {
+  background-color: #1e293b;
+  border-color: #334155;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.skin-dark .toolbar-dropdown-item {
+  color: #94a3b8;
+}
+
+.skin-dark .toolbar-dropdown-item:hover {
+  background-color: #334155;
+  color: #f8fafc;
+}
+
+.skin-colorful .toolbar-dropdown-menu {
+  border-color: #e2e8f0;
+}
+

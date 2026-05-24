@@ -40,34 +40,9 @@
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--accent)"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4Z"></path></svg>
             Editing View
           </div>
-          <div class="editor-toolbar">
-            <button class="toolbar-btn btn-undo" onclick="triggerUndo()" title="Undo (Ctrl+Z)">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 7v6h6"></path><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"></path></svg>
-            </button>
-            <button class="toolbar-btn btn-redo" onclick="triggerRedo()" title="Redo (Ctrl+Y)">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 7v6h-6"></path><path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7"></path></svg>
-            </button>
-            <button class="toolbar-btn btn-bold" onclick="applyFormat('**', '**', 'bold text')" title="Bold">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path><path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path></svg>
-            </button>
-            <button class="toolbar-btn btn-del" onclick="applyFormat('~~', '~~', 'strikethrough')" title="Strikethrough">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><path d="M16 4H9a4 4 0 0 0-4 4 4 4 0 0 0 4 4h6a4 4 0 0 1 4 4 4 4 0 0 1-4 4H7"></path></svg>
-            </button>
-            <button class="toolbar-btn btn-italic" onclick="applyFormat('*', '*', 'italic text')" title="Italic">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="4" x2="10" y2="4"></line><line x1="14" y1="20" x2="5" y2="20"></line><line x1="15" y1="4" x2="9" y2="20"></line></svg>
-            </button>
-            <button class="toolbar-btn btn-code" onclick="applyFormat('`', '`', 'code')" title="Inline Code">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
-            </button>
-            <button class="toolbar-btn btn-heading" onclick="applyFormat('### ', '', 'Heading')" title="Heading (H3)">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="4" x2="4" y2="20"></line><line x1="20" y1="4" x2="20" y2="20"></line></svg>
-            </button>
-            <select id="skin-select" class="toolbar-btn btn-skin-select" style="padding: 4px 8px; font-family: inherit;" title="Change Editor Skin">
-              <option value="skin-default">Default Skin</option>
-              <option value="skin-colorful">Colorful Skin</option>
-              <option value="skin-dark">Dark Skin</option>
-            </select>
-          </div>
+        </div>
+        <div class="traven-toolbar-container">
+          <?php include 'includes/_toolbar.php'; ?>
         </div>
         <div id="editor" class="editor-mount"></div>
       </div>
@@ -104,32 +79,6 @@
         initialValue: "---\ntitle: Traven Editor\nauthor: John Connor\n---\n\n# Welcome to Traven\n\nThis is a **standalone** WYSIWYM editor. Try moving your cursor into **this bold text** or *this italic text* to see the delimiters appear. \n\nHere is some `inline code` and a quote:\n\n> Blockquotes look elegant and simple.\n\n---\n\n### Drag & Drop / Paste Images\nTry pasting or dropping an image file below to see the optimistic loading UI spinner in action!",
         onUploadImage: mockImageUpload
       });
-    });
-
-    // Export formatting snippet helper
-    window.applyFormat = (before, after, placeholder) => {
-      if (window.editor) {
-        window.editor.insertSnippet(before, after, placeholder);
-      }
-    };
-
-    // Export undo/redo helpers
-    window.triggerUndo = () => {
-      if (window.editor) {
-        window.editor.undo();
-      }
-    };
-
-    // Export redo helper
-    window.triggerRedo = () => {
-      if (window.editor) {
-        window.editor.redo();
-      }
-    };
-
-    // Handle dynamic skin switching
-    document.getElementById('skin-select')?.addEventListener('change', (e) => {
-      document.getElementById('editor-skin-link').href = 'assets/skins/' + e.target.value + '.css';
     });
   </script>
 </body>
