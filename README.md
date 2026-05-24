@@ -48,9 +48,6 @@ Copy `dist/traven.js` and your preferred skin stylesheet (from `assets/skins/`) 
   <meta charset="UTF-8">
   <title>Traven Integration</title>
   
-  <!-- Atkinson Hyperlegible Next is the recommended font for high legibility -->
-  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;700&display=swap" rel="stylesheet">
-  
   <!-- Load the stylesheet skin -->
   <link rel="stylesheet" href="assets/skins/skin-default.css">
   <link rel="stylesheet" href="assets/toolbars/toolbar-default.css">
