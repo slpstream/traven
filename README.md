@@ -18,9 +18,11 @@
 
 **Traven** is a premium, distraction-free WYSIWYM (What You See Is What You Mean) Markdown editor designed to be embedded directly into custom CMS systems, administrative dashboards, and web forms. Built on the **CodeMirror 6** editing engine, Traven delivers a high-fidelity editing experience while outputting clean, raw Markdown.
 
+Traven is highly modular and straightforward to customize or extend. If you need a Markdown editor that adapts to the layout, theme, and behavior of an existing project, its configuration options and decoupled styling make integration fast and easy.
+
 ### Naming & Philosophy
 
-The project is inspired by the anonymous author of *The Treasure of the Sierra Madre*. Using the nym **B. Traven**, he spent his career proving that the work outlasts the author, communicating with publishers pseudonymously and letting his writing speak for itself. For a framework-agnostic, open-source editor meant to be embedded, customized, and handed to the commons, we couldn't think of a better patron saint.
+**B. Traven** was the chosen nym of the privacy-first author behind *The Treasure of the Sierra Madre*, who spent his career proving that the work outlasts the author, communicating with publishers pseudonymously and letting his writing speak for itself. For a framework-agnostic, open-source editor meant to be embedded, customized, and stay quietly out of the limelight, the name fits.
 
 ---
 
