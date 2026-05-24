@@ -224,8 +224,8 @@
 .cm-wysiwym-hr-widget {
   border: 0;
   border-top: 2px dashed #334155; /* Slate 700 */
-  margin: 12px 0 !important;
-  padding: 0 !important;
+  margin: 0 !important;
+  padding: 12px 0 !important;
   display: block;
   width: 100%;
 }

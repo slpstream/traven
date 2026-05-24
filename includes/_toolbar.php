@@ -16,6 +16,9 @@
 <button class="toolbar-btn btn-code" onclick="applyFormat('`', '`', 'code')" title="Inline Code">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><polyline points="64 88 16 128 64 168" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><polyline points="192 88 240 128 192 168" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><line x1="160" y1="40" x2="96" y2="216" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>
 </button>
+<button class="toolbar-btn btn-code-block" onclick="applyCodeBlock()" title="Code Block">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><polyline points="64 32 32 64 64 96" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><polyline points="104 32 136 64 104 96" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><path d="M176,48h24a8,8,0,0,1,8,8V200a8,8,0,0,1-8,8H56a8,8,0,0,1-8-8V136" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>
+</button>
 <button class="toolbar-btn btn-quote" onclick="applyBlockquote()" title="Blockquote">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><path d="M108,144H40a8,8,0,0,1-8-8V72a8,8,0,0,1,8-8h60a8,8,0,0,1,8,8v88a40,40,0,0,1-40,40" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><path d="M224,144H156a8,8,0,0,1-8-8V72a8,8,0,0,1,8-8h60a8,8,0,0,1,8,8v88a40,40,0,0,1-40,40" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>
 </button>
@@ -56,6 +59,9 @@
     </button>
   </div>
 </div>
+<button class="toolbar-btn btn-datetime" onclick="triggerDateTime()" title="Insert Date/Time">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><rect x="40" y="40" width="176" height="176" rx="8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><line x1="176" y1="24" x2="176" y2="56" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><line x1="80" y1="24" x2="80" y2="56" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><line x1="40" y1="88" x2="216" y2="88" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><line x1="152" y1="152" x2="104" y2="152" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><line x1="128" y1="128" x2="128" y2="176" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>
+</button>
 <select id="skin-select" class="toolbar-btn btn-skin-select" style="padding: 4px 8px; font-family: inherit;" title="Change Editor Skin">
   <option value="skin-default">Default Skin</option>
   <option value="skin-colorful">Colorful Skin</option>
@@ -69,6 +75,55 @@
       if (window.editor) {
         window.editor.insertSnippet(before, after, placeholder);
       }
+    };
+
+    window.applyCodeBlock = () => {
+      if (!window.editor) return;
+      const view = window.editor.getView();
+      const state = view.state;
+      const { from, to } = state.selection.main;
+      const hadSelection = from !== to;
+
+      let selectionText = hadSelection ? state.sliceDoc(from, to) : '';
+
+      // Determine spacing around the block to ensure fences start/end on their own line, but without blank lines
+      const charBefore = from > 0 ? state.sliceDoc(from - 1, from) : '\n';
+      const prefixSpacing = charBefore !== '\n' ? '\n' : '';
+
+      const charAfter = to < state.doc.length ? state.sliceDoc(to, to + 1) : '\n';
+      const suffixSpacing = charAfter !== '\n' ? '\n' : '';
+
+      let finalInsert = '';
+      let newAnchor = 0;
+      let newHead = 0;
+
+      if (!hadSelection) {
+        // Empty selection: insert an empty code block with cursor in the middle
+        const insertion = '```\n\n```';
+        finalInsert = `${prefixSpacing}${insertion}${suffixSpacing}`;
+        newAnchor = from + prefixSpacing.length + 4; // Length of '```\n'
+        newHead = newAnchor;
+      } else {
+        // Text highlighted: wrap the text with backticks
+        let middleText = selectionText;
+        if (!middleText.startsWith('\n')) {
+          middleText = '\n' + middleText;
+        }
+        if (!middleText.endsWith('\n')) {
+          middleText = middleText + '\n';
+        }
+
+        const standardInsertion = `\`\`\`${middleText}\`\`\``;
+        finalInsert = `${prefixSpacing}${standardInsertion}${suffixSpacing}`;
+        newAnchor = from + prefixSpacing.length;
+        newHead = newAnchor + standardInsertion.length;
+      }
+
+      view.dispatch({
+        changes: { from, to, insert: finalInsert },
+        selection: { anchor: newAnchor, head: newHead }
+      });
+      view.focus();
     };
 
     window.applyHR = () => {
@@ -263,6 +318,12 @@
     window.triggerRedo = () => {
       if (window.editor) {
         window.editor.redo();
+      }
+    };
+
+    window.triggerDateTime = () => {
+      if (window.editor) {
+        window.editor.insertDateTime();
       }
     };
 
