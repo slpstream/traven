@@ -95,6 +95,8 @@ Initializes a new editor instance.
 | `initialValue` | `string` | `""` | The starting Markdown document string. |
 | `lineNumbers` | `boolean` | `false` | Show line numbers and folding gutters in the primary editor. |
 | `sourceLineNumbers`| `boolean` | `false` | Show line numbers and gutters in the raw sync editor. |
+| `lineWrapping` | `boolean` | `true` | Enable soft line wrapping in the primary editor. |
+| `sourceLineWrapping`| `boolean` | `true` | Enable soft line wrapping in the raw sync editor. |
 | `onChange` | `function` | `null` | Callback fired on change: `(value: string) => void`. |
 | `onSave` | `function` | `null` | Callback fired on Save command (Cmd+S / Ctrl+S): `(value: string) => void`. |
 | `onUploadImage` | `function` | `null` | Callback returning a promise of the uploaded image's URL: `(file: File) => Promise<string>`. |
