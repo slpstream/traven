@@ -18,7 +18,7 @@
 
 **Traven** is a premium, distraction-free WYSIWYM (What You See Is What You Mean) Markdown editor designed to be embedded directly into custom CMS systems, administrative dashboards, and web forms. Built on the **CodeMirror 6** editing engine, Traven delivers a high-fidelity editing experience while outputting clean, raw Markdown.
 
-Traven is highly modular and straightforward to customize or extend. If you need a powerful, flexible and fairly unopinionated Markdown editor that adapts to the layout, theme, and behavior of an existing project, its configuration options and decoupled styling make integration fast and easy.
+Traven is highly modular and straightforward to customize or extend. If you need a powerful, flexible and mostly unopinionated Markdown editor that adapts to the layout, theme, and behavior of an existing project, its configuration options and decoupled styling make integration fast and easy.
 
 ### Naming & Philosophy
 
