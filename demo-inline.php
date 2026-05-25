@@ -20,6 +20,11 @@
 
   <?php
     $header_nav_html = '
+      <select id="skin-select" class="nav-btn btn-skin-select" style="padding: 6px 12px; font-family: inherit; font-size: 0.9em; cursor: pointer; margin-right: 8px;">
+        <option value="skin-default">Default Skin</option>
+        <option value="skin-colorful">Colorful Skin</option>
+        <option value="skin-dark">Dark Skin</option>
+      </select>
       <a href="demo-form.php" class="nav-btn">Switch to Form Demo &rarr;</a>
     ';
     include 'includes/_header.php';
@@ -41,9 +46,6 @@
             Editing View
           </div>
         </div>
-        <div class="traven-toolbar-container">
-          <?php include 'includes/_toolbar.php'; ?>
-        </div>
         <div id="editor" class="editor-mount"></div>
       </div>
 
@@ -62,7 +64,7 @@
   </main>
 
   <script type="module">
-    import { TravenEditor } from "./dist/traven.js";
+    import { TravenEditor, DEFAULT_TOOLBAR } from "./dist/traven.js";
 
     // Simulate async image upload
     const mockImageUpload = async (file) => {
@@ -71,13 +73,22 @@
       return URL.createObjectURL(file);
     };
 
+    // Dynamic skin selector handler
+    document.getElementById("skin-select")?.addEventListener("change", (e) => {
+      const skinLink = document.getElementById("editor-skin-link");
+      if (skinLink) {
+        skinLink.href = "assets/skins/" + e.target.value + ".css";
+      }
+    });
+
     // Instantiate editor after fonts are loaded to prevent CodeMirror coordinate measuring cache errors
     document.fonts.ready.then(() => {
       window.editor = new TravenEditor({
         element: document.getElementById("editor"),
         sourceElement: document.getElementById("raw-editor"),
         initialValue: "---\ntitle: Traven Editor\nauthor: John Connor\n---\n\n# Welcome to Traven\n\nThis is a **standalone** WYSIWYM editor. Try moving your cursor into **this bold text** or *this italic text* to see the delimiters appear. \n\nHere is some `inline code` and a quote:\n\n> Blockquotes look elegant and simple.\n\n---\n\n### Drag & Drop / Paste Images\nTry pasting or dropping an image file below to see the optimistic loading UI spinner in action!",
-        onUploadImage: mockImageUpload
+        onUploadImage: mockImageUpload,
+        toolbar: DEFAULT_TOOLBAR
       });
     });
   </script>

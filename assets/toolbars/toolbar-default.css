@@ -54,6 +54,14 @@ button.toolbar-btn {
   flex-wrap: wrap;
 }
 
+.toolbar-separator {
+  width: 1px;
+  height: 20px;
+  background-color: var(--border-color, #e2e8f0);
+  margin: 0 4px;
+  flex-shrink: 0;
+}
+
 .form-demo .toolbar-btn {
   background-color: #ffffff;
   border: 1px solid var(--border-color, #e2e8f0);
@@ -218,3 +226,188 @@ button.btn-heading {
   height: auto !important;
 }
 
+/* Traven Modal Dialog System */
+.traven-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.traven-modal-overlay.is-active {
+  opacity: 1;
+}
+
+.traven-modal {
+  background: var(--bg-primary, #ffffff);
+  color: var(--text-primary, #0f172a);
+  border-radius: 12px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  width: 90%;
+  max-width: 480px;
+  overflow: hidden;
+  transform: scale(0.95);
+  transition: transform 0.2s ease;
+  border: 1px solid var(--border-color, #e2e8f0);
+  font-family: 'Atkinson Hyperlegible Next', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+.traven-modal-overlay.is-active .traven-modal {
+  transform: scale(1);
+}
+
+.traven-modal-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.traven-modal-title {
+  font-size: 1.05em;
+  font-weight: 700;
+  color: var(--text-primary, #0f172a);
+  margin: 0;
+}
+.traven-modal-close {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary, #64748b);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+  padding: 0;
+}
+.traven-modal-close:hover {
+  background-color: var(--bg-hover, #f1f5f9);
+  color: var(--text-primary, #0f172a);
+}
+.traven-modal-close svg {
+  width: 14px;
+  height: 14px;
+}
+
+.traven-modal-body {
+  padding: 20px;
+  font-size: 0.92em;
+  line-height: 1.5;
+}
+
+.traven-modal-footer {
+  padding: 12px 20px;
+  border-top: 1px solid var(--border-color, #e2e8f0);
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  background-color: var(--bg-secondary, #f8fafc);
+}
+
+.traven-modal-field {
+  margin-bottom: 16px;
+}
+.traven-modal-field:last-child {
+  margin-bottom: 0;
+}
+.traven-modal-label {
+  display: block;
+  font-size: 0.85em;
+  font-weight: 600;
+  color: var(--text-secondary, #475569);
+  margin-bottom: 6px;
+}
+.traven-modal-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 6px;
+  font-size: 0.9em;
+  outline: none;
+  background-color: var(--bg-primary, #ffffff);
+  color: var(--text-primary, #0f172a);
+  transition: border-color 0.15s ease;
+  box-sizing: border-box;
+}
+.traven-modal-input:focus {
+  border-color: var(--accent, #6366f1);
+}
+
+.traven-modal-btn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.85em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+.traven-modal-btn.btn-primary {
+  background-color: var(--accent, #6366f1);
+  color: white;
+  border: 1px solid transparent;
+}
+.traven-modal-btn.btn-primary:hover {
+  background-color: var(--accent-hover, #4f46e5);
+}
+.traven-modal-btn.btn-secondary {
+  background-color: var(--bg-primary, #ffffff);
+  color: var(--text-secondary, #475569);
+  border: 1px solid var(--border-color, #e2e8f0);
+}
+.traven-modal-btn.btn-secondary:hover {
+  background-color: var(--bg-hover, #f8fafc);
+  color: var(--text-primary, #0f172a);
+}
+
+/* Help Dialog Content styling */
+.help-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.help-section-title {
+  font-weight: 700;
+  font-size: 0.9em;
+  color: var(--accent, #6366f1);
+  margin-top: 8px;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.help-section-title:first-child {
+  margin-top: 0;
+}
+.help-row {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px dashed var(--border-color, #e2e8f0);
+  padding: 4px 0;
+}
+.help-row:last-child {
+  border-bottom: none;
+}
+.help-key {
+  color: var(--text-primary, #0f172a);
+}
+.help-value {
+  color: var(--text-secondary, #64748b);
+  font-family: monospace;
+  background-color: var(--bg-secondary, #f1f5f9);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.85em;
+}

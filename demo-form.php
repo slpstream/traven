@@ -19,7 +19,14 @@
 <body class="form-demo">
   
   <?php
-    $header_nav_html = '<a href="demo-inline.php" class="nav-btn">&larr; Switch to Inline YAML Demo</a>';
+    $header_nav_html = '
+      <select id="skin-select" class="nav-btn btn-skin-select" style="padding: 6px 12px; font-family: inherit; font-size: 0.9em; cursor: pointer; margin-right: 8px;">
+        <option value="skin-default">Default Skin</option>
+        <option value="skin-colorful">Colorful Skin</option>
+        <option value="skin-dark">Dark Skin</option>
+      </select>
+      <a href="demo-inline.php" class="nav-btn">&larr; Switch to Inline YAML Demo</a>
+    ';
     include 'includes/_header.php';
   ?>
 
@@ -82,17 +89,13 @@
         </div>
       </div>
       <div class="editor-wrapper">
-        <!-- Toolbar Container -->
-        <div class="traven-toolbar-container">
-          <?php include 'includes/_toolbar.php'; ?>
-        </div>
         <div id="editor" class="editor-mount"></div>
       </div>
     </div>
   </main>
 
   <script type="module">
-    import { TravenEditor } from "./dist/traven.js";
+    import { TravenEditor, DEFAULT_TOOLBAR } from "./dist/traven.js";
 
     // Raw starting document (loaded from database)
     const initialRawFile = `---
@@ -175,6 +178,14 @@ Try modifying the inputs in the form or editing the body text here to see how th
     authorInput.addEventListener("input", updateCombinedPreview);
     statusSelect.addEventListener("change", updateCombinedPreview);
 
+    // Dynamic skin selector handler
+    document.getElementById("skin-select")?.addEventListener("change", (e) => {
+      const skinLink = document.getElementById("editor-skin-link");
+      if (skinLink) {
+        skinLink.href = "assets/skins/" + e.target.value + ".css";
+      }
+    });
+
     // 4. Initialize Traven with only the Markdown body content
     document.fonts.ready.then(() => {
       window.editor = new TravenEditor({
@@ -182,7 +193,8 @@ Try modifying the inputs in the form or editing the body text here to see how th
         initialValue: markdown,
         onChange: () => {
           updateCombinedPreview();
-        }
+        },
+        toolbar: DEFAULT_TOOLBAR
       });
       // Initial preview compilation
       updateCombinedPreview();

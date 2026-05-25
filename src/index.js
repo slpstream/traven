@@ -29,11 +29,42 @@ import { Strikethrough, TaskList } from "@lezer/markdown";
 import { yamlFrontmatter } from "@codemirror/lang-yaml";
 import { undo, redo } from "@codemirror/commands";
 import { search, openSearchPanel } from "@codemirror/search";
+import { buildToolbar } from "./toolbar/toolbar.js";
 import { wysiwymPlugin } from "./wysiwym.js";
 import { delimiterSkipKeymap } from "./delimiter-skip.js";
 import { imageDecorationPlugin, imageHandlerExtension } from "./images.js";
 
 const syncAnnotation = Annotation.define();
+
+export const DEFAULT_TOOLBAR = [
+  "undo",
+  "redo",
+  "|",
+  "bold",
+  "italic",
+  "strikethrough",
+  "code",
+  "|",
+  "heading",
+  "|",
+  "bulletlist",
+  "numberedlist",
+  "blockquote",
+  "hr",
+  "|",
+  "codeblock",
+  "|",
+  "datetime",
+  "search",
+  "fullscreen",
+  "clear",
+  "uppercase",
+  "lowercase",
+  "capitalize",
+  "gotoline",
+  "link",
+  "help"
+];
 
 /**
  * Builds a custom modular base setup similar to CodeMirror's basicSetup
@@ -85,6 +116,7 @@ function buildBaseSetup(options = {}) {
  * @property {function(File): Promise<string>} [onUploadImage] - Callback handling image uploads.
  * @property {"light" | "dark"} [theme] - Visual style theme.
  * @property {string} [caretColor] - Configurable caret color override.
+ * @property {Array<string>|boolean} [toolbar=false] - Toolbar configuration array or false.
  */
 
 export class TravenEditor {
@@ -107,6 +139,12 @@ export class TravenEditor {
     const showSourceLineNumbers = !!options.sourceLineNumbers;
     const wrapLines = options.lineWrapping !== false;
     const wrapSourceLines = options.sourceLineWrapping !== false;
+
+    // Render and prepend toolbar if provided in constructor options
+    if (options.toolbar && Array.isArray(options.toolbar)) {
+      const toolbarEl = buildToolbar(this, options.toolbar);
+      options.element.prepend(toolbarEl);
+    }
 
     const extensions = [
       ...buildBaseSetup({
@@ -394,6 +432,251 @@ export class TravenEditor {
       scrollIntoView: true
     });
     this.#view.focus();
+  }
+
+  /**
+   * Wraps the current selection in a markdown code block.
+   */
+  insertCodeBlock() {
+    const view = this.#view;
+    const state = view.state;
+    const { from, to } = state.selection.main;
+    const hadSelection = from !== to;
+
+    let selectionText = hadSelection ? state.sliceDoc(from, to) : '';
+
+    const charBefore = from > 0 ? state.sliceDoc(from - 1, from) : '\n';
+    const prefixSpacing = charBefore !== '\n' ? '\n' : '';
+
+    const charAfter = to < state.doc.length ? state.sliceDoc(to, to + 1) : '\n';
+    const suffixSpacing = charAfter !== '\n' ? '\n' : '';
+
+    let finalInsert = '';
+    let newAnchor = 0;
+    let newHead = 0;
+
+    if (!hadSelection) {
+      const insertion = '```\n\n```';
+      finalInsert = `${prefixSpacing}${insertion}${suffixSpacing}`;
+      newAnchor = from + prefixSpacing.length + 4;
+      newHead = newAnchor;
+    } else {
+      let middleText = selectionText;
+      if (!middleText.startsWith('\n')) {
+        middleText = '\n' + middleText;
+      }
+      if (!middleText.endsWith('\n')) {
+        middleText = middleText + '\n';
+      }
+
+      const standardInsertion = `\`\`\`${middleText}\`\`\`;`;
+      // Strip trailing semicolon from template if any (standardInsertion definition: `\`\`\`${middleText}\`\`\``)
+      // Corrected inline:
+      const standardInsertCorrected = `\`\`\`${middleText}\`\`\``;
+      finalInsert = `${prefixSpacing}${standardInsertCorrected}${suffixSpacing}`;
+      newAnchor = from + prefixSpacing.length;
+      newHead = newAnchor + standardInsertCorrected.length;
+    }
+
+    view.dispatch({
+      changes: { from, to, insert: finalInsert },
+      selection: { anchor: newAnchor, head: newHead }
+    });
+    view.focus();
+  }
+
+  /**
+   * Inserts a horizontal rule, handling spacing.
+   */
+  insertHR() {
+    const view = this.#view;
+    const state = view.state;
+    const { from, to } = state.selection.main;
+
+    const insertion = '---';
+
+    const charBefore = from > 0 ? state.sliceDoc(from - 1, from) : '\n';
+    const charAfter = to < state.doc.length ? state.sliceDoc(to, to + 1) : '\n';
+
+    const secondCharBefore = from > 1 ? state.sliceDoc(from - 2, from - 1) : '\n';
+
+    let prefixSpacing = '';
+    if (charBefore !== '\n') {
+      prefixSpacing = '\n\n';
+    } else if (secondCharBefore !== '\n') {
+      prefixSpacing = '\n';
+    }
+
+    let suffixSpacing = '';
+    if (charAfter !== '\n') {
+      suffixSpacing = '\n';
+    }
+
+    const finalInsert = `${prefixSpacing}${insertion}${suffixSpacing}`;
+
+    view.dispatch({
+      changes: { from, to, insert: finalInsert },
+      selection: { anchor: from + prefixSpacing.length + insertion.length }
+    });
+    view.focus();
+  }
+
+  /**
+   * Sets or toggles heading level for the active line.
+   * @param {number} level - Heading level (1 to 6).
+   */
+  setHeading(level) {
+    const view  = this.#view;
+    const state = view.state;
+    const pos   = state.selection.main.head;
+    const line  = state.doc.lineAt(pos);
+    const existingPrefix = line.text.match(/^(#{1,6}\s*)/)?.[0] || '';
+
+    const prefix = level > 0 ? '#'.repeat(level) + ' ' : '';
+
+    if (existingPrefix === prefix) {
+      view.dispatch({
+        changes: { from: line.from, to: line.from + existingPrefix.length, insert: '' }
+      });
+    } else {
+      view.dispatch({
+        changes: { from: line.from, to: line.from + existingPrefix.length, insert: prefix }
+      });
+    }
+    view.focus();
+  }
+
+  /**
+   * Formats selection or line as blockquote.
+   */
+  insertBlockquote() {
+    const view = this.#view;
+    const state = view.state;
+    const { from, to } = state.selection.main;
+
+    if (from === to) {
+      const pos = from;
+      const line = state.doc.lineAt(pos);
+      const existingPrefix = line.text.match(/^(>\s*)/)?.[0] || '';
+
+      if (existingPrefix) {
+        view.dispatch({
+          changes: { from: line.from, to: line.from + existingPrefix.length, insert: '' }
+        });
+      } else {
+        view.dispatch({
+          changes: { from: line.from, to: line.from, insert: '> ' }
+        });
+      }
+    } else {
+      let selectedText = state.sliceDoc(from, to);
+      const lines = selectedText.split(/\r?\n/);
+      const quotedLines = lines.map(line => `> ${line}`);
+      let insertion = quotedLines.join('\n');
+
+      const charBefore = from > 0 ? state.sliceDoc(from - 1, from) : '\n';
+      const charAfter = to < state.doc.length ? state.sliceDoc(to, to + 1) : '\n';
+      const secondCharBefore = from > 1 ? state.sliceDoc(from - 2, from - 1) : '\n';
+      const secondCharAfter = to < state.doc.length - 1 ? state.sliceDoc(to + 1, to + 2) : '\n';
+
+      let prefixSpacing = '';
+      if (charBefore !== '\n') {
+        prefixSpacing = '\n\n';
+      } else if (secondCharBefore !== '\n') {
+        prefixSpacing = '\n';
+      }
+
+      let suffixSpacing = '';
+      if (charAfter !== '\n') {
+        suffixSpacing = '\n\n';
+      } else if (secondCharAfter !== '\n') {
+        suffixSpacing = '\n';
+      }
+
+      const finalInsert = `${prefixSpacing}${insertion}${suffixSpacing}`;
+
+      view.dispatch({
+        changes: { from, to, insert: finalInsert },
+        selection: { anchor: from + prefixSpacing.length, head: from + prefixSpacing.length + insertion.length }
+      });
+    }
+    view.focus();
+  }
+
+  /**
+   * Formats selection or line as a list (ordered or unordered).
+   * @param {"ol" | "ul"} type
+   */
+  insertList(type) {
+    const view = this.#view;
+    const state = view.state;
+    const { from, to } = state.selection.main;
+
+    const isOL = type === 'ol';
+    const getPrefix = (index) => isOL ? `${index + 1}. ` : '- ';
+
+    if (from === to) {
+      const pos = from;
+      const line = state.doc.lineAt(pos);
+      const text = line.text;
+      const ulMatch = text.match(/^(-\s+)/);
+      const olMatch = text.match(/^(\d+\.\s+)/);
+
+      if (ulMatch) {
+        const matchText = ulMatch[0];
+        if (!isOL) {
+          view.dispatch({ changes: { from: line.from, to: line.from + matchText.length, insert: '' } });
+        } else {
+          view.dispatch({ changes: { from: line.from, to: line.from + matchText.length, insert: '1. ' } });
+        }
+      } else if (olMatch) {
+        const matchText = olMatch[0];
+        if (isOL) {
+          view.dispatch({ changes: { from: line.from, to: line.from + matchText.length, insert: '' } });
+        } else {
+          view.dispatch({ changes: { from: line.from, to: line.from + matchText.length, insert: '- ' } });
+        }
+      } else {
+        const insertPrefix = getPrefix(0);
+        view.dispatch({ changes: { from: line.from, to: line.from, insert: insertPrefix } });
+      }
+    } else {
+      let selectedText = state.sliceDoc(from, to);
+      const lines = selectedText.split(/\r?\n/);
+
+      const listLines = lines.map((lineText, idx) => {
+        const cleanLine = lineText.replace(/^([-\d+\.\s]+)/, '');
+        return `${getPrefix(idx)}${cleanLine}`;
+      });
+      const insertion = listLines.join('\n');
+
+      const charBefore = from > 0 ? state.sliceDoc(from - 1, from) : '\n';
+      const charAfter = to < state.doc.length ? state.sliceDoc(to, to + 1) : '\n';
+      const secondCharBefore = from > 1 ? state.sliceDoc(from - 2, from - 1) : '\n';
+      const secondCharAfter = to < state.doc.length - 1 ? state.sliceDoc(to + 1, to + 2) : '\n';
+
+      let prefixSpacing = '';
+      if (charBefore !== '\n') {
+        prefixSpacing = '\n\n';
+      } else if (secondCharBefore !== '\n') {
+        prefixSpacing = '\n';
+      }
+
+      let suffixSpacing = '';
+      if (charAfter !== '\n') {
+        suffixSpacing = '\n\n';
+      } else if (secondCharAfter !== '\n') {
+        suffixSpacing = '\n';
+      }
+
+      const finalInsert = `${prefixSpacing}${insertion}${suffixSpacing}`;
+
+      view.dispatch({
+        changes: { from, to, insert: finalInsert },
+        selection: { anchor: from + prefixSpacing.length, head: from + prefixSpacing.length + insertion.length }
+      });
+    }
+    view.focus();
   }
 
 
