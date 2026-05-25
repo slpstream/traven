@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Traven Editor — Form-Managed Metadata Demo</title>
+  <title>Traven Editor — Hybrid Editing Demo</title>
 
   <!-- Preload Critical Fonts & Styles -->
   <link rel="preload" href="assets/fonts/fonts.css" as="style">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="assets/css/demo.css">
 </head>
 
-<body class="form-demo">
+<body class="hybrid-demo">
 
   <?php
   include 'includes/_customization-dropdowns.php';
@@ -28,10 +28,10 @@
   ?>
 
   <main>
-    <!-- Left Sidebar: Metadata Form and Unified Source -->
-    <div style="display: flex; flex-direction: column; gap: 30px;">
+    <!-- Top Row: Metadata Form & Unified Output Preview -->
+    <div class="top-row">
       <!-- Form Input Card -->
-      <div class="sandbox-card">
+      <div class="sandbox-card form-card">
         <div class="card-header">
           <div class="card-title">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -65,7 +65,7 @@
       </div>
 
       <!-- Combined Output Card -->
-      <div class="sandbox-card" style="flex: 1; display: flex; flex-direction: column;">
+      <div class="sandbox-card preview-card">
         <div class="card-header">
           <div class="card-title">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -86,19 +86,37 @@
       </div>
     </div>
 
-    <!-- Right Area: Traven WYSIWYM Editor -->
-    <div class="sandbox-card editor-card">
-      <div class="card-header">
-        <div class="card-title">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <path d="M12 20h9"></path>
-            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-          </svg>
-          Body Content Editor
+    <!-- Bottom Row: Side-by-Side Editable Views -->
+    <div class="bottom-row">
+      <!-- Editor Card -->
+      <div class="sandbox-card editor-card">
+        <div class="card-header">
+          <div class="card-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--accent)">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4Z"></path>
+            </svg>
+            WYSIWYM Editing View
+          </div>
         </div>
-      </div>
-      <div class="editor-wrapper">
         <div id="editor" class="editor-mount"></div>
+      </div>
+
+      <!-- Live Sync Output Card -->
+      <div class="sandbox-card raw-editor-card">
+        <div class="card-header">
+          <div class="card-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round" style="stroke: #e11d48">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+            Raw Markdown Content
+          </div>
+          <span class="output-label-badge">EDITABLE RAW SOURCE</span>
+        </div>
+        <div id="raw-editor" class="raw-editor-mount"></div>
       </div>
     </div>
   </main>
@@ -108,20 +126,16 @@
 
     // Raw starting document (loaded from database)
     const initialRawFile = `---
-title: Traven Structured Demo
-author: Sarah Connor
+title: Traven Hybrid
+author: Kyle Reese
 status: Published
 ---
-# Form-Managed Metadata Demo
+# Hybrid Editing Demo
 
-This demo illustrates **Approach B (Split-Before / Join-After)** which is the recommended pattern for CMS integrations.
-
-Notice that:
-1. The editor container **only shows the Markdown body**. The YAML metadata is completely hidden and protected from writing accidents.
-2. The metadata (Title, Author, Status) is managed via the **standard HTML form fields** on the left.
-3. The terminal view on the bottom-left shows the **unified combined file content** in real-time as you edit!
-
-Try modifying the inputs in the form or editing the body text here to see how they are seamlessly combined!`;
+This demo illustrates a hybrid layout where:
+1. The document metadata (Title, Author, Status) is managed via form fields and synced to the YAML frontmatter on the top.
+2. The Markdown body is displayed in two side-by-side editable views (WYSIWYM and raw source) that sync changes bi-directionally in real-time.
+3. Editing is limited strictly to the actual Markdown content. The frontmatter is kept clean and safe from editing accidents.`;
 
     // 1. Splitting/Joining utilities
     function splitFrontmatter(raw) {
@@ -202,14 +216,23 @@ Try modifying the inputs in the form or editing the body text here to see how th
       }
     });
 
-    // 4. Initialize Traven with only the Markdown body content
+    // Simulate async image upload
+    const mockImageUpload = async (file) => {
+      console.log("Mock uploading file:", file.name);
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      return URL.createObjectURL(file);
+    };
+
+    // 4. Initialize Traven Editor with side-by-side editing syncing
     document.fonts.ready.then(() => {
       window.editor = new TravenEditor({
         element: document.getElementById("editor"),
+        sourceElement: document.getElementById("raw-editor"),
         initialValue: markdown,
         onChange: () => {
           updateCombinedPreview();
         },
+        onUploadImage: mockImageUpload,
         toolbar: DEFAULT_TOOLBAR
       });
       // Initial preview compilation

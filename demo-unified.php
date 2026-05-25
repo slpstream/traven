@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Traven Editor — Form-Managed Metadata Demo</title>
+  <title>Traven Editor — Unified Editing Demo</title>
 
   <!-- Preload Critical Fonts & Styles -->
   <link rel="preload" href="assets/fonts/fonts.css" as="style">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="assets/css/demo.css">
 </head>
 
-<body class="form-demo">
+<body class="unified-demo">
 
   <?php
   include 'includes/_customization-dropdowns.php';
@@ -28,11 +28,11 @@
   ?>
 
   <main>
-    <!-- Left Sidebar: Metadata Form and Unified Source -->
-    <div style="display: flex; flex-direction: column; gap: 30px;">
+    <!-- Top Row: Metadata Form (Horizontal Layout) -->
+    <div class="top-row">
       <!-- Form Input Card -->
-      <div class="sandbox-card">
-        <div class="card-header">
+      <div class="sandbox-card form-card is-collapsed">
+        <div class="card-header" id="metadata-accordion-trigger">
           <div class="card-title">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
@@ -43,6 +43,9 @@
             </svg>
             Document Metadata
           </div>
+          <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
         </div>
         <div class="form-body">
           <div class="form-group">
@@ -63,42 +66,21 @@
           </div>
         </div>
       </div>
-
-      <!-- Combined Output Card -->
-      <div class="sandbox-card" style="flex: 1; display: flex; flex-direction: column;">
-        <div class="card-header">
-          <div class="card-title">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <polyline points="16 18 22 12 16 6"></polyline>
-              <polyline points="8 6 2 12 8 18"></polyline>
-            </svg>
-            Unified Output File
-          </div>
-        </div>
-        <div class="terminal-container">
-          <div class="terminal-titlebar">
-            <span class="dot red"></span>
-            <span class="dot yellow"></span>
-            <span class="dot green"></span>
-          </div>
-          <textarea id="combined-preview" class="terminal-view" readonly></textarea>
-        </div>
-      </div>
     </div>
 
-    <!-- Right Area: Traven WYSIWYM Editor -->
-    <div class="sandbox-card editor-card">
-      <div class="card-header">
-        <div class="card-title">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <path d="M12 20h9"></path>
-            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-          </svg>
-          Body Content Editor
+    <!-- Bottom Row: Unified Editor Card with Tabs -->
+    <div class="bottom-row">
+      <div class="sandbox-card editor-card">
+        <div class="card-header">
+          <div class="unified-tab-bar">
+            <button type="button" id="tab-wysiwym" class="unified-tab is-active">WYSIWYM</button>
+            <button type="button" id="tab-markdown" class="unified-tab">Markdown</button>
+          </div>
         </div>
-      </div>
-      <div class="editor-wrapper">
-        <div id="editor" class="editor-mount"></div>
+        <div class="editor-wrapper mode-wysiwym">
+          <div id="editor" class="editor-mount"></div>
+          <div id="raw-editor" class="raw-editor-mount"></div>
+        </div>
       </div>
     </div>
   </main>
@@ -108,20 +90,16 @@
 
     // Raw starting document (loaded from database)
     const initialRawFile = `---
-title: Traven Structured Demo
-author: Sarah Connor
+title: Traven Unified
+author: Miles Dyson
 status: Published
 ---
-# Form-Managed Metadata Demo
+# Unified Editing Demo
 
-This demo illustrates **Approach B (Split-Before / Join-After)** which is the recommended pattern for CMS integrations.
-
-Notice that:
-1. The editor container **only shows the Markdown body**. The YAML metadata is completely hidden and protected from writing accidents.
-2. The metadata (Title, Author, Status) is managed via the **standard HTML form fields** on the left.
-3. The terminal view on the bottom-left shows the **unified combined file content** in real-time as you edit!
-
-Try modifying the inputs in the form or editing the body text here to see how they are seamlessly combined!`;
+This demo illustrates a unified layout where:
+1. The document metadata (Title, Author, Status) is managed via form fields and synced to the YAML frontmatter on the top.
+2. The Markdown body is edited in a single workspace. Switch between WYSIWYM mode and Markdown mode using the tabs above.
+3. Editing is limited strictly to the actual Markdown content. The frontmatter is kept clean and safe from editing accidents.`;
 
     // 1. Splitting/Joining utilities
     function splitFrontmatter(raw) {
@@ -161,30 +139,10 @@ Try modifying the inputs in the form or editing the body text here to see how th
     const titleInput = document.getElementById("meta-title");
     const authorInput = document.getElementById("meta-author");
     const statusSelect = document.getElementById("meta-status");
-    const combinedPreview = document.getElementById("combined-preview");
 
     titleInput.value = initialMetadata.title;
     authorInput.value = initialMetadata.author;
     statusSelect.value = initialMetadata.status;
-
-    // Helper to compile and update combined raw preview
-    function updateCombinedPreview() {
-      if (!window.editor) return;
-      const bodyMarkdown = window.editor.getValue();
-      const currentMeta = {
-        title: titleInput.value.trim(),
-        author: authorInput.value.trim(),
-        status: statusSelect.value
-      };
-      const serializedYaml = `title: ${currentMeta.title}\nauthor: ${currentMeta.author}\nstatus: ${currentMeta.status}`;
-      const combined = joinFrontmatter(serializedYaml, bodyMarkdown);
-      combinedPreview.value = combined;
-    }
-
-    // Attach listeners to form inputs
-    titleInput.addEventListener("input", updateCombinedPreview);
-    authorInput.addEventListener("input", updateCombinedPreview);
-    statusSelect.addEventListener("change", updateCombinedPreview);
 
     // Dynamic skin selector handler
     document.getElementById("skin-select")?.addEventListener("change", (e) => {
@@ -202,18 +160,59 @@ Try modifying the inputs in the form or editing the body text here to see how th
       }
     });
 
-    // 4. Initialize Traven with only the Markdown body content
+    // Simulate async image upload
+    const mockImageUpload = async (file) => {
+      console.log("Mock uploading file:", file.name);
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      return URL.createObjectURL(file);
+    };
+
+    // 4. Initialize Traven Editor with tabbed layout
     document.fonts.ready.then(() => {
       window.editor = new TravenEditor({
         element: document.getElementById("editor"),
+        sourceElement: document.getElementById("raw-editor"),
         initialValue: markdown,
-        onChange: () => {
-          updateCombinedPreview();
-        },
+        onUploadImage: mockImageUpload,
         toolbar: DEFAULT_TOOLBAR
       });
-      // Initial preview compilation
-      updateCombinedPreview();
+
+      // Tab switching logic
+      const wysiwymTab = document.getElementById('tab-wysiwym');
+      const markdownTab = document.getElementById('tab-markdown');
+      const editorWrapper = document.querySelector('.editor-wrapper');
+
+      function activateTab(mode) {
+        const isWysiwym = mode === 'wysiwym';
+        wysiwymTab.classList.toggle('is-active', isWysiwym);
+        markdownTab.classList.toggle('is-active', !isWysiwym);
+        
+        editorWrapper.classList.toggle('mode-wysiwym', isWysiwym);
+        editorWrapper.classList.toggle('mode-markdown', !isWysiwym);
+
+        // Grey out toolbar in Markdown mode
+        const toolbar = document.querySelector('.traven-toolbar-container');
+        if (toolbar) {
+          toolbar.classList.toggle('is-disabled', !isWysiwym);
+        }
+
+        // Force CodeMirror views to measure coordinates again to prevent layout corruption
+        if (window.editor) {
+          const view = window.editor.getView();
+          if (view) view.requestMeasure();
+        }
+      }
+
+      wysiwymTab.addEventListener('click', () => activateTab('wysiwym'));
+      markdownTab.addEventListener('click', () => activateTab('markdown'));
+
+      // Accordion toggle logic
+      const accordionTrigger = document.getElementById('metadata-accordion-trigger');
+      const formCard = document.querySelector('.form-card');
+      
+      accordionTrigger.addEventListener('click', () => {
+        formCard.classList.toggle('is-collapsed');
+      });
     });
   </script>
 </body>

@@ -402,3 +402,268 @@ header {
     padding: 12px 10px;
   }
 }
+
+/* ==========================================================================
+   Hybrid Demo Page Styles
+   ========================================================================== */
+.hybrid-demo main {
+  flex: 1;
+  padding: 30px;
+  max-width: 1440px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.hybrid-demo .top-row {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 30px;
+}
+
+.hybrid-demo .bottom-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+}
+
+@media (max-width: 1024px) {
+  .hybrid-demo .top-row,
+  .hybrid-demo .bottom-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.hybrid-demo .sandbox-card {
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03);
+}
+
+.hybrid-demo .form-card {
+  height: auto;
+}
+
+.hybrid-demo .preview-card {
+  height: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.hybrid-demo .editor-card,
+.hybrid-demo .raw-editor-card {
+  height: 500px;
+  min-height: 400px;
+}
+
+/* Ensure editor mounts grow to fill their cards */
+.hybrid-demo .editor-mount,
+.hybrid-demo .raw-editor-mount {
+  flex: 1;
+  overflow: hidden;
+  height: 100%;
+}
+
+.hybrid-demo .editor-mount .cm-editor {
+  height: 100%;
+  font-family: 'Atkinson Hyperlegible Next', sans-serif;
+}
+
+.hybrid-demo .editor-mount .cm-scroller {
+  outline: none;
+}
+
+/* ==========================================================================
+   Unified Demo Page Styles
+   ========================================================================== */
+.unified-demo main {
+  flex: 1;
+  padding: 30px;
+  max-width: 1440px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.unified-demo .top-row {
+  display: block; /* Full width for the metadata card */
+}
+
+.unified-demo .bottom-row {
+  display: block; /* Full width for the editor card */
+}
+
+.unified-demo .sandbox-card {
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03);
+}
+
+.unified-demo .form-card {
+  height: auto;
+  max-width: 360px;
+  transition: border-color 0.3s ease;
+}
+
+.unified-demo .form-card.is-collapsed .form-body {
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.unified-demo .form-card.is-collapsed .card-header {
+  border-bottom-color: transparent;
+}
+
+.unified-demo .form-card .form-body {
+  max-height: 500px;
+  overflow: hidden;
+  transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
+  opacity: 1;
+}
+
+/* Chevron Rotation */
+.unified-demo .form-card .chevron-icon {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: rotate(0deg);
+  color: var(--text-secondary);
+}
+
+.unified-demo .form-card:not(.is-collapsed) .chevron-icon {
+  transform: rotate(180deg);
+}
+
+/* Accordion Header styling */
+.unified-demo .form-card .card-header {
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s ease, border-color 0.3s ease;
+}
+
+.unified-demo .form-card .card-header:hover {
+  background-color: #f1f5f9;
+}
+
+/* Horizontal Form Layout for Metadata */
+.unified-demo .horizontal-form {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding: 20px;
+}
+
+.unified-demo .horizontal-form .form-group {
+  flex: 1;
+  min-width: 240px;
+}
+
+/* Editor card layout */
+.unified-demo .editor-card {
+  height: 600px;
+  min-height: 400px;
+  resize: vertical;
+}
+
+.unified-demo .editor-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin: 0; /* Reset margins inside unified demo */
+  border: none;
+  border-radius: 0;
+  overflow: hidden;
+  background-color: #ffffff;
+}
+
+.unified-demo .editor-mount,
+.unified-demo .raw-editor-mount {
+  padding: 0;
+  overflow: hidden;
+  height: 100%;
+}
+
+/* Tab Switcher Styles */
+.unified-tab-bar {
+  display: flex;
+  gap: 0;
+  background-color: #f1f5f9;
+  border-radius: 8px;
+  padding: 3px;
+  border: 1px solid var(--border-color);
+}
+
+.unified-tab {
+  padding: 6px 16px;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.85em;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+}
+
+.unified-tab.is-active {
+  background-color: #ffffff;
+  color: var(--text-primary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  font-weight: 700;
+}
+
+.unified-tab:hover:not(.is-active) {
+  color: var(--text-primary);
+}
+
+/* Switcher Editor Mounting Display Toggle */
+.unified-demo .editor-wrapper.mode-wysiwym #editor {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.unified-demo .editor-wrapper.mode-wysiwym #editor .cm-editor {
+  flex: 1;
+  height: 100%;
+}
+
+.unified-demo .editor-wrapper.mode-wysiwym #raw-editor {
+  display: none !important;
+}
+
+.unified-demo .editor-wrapper.mode-markdown #editor {
+  flex: 0 0 auto;
+  height: auto;
+}
+
+.unified-demo .editor-wrapper.mode-markdown #editor .cm-editor {
+  display: none !important;
+}
+
+.unified-demo .editor-wrapper.mode-markdown #raw-editor {
+  display: flex !important;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+}
+
+.unified-demo .editor-wrapper.mode-markdown #raw-editor .cm-editor {
+  flex: 1;
+  height: 100%;
+}
+
+/* Greyed-out Toolbar in Markdown Mode */
+.unified-demo .traven-toolbar-container.is-disabled {
+  opacity: 0.45;
+  pointer-events: none;
+  user-select: none;
+  filter: grayscale(40%);
+  transition: all 0.2s ease;
+}

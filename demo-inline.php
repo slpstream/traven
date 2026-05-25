@@ -23,9 +23,7 @@
 
   <?php
   include 'includes/_customization-dropdowns.php';
-  $header_nav_html = $customization_dropdowns_html . '
-      <a href="demo-form.php" class="nav-btn">Switch to Form Demo &rarr;</a>
-    ';
+  $header_nav_html = $customization_dropdowns_html;
   include 'includes/_header.php';
   ?>
 
