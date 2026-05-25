@@ -75,11 +75,18 @@
           <div class="unified-tab-bar">
             <button type="button" id="tab-wysiwym" class="unified-tab is-active">WYSIWYM</button>
             <button type="button" id="tab-markdown" class="unified-tab">Markdown</button>
+            <button type="button" id="tab-preview" class="unified-tab">Preview</button>
           </div>
         </div>
         <div class="editor-wrapper mode-wysiwym">
           <div id="editor" class="editor-mount"></div>
           <div id="raw-editor" class="raw-editor-mount"></div>
+          <div id="html-preview" class="html-preview-mount traven-preview" style="display: none; padding: 24px 32px; overflow-y: auto; height: 100%; box-sizing: border-box;"></div>
+        </div>
+        <div class="card-footer" style="padding: 12px 20px; border-top: 1px solid var(--border-color); font-size: 0.85em; color: var(--text-secondary); display: flex; gap: 20px; justify-content: flex-end; background-color: #fafafa; font-weight: 500; font-family: inherit;">
+          <span id="stats-words">Words: 0</span>
+          <span id="stats-chars">Characters: 0</span>
+          <span id="stats-readtime">Read Time: 0 min</span>
         </div>
       </div>
     </div>
@@ -174,23 +181,67 @@ This demo illustrates a unified layout where:
         sourceElement: document.getElementById("raw-editor"),
         initialValue: markdown,
         onUploadImage: mockImageUpload,
-        toolbar: DEFAULT_TOOLBAR
+        toolbar: DEFAULT_TOOLBAR,
+        theme: localStorage.getItem("traven-selected-theme") || "light",
+        vimMode: localStorage.getItem("traven-selected-vim") === "true"
+      });
+
+      // Update statistics
+      window.editor.on("statsUpdate", (stats) => {
+        document.getElementById("stats-words").textContent = `Words: ${stats.words}`;
+        document.getElementById("stats-chars").textContent = `Characters: ${stats.characters}`;
+        document.getElementById("stats-readtime").textContent = `Read Time: ${stats.readTime} min`;
       });
 
       // Tab switching logic
       const wysiwymTab = document.getElementById('tab-wysiwym');
       const markdownTab = document.getElementById('tab-markdown');
+      const previewTab = document.getElementById('tab-preview');
       const editorWrapper = document.querySelector('.editor-wrapper');
 
       function activateTab(mode) {
         const isWysiwym = mode === 'wysiwym';
+        const isMarkdown = mode === 'markdown';
+        const isPreview = mode === 'preview';
+
         wysiwymTab.classList.toggle('is-active', isWysiwym);
-        markdownTab.classList.toggle('is-active', !isWysiwym);
+        markdownTab.classList.toggle('is-active', isMarkdown);
+        previewTab.classList.toggle('is-active', isPreview);
         
         editorWrapper.classList.toggle('mode-wysiwym', isWysiwym);
-        editorWrapper.classList.toggle('mode-markdown', !isWysiwym);
+        editorWrapper.classList.toggle('mode-markdown', isMarkdown);
+        editorWrapper.classList.toggle('mode-preview', isPreview);
 
-        // Grey out toolbar in Markdown mode
+        const editorEl = document.getElementById("editor");
+        const rawEditorEl = document.getElementById("raw-editor");
+        const previewEl = document.getElementById("html-preview");
+
+        if (isWysiwym) {
+          editorEl.style.display = "flex";
+          rawEditorEl.style.display = "none";
+          previewEl.style.display = "none";
+        } else if (isMarkdown) {
+          editorEl.style.display = "none";
+          rawEditorEl.style.display = "flex";
+          previewEl.style.display = "none";
+        } else if (isPreview) {
+          editorEl.style.display = "none";
+          rawEditorEl.style.display = "none";
+          previewEl.style.display = "block";
+          
+          // Apply custom rendering or fallback rendering
+          const isDark = localStorage.getItem("traven-selected-theme") === "dark";
+          if (isDark) {
+            previewEl.style.backgroundColor = "#0f172a";
+            previewEl.style.color = "#e2e8f0";
+          } else {
+            previewEl.style.backgroundColor = "#ffffff";
+            previewEl.style.color = "#1e293b";
+          }
+          previewEl.innerHTML = window.editor.getContentHtml();
+        }
+
+        // Grey out toolbar in Markdown and Preview modes
         const toolbar = document.querySelector('.traven-toolbar-container');
         if (toolbar) {
           toolbar.classList.toggle('is-disabled', !isWysiwym);
@@ -205,6 +256,7 @@ This demo illustrates a unified layout where:
 
       wysiwymTab.addEventListener('click', () => activateTab('wysiwym'));
       markdownTab.addEventListener('click', () => activateTab('markdown'));
+      previewTab.addEventListener('click', () => activateTab('preview'));
 
       // Accordion toggle logic
       const accordionTrigger = document.getElementById('metadata-accordion-trigger');

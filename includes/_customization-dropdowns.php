@@ -140,6 +140,17 @@ $customization_dropdowns_html = '
 ' . $skin_options_html . '</select>
 <select id="toolbar-select" class="nav-btn btn-toolbar-select" style="padding: 6px 12px; font-family: inherit; font-size: 0.9em; cursor: pointer; margin-right: 8px;">
 ' . $toolbar_options_html . '</select>
+<select id="theme-select" class="nav-btn btn-theme-select" style="padding: 6px 12px; font-family: inherit; font-size: 0.9em; cursor: pointer; margin-right: 8px;">
+  <option value="light">Light Editor Theme</option>
+  <option value="dark">Dark Editor Theme</option>
+</select>
+<label class="vim-toggle-container" style="display: inline-flex; align-items: center; gap: 8px; font-family: inherit; font-size: 0.85em; font-weight: 600; color: var(--text-secondary); cursor: pointer; user-select: none; margin-right: 8px; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border-color); background-color: #fafafa; transition: all 0.2s; box-sizing: border-box; height: 35px; vertical-align: middle;">
+  <span style="letter-spacing: 0.01em;">Vim Keybindings</span>
+  <div class="vim-switch" style="position: relative; width: 28px; height: 16px; background-color: #cbd5e1; border-radius: 10px; transition: background-color 0.2s; flex-shrink: 0;">
+    <input type="checkbox" id="vim-checkbox" style="opacity: 0; width: 0; height: 0; position: absolute; margin: 0;">
+    <span class="vim-switch-handle" style="position: absolute; top: 2px; left: 2px; width: 12px; height: 12px; background-color: white; border-radius: 50%; transition: transform 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.15);"></span>
+  </div>
+</label>
 <select id="demo-select" class="nav-btn btn-demo-select" style="padding: 6px 12px; font-family: inherit; font-size: 0.9em; cursor: pointer; margin-right: 8px;">
 ' . $demo_options_html . '</select>
 <a href="https://github.com/slpstream/traven/tree/main/docs" target="_blank" class="nav-btn" style="margin-right: 8px;">Docs</a>
@@ -148,9 +159,11 @@ $customization_dropdowns_html = '
 (function() {
   const skinSelect = document.getElementById("skin-select");
   const toolbarSelect = document.getElementById("toolbar-select");
+  const themeSelect = document.getElementById("theme-select");
+  const vimCheckbox = document.getElementById("vim-checkbox");
   const skinLink = document.getElementById("editor-skin-link");
   const toolbarLink = document.getElementById("editor-toolbar-link");
-
+ 
   function applySelection(selectEl, linkEl, storageKey, pathPrefix) {
     if (!selectEl) return;
     
@@ -162,7 +175,7 @@ $customization_dropdowns_html = '
         linkEl.href = pathPrefix + savedValue + ".css";
       }
     }
-
+ 
     // 2. Listen for changes to save and apply
     selectEl.addEventListener("change", (e) => {
       const selectedValue = e.target.value;
@@ -172,10 +185,71 @@ $customization_dropdowns_html = '
       }
     });
   }
-
+ 
   applySelection(skinSelect, skinLink, "traven-selected-skin", "assets/skins/");
   applySelection(toolbarSelect, toolbarLink, "traven-selected-toolbar", "assets/toolbars/");
+ 
+  // Handle Theme Selection
+  const savedTheme = localStorage.getItem("traven-selected-theme") || "light";
+  if (themeSelect) {
+    themeSelect.value = savedTheme;
+    
+    const syncPreviewTheme = (theme) => {
+      const preview = document.getElementById("html-preview");
+      if (preview) {
+        if (theme === "dark") {
+          preview.classList.add("cm-wysiwym-dark");
+        } else {
+          preview.classList.remove("cm-wysiwym-dark");
+        }
+      }
+    };
+    
+    // Defer to guarantee preview element is fully in DOM
+    setTimeout(() => syncPreviewTheme(savedTheme), 0);
 
+    themeSelect.addEventListener("change", (e) => {
+      const val = e.target.value;
+      localStorage.setItem("traven-selected-theme", val);
+      syncPreviewTheme(val);
+      if (window.editor && typeof window.editor.setTheme === "function") {
+        window.editor.setTheme(val);
+      }
+    });
+  }
+ 
+  // Handle Vim Selection
+  const savedVim = localStorage.getItem("traven-selected-vim") === "true";
+  if (vimCheckbox) {
+    vimCheckbox.checked = savedVim;
+
+    const updateSwitchUI = (checked) => {
+      const container = vimCheckbox.closest(".vim-toggle-container");
+      const switchBg = container?.querySelector(".vim-switch");
+      const handle = container?.querySelector(".vim-switch-handle");
+      if (switchBg && handle) {
+        if (checked) {
+          switchBg.style.backgroundColor = "var(--accent)";
+          handle.style.transform = "translateX(12px)";
+        } else {
+          switchBg.style.backgroundColor = "#cbd5e1";
+          handle.style.transform = "translateX(0)";
+        }
+      }
+    };
+
+    updateSwitchUI(savedVim);
+
+    vimCheckbox.addEventListener("change", (e) => {
+      const val = e.target.checked;
+      localStorage.setItem("traven-selected-vim", val ? "true" : "false");
+      updateSwitchUI(val);
+      if (window.editor && typeof window.editor.setVimMode === "function") {
+        window.editor.setVimMode(val);
+      }
+    });
+  }
+ 
   document.getElementById("demo-select")?.addEventListener("change", (e) => {
     if (e.target.value) {
       window.location.href = e.target.value;

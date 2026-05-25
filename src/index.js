@@ -1,4 +1,4 @@
-import { EditorState, Extension, Annotation, Prec } from "@codemirror/state";
+import { EditorState, Extension, Annotation, Prec, Compartment } from "@codemirror/state";
 import {
   EditorView,
   lineNumbers as cmLineNumbers,
@@ -34,8 +34,11 @@ import { TOOL_REGISTRY } from "./toolbar/tools.js";
 import { wysiwymPlugin } from "./wysiwym.js";
 import { delimiterSkipKeymap } from "./delimiter-skip.js";
 import { imageDecorationPlugin, imageHandlerExtension } from "./images.js";
+import { vim } from "@replit/codemirror-vim";
+import "./style.css";
 
 const syncAnnotation = Annotation.define();
+const vimCompartment = new Compartment();
 
 export const DEFAULT_TOOLBAR = [
   "undo",
@@ -63,6 +66,7 @@ export const DEFAULT_TOOLBAR = [
   "uppercase",
   "lowercase",
   "capitalize",
+  "removeformatting",
   "gotoline",
   "help"
 ];
@@ -127,6 +131,10 @@ export class TravenEditor {
   #rawView = null;
   /** @type {Object.<string, Function[]>} */
   #listeners = {};
+  /** @type {TravenOptions} */
+  #options;
+  /** @type {Function|null} */
+  #customRenderer = null;
 
   /**
    * @param {TravenOptions} options
@@ -135,6 +143,7 @@ export class TravenEditor {
     if (!options.element) {
       throw new Error("TravenEditor requires a parent element option.");
     }
+    this.#options = options;
 
     const showLineNumbers = !!options.lineNumbers;
     const showSourceLineNumbers = !!options.sourceLineNumbers;
@@ -174,6 +183,8 @@ export class TravenEditor {
               annotations: syncAnnotation.of(true)
             });
           }
+
+          this.#triggerStatsUpdate();
         }
       }),
 
@@ -191,6 +202,10 @@ export class TravenEditor {
       ".cm-fat-cursor": { backgroundColor: `${defaultCaret} !important` }
     });
     extensions.push(themeExtension);
+
+    // Vim Keybindings support
+    const initialVim = options.vimMode ? vim() : [];
+    extensions.push(vimCompartment.of(initialVim));
 
     // Save keymap handler (Ctrl+S / Cmd+S)
     const saveHandler = EditorView.domEventHandlers({
@@ -240,6 +255,10 @@ export class TravenEditor {
       })
     });
 
+    if (options.theme === "dark") {
+      this.#view.dom.classList.add("cm-wysiwym-dark");
+    }
+
     // Optional raw editor setup
     if (options.sourceElement) {
       const rawExtensions = [
@@ -258,7 +277,8 @@ export class TravenEditor {
               });
             }
           }
-        })
+        }),
+        vimCompartment.of(options.vimMode ? vim() : [])
       ];
 
       this.#rawView = new EditorView({
@@ -268,7 +288,16 @@ export class TravenEditor {
           extensions: rawExtensions
         })
       });
+
+      if (options.theme === "dark") {
+        this.#rawView.dom.classList.add("cm-wysiwym-dark");
+      }
     }
+
+    // Trigger initial stats calculation asynchronously to allow event listeners to bind first
+    Promise.resolve().then(() => {
+      this.#triggerStatsUpdate();
+    });
   }
 
   // --- Public API Methods ---
@@ -309,6 +338,90 @@ export class TravenEditor {
     this.#view.dispatch({
       changes: { from: 0, to: this.#view.state.doc.length, insert: value }
     });
+  }
+
+  /**
+   * Sets the editor theme dynamically.
+   * @param {"light" | "dark"} theme
+   */
+  setTheme(theme) {
+    if (theme === "dark") {
+      this.#view.dom.classList.add("cm-wysiwym-dark");
+      if (this.#rawView) {
+        this.#rawView.dom.classList.add("cm-wysiwym-dark");
+      }
+    } else {
+      this.#view.dom.classList.remove("cm-wysiwym-dark");
+      if (this.#rawView) {
+        this.#rawView.dom.classList.remove("cm-wysiwym-dark");
+      }
+    }
+  }
+
+  /**
+   * Toggles Vim keybindings dynamically.
+   * @param {boolean} enabled
+   */
+  setVimMode(enabled) {
+    const extension = enabled ? vim() : [];
+    this.#view.dispatch({
+      effects: vimCompartment.reconfigure(extension)
+    });
+    if (this.#rawView) {
+      this.#rawView.dispatch({
+        effects: vimCompartment.reconfigure(extension)
+      });
+    }
+  }
+
+  /**
+   * Returns the total character count of the document.
+   * @returns {number}
+   */
+  getCharacterCount() {
+    return this.getValue().length;
+  }
+
+  /**
+   * Returns the total word count of the document.
+   * @returns {number}
+   */
+  getWordCount() {
+    const text = this.getValue().trim();
+    if (!text) return 0;
+    return text.split(/\s+/).filter(Boolean).length;
+  }
+
+  /**
+   * Returns the estimated reading time of the document in minutes.
+   * @returns {number}
+   */
+  getReadTime() {
+    const words = this.getWordCount();
+    return Math.ceil(words / 200);
+  }
+
+  /**
+   * Registers a custom markdown rendering function.
+   * @param {function(string): string} renderFn - The rendering function.
+   */
+  registerRenderer(renderFn) {
+    if (typeof renderFn !== "function") {
+      throw new Error("registerRenderer expects a function.");
+    }
+    this.#customRenderer = renderFn;
+  }
+
+  /**
+   * Returns the rendered HTML of the current document content.
+   * @returns {string} HTML representation of the document.
+   */
+  getContentHtml() {
+    const val = this.getValue();
+    if (this.#customRenderer) {
+      return this.#customRenderer(val);
+    }
+    return this.#fallbackRender(val);
   }
 
   /**
@@ -422,6 +535,65 @@ export class TravenEditor {
     });
     this.#view.focus();
   }
+
+  /**
+   * Strips block-level and inline Markdown formatting from the current selection,
+   * excluding links and images which are kept intact.
+   */
+  removeFormatting() {
+    const range = this.#view.state.selection.main;
+    if (range.empty) return;
+    const rawText = this.#view.state.sliceDoc(range.from, range.to);
+
+    // 1. Process block-level formatting line-by-line
+    const lines = rawText.split(/\r?\n/);
+    const processedLines = [];
+
+    for (const line of lines) {
+      // Remove code block fences: e.g. ``` or ```javascript
+      if (/^\s*```\w*$/.test(line)) {
+        continue;
+      }
+      // Remove horizontal rules: e.g. ---, ***, ___
+      if (/^\s*([-*_])\1{2,}\s*$/.test(line)) {
+        continue;
+      }
+
+      let cleaned = line;
+      // Strip task list markers: e.g. "- [ ] " or "* [x] "
+      cleaned = cleaned.replace(/^\s*[-*+]\s+\[[\sxX]\]\s+/, '');
+      // Strip ordered/unordered list markers: e.g. "- " or "1. "
+      cleaned = cleaned.replace(/^\s*([-*+]|\d+\.)\s+/, '');
+      // Strip blockquote markers (potentially nested): e.g. "> > "
+      cleaned = cleaned.replace(/^\s*(>\s*)+/, '');
+      // Strip heading markers: e.g. "### "
+      cleaned = cleaned.replace(/^\s*#{1,6}\s+/, '');
+
+      processedLines.push(cleaned);
+    }
+
+    let text = processedLines.join('\n');
+
+    // 2. Process inline formatting (excluding links and images)
+    // Strip bold/italic emphasis (longest delimiters first)
+    text = text.replace(/(\*{3}|_{3})(.+?)\1/g, '$2');
+    text = text.replace(/(\*{2}|_{2})(.+?)\1/g, '$2');
+    text = text.replace(/(\*|_)(.+?)\1/g, '$2');
+    // Strip strikethrough: ~~text~~
+    text = text.replace(/~~(.+?)~~/g, '$1');
+    // Strip highlights: ==text==
+    text = text.replace(/==(.+?)==/g, '$1');
+    // Strip inline code: `text`
+    text = text.replace(/`([^`]+)`/g, '$1');
+
+    this.#view.dispatch({
+      changes: { from: range.from, to: range.to, insert: text },
+      selection: { anchor: range.from, head: range.from + text.length }
+    });
+    this.#view.focus();
+  }
+
+
 
   /**
    * Toggles fullscreen mode on the editor's parent container.
@@ -742,8 +914,8 @@ export class TravenEditor {
 
   /**
    * Add event listener.
-   * @param {"change" | "save"} event
-   * @param {function(string): void} callback
+   * @param {"change" | "save" | "statsUpdate"} event
+   * @param {function(any): void} callback
    */
   on(event, callback) {
     if (!this.#listeners[event]) {
@@ -753,13 +925,102 @@ export class TravenEditor {
   }
 
   /**
+   * Calculates current document stats and fires callbacks and listeners.
+   */
+  #triggerStatsUpdate() {
+    const stats = {
+      words: this.getWordCount(),
+      characters: this.getCharacterCount(),
+      readTime: this.getReadTime()
+    };
+    if (this.#options.onStatsUpdate) {
+      this.#options.onStatsUpdate(stats);
+    }
+    this.#trigger("statsUpdate", stats);
+  }
+
+  /**
    * @param {string} event
-   * @param {string} value
+   * @param {any} value
    */
   #trigger(event, value) {
     if (this.#listeners[event]) {
       this.#listeners[event].forEach((cb) => cb(value));
     }
+  }
+
+  /**
+   * Simple fallback Markdown parser to HTML.
+   * @param {string} md
+   * @returns {string}
+   */
+  #fallbackRender(md) {
+    // 1. Strip YAML frontmatter if present
+    let content = md.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/, "");
+    
+    // 2. Escape HTML characters to prevent XSS in fallback
+    content = content
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+
+    // 3. Convert headings & horizontal rules
+    content = content.replace(/^# (.*?)$/gm, "<h1>$1</h1>");
+    content = content.replace(/^## (.*?)$/gm, "<h2>$1</h2>");
+    content = content.replace(/^### (.*?)$/gm, "<h3>$1</h3>");
+    content = content.replace(/^#### (.*?)$/gm, "<h4>$1</h4>");
+    content = content.replace(/^##### (.*?)$/gm, "<h5>$1</h5>");
+    content = content.replace(/^###### (.*?)$/gm, "<h6>$1</h6>");
+    content = content.replace(/^(\-\-\-|\*\*\*|\_\_\_)$/gm, "<hr>");
+    
+    // 4. Convert blockquotes (restore escaped gt)
+    content = content.replace(/^&gt; (.*?)$/gm, "<blockquote>$1</blockquote>");
+
+    // 5. Convert lists
+    let inList = false;
+    const lines = content.split("\n");
+    const processedLines = [];
+    for (const line of lines) {
+      const listMatch = line.match(/^[\*\-] (.*?)$/);
+      if (listMatch) {
+        if (!inList) {
+          processedLines.push("<ul>");
+          inList = true;
+        }
+        processedLines.push(`<li>${listMatch[1]}</li>`);
+      } else {
+        if (inList) {
+          processedLines.push("</ul>");
+          inList = false;
+        }
+        processedLines.push(line);
+      }
+    }
+    if (inList) {
+      processedLines.push("</ul>");
+    }
+    content = processedLines.join("\n");
+
+    // 6. Convert inline elements (images, links, bold, italic, code)
+    content = content.replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" style="max-width: 100%; height: auto; display: block; margin: 12px 0; border-radius: 6px;">');
+    content = content.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>');
+    content = content.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+    content = content.replace(/\*(.*?)\*/g, "<em>$1</em>");
+    content = content.replace(/`(.*?)`/g, "<code>$1</code>");
+
+    // 7. Convert paragraphs (blank lines split)
+    const blocks = content.split(/\n{2,}/);
+    const htmlBlocks = blocks.map(block => {
+      const trimmed = block.trim();
+      if (!trimmed) return "";
+      // If it's already an HTML block tag, image, or hr, don't wrap in <p>
+      if (/^<(h[1-6]|blockquote|ul|li|img|hr)/i.test(trimmed)) {
+        return trimmed;
+      }
+      return `<p>${trimmed.replace(/\n/g, "<br>")}</p>`;
+    });
+
+    return htmlBlocks.filter(Boolean).join("\n");
   }
 
   /**

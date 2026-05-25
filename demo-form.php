@@ -210,7 +210,9 @@ Try modifying the inputs in the form or editing the body text here to see how th
         onChange: () => {
           updateCombinedPreview();
         },
-        toolbar: DEFAULT_TOOLBAR
+        toolbar: DEFAULT_TOOLBAR,
+        theme: localStorage.getItem("traven-selected-theme") || "light",
+        vimMode: localStorage.getItem("traven-selected-vim") === "true"
       });
       // Initial preview compilation
       updateCombinedPreview();

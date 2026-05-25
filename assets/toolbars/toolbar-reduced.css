@@ -9,6 +9,7 @@
 .btn-datetime,
 .btn-uppercase,
 .btn-lowercase,
-.btn-capitalize {
+.btn-capitalize,
+.btn-removeformatting {
   display: none !important;
 }

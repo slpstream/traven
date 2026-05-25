@@ -102,7 +102,9 @@
         sourceElement: document.getElementById("raw-editor"),
         initialValue: "---\ntitle: Traven Editor\nauthor: John Connor\n---\n\n# Try Traven\n\nThis is a **standalone** WYSIWYM editor. Move your cursor into **this bold text** or *this italic text* to see the delimiters appear. \n\nHere is some `inline code` and a quote:\n\n> Blockquotes look elegant and simple.\n\n---\n\n### Drag & Drop / Paste Images\nTry pasting or dropping an image file below to see the optimistic loading UI spinner in action!",
         onUploadImage: mockImageUpload,
-        toolbar: DEFAULT_TOOLBAR
+        toolbar: DEFAULT_TOOLBAR,
+        theme: localStorage.getItem("traven-selected-theme") || "light",
+        vimMode: localStorage.getItem("traven-selected-vim") === "true"
       });
     });
   </script>

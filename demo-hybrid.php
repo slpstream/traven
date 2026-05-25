@@ -233,7 +233,9 @@ This demo illustrates a hybrid layout where:
           updateCombinedPreview();
         },
         onUploadImage: mockImageUpload,
-        toolbar: DEFAULT_TOOLBAR
+        toolbar: DEFAULT_TOOLBAR,
+        theme: localStorage.getItem("traven-selected-theme") || "light",
+        vimMode: localStorage.getItem("traven-selected-vim") === "true"
       });
       // Initial preview compilation
       updateCombinedPreview();

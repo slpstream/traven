@@ -1,0 +1,230 @@
+/* Traven Editor - Base Dark Mode Stylesheet */
+
+/* Main editor layout and typography */
+.cm-editor.cm-wysiwym-dark {
+  background-color: #0f172a !important; /* Deep Slate 900 */
+  color: #e2e8f0 !important; /* Soft white/Slate 200 */
+}
+
+/* Gutters & Line numbers */
+.cm-editor.cm-wysiwym-dark .cm-gutters {
+  background-color: transparent !important;
+  border-right: none !important;
+  color: #64748b !important; /* Readable Slate 500 line numbers */
+}
+
+/* Active line highlighting */
+.cm-editor.cm-wysiwym-dark .cm-activeLine {
+  background-color: rgba(30, 41, 59, 0.5) !important;
+}
+
+.cm-editor.cm-wysiwym-dark .cm-activeLineGutter {
+  background-color: transparent !important;
+  color: #38bdf8 !important; /* Sky Blue active line indicator */
+}
+
+/* Selection highlight */
+.cm-editor.cm-wysiwym-dark .cm-selectionBackground, 
+.cm-editor.cm-wysiwym-dark .cm-native-selection {
+  background-color: rgba(56, 189, 248, 0.35) !important;
+}
+
+.cm-editor.cm-wysiwym-dark.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground {
+  background-color: rgba(56, 189, 248, 0.6) !important;
+}
+
+/* Bold & Italic */
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-bold {
+  color: #ffffff !important;
+}
+
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-italic {
+  color: #cbd5e1 !important;
+}
+
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-strikethrough {
+  color: #94a3b8 !important;
+}
+
+/* Inline code pill */
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-inline-code {
+  background-color: #1e293b; /* Slate 800 */
+  color: #38bdf8; /* Sky Blue code text */
+  border-color: #334155; /* Slate 700 */
+}
+
+/* Headings */
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-h1, 
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-h2, 
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-h3, 
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-h4, 
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-h5, 
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-h6 {
+  color: #f8fafc !important;
+}
+
+/* Blockquotes */
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-blockquote {
+  border-left-color: #475569; /* Slate 600 */
+}
+
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-blockquote,
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-blockquote * {
+  color: #94a3b8 !important; /* Slate 400 */
+}
+
+/* YAML Frontmatter */
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-frontmatter {
+  background-color: #1e293b !important;
+  border-left-color: #475569 !important;
+}
+
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-frontmatter,
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-frontmatter span {
+  color: #94a3b8 !important;
+}
+
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-frontmatter-active {
+  background-color: #1e293b !important;
+  border-left-color: #38bdf8 !important;
+}
+
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-frontmatter-active,
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-frontmatter-active span {
+  color: #e2e8f0 !important;
+}
+
+/* Horizontal Rules */
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-hr-widget {
+  border-top-color: #334155 !important;
+}
+
+/* Image container */
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-image-widget-container {
+  border-color: #334155;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  background-color: #0f172a;
+}
+
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-image-widget-container:hover {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+}
+
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-image-caption {
+  color: #94a3b8;
+  border-top-color: #334155;
+  background-color: #1e293b;
+}
+
+/* Optimistic uploading */
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-image-uploading {
+  background-color: rgba(21, 128, 61, 0.15);
+  color: #4ade80;
+}
+
+/* Links */
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-link-anchor {
+  color: #38bdf8;
+}
+
+/* Bullet list marker styling */
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-bullet {
+  color: #38bdf8 !important;
+}
+
+/* Code Blocks */
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-codeblock-line {
+  background-color: #1e293b;
+}
+
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-codeblock-line-first,
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-codeblock-line-last,
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-codeblock-line:not(.cm-wysiwym-codeblock-line-first):not(.cm-wysiwym-codeblock-line-last) {
+  border-color: #334155 !important;
+}
+
+/* Caret color overrides */
+.cm-editor.cm-wysiwym-dark .cm-cursor {
+  border-left-color: #38bdf8 !important; /* Sky Blue caret */
+}
+.cm-editor.cm-wysiwym-dark .cm-fat-cursor {
+  background-color: #38bdf8 !important;
+}
+
+/* Ensure the Vim block cursor (fat cursor) is semi-transparent across all skins */
+.cm-editor .cm-fat-cursor {
+  opacity: 0.6 !important;
+}
+
+/* Syntax Highlighting for Dark Mode */
+.cm-editor.cm-wysiwym-dark .tok-markup,
+.cm-editor.cm-wysiwym-dark .cmt-markup,
+.cm-editor.cm-wysiwym-dark .tok-meta,
+.cm-editor.cm-wysiwym-dark .cmt-meta,
+.cm-editor.cm-wysiwym-dark .tok-punctuation,
+.cm-editor.cm-wysiwym-dark .cmt-punctuation,
+.cm-editor.cm-wysiwym-dark .tok-list,
+.cm-editor.cm-wysiwym-dark .cmt-list {
+  color: #ffffff !important;
+}
+
+.cm-editor.cm-wysiwym-dark .tok-comment,
+.cm-editor.cm-wysiwym-dark .cmt-comment {
+  color: #64748b !important;
+  font-style: italic;
+}
+
+.cm-editor.cm-wysiwym-dark .tok-keyword,
+.cm-editor.cm-wysiwym-dark .cmt-keyword {
+  color: #fb923c !important; /* Orange */
+}
+
+.cm-editor.cm-wysiwym-dark .tok-string,
+.cm-editor.cm-wysiwym-dark .cmt-string {
+  color: #4ade80 !important; /* Green */
+}
+
+.cm-editor.cm-wysiwym-dark .tok-number,
+.cm-editor.cm-wysiwym-dark .cmt-number,
+.cm-editor.cm-wysiwym-dark .tok-boolean,
+.cm-editor.cm-wysiwym-dark .cmt-boolean {
+  color: #a78bfa !important; /* Purple */
+}
+
+.cm-editor.cm-wysiwym-dark .tok-variableName,
+.cm-editor.cm-wysiwym-dark .cmt-variableName {
+  color: #f8fafc !important;
+}
+
+.cm-editor.cm-wysiwym-dark .tok-propertyName,
+.cm-editor.cm-wysiwym-dark .cmt-propertyName {
+  color: #38bdf8 !important;
+}
+
+.cm-editor.cm-wysiwym-dark .tok-operator,
+.cm-editor.cm-wysiwym-dark .cmt-operator {
+  color: #cbd5e1 !important;
+}
+
+.cm-editor.cm-wysiwym-dark .tok-url,
+.cm-editor.cm-wysiwym-dark .cmt-url,
+.cm-editor.cm-wysiwym-dark .tok-link,
+.cm-editor.cm-wysiwym-dark .cmt-link {
+  color: #38bdf8 !important;
+}
+
+/* Scrollbars overrides for dark mode */
+.cm-editor.cm-wysiwym-dark ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.cm-editor.cm-wysiwym-dark ::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+.cm-editor.cm-wysiwym-dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 5px;
+}
+.cm-editor.cm-wysiwym-dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
