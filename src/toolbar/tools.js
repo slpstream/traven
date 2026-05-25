@@ -5,6 +5,7 @@ export const TOOL_REGISTRY = {
     key: "undo",
     title: "Undo",
     shortcut: "Ctrl+Z",
+    keybinding: "Mod-z",
     icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><polyline points="24 56 24 104 72 104" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><path d="M67.59,192A88,88,0,1,0,65.77,65.77L24,104" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>`,
     action: (editor) => editor.undo()
   },
@@ -12,6 +13,7 @@ export const TOOL_REGISTRY = {
     key: "redo",
     title: "Redo",
     shortcut: "Ctrl+Y",
+    keybinding: "Mod-y",
     icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><polyline points="184 104 232 104 232 56" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><path d="M188.4,192a88,88,0,1,1,1.83-126.23L232,104" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>`,
     action: (editor) => editor.redo()
   },
@@ -19,6 +21,7 @@ export const TOOL_REGISTRY = {
     key: "bold",
     title: "Bold",
     shortcut: "Ctrl+B",
+    keybinding: "Mod-b",
     icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><path d="M80,120h80a40,40,0,0,1,0,80H80V48h68a36,36,0,0,1,0,72" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>`,
     action: (editor) => editor.insertSnippet("**", "**", "bold text")
   },
@@ -26,6 +29,7 @@ export const TOOL_REGISTRY = {
     key: "italic",
     title: "Italic",
     shortcut: "Ctrl+I",
+    keybinding: "Mod-i",
     icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><line x1="152" y1="56" x2="104" y2="200" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><line x1="64" y1="200" x2="144" y2="200" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><line x1="112" y1="56" x2="192" y2="56" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>`,
     action: (editor) => editor.insertSnippet("*", "*", "italic text")
   },
@@ -33,6 +37,7 @@ export const TOOL_REGISTRY = {
     key: "strikethrough",
     title: "Strikethrough",
     shortcut: "Ctrl+Shift+S",
+    keybinding: "Mod-Shift-s",
     icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><line x1="40" y1="128" x2="216" y2="128" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><path d="M76.33,96a25.71,25.71,0,0,1-1.22-8c0-22.09,22-40,52.89-40,23,0,40.24,9.87,48,24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><path d="M72,168c0,22.09,25.07,40,56,40s56-17.91,56-40c0-23.77-21.62-33-45.6-40" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>`,
     action: (editor) => editor.insertSnippet("~~", "~~", "strikethrough")
   },
@@ -117,6 +122,8 @@ export const TOOL_REGISTRY = {
   gotoline: {
     key: "gotoline",
     title: "Go to Line",
+    shortcut: "Ctrl+G",
+    keybinding: "Mod-g",
     icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><line x1="128" y1="32" x2="128" y2="160" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><polyline points="72 104 128 160 184 104" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><line x1="40" y1="208" x2="216" y2="208" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>`,
     action: (editor) => {
       const lineStr = prompt("Enter line number:");
@@ -175,6 +182,8 @@ export const TOOL_REGISTRY = {
   link: {
     key: "link",
     title: "Link",
+    shortcut: "Ctrl+K",
+    keybinding: "Mod-k",
     icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><path d="M122.34,162.34,104,180.69a48,48,0,0,1-67.88-67.88l18.34-18.34a48,48,0,0,1,65.25-2.28" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><path d="M133.66,93.66,152,75.31a48,48,0,0,1,67.88,67.88l-18.34,18.34a48,48,0,0,1-65.25,2.28" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>`,
     action: (editor, buttonEl) => {
       openLinkModal(editor, buttonEl);
@@ -183,6 +192,8 @@ export const TOOL_REGISTRY = {
   help: {
     key: "help",
     title: "Help",
+    shortcut: "Ctrl+/",
+    keybinding: "Mod-/",
     icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><circle cx="128" cy="128" r="96" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><circle cx="128" cy="180" r="12"/><path d="M128,144v-8a28,28,0,1,0-28-28" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>`,
     action: (editor, buttonEl) => {
       openHelpModal(editor, buttonEl);

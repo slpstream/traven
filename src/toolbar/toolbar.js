@@ -1,14 +1,36 @@
 import { TOOL_REGISTRY } from "./tools.js";
 
 /**
+ * Formats a CodeMirror-style keybinding string (e.g. "Mod-Shift-s") into a user-friendly display name (e.g. "Ctrl+Shift+S").
+ * @param {string} bindingStr
+ * @returns {string}
+ */
+function formatShortcutForDisplay(bindingStr) {
+  const isMac = typeof navigator !== "undefined" && /Mac|iPod|iPhone|iPad/.test(navigator.platform);
+  const modName = isMac ? "Cmd" : "Ctrl";
+  
+  return bindingStr
+    .split("-")
+    .map(part => {
+      if (part === "Mod") return modName;
+      if (part === "Shift") return "Shift";
+      if (part === "Alt") return "Alt";
+      if (part.length === 1) return part.toUpperCase();
+      return part;
+    })
+    .join("+");
+}
+
+/**
  * Builds the toolbar DOM container and elements based on the provided configuration.
  * Binds DOM action triggers back to the editor instance.
  *
  * @param {Object} editor - The TravenEditor instance.
  * @param {Array<string>} config - Ordered list of tool keys and separator tokens.
+ * @param {Object} [keybindings={}] - Custom keyboard shortcut mappings.
  * @returns {HTMLElement} The toolbar container DOM element.
  */
-export function buildToolbar(editor, config) {
+export function buildToolbar(editor, config, keybindings = {}) {
   const container = document.createElement("div");
   container.className = "traven-toolbar-container";
   container.setAttribute("role", "toolbar");
@@ -29,6 +51,11 @@ export function buildToolbar(editor, config) {
       return;
     }
 
+    // Resolve keybinding shortcut for tooltip display
+    const customBinding = keybindings[key];
+    const bindingStr = customBinding !== undefined ? customBinding : tool.keybinding;
+    const displayShortcut = bindingStr ? formatShortcutForDisplay(bindingStr) : (tool.shortcut || "");
+
     if (tool.type === "dropdown") {
       const dropdownWrapper = document.createElement("div");
       dropdownWrapper.className = "toolbar-dropdown";
@@ -37,7 +64,9 @@ export function buildToolbar(editor, config) {
       const trigger = document.createElement("button");
       trigger.type = "button";
       trigger.className = `toolbar-btn btn-${key}`;
-      trigger.setAttribute("title", tool.title);
+      
+      const titleText = displayShortcut ? `${tool.title} (${displayShortcut})` : tool.title;
+      trigger.setAttribute("title", titleText);
       trigger.setAttribute("aria-label", tool.title);
       trigger.setAttribute("aria-haspopup", "true");
       trigger.setAttribute("aria-expanded", "false");
@@ -168,7 +197,7 @@ export function buildToolbar(editor, config) {
       button.type = "button";
       button.className = `toolbar-btn btn-${key}`;
       
-      const titleText = tool.shortcut ? `${tool.title} (${tool.shortcut})` : tool.title;
+      const titleText = displayShortcut ? `${tool.title} (${displayShortcut})` : tool.title;
       button.setAttribute("title", titleText);
       button.setAttribute("aria-label", tool.title);
       button.innerHTML = tool.icon;

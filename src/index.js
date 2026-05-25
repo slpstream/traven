@@ -1,4 +1,4 @@
-import { EditorState, Extension, Annotation } from "@codemirror/state";
+import { EditorState, Extension, Annotation, Prec } from "@codemirror/state";
 import {
   EditorView,
   lineNumbers as cmLineNumbers,
@@ -30,6 +30,7 @@ import { yamlFrontmatter } from "@codemirror/lang-yaml";
 import { undo, redo } from "@codemirror/commands";
 import { search, openSearchPanel } from "@codemirror/search";
 import { buildToolbar } from "./toolbar/toolbar.js";
+import { TOOL_REGISTRY } from "./toolbar/tools.js";
 import { wysiwymPlugin } from "./wysiwym.js";
 import { delimiterSkipKeymap } from "./delimiter-skip.js";
 import { imageDecorationPlugin, imageHandlerExtension } from "./images.js";
@@ -142,7 +143,7 @@ export class TravenEditor {
 
     // Render and prepend toolbar if provided in constructor options
     if (options.toolbar && Array.isArray(options.toolbar)) {
-      const toolbarEl = buildToolbar(this, options.toolbar);
+      const toolbarEl = buildToolbar(this, options.toolbar, options.keybindings);
       options.element.prepend(toolbarEl);
     }
 
@@ -207,6 +208,29 @@ export class TravenEditor {
       }
     });
     extensions.push(saveHandler);
+
+    // Dynamic keyboard shortcuts keymap registration
+    const keymapBindings = [];
+    const customKeybindings = options.keybindings || {};
+    for (const key of Object.keys(TOOL_REGISTRY)) {
+      const tool = TOOL_REGISTRY[key];
+      const bindingStr = key in customKeybindings ? customKeybindings[key] : tool.keybinding;
+      if (bindingStr) {
+        keymapBindings.push({
+          key: bindingStr,
+          run: () => {
+            const buttonEl = options.element && typeof options.element.querySelector === "function"
+              ? options.element.querySelector(`.toolbar-btn.btn-${key}`)
+              : null;
+            tool.action(this, buttonEl);
+            return true;
+          }
+        });
+      }
+    }
+    if (keymapBindings.length > 0) {
+      extensions.push(Prec.high(keymap.of(keymapBindings)));
+    }
 
     this.#view = new EditorView({
       parent: options.element,
