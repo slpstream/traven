@@ -20,6 +20,47 @@ class HRWidget extends WidgetType {
   eq() { return true; }
 }
 
+class CheckboxWidget extends WidgetType {
+  constructor(checked, pos) {
+    super();
+    this.checked = checked;
+    this.pos = pos;
+  }
+
+  toDOM(view) {
+    const input = document.createElement("input");
+    input.type = "checkbox";
+    input.checked = this.checked;
+    input.className = "cm-wysiwym-checkbox";
+    input.setAttribute("aria-label", this.checked ? "Completed task" : "Incomplete task");
+
+    input.addEventListener("mousedown", (e) => {
+      e.preventDefault();
+      if (view.state.readOnly) return;
+
+      const line = view.state.doc.lineAt(this.pos);
+      const match = line.text.match(/^(\s*[-*+]\s+)\[([\sxX])\]/);
+      if (!match) return;
+
+      const isChecked = match[2].toLowerCase() === "x";
+      const replacement = isChecked ? "[ ]" : "[x]";
+      const bracketStart = line.from + match[1].length;
+
+      view.dispatch({
+        changes: { from: bracketStart, to: bracketStart + 3, insert: replacement }
+      });
+    });
+
+    return input;
+  }
+
+  eq(other) {
+    return this.checked === other.checked;
+  }
+
+  ignoreEvent() { return false; }
+}
+
 // --- Decoration Tokens ---
 
 const collapseDeco = Decoration.replace({});
@@ -211,6 +252,23 @@ function buildWysiwymDecorations(state) {
               from: node.from,
               to: node.to,
               deco: Decoration.replace({ widget: new HRWidget(), block: true })
+            });
+          }
+        }
+
+        // 8.5. Task List Checkboxes (interactive)
+        if (node.name === "TaskMarker") {
+          const line = state.doc.lineAt(node.from);
+          const isCursorOnLine = cursorLine === line.number;
+          if (!isCursorOnLine) {
+            const markerText = state.sliceDoc(node.from, node.to);
+            const isChecked = /\[[xX]\]/.test(markerText);
+            collected.push({
+              from: node.from,
+              to: node.to,
+              deco: Decoration.replace({
+                widget: new CheckboxWidget(isChecked, node.from)
+              })
             });
           }
         }

@@ -198,3 +198,23 @@ button.btn-heading {
   border-color: #e2e8f0;
 }
 
+/* Fullscreen Mode */
+.is-fullscreen {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 9999 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  background: var(--bg-primary, #ffffff);
+  border-radius: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.is-fullscreen .editor-mount,
+.is-fullscreen .cm-editor {
+  flex: 1;
+  max-height: none !important;
+  height: auto !important;
+}
+

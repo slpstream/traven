@@ -25,9 +25,10 @@ import {
 } from "@codemirror/language";
 import { classHighlighter } from "@lezer/highlight";
 import { markdown } from "@codemirror/lang-markdown";
-import { Strikethrough } from "@lezer/markdown";
+import { Strikethrough, TaskList } from "@lezer/markdown";
 import { yamlFrontmatter } from "@codemirror/lang-yaml";
 import { undo, redo } from "@codemirror/commands";
+import { search, openSearchPanel } from "@codemirror/search";
 import { wysiwymPlugin } from "./wysiwym.js";
 import { delimiterSkipKeymap } from "./delimiter-skip.js";
 import { imageDecorationPlugin, imageHandlerExtension } from "./images.js";
@@ -113,7 +114,7 @@ export class TravenEditor {
         foldGutter: showLineNumbers
       }),
       ...(wrapLines ? [EditorView.lineWrapping] : []),
-      yamlFrontmatter({ content: markdown({ extensions: [Strikethrough, { remove: ["SetextHeading"] }] }) }),
+      yamlFrontmatter({ content: markdown({ extensions: [Strikethrough, TaskList, { remove: ["SetextHeading"] }] }) }),
       wysiwymPlugin(),
       delimiterSkipKeymap(),
       imageDecorationPlugin(),
@@ -138,7 +139,10 @@ export class TravenEditor {
       }),
 
       // Optimistic image upload and drop/paste handling
-      imageHandlerExtension(options.onUploadImage)
+      imageHandlerExtension(options.onUploadImage),
+
+      // Search panel (provides Ctrl+F keybinding and search UI)
+      search()
     ];
 
     // Caret color configuration
@@ -299,6 +303,97 @@ export class TravenEditor {
     const minutes = String(now.getMinutes()).padStart(2, '0');
     const dateStr = `${year}-${month}-${day} ${hours}:${minutes}`;
     this.insertSnippet('', '', dateStr);
+  }
+
+  /**
+   * Clears all document content and refocuses the editor.
+   */
+  clear() {
+    this.setValue("");
+    this.#view.focus();
+  }
+
+  /**
+   * Converts the current selection to UPPERCASE.
+   * Preserves the selection bounds after transformation.
+   */
+  toUpperCase() {
+    const range = this.#view.state.selection.main;
+    if (range.empty) return;
+    const selected = this.#view.state.sliceDoc(range.from, range.to);
+    const transformed = selected.toUpperCase();
+    this.#view.dispatch({
+      changes: { from: range.from, to: range.to, insert: transformed },
+      selection: { anchor: range.from, head: range.from + transformed.length }
+    });
+    this.#view.focus();
+  }
+
+  /**
+   * Converts the current selection to lowercase.
+   * Preserves the selection bounds after transformation.
+   */
+  toLowerCase() {
+    const range = this.#view.state.selection.main;
+    if (range.empty) return;
+    const selected = this.#view.state.sliceDoc(range.from, range.to);
+    const transformed = selected.toLowerCase();
+    this.#view.dispatch({
+      changes: { from: range.from, to: range.to, insert: transformed },
+      selection: { anchor: range.from, head: range.from + transformed.length }
+    });
+    this.#view.focus();
+  }
+
+  /**
+   * Capitalizes the first letter of each word in the current selection.
+   * Preserves the selection bounds after transformation.
+   */
+  capitalizeWords() {
+    const range = this.#view.state.selection.main;
+    if (range.empty) return;
+    const selected = this.#view.state.sliceDoc(range.from, range.to);
+    const capitalized = selected.replace(/\b[a-z]/g, (ch) => ch.toUpperCase());
+    this.#view.dispatch({
+      changes: { from: range.from, to: range.to, insert: capitalized },
+      selection: { anchor: range.from, head: range.from + capitalized.length }
+    });
+    this.#view.focus();
+  }
+
+  /**
+   * Toggles fullscreen mode on the editor's parent container.
+   * Targets the nearest .editor-wrapper ancestor (toolbar + editor),
+   * falling back to the immediate parent element.
+   */
+  toggleFullscreen() {
+    const container = this.#view.dom.closest('.editor-wrapper')
+                   || this.#view.dom.parentElement;
+    container.classList.toggle('is-fullscreen');
+    // Reflow CM's coordinate measurements after layout change
+    this.#view.requestMeasure();
+    this.#view.focus();
+  }
+
+  /**
+   * Opens the CodeMirror search panel.
+   */
+  openSearch() {
+    openSearchPanel(this.#view);
+  }
+
+  /**
+   * Moves the cursor to the specified line number and scrolls it into view.
+   * @param {number} lineNumber - 1-indexed line number. Clamped to document bounds.
+   */
+  goToLine(lineNumber) {
+    const n = Math.max(1, Math.min(lineNumber, this.#view.state.doc.lines));
+    const line = this.#view.state.doc.line(n);
+    this.#view.dispatch({
+      selection: { anchor: line.from },
+      scrollIntoView: true
+    });
+    this.#view.focus();
   }
 
 
