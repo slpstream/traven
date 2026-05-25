@@ -369,5 +369,13 @@
   color: #0f172a !important;
 }
 
+/* Bullet list marker styling */
+.cm-wysiwym-bullet {
+  color: #64748b; /* Slate 500 */
+  font-weight: bold;
+  margin-right: 0.35em;
+  display: inline-block;
+}
+
 
 

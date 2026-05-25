@@ -61,6 +61,16 @@ class CheckboxWidget extends WidgetType {
   ignoreEvent() { return false; }
 }
 
+class BulletWidget extends WidgetType {
+  toDOM() {
+    const span = document.createElement("span");
+    span.className = "cm-wysiwym-bullet";
+    span.innerHTML = "•";
+    return span;
+  }
+  eq() { return true; }
+}
+
 // --- Decoration Tokens ---
 
 const collapseDeco = Decoration.replace({});
@@ -270,6 +280,27 @@ function buildWysiwymDecorations(state) {
                 widget: new CheckboxWidget(isChecked, node.from)
               })
             });
+          }
+        }
+
+        // 8.6. Bullet List Markers (replace '-' / '*' / '+' with a bullet point when cursor is off the line)
+        if (node.name === "ListMark") {
+          const line = state.doc.lineAt(node.from);
+          const isCursorOnLine = cursorLine === line.number;
+          if (!isCursorOnLine) {
+            const markerText = state.sliceDoc(node.from, node.to);
+            if (markerText === "-" || markerText === "*" || markerText === "+") {
+              const isTask = /^\s*[-*+]\s+\[[\sxX]\]/.test(line.text);
+              if (!isTask) {
+                collected.push({
+                  from: node.from,
+                  to: node.to,
+                  deco: Decoration.replace({
+                    widget: new BulletWidget()
+                  })
+                });
+              }
+            }
           }
         }
 

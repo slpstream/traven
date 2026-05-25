@@ -393,3 +393,11 @@
   color: #38bdf8 !important; /* Sky blue links */
 }
 
+/* Bullet list marker styling */
+.cm-wysiwym-bullet {
+  color: #38bdf8; /* Sky Blue 400 */
+  font-weight: bold;
+  margin-right: 0.35em;
+  display: inline-block;
+}
+

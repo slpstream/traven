@@ -50,6 +50,7 @@ export const DEFAULT_TOOLBAR = [
   "|",
   "bulletlist",
   "numberedlist",
+  "tasklist",
   "blockquote",
   "hr",
   "|",
@@ -628,8 +629,8 @@ export class TravenEditor {
   }
 
   /**
-   * Formats selection or line as a list (ordered or unordered).
-   * @param {"ol" | "ul"} type
+   * Formats selection or line as a list (ordered, unordered, or task/checklist).
+   * @param {"ol" | "ul" | "task"} type
    */
   insertList(type) {
     const view = this.#view;
@@ -637,25 +638,45 @@ export class TravenEditor {
     const { from, to } = state.selection.main;
 
     const isOL = type === 'ol';
-    const getPrefix = (index) => isOL ? `${index + 1}. ` : '- ';
+    const isTask = type === 'task';
+    const getPrefix = (index) => {
+      if (isOL) return `${index + 1}. `;
+      if (isTask) return `- [ ] `;
+      return '- ';
+    };
 
     if (from === to) {
       const pos = from;
       const line = state.doc.lineAt(pos);
       const text = line.text;
+      
+      const taskMatch = text.match(/^(-\s+\[[\sxX]\]\s+)/);
       const ulMatch = text.match(/^(-\s+)/);
       const olMatch = text.match(/^(\d+\.\s+)/);
 
-      if (ulMatch) {
+      if (taskMatch) {
+        const matchText = taskMatch[0];
+        if (isTask) {
+          view.dispatch({ changes: { from: line.from, to: line.from + matchText.length, insert: '' } });
+        } else if (isOL) {
+          view.dispatch({ changes: { from: line.from, to: line.from + matchText.length, insert: '1. ' } });
+        } else {
+          view.dispatch({ changes: { from: line.from, to: line.from + matchText.length, insert: '- ' } });
+        }
+      } else if (ulMatch) {
         const matchText = ulMatch[0];
-        if (!isOL) {
+        if (isTask) {
+          view.dispatch({ changes: { from: line.from, to: line.from + matchText.length, insert: '- [ ] ' } });
+        } else if (!isOL) {
           view.dispatch({ changes: { from: line.from, to: line.from + matchText.length, insert: '' } });
         } else {
           view.dispatch({ changes: { from: line.from, to: line.from + matchText.length, insert: '1. ' } });
         }
       } else if (olMatch) {
         const matchText = olMatch[0];
-        if (isOL) {
+        if (isTask) {
+          view.dispatch({ changes: { from: line.from, to: line.from + matchText.length, insert: '- [ ] ' } });
+        } else if (isOL) {
           view.dispatch({ changes: { from: line.from, to: line.from + matchText.length, insert: '' } });
         } else {
           view.dispatch({ changes: { from: line.from, to: line.from + matchText.length, insert: '- ' } });
@@ -669,7 +690,7 @@ export class TravenEditor {
       const lines = selectedText.split(/\r?\n/);
 
       const listLines = lines.map((lineText, idx) => {
-        const cleanLine = lineText.replace(/^([-\d+\.\s]+)/, '');
+        const cleanLine = lineText.replace(/^(-\s+\[[\sxX]\]\s+|[-\d+\.\s]+)/, '');
         return `${getPrefix(idx)}${cleanLine}`;
       });
       const insertion = listLines.join('\n');
