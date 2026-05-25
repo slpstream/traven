@@ -1,0 +1,102 @@
+@import "toolbar-default.css";
+
+/* Compact Theme CSS Variables */
+:root {
+  --rail-bg: #ffffff;
+  --rail-border: #cbd5e1;
+  --rail-hover-bg: #f1f5f9;
+  --rail-active-bg: #e2e8f0;
+  --rail-icon-color: #475569;
+}
+
+/* Hide unwanted buttons to keep a reduced, compact set */
+.btn-undo,
+.btn-redo,
+.btn-strikethrough,
+.btn-tasklist,
+.btn-hr,
+.btn-datetime,
+.btn-search,
+.btn-clear,
+.btn-uppercase,
+.btn-lowercase,
+.btn-capitalize,
+.btn-gotoline,
+.btn-help,
+.toolbar-separator {
+  display: none !important;
+}
+
+/* Align rail centered like Medium/Substack */
+.traven-toolbar-container {
+  display: flex !important;
+  justify-content: center !important;
+  gap: 0 !important;
+  padding: 8px 12px !important;
+  background-color: #ffffff !important;
+  border-bottom: none !important;
+}
+
+/* Base rail button reset */
+.toolbar-btn,
+.form-demo .toolbar-btn {
+  background-color: var(--rail-bg) !important;
+  color: var(--rail-icon-color) !important;
+  border-top: 1px solid var(--rail-border) !important;
+  border-bottom: 1px solid var(--rail-border) !important;
+  border-right: 1px solid var(--rail-border) !important;
+  border-left: none !important;
+  border-radius: 0px !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+/* Reset dropdown wrapper margins */
+.toolbar-dropdown {
+  margin: 0 !important;
+  display: inline-flex !important;
+}
+
+/* First visible button on the left end */
+.btn-bold,
+.form-demo .btn-bold {
+  border-left: 1px solid var(--rail-border) !important;
+  border-top-left-radius: 6px !important;
+  border-bottom-left-radius: 6px !important;
+}
+
+/* Last visible button on the right end */
+.btn-fullscreen,
+.form-demo .btn-fullscreen {
+  border-top-right-radius: 6px !important;
+  border-bottom-right-radius: 6px !important;
+}
+
+/* Button sizing */
+button.toolbar-btn,
+.form-demo button.toolbar-btn {
+  width: 32px !important;
+  height: 32px !important;
+  padding: 0 !important;
+}
+
+button.btn-heading,
+.form-demo button.btn-heading {
+  width: auto !important;
+  padding: 0 8px !important;
+}
+
+/* Hover and active states */
+.toolbar-btn:hover,
+.form-demo .toolbar-btn:hover {
+  background-color: var(--rail-hover-bg) !important;
+  color: var(--rail-icon-color) !important;
+  border-color: var(--rail-border) !important;
+  transform: none !important;
+}
+
+.toolbar-btn:active,
+.form-demo .toolbar-btn:active {
+  background-color: var(--rail-active-bg) !important;
+}

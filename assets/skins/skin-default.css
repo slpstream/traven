@@ -9,6 +9,11 @@
   color: #1e293b !important;
 }
 
+.cm-editor:focus,
+.cm-editor.cm-focused {
+  outline: none !important;
+}
+
 .cm-scroller {
   font-family: inherit !important;
   line-height: 1.75 !important;

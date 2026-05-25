@@ -1,33 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Traven Editor — Form-Managed Metadata Demo</title>
-  
+
   <!-- Preload Critical Fonts & Styles -->
   <link rel="preload" href="assets/fonts/fonts.css" as="style">
-  <link rel="preload" href="assets/fonts/AtkinsonHyperlegibleNext-Regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/AtkinsonHyperlegibleNext-Regular.woff2" as="font" type="font/woff2"
+    crossorigin>
   <link rel="preload" href="assets/fonts/mozilla-headline-v1-latin-700.woff2" as="font" type="font/woff2" crossorigin>
-  
+
   <link rel="stylesheet" href="assets/fonts/fonts.css">
   <link rel="stylesheet" href="assets/skins/skin-default.css" id="editor-skin-link">
-  
-  <link rel="stylesheet" href="assets/toolbars/toolbar-default.css">
+
+  <link rel="stylesheet" href="assets/toolbars/toolbar-default.css" id="editor-toolbar-link">
   <link rel="stylesheet" href="assets/css/demo.css">
 </head>
+
 <body class="form-demo">
-  
+
   <?php
-    $header_nav_html = '
-      <select id="skin-select" class="nav-btn btn-skin-select" style="padding: 6px 12px; font-family: inherit; font-size: 0.9em; cursor: pointer; margin-right: 8px;">
-        <option value="skin-default">Default Skin</option>
-        <option value="skin-colorful">Colorful Skin</option>
-        <option value="skin-dark">Dark Skin</option>
-      </select>
+  include 'includes/_customization-dropdowns.php';
+  $header_nav_html = $customization_dropdowns_html . '
       <a href="demo-inline.php" class="nav-btn">&larr; Switch to Inline YAML Demo</a>
     ';
-    include 'includes/_header.php';
+  include 'includes/_header.php';
   ?>
 
   <main>
@@ -37,7 +36,13 @@
       <div class="sandbox-card">
         <div class="card-header">
           <div class="card-title">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
             Document Metadata
           </div>
         </div>
@@ -65,7 +70,10 @@
       <div class="sandbox-card" style="flex: 1; display: flex; flex-direction: column;">
         <div class="card-header">
           <div class="card-title">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
             Unified Output File
           </div>
         </div>
@@ -84,7 +92,10 @@
     <div class="sandbox-card editor-card">
       <div class="card-header">
         <div class="card-title">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M12 20h9"></path>
+            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+          </svg>
           Body Content Editor
         </div>
       </div>
@@ -103,7 +114,6 @@ title: Traven Structured Demo
 author: Sarah Connor
 status: Published
 ---
-
 # Form-Managed Metadata Demo
 
 This demo illustrates **Approach B (Split-Before / Join-After)** which is the recommended pattern for CMS integrations.
@@ -186,6 +196,14 @@ Try modifying the inputs in the form or editing the body text here to see how th
       }
     });
 
+    // Dynamic toolbar selector handler
+    document.getElementById("toolbar-select")?.addEventListener("change", (e) => {
+      const toolbarLink = document.getElementById("editor-toolbar-link");
+      if (toolbarLink) {
+        toolbarLink.href = "assets/toolbars/" + e.target.value + ".css";
+      }
+    });
+
     // 4. Initialize Traven with only the Markdown body content
     document.fonts.ready.then(() => {
       window.editor = new TravenEditor({
@@ -201,4 +219,5 @@ Try modifying the inputs in the form or editing the body text here to see how th
     });
   </script>
 </body>
+
 </html>

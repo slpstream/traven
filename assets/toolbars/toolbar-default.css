@@ -4,7 +4,7 @@
 .toolbar-btn {
   background: white;
   border: 1px solid var(--border-color, #e2e8f0);
-  padding: 6px 12px;
+  padding: 2px 4px;
   border-radius: 8px;
   cursor: pointer;
   display: inline-flex;
@@ -27,8 +27,8 @@ button.toolbar-btn {
 }
 
 .toolbar-btn svg {
-  width: 14px;
-  height: 14px;
+  width: 18px;
+  height: 18px;
   stroke: currentColor;
 }
 
@@ -70,7 +70,7 @@ button.toolbar-btn {
   background-color: #ffffff;
   border: 1px solid var(--border-color, #e2e8f0);
   border-radius: 6px;
-  padding: 6px 12px;
+  padding: 2px 4px;
   font-size: 0.8em;
   font-weight: 600;
   color: var(--text-primary, #0f172a);
@@ -96,8 +96,8 @@ button.toolbar-btn {
 }
 
 .form-demo .toolbar-btn svg {
-  width: 13px;
-  height: 13px;
+  width: 18px;
+  height: 18px;
 }
 
 /* Heading Dropdown Styles */
@@ -109,13 +109,13 @@ button.toolbar-btn {
 /* Wider trigger button for heading with caret */
 button.btn-heading {
   width: auto;
-  padding: 0 8px;
+  padding: 0 4px;
   gap: 4px;
 }
 
 .form-demo button.btn-heading {
   width: auto;
-  padding: 0 6px;
+  padding: 0 4px;
   gap: 4px;
 }
 

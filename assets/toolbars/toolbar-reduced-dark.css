@@ -1,0 +1,43 @@
+@import "toolbar-reduced.css";
+
+/* Styling overrides for square, white-on-slate, smaller buttons */
+.toolbar-btn,
+.form-demo .toolbar-btn {
+  background-color: #475569 !important; /* Slate 600 */
+  color: #ffffff !important;
+  border-color: #334155 !important; /* Slate 700 */
+  border-radius: 0px !important;
+  padding: 2px 4px !important; /* Even less padding */
+}
+
+button.toolbar-btn,
+.form-demo button.toolbar-btn {
+  width: 26px !important;
+  height: 26px !important;
+  padding: 0 !important;
+}
+
+button.btn-heading,
+.form-demo button.btn-heading {
+  width: auto !important;
+  padding: 0 4px !important;
+}
+
+/* Make SVG icons even larger */
+.toolbar-btn svg,
+.form-demo .toolbar-btn svg {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+/* Hover and active states */
+.toolbar-btn:hover,
+.form-demo .toolbar-btn:hover {
+  background-color: #64748b !important; /* Slate 500 */
+  border-color: #475569 !important;
+}
+
+.toolbar-btn:active,
+.form-demo .toolbar-btn:active {
+  background-color: #334155 !important; /* Slate 700 */
+}

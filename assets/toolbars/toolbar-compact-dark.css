@@ -1,0 +1,32 @@
+@import "toolbar-compact.css";
+
+/* Compact Dark Theme CSS Variables - Slate 900/800 Palette */
+:root {
+  --rail-bg: #1e293b;          /* Slate 800 */
+  --rail-border: #334155;      /* Slate 700 */
+  --rail-hover-bg: #334155;    /* Slate 700 */
+  --rail-active-bg: #0f172a;   /* Slate 900 */
+  --rail-icon-color: #e2e8f0;  /* Slate 200 */
+}
+
+/* Make the outer container match the dark slate skin background */
+.traven-toolbar-container {
+  background-color: #0f172a !important; /* Deep Slate 900 */
+  border-bottom: none !important;
+}
+
+/* Ensure dropdown menu elements adapt to the dark slate palette */
+.toolbar-dropdown-menu {
+  background-color: #1e293b !important; /* Slate 800 */
+  border-color: #334155 !important;     /* Slate 700 */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+}
+
+.toolbar-dropdown-item {
+  color: #94a3b8 !important; /* Slate 400 */
+}
+
+.toolbar-dropdown-item:hover {
+  background-color: #334155 !important; /* Slate 700 */
+  color: #ffffff !important;
+}

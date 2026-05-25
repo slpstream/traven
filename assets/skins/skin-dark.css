@@ -7,6 +7,11 @@
   color: #e2e8f0 !important; /* Soft white/Slate 200 */
 }
 
+.cm-editor:focus,
+.cm-focused {
+  outline: none !important;
+}
+
 .cm-scroller {
   font-family: inherit !important;
   line-height: 1.75 !important;

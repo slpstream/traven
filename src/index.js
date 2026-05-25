@@ -45,6 +45,7 @@ export const DEFAULT_TOOLBAR = [
   "italic",
   "strikethrough",
   "code",
+  "codeblock",
   "|",
   "heading",
   "|",
@@ -54,17 +55,15 @@ export const DEFAULT_TOOLBAR = [
   "blockquote",
   "hr",
   "|",
-  "codeblock",
-  "|",
   "datetime",
   "search",
+  "link",
   "fullscreen",
   "clear",
   "uppercase",
   "lowercase",
   "capitalize",
   "gotoline",
-  "link",
   "help"
 ];
 
