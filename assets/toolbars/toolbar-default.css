@@ -32,6 +32,10 @@ button.toolbar-btn {
   stroke: currentColor;
 }
 
+.toolbar-btn svg rect:not([stroke]) {
+  stroke: none;
+}
+
 .toolbar-btn:hover {
   background-color: #f8fafc;
   border-color: #cbd5e1;
@@ -174,6 +178,10 @@ button.btn-heading {
   height: 14px;
   stroke: currentColor;
   flex-shrink: 0;
+}
+
+.toolbar-dropdown-item svg rect:not([stroke]) {
+  stroke: none;
 }
 
 .form-demo .toolbar-dropdown-item svg {
