@@ -107,6 +107,7 @@ Initializes a new editor instance.
 | `caretColor` | `string` | `""` | Custom hex color for the editor caret overrides. |
 | `toolbar` | `Array<string> \| boolean`| `false` | A list of tool key strings defining the toolbar buttons layout, or `false` to disable the toolbar. |
 | `vimMode` | `boolean` | `false` | Enables Vim keybindings and normal mode emulation in both editing panes. |
+| `readOnly` | `boolean` | `false` | Enables read-only mode for both primary and secondary editor panes. |
 | `keybindings` | `object` | `{}` | Key-value pairs overriding default tool keybindings (e.g. `{ bold: "Ctrl-Shift-b" }`). |
 
 ---
@@ -120,6 +121,28 @@ Returns the complete document content as a Markdown string.
 #### `setValue(value)`
 Replaces the entire document content with a new Markdown string.
 *   **Parameters:** `value` (`string`)
+
+#### `focus()`
+Programmatically focuses the primary editor view.
+
+#### `setReadOnly(readOnly)`
+Sets the editor to read-only or read-write mode dynamically.
+*   **Parameters:** `readOnly` (`boolean`): Whether the editor should be read-only.
+
+#### `isReadOnly()`
+Returns whether the editor is currently in read-only mode.
+*   **Returns:** `boolean`
+
+#### `getSelection()`
+Returns the currently selected text in the primary editor.
+*   **Returns:** `string`
+
+#### `setSelection(anchor, head)`
+Sets the selection range in the editor and focuses it.
+*   **Parameters:**
+    *   `anchor` (`number`): The starting character index of the selection.
+    *   `head` (`number`, optional): The ending character index of the selection. Defaults to `anchor`.
+
 
 #### `insertSnippet(before, after, placeholder)`
 Wraps the current text selection with markdown characters. If no text is selected, inserts a formatted placeholder string.
@@ -173,7 +196,16 @@ Programmatically invokes the registered save callback with current values.
 Registers an event listener callback.
 *   **Parameters:**
     *   `event` (`"change" | "save" | "statsUpdate"`): The event name.
-    *   `callback` (`function(any): void`): Callback receiving the updated content string, or stats object (`{ words: number, characters: number, readTime: number }` for `"statsUpdate"`).
+    *   `callback` (`function`): The callback function:
+        *   For `"change"` / `"save"`: receives `(value: string)` (the updated Markdown document).
+        *   For `"statsUpdate"`: receives a stats object: `{ words: number, characters: number, readTime: number }`.
+
+**Example:**
+```javascript
+editor.on("statsUpdate", (stats) => {
+  console.log(`Words: ${stats.words}, Characters: ${stats.characters}, Read Time: ${stats.readTime} min`);
+});
+```
 
 #### `destroy()`
 Cleans up event listeners and destroys CodeMirror instances.

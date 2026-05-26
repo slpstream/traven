@@ -88,6 +88,14 @@
   color: #8c7f70; /* Muted brown/gray to match the colorful palette */
 }
 
+/* Highlight text - bright yellow */
+.cm-wysiwym-highlight {
+  background-color: rgba(253, 224, 71, 0.65) !important;
+  color: #1e293b !important;
+  border-radius: 3px;
+  padding: 1px 0;
+}
+
 /* Inline code pill styling - Vibrant Rose */
 .cm-wysiwym-inline-code {
   font-family: 'Fira Code', ui-monospace, monospace !important;
@@ -468,6 +476,11 @@
   color: #a1a1aa !important;
 }
 
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-highlight {
+  background-color: rgba(253, 224, 71, 0.35) !important;
+  color: #fef08a !important;
+}
+
 .cm-editor.cm-wysiwym-dark .cm-wysiwym-inline-code {
   background-color: #27272a;
   color: #f43f5e; /* Vibrant Rose code */
@@ -738,6 +751,13 @@
 .traven-preview a:hover {
   text-decoration: none;
 }
+
+.traven-preview mark {
+  background-color: rgba(253, 224, 71, 0.7) !important;
+  color: #1e293b !important;
+  border-radius: 3px;
+  padding: 1px 4px;
+}
 .traven-preview hr {
   border: none;
   border-top: 1px solid #e7e5e4;
@@ -795,6 +815,11 @@
 }
 .traven-preview.cm-wysiwym-dark a {
   color: #cc4a0a;
+}
+
+.traven-preview.cm-wysiwym-dark mark {
+  background-color: rgba(253, 224, 71, 0.35) !important;
+  color: #fef08a !important;
 }
 .traven-preview.cm-wysiwym-dark hr {
   border-top-color: #3f3f46;

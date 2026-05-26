@@ -88,6 +88,13 @@
   color: #64748b;
 }
 
+/* Highlight text - soft pastel yellow */
+.cm-wysiwym-highlight {
+  background-color: rgba(250, 204, 21, 0.25);
+  border-radius: 3px;
+  padding: 1px 0;
+}
+
 /* Inline code pill styling - Neutral Slate */
 .cm-wysiwym-inline-code {
   font-family: 'Fira Code', ui-monospace, monospace !important;
@@ -469,6 +476,10 @@
   color: #94a3b8 !important;
 }
 
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-highlight {
+  background-color: rgba(250, 204, 21, 0.18);
+}
+
 .cm-editor.cm-wysiwym-dark .cm-wysiwym-inline-code {
   background-color: #1e293b;
   color: #38bdf8;
@@ -736,6 +747,12 @@
 .traven-preview a:hover {
   text-decoration: none;
 }
+
+.traven-preview mark {
+  background-color: rgba(250, 204, 21, 0.3);
+  border-radius: 3px;
+  padding: 1px 4px;
+}
 .traven-preview hr {
   border: none;
   border-top: 1px solid #e2e8f0;
@@ -790,6 +807,11 @@
 }
 .traven-preview.cm-wysiwym-dark a {
   color: #38bdf8;
+}
+
+.traven-preview.cm-wysiwym-dark mark {
+  background-color: rgba(250, 204, 21, 0.2);
+  color: #f8fafc;
 }
 .traven-preview.cm-wysiwym-dark hr {
   border-top-color: #334155;

@@ -26,6 +26,7 @@ import {
 import { classHighlighter } from "@lezer/highlight";
 import { markdown } from "@codemirror/lang-markdown";
 import { Strikethrough, TaskList, Table } from "@lezer/markdown";
+import { Highlight } from "./highlight-parser.js";
 import { yamlFrontmatter } from "@codemirror/lang-yaml";
 import { undo, redo } from "@codemirror/commands";
 import { search, openSearchPanel } from "@codemirror/search";
@@ -48,6 +49,7 @@ export const DEFAULT_TOOLBAR = [
   "bold",
   "italic",
   "strikethrough",
+  "highlight",
   "code",
   "codeblock",
   "|",
@@ -167,7 +169,7 @@ export class TravenEditor {
       }),
       ...(wrapLines ? [EditorView.lineWrapping] : []),
       readOnlyCompartment.of(EditorState.readOnly.of(!!options.readOnly)),
-      yamlFrontmatter({ content: markdown({ extensions: [Strikethrough, TaskList, Table, { remove: ["SetextHeading"] }] }) }),
+      yamlFrontmatter({ content: markdown({ extensions: [Strikethrough, TaskList, Table, Highlight, { remove: ["SetextHeading"] }] }) }),
       wysiwymPlugin(),
       delimiterSkipKeymap(),
       imageDecorationPlugin(),
@@ -1181,6 +1183,7 @@ export class TravenEditor {
     content = content.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>');
     content = content.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
     content = content.replace(/\*(.*?)\*/g, "<em>$1</em>");
+    content = content.replace(/==(.*?)==/g, "<mark>$1</mark>");
     content = content.replace(/`(.*?)`/g, "<code>$1</code>");
 
     // 7. Convert paragraphs (blank lines split)

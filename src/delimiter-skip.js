@@ -108,7 +108,29 @@ function findSkipTarget(state, cursor, direction) {
         }
       }
 
-      // 5. HeaderMark (heading markers at start of line)
+      // 5. Highlight (length 2 delimiter)
+      if (node.name === "Highlight") {
+        const openEnd = node.from + 2;
+        const closeStart = node.to - 2;
+
+        if (direction === "right") {
+          if (cursor >= node.from && cursor < openEnd) {
+            best = { target: openEnd, suppressRange: { from: node.from, to: node.to } };
+          }
+          if (cursor >= closeStart && cursor < node.to) {
+            best = { target: node.to, suppressRange: null };
+          }
+        } else {
+          if (cursor > closeStart && cursor <= node.to) {
+            best = { target: closeStart, suppressRange: { from: node.from, to: node.to } };
+          }
+          if (cursor > node.from && cursor <= openEnd) {
+            best = { target: node.from, suppressRange: null };
+          }
+        }
+      }
+
+      // 6. HeaderMark (heading markers at start of line)
       if (node.name === "HeaderMark") {
         if (direction === "right") {
           if (cursor >= node.from && cursor < node.to) {
@@ -121,7 +143,7 @@ function findSkipTarget(state, cursor, direction) {
         }
       }
 
-      // 6. Link delimiters [text](url) — skip over collapsed brackets/URL
+      // 7. Link delimiters [text](url) — skip over collapsed brackets/URL
       if (node.name === "Link") {
         let firstMarkEnd = null;
         let secondMarkStart = null;
@@ -163,7 +185,7 @@ function findSkipTarget(state, cursor, direction) {
         }
       }
 
-      // 7. Autolink delimiters <url> — skip over collapsed angle brackets
+      // 8. Autolink delimiters <url> — skip over collapsed angle brackets
       if (node.name === "Autolink") {
         const openEnd = node.from + 1;
         const closeStart = node.to - 1;

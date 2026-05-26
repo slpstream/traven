@@ -41,6 +41,15 @@ describe('TravenEditor', () => {
     expect(editor.getValue()).toBe('Hello World');
   });
 
+  it('can focus the editor programmatically', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: 'Focus Test',
+    });
+    editor.focus();
+    expect(document.activeElement).toBe(editor.getView().contentDOM);
+  });
+
   it('can set and get values', () => {
     const editor = new TravenEditor({
       element: container,
@@ -107,12 +116,12 @@ describe('TravenEditor', () => {
   it('can strip markdown formatting with removeFormatting()', () => {
     const editor = new TravenEditor({
       element: container,
-      initialValue: '### Hello **World** with `code` and ~~strike~~',
+      initialValue: '### Hello **World** with `code`, ~~strike~~ and ==highlight==',
     });
 
     // Select the whole document to strip formatting
     editor.setSelection(0, editor.getValue().length);
     editor.removeFormatting();
-    expect(editor.getValue()).toBe('Hello World with code and strike');
+    expect(editor.getValue()).toBe('Hello World with code, strike and highlight');
   });
 });
