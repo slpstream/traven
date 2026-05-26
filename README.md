@@ -16,7 +16,7 @@
 
 ## What is Traven?
 
-**Traven Editor** is a light, distraction-free WYSIWYM (What You See Is What You Mean) Markdown editor designed to be embedded directly into custom CMS systems, administrative dashboards, and web forms. Built on the **CodeMirror 6** editing engine, Traven delivers a high-fidelity editing experience while outputting clean, raw Markdown.
+**Traven Editor** is a non-brittle WYSIWYM (What You See Is What You Mean) Markdown editor designed to be embedded directly into custom CMS systems, administrative dashboards, and web forms. Built on the **CodeMirror 6** editing engine, Traven delivers a high-fidelity editing experience while outputting clean, raw Markdown.
 
 Traven is highly modular and straightforward to customize or extend. If you need a powerful, flexible and mostly unopinionated Markdown editor that adapts to the layout, theme, and behavior of an existing project, its configuration options and decoupled styling make integration fast and easy.
 
@@ -33,7 +33,10 @@ Traven is highly modular and straightforward to customize or extend. If you need
 *   **Decoupled Styling (Skins)**: Theme aesthetics (colors, padding, borders) are decoupled from the JavaScript logic. Swap between the neutral **Default Skin** and optional skins such as a **Dark Skin** and a contemporary **Colorful Skin** by changing a single `<link>` stylesheet, with no rebuilding required.
 *   **Bidirectional Raw Sync**: Easily bind a secondary raw Markdown viewer/editor in split-screen layouts. Changes flow incrementally between editors, maintaining cursor positions and separate histories without circular synchronization loops.
 *   **Smart Keyboard Utilities**: Includes keyboard helpers that prevent cursors from getting trapped inside collapsed markdown delimiters during arrow navigation.
-*   **Zero Peer Dependencies**: Bundles CodeMirror modules internally using `esbuild`. Simply drop in the compiled script and a stylesheet to start editing.
+*   **Vim Emulation Mode**: Toggleable Vim normal/visual/insert mode keybindings dynamically at runtime.
+*   **Real-Time Statistics**: Out-of-the-box support for tracking words, characters, and estimated reading times with statistics update event listeners.
+*   **Dynamic HTML Preview Rendering**: Features a compilation hook for registering custom Markdown renderers to generate structural, skin-synced HTML previews.
+*   **Zero Peer Dependencies**: Bundles CodeMirror and Vim emulation modules internally using `esbuild`. Simply drop in the compiled script and a stylesheet to start editing.
 
 ---
 
@@ -99,8 +102,12 @@ Initializes a new editor instance.
 | `onChange` | `function` | `null` | Callback fired on change: `(value: string) => void`. |
 | `onSave` | `function` | `null` | Callback fired on Save command (Cmd+S / Ctrl+S): `(value: string) => void`. |
 | `onUploadImage` | `function` | `null` | Callback returning a promise of the uploaded image's URL: `(file: File) => Promise<string>`. |
-| `theme` | `"light" \| "dark"`| `"light"` | Configures baseline cursor theme variables. |
+| `onStatsUpdate` | `function` | `null` | Callback fired when document stats change: `(stats: { words: number, characters: number, readTime: number }) => void`. |
+| `theme` | `"light" \| "dark"`| `"light"` | Configures baseline cursor theme variables and dark mode class triggers. |
 | `caretColor` | `string` | `""` | Custom hex color for the editor caret overrides. |
+| `toolbar` | `Array<string> \| boolean`| `false` | A list of tool key strings defining the toolbar buttons layout, or `false` to disable the toolbar. |
+| `vimMode` | `boolean` | `false` | Enables Vim keybindings and normal mode emulation in both editing panes. |
+| `keybindings` | `object` | `{}` | Key-value pairs overriding default tool keybindings (e.g. `{ bold: "Ctrl-Shift-b" }`). |
 
 ---
 
@@ -122,10 +129,42 @@ Wraps the current text selection with markdown characters. If no text is selecte
     *   `placeholder` (`string`): Text displayed inside tags if selection is empty.
 
 #### `undo()`
-Triggers history undo on the currently focused editor.
+Triggers history undo on the currently focused editor (WYSIWYM or raw).
 
 #### `redo()`
-Triggers history redo on the currently focused editor.
+Triggers history redo on the currently focused editor (WYSIWYM or raw).
+
+#### `setTheme(theme)`
+Dynamically toggles light or dark mode styling across the editors.
+*   **Parameters:** `theme` (`"light" | "dark"`)
+
+#### `setVimMode(enabled)`
+Dynamically toggles Vim mode emulation at runtime.
+*   **Parameters:** `enabled` (`boolean`)
+
+#### `getCharacterCount()`
+Returns the total character length of the active document.
+*   **Returns:** `number`
+
+#### `getWordCount()`
+Returns the total word count of the active document.
+*   **Returns:** `number`
+
+#### `getReadTime()`
+Returns the estimated reading time of the active document in minutes.
+*   **Returns:** `number`
+
+#### `registerRenderer(renderFn)`
+Registers a custom Markdown compilation function to render custom HTML previews.
+*   **Parameters:** `renderFn` (`(markdown: string) => string`)
+
+#### `getContentHtml()`
+Returns the compiled HTML representation of the document, using the registered custom renderer or the built-in fallback parser.
+*   **Returns:** `string`
+
+#### `getView()`
+Exposes the primary CodeMirror `EditorView` instance.
+*   **Returns:** `EditorView`
 
 #### `triggerSave()`
 Programmatically invokes the registered save callback with current values.
@@ -133,11 +172,62 @@ Programmatically invokes the registered save callback with current values.
 #### `on(event, callback)`
 Registers an event listener callback.
 *   **Parameters:**
-    *   `event` (`"change" | "save"`): The event name.
-    *   `callback` (`function(string): void`): Callback receiving the updated content string.
+    *   `event` (`"change" | "save" | "statsUpdate"`): The event name.
+    *   `callback` (`function(any): void`): Callback receiving the updated content string, or stats object (`{ words: number, characters: number, readTime: number }` for `"statsUpdate"`).
 
 #### `destroy()`
 Cleans up event listeners and destroys CodeMirror instances.
+
+---
+
+### Editing & Formatting Helpers
+
+Traven exposes several built-in commands to manipulate text selections programmatically:
+
+#### `clear()`
+Wipes the entire document content and focuses the primary editor.
+
+#### `toUpperCase()`
+Converts the active selection to uppercase, preserving the selected text boundary.
+
+#### `toLowerCase()`
+Converts the active selection to lowercase, preserving the selected text boundary.
+
+#### `capitalizeWords()`
+Capitalizes the first letter of every word in the active selection.
+
+#### `removeFormatting()`
+Strips all inline styles (bold, italic, code backticks, strikethrough, highlights) and block formatting (lists, taskboxes, headings, blockquotes, horizontal rules) from the selection.
+
+#### `toggleFullscreen()`
+Toggles fullscreen class `.is-fullscreen` on the editor's parent container and recalculates layout coordinates.
+
+#### `openSearch()`
+Opens the built-in CodeMirror find-and-replace search panel.
+
+#### `goToLine(lineNumber)`
+Navigates the cursor to the specified 1-indexed line number and scrolls it into view.
+*   **Parameters:** `lineNumber` (`number`)
+
+#### `insertCodeBlock()`
+Wraps the selection in a fenced code block (`` ``` ``) with appropriate line spacing.
+
+#### `insertHR()`
+Inserts a standalone markdown horizontal rule line (`---`) at the cursor.
+
+#### `insertTable()`
+Inserts a pre-formatted 3x3 Markdown table template at the cursor, and selects the first header text.
+
+#### `setHeading(level)`
+Toggles or applies a heading level (`1` to `6`) prefix to the active line. Pass `0` to strip headings.
+*   **Parameters:** `level` (`number`)
+
+#### `insertBlockquote()`
+Converts the active selection or line into a markdown blockquote block (`> `).
+
+#### `insertList(type)`
+Converts the active selection or line into a list of the specified type.
+*   **Parameters:** `type` (`"ul" | "ol" | "task"`)
 
 ---
 
@@ -198,7 +288,50 @@ Simply swap the styling link in your HTML document:
 ```
 
 ### CUSTOMIZING THE TOOLBAR
-All toolbar buttons are tagged with specific classes. To hide buttons or re-style them, override classes in your local stylesheets:
+
+You can customize the toolbar layout by passing an array of tool keys to the constructor's `toolbar` option, or hide buttons using CSS overrides.
+
+#### Available Toolbar Stylesheets
+
+Alternative pre-configured toolbar presentation sheets are available in `assets/toolbars/` and can be loaded dynamically or statically to swap editor layouts:
+*   `toolbar-default.css`: The default clean toolbar skin.
+*   `toolbar-compact.css` / `toolbar-compact-dark.css`: Slim layouts with reduced padding.
+*   `toolbar-reduced.css` / `toolbar-reduced-dark.css`: Ultra-minimalist layouts for simplified interfaces.
+
+#### Toolbar Buttons & Selectors Reference
+
+Each button generated in the toolbar is assigned a generic `.toolbar-btn` class, along with a button-specific class matching its key name (e.g. `.btn-bold`):
+
+| Tool Key | CSS Selector | Action Description | Default Keyboard Shortcut |
+| :--- | :--- | :--- | :--- |
+| `undo` | `.btn-undo` | Undo last operation | `Ctrl+Z` (`Cmd+Z` on Mac) |
+| `redo` | `.btn-redo` | Redo last undone operation | `Ctrl+Y` (`Cmd+Y` on Mac) |
+| `bold` | `.btn-bold` | Bold text (`**bold text**`) | `Ctrl+B` (`Cmd+B` on Mac) |
+| `italic` | `.btn-italic` | Italic text (`*italic text*`) | `Ctrl+I` (`Cmd+I` on Mac) |
+| `strikethrough` | `.btn-strikethrough` | Strikethrough text (`~~strikethrough~~`) | `Ctrl+Shift+S` (`Cmd+Shift+S` on Mac) |
+| `code` | `.btn-code` | Inline code backticks (`` `code` ``) | - |
+| `codeblock` | `.btn-codeblock` | Wrap selection in fenced code block (`` ``` ``) | - |
+| `heading` | `.btn-heading` | Dropdown selector for Heading 1 to Heading 6 | - |
+| `bulletlist` | `.btn-bulletlist` | Format line or selection as unordered list (`- `) | - |
+| `numberedlist` | `.btn-numberedlist` | Format line or selection as ordered list (`1. `) | - |
+| `tasklist` | `.btn-tasklist` | Format line or selection as checklist (`- [ ] `) | `Ctrl+Shift+C` (`Cmd+Shift+C` on Mac) |
+| `blockquote` | `.btn-blockquote` | Format line or selection as blockquote (`> `) | - |
+| `hr` | `.btn-hr` | Insert horizontal rule line (`---`) | - |
+| `table` | `.btn-table` | Insert standard 3x3 table template | - |
+| `datetime` | `.btn-datetime` | Insert current Date & Time (YYYY-MM-DD HH:MM) | - |
+| `search` | `.btn-search` | Open CodeMirror search panel | `Ctrl+F` (`Cmd+F` on Mac) |
+| `fullscreen` | `.btn-fullscreen` | Toggle editor container fullscreen mode | - |
+| `clear` | `.btn-clear` | Clear all document content | - |
+| `uppercase` | `.btn-uppercase` | Convert selection to UPPERCASE | - |
+| `lowercase` | `.btn-lowercase` | Convert selection to lowercase | - |
+| `capitalize` | `.btn-capitalize` | Capitalize selection words | - |
+| `removeformatting` | `.btn-removeformatting` | Remove Markdown styling from selection | - |
+| `gotoline` | `.btn-gotoline` | Prompt for line number and navigate | `Ctrl+G` (`Cmd+G` on Mac) |
+| `link` | `.btn-link` | Insert link using link modal dialog | `Ctrl+K` (`Cmd+K` on Mac) |
+| `help` | `.btn-help` | Open keyboard shortcuts help modal | `Ctrl+/` (`Cmd+/` on Mac) |
+
+#### Hiding Buttons via CSS
+To hide buttons or re-style them, override classes in your local stylesheets:
 ```css
 /* Hide the Heading and Redo buttons from the toolbar */
 .toolbar-btn.btn-heading,

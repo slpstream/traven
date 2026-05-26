@@ -3,14 +3,19 @@ import { syntaxTree } from "@codemirror/language";
 import { Extension } from "@codemirror/state";
 import { setSuppression, clearSuppression } from "./wysiwym.js";
 
-function skipDelimiter(view, direction) {
-  const { state } = view;
-  const cursor = state.selection.main.head;
+/**
+ * Examines the syntax tree around `cursor` and returns the best skip target
+ * for a single delimiter boundary, plus an optional suppress range if the
+ * cursor is entering (not exiting) a node.
+ *
+ * @param {EditorState} state
+ * @param {number} cursor
+ * @param {"left"|"right"} direction
+ * @returns {{ target: number, suppressRange: {from:number,to:number}|null } | null}
+ */
+function findSkipTarget(state, cursor, direction) {
+  let best = null;
 
-  let target = null;
-  let suppressRange = null;
-
-  // Inspect syntax tree within a small window around the cursor position
   syntaxTree(state).iterate({
     from: Math.max(0, cursor - 6),
     to: Math.min(state.doc.length, cursor + 6),
@@ -21,24 +26,18 @@ function skipDelimiter(view, direction) {
         const closeStart = node.to - 2;
 
         if (direction === "right") {
-          // Inside or entering opening delimiter -> skip to content start
           if (cursor >= node.from && cursor < openEnd) {
-            target = openEnd;
-            suppressRange = { from: node.from, to: node.to };
+            best = { target: openEnd, suppressRange: { from: node.from, to: node.to } };
           }
-          // Inside or entering closing delimiter -> skip past node end
           if (cursor >= closeStart && cursor < node.to) {
-            target = node.to;
+            best = { target: node.to, suppressRange: null };
           }
         } else {
-          // Inside or entering closing delimiter from right -> skip to content end
           if (cursor > closeStart && cursor <= node.to) {
-            target = closeStart;
-            suppressRange = { from: node.from, to: node.to };
+            best = { target: closeStart, suppressRange: { from: node.from, to: node.to } };
           }
-          // Inside or entering opening delimiter from right -> skip before node
           if (cursor > node.from && cursor <= openEnd) {
-            target = node.from;
+            best = { target: node.from, suppressRange: null };
           }
         }
       }
@@ -50,19 +49,17 @@ function skipDelimiter(view, direction) {
 
         if (direction === "right") {
           if (cursor >= node.from && cursor < openEnd) {
-            target = openEnd;
-            suppressRange = { from: node.from, to: node.to };
+            best = { target: openEnd, suppressRange: { from: node.from, to: node.to } };
           }
           if (cursor >= closeStart && cursor < node.to) {
-            target = node.to;
+            best = { target: node.to, suppressRange: null };
           }
         } else {
           if (cursor > closeStart && cursor <= node.to) {
-            target = closeStart;
-            suppressRange = { from: node.from, to: node.to };
+            best = { target: closeStart, suppressRange: { from: node.from, to: node.to } };
           }
           if (cursor > node.from && cursor <= openEnd) {
-            target = node.from;
+            best = { target: node.from, suppressRange: null };
           }
         }
       }
@@ -74,44 +71,93 @@ function skipDelimiter(view, direction) {
 
         if (direction === "right") {
           if (cursor >= node.from && cursor < openEnd) {
-            target = openEnd;
+            best = { target: openEnd, suppressRange: null };
           }
           if (cursor >= closeStart && cursor < node.to) {
-            target = node.to;
+            best = { target: node.to, suppressRange: null };
           }
         } else {
           if (cursor > closeStart && cursor <= node.to) {
-            target = closeStart;
+            best = { target: closeStart, suppressRange: null };
           }
           if (cursor > node.from && cursor <= openEnd) {
-            target = node.from;
+            best = { target: node.from, suppressRange: null };
           }
         }
       }
 
-      // 4. HeaderMark (heading markers at start of line)
+      // 4. Strikethrough (length 2 delimiter)
+      if (node.name === "Strikethrough") {
+        const openEnd = node.from + 2;
+        const closeStart = node.to - 2;
+
+        if (direction === "right") {
+          if (cursor >= node.from && cursor < openEnd) {
+            best = { target: openEnd, suppressRange: { from: node.from, to: node.to } };
+          }
+          if (cursor >= closeStart && cursor < node.to) {
+            best = { target: node.to, suppressRange: null };
+          }
+        } else {
+          if (cursor > closeStart && cursor <= node.to) {
+            best = { target: closeStart, suppressRange: { from: node.from, to: node.to } };
+          }
+          if (cursor > node.from && cursor <= openEnd) {
+            best = { target: node.from, suppressRange: null };
+          }
+        }
+      }
+
+      // 5. HeaderMark (heading markers at start of line)
       if (node.name === "HeaderMark") {
         if (direction === "right") {
           if (cursor >= node.from && cursor < node.to) {
-            target = node.to;
+            best = { target: node.to, suppressRange: null };
           }
         } else {
           if (cursor > node.from && cursor <= node.to) {
-            target = node.from;
+            best = { target: node.from, suppressRange: null };
           }
         }
       }
     }
   });
 
-  if (target === null || target === cursor) return false;
+  return best;
+}
 
-  const effects = suppressRange
-    ? [setSuppression.of(suppressRange)]
+/**
+ * Multi-jump delimiter skip: loops to traverse multiple adjacent collapsed
+ * delimiter boundaries in a single arrow keypress (handles nested syntax
+ * like **_text_**, ~~**text**~~, etc.)
+ */
+function skipDelimiter(view, direction) {
+  const { state } = view;
+  const originalCursor = state.selection.main.head;
+  let cursor = originalCursor;
+  const suppressRanges = [];
+
+  // Safety cap: deepest realistic nesting is ~3-4 levels
+  const maxIterations = 5;
+
+  for (let i = 0; i < maxIterations; i++) {
+    const result = findSkipTarget(state, cursor, direction);
+    if (!result || result.target === cursor) break;
+
+    cursor = result.target;
+    if (result.suppressRange) {
+      suppressRanges.push(result.suppressRange);
+    }
+  }
+
+  if (cursor === originalCursor) return false;
+
+  const effects = suppressRanges.length > 0
+    ? [setSuppression.of(suppressRanges)]
     : [clearSuppression.of(null)];
 
   view.dispatch({
-    selection: { anchor: target },
+    selection: { anchor: cursor },
     effects
   });
 

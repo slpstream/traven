@@ -25,7 +25,7 @@ import {
 } from "@codemirror/language";
 import { classHighlighter } from "@lezer/highlight";
 import { markdown } from "@codemirror/lang-markdown";
-import { Strikethrough, TaskList } from "@lezer/markdown";
+import { Strikethrough, TaskList, Table } from "@lezer/markdown";
 import { yamlFrontmatter } from "@codemirror/lang-yaml";
 import { undo, redo } from "@codemirror/commands";
 import { search, openSearchPanel } from "@codemirror/search";
@@ -57,6 +57,7 @@ export const DEFAULT_TOOLBAR = [
   "tasklist",
   "blockquote",
   "hr",
+  "table",
   "|",
   "datetime",
   "search",
@@ -162,7 +163,7 @@ export class TravenEditor {
         foldGutter: showLineNumbers
       }),
       ...(wrapLines ? [EditorView.lineWrapping] : []),
-      yamlFrontmatter({ content: markdown({ extensions: [Strikethrough, TaskList, { remove: ["SetextHeading"] }] }) }),
+      yamlFrontmatter({ content: markdown({ extensions: [Strikethrough, TaskList, Table, { remove: ["SetextHeading"] }] }) }),
       wysiwymPlugin(),
       delimiterSkipKeymap(),
       imageDecorationPlugin(),
@@ -718,6 +719,50 @@ export class TravenEditor {
   }
 
   /**
+   * Inserts a standard 3x3 markdown table template, handling surrounding spacing.
+   */
+  insertTable() {
+    const view = this.#view;
+    const state = view.state;
+    const { from, to } = state.selection.main;
+
+    const insertion = 
+      `| Header 1 | Header 2 | Header 3 |\n` +
+      `|----------|----------|----------|\n` +
+      `| Cell 1   | Cell 2   | Cell 3   |\n` +
+      `| Cell 4   | Cell 5   | Cell 6   |`;
+
+    const charBefore = from > 0 ? state.sliceDoc(from - 1, from) : '\n';
+    const secondCharBefore = from > 1 ? state.sliceDoc(from - 2, from - 1) : '\n';
+
+    let prefixSpacing = '';
+    if (charBefore !== '\n') {
+      prefixSpacing = '\n\n';
+    } else if (secondCharBefore !== '\n') {
+      prefixSpacing = '\n';
+    }
+
+    const charAfter = to < state.doc.length ? state.sliceDoc(to, to + 1) : '\n';
+    let suffixSpacing = '';
+    if (charAfter !== '\n') {
+      suffixSpacing = '\n';
+    }
+
+    const finalInsert = `${prefixSpacing}${insertion}${suffixSpacing}`;
+
+    // Select the "Header 1" text for easy editing.
+    // "Header 1" starts after the leading "| " (length 2) of the table insertion.
+    const selStart = from + prefixSpacing.length + 2;
+    const selEnd = selStart + 8; // length of "Header 1"
+
+    view.dispatch({
+      changes: { from, to, insert: finalInsert },
+      selection: { anchor: selStart, head: selEnd }
+    });
+    view.focus();
+  }
+
+  /**
    * Sets or toggles heading level for the active line.
    * @param {number} level - Heading level (1 to 6).
    */
@@ -976,6 +1021,69 @@ export class TravenEditor {
     // 4. Convert blockquotes (restore escaped gt)
     content = content.replace(/^&gt; (.*?)$/gm, "<blockquote>$1</blockquote>");
 
+    // 4.5. Convert GFM tables
+    const tableLines = content.split("\n");
+    const processedTableLines = [];
+    let inTable = false;
+    let tableRows = [];
+
+    const renderTableHtml = (rows) => {
+      if (rows.length < 2) return rows.join("\n");
+      const headerRow = rows[0];
+      const separatorRow = rows[1];
+      const isSeparator = /^[|\s:-]+$/.test(separatorRow);
+      if (!isSeparator) return rows.join("\n");
+
+      const parseCells = (rowText) => {
+        let clean = rowText.trim();
+        if (clean.startsWith("|")) clean = clean.slice(1);
+        if (clean.endsWith("|")) clean = clean.slice(0, -1);
+        return clean.split("|").map(cell => cell.trim());
+      };
+
+      const headers = parseCells(headerRow);
+      let html = "<table>\n<thead>\n<tr>\n";
+      headers.forEach(h => {
+        html += `<th>${h}</th>\n`;
+      });
+      html += "</tr>\n</thead>\n<tbody>\n";
+
+      for (let j = 2; j < rows.length; j++) {
+        const cells = parseCells(rows[j]);
+        html += "<tr>\n";
+        for (let k = 0; k < headers.length; k++) {
+          html += `<td>${cells[k] || ""}</td>\n`;
+        }
+        html += "</tr>\n";
+      }
+      html += "</tbody>\n</table>";
+      return html;
+    };
+
+    for (let i = 0; i < tableLines.length; i++) {
+      const line = tableLines[i];
+      const trimmed = line.trim();
+      const isTableRow = trimmed.startsWith("|") && trimmed.length > 1;
+
+      if (isTableRow) {
+        if (!inTable) {
+          inTable = true;
+          tableRows = [];
+        }
+        tableRows.push(trimmed);
+      } else {
+        if (inTable) {
+          processedTableLines.push(renderTableHtml(tableRows));
+          inTable = false;
+        }
+        processedTableLines.push(line);
+      }
+    }
+    if (inTable) {
+      processedTableLines.push(renderTableHtml(tableRows));
+    }
+    content = processedTableLines.join("\n");
+
     // 5. Convert lists
     let inList = false;
     const lines = content.split("\n");
@@ -1014,7 +1122,7 @@ export class TravenEditor {
       const trimmed = block.trim();
       if (!trimmed) return "";
       // If it's already an HTML block tag, image, or hr, don't wrap in <p>
-      if (/^<(h[1-6]|blockquote|ul|li|img|hr)/i.test(trimmed)) {
+      if (/^<(h[1-6]|blockquote|ul|li|img|hr|table)/i.test(trimmed)) {
         return trimmed;
       }
       return `<p>${trimmed.replace(/\n/g, "<br>")}</p>`;

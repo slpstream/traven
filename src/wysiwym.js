@@ -71,6 +71,140 @@ class BulletWidget extends WidgetType {
   eq() { return true; }
 }
 
+class TableWidget extends WidgetType {
+  constructor(tableText, tableFrom) {
+    super();
+    this.tableText = tableText;
+    this.tableFrom = tableFrom;
+  }
+
+  toDOM(view) {
+    const container = document.createElement("div");
+    container.className = "cm-wysiwym-table-widget";
+
+    const allLines = this.tableText.split("\n");
+    const lines = allLines.filter(l => l.trim());
+    if (lines.length < 2) {
+      container.textContent = this.tableText;
+      return container;
+    }
+
+    // Verify line[1] is a separator row
+    const isSeparator = /^[|\s:-]+$/.test(lines[1].trim());
+    if (!isSeparator) {
+      container.textContent = this.tableText;
+      return container;
+    }
+
+    // Compute start offset of each line in the original text
+    let charOffset = 0;
+    const lineStarts = {};
+    for (let i = 0; i < allLines.length; i++) {
+      lineStarts[allLines[i]] = lineStarts[allLines[i]] === undefined ? charOffset : lineStarts[allLines[i]];
+      charOffset += allLines[i].length + 1;
+    }
+
+    // Find start position of each cell's trimmed content within a line
+    const findCellContentPositions = (line) => {
+      const positions = [];
+      let i = line.indexOf("|");
+      if (i === -1) return positions;
+      i++; // skip first pipe
+      while (i < line.length) {
+        // Find next pipe
+        let nextPipe = line.indexOf("|", i);
+        if (nextPipe === -1) break;
+        // Cell raw slice is line[i..nextPipe]
+        const rawCell = line.slice(i, nextPipe);
+        // Find trimmed content start
+        const trimmedStart = i + (rawCell.length - rawCell.trimStart().length);
+        positions.push(trimmedStart);
+        i = nextPipe + 1;
+      }
+      return positions;
+    };
+
+    const parseCells = (line) => {
+      let clean = line.trim();
+      if (clean.startsWith("|")) clean = clean.slice(1);
+      if (clean.endsWith("|")) clean = clean.slice(0, -1);
+      return clean.split("|").map(c => c.trim());
+    };
+
+    const table = document.createElement("table");
+    const tableFrom = this.tableFrom;
+
+    // Use a unique-offset approach: track cumulative line offsets directly
+    let cumOffset = 0;
+    const lineOffsets = [];
+    for (const l of allLines) {
+      lineOffsets.push(cumOffset);
+      cumOffset += l.length + 1;
+    }
+    // Map filtered lines to their index in allLines
+    const filteredLineIndices = [];
+    for (let i = 0; i < allLines.length; i++) {
+      if (allLines[i].trim()) filteredLineIndices.push(i);
+    }
+
+    // Header (filteredLineIndices[0])
+    const thead = document.createElement("thead");
+    const headerTr = document.createElement("tr");
+    const headers = parseCells(lines[0]);
+    const hLineIdx = filteredLineIndices[0];
+    const hPositions = findCellContentPositions(allLines[hLineIdx]);
+    headers.forEach((h, j) => {
+      const th = document.createElement("th");
+      th.textContent = h;
+      if (hPositions[j] !== undefined) {
+        th.dataset.pos = String(tableFrom + lineOffsets[hLineIdx] + hPositions[j]);
+      }
+      headerTr.appendChild(th);
+    });
+    thead.appendChild(headerTr);
+    table.appendChild(thead);
+
+    // Body (skip separator at filteredLineIndices[1])
+    const tbody = document.createElement("tbody");
+    for (let fi = 2; fi < filteredLineIndices.length; fi++) {
+      const tr = document.createElement("tr");
+      const lineIdx = filteredLineIndices[fi];
+      const cells = parseCells(allLines[lineIdx]);
+      const cPositions = findCellContentPositions(allLines[lineIdx]);
+      for (let j = 0; j < headers.length; j++) {
+        const td = document.createElement("td");
+        td.textContent = cells[j] || "";
+        if (cPositions[j] !== undefined) {
+          td.dataset.pos = String(tableFrom + lineOffsets[lineIdx] + cPositions[j]);
+        }
+        tr.appendChild(td);
+      }
+      tbody.appendChild(tr);
+    }
+    table.appendChild(tbody);
+    container.appendChild(table);
+
+    // Click handler: place cursor at the clicked cell's document position
+    container.addEventListener("mousedown", (e) => {
+      const cell = e.target.closest("th, td");
+      if (!cell || !cell.dataset.pos) return;
+      e.preventDefault();
+      e.stopPropagation();
+      const pos = parseInt(cell.dataset.pos);
+      view.dispatch({ selection: { anchor: pos } });
+      view.focus();
+    });
+
+    return container;
+  }
+
+  eq(other) {
+    return this.tableText === other.tableText && this.tableFrom === other.tableFrom;
+  }
+
+  ignoreEvent() { return false; }
+}
+
 // --- Decoration Tokens ---
 
 const collapseDeco = Decoration.replace({});
@@ -102,6 +236,9 @@ const codeBlockLineFirstDeco = Decoration.line({ class: "cm-wysiwym-codeblock-li
 const codeBlockLineLastDeco = Decoration.line({ class: "cm-wysiwym-codeblock-line cm-wysiwym-codeblock-line-last" });
 const codeBlockLineSingleDeco = Decoration.line({ class: "cm-wysiwym-codeblock-line cm-wysiwym-codeblock-line-first cm-wysiwym-codeblock-line-last" });
 
+// Table line styles
+const tableRowLineDeco = Decoration.line({ class: "cm-wysiwym-table-row" });
+
 
 // --- Suppression StateField ---
 export const setSuppression = StateEffect.define();
@@ -114,7 +251,11 @@ export const suppressionField = StateField.define({
   update(value, tr) {
     if (tr.docChanged) return null;
     for (const effect of tr.effects) {
-      if (effect.is(setSuppression)) return effect.value;
+      if (effect.is(setSuppression)) {
+        // Normalize to array for backwards compatibility
+        const val = effect.value;
+        return Array.isArray(val) ? val : [val];
+      }
       if (effect.is(clearSuppression)) return null;
     }
     return value;
@@ -150,7 +291,7 @@ function buildWysiwymDecorations(state) {
         // 1. Bold (StrongEmphasis)
         if (node.name === "StrongEmphasis") {
           const isCursorInside = cursorHead >= node.from && cursorHead <= node.to;
-          const isSuppressed = suppressed && suppressed.from === node.from && suppressed.to === node.to;
+          const isSuppressed = suppressed && suppressed.some(s => s.from === node.from && s.to === node.to);
 
           if (!isCursorInside || isSuppressed) {
             // Collapse delimiters (first 2 and last 2 characters)
@@ -164,7 +305,7 @@ function buildWysiwymDecorations(state) {
         // 2. Italic (Emphasis)
         if (node.name === "Emphasis") {
           const isCursorInside = cursorHead >= node.from && cursorHead <= node.to;
-          const isSuppressed = suppressed && suppressed.from === node.from && suppressed.to === node.to;
+          const isSuppressed = suppressed && suppressed.some(s => s.from === node.from && s.to === node.to);
 
           if (!isCursorInside || isSuppressed) {
             // Collapse delimiters (first 1 and last 1 characters)
@@ -178,7 +319,7 @@ function buildWysiwymDecorations(state) {
         // 2.5 Strikethrough (Strikethrough)
         if (node.name === "Strikethrough") {
           const isCursorInside = cursorHead >= node.from && cursorHead <= node.to;
-          const isSuppressed = suppressed && suppressed.from === node.from && suppressed.to === node.to;
+          const isSuppressed = suppressed && suppressed.some(s => s.from === node.from && s.to === node.to);
 
           if (!isCursorInside || isSuppressed) {
             // Collapse delimiters (first 2 and last 2 characters '~~')
@@ -330,6 +471,32 @@ function buildWysiwymDecorations(state) {
           if (!isCursorInside) {
             collected.push({ from: node.from, to: node.from + 3, deco: collapseDeco });
             collected.push({ from: node.to - 3, to: node.to, deco: collapseDeco });
+          }
+        }
+
+        // 9.5 GFM Table
+        if (node.name === "Table") {
+          const isCursorInside = cursorHead >= node.from && cursorHead <= node.to;
+
+          if (!isCursorInside) {
+            // Replace the entire table with a rendered HTML table widget
+            const tableText = state.doc.sliceString(node.from, node.to);
+            collected.push({
+              from: node.from,
+              to: node.to,
+              deco: Decoration.replace({ widget: new TableWidget(tableText, node.from), block: true })
+            });
+          } else {
+            // When editing: apply subtle background tint to table lines
+            const startLine = state.doc.lineAt(node.from).number;
+            const endLine = state.doc.lineAt(node.to).number;
+            for (let i = startLine; i <= endLine; i++) {
+              if (!decoratedLines.has(i)) {
+                const line = state.doc.line(i);
+                collected.push({ from: line.from, to: line.from, deco: tableRowLineDeco });
+                decoratedLines.add(i);
+              }
+            }
           }
         }
 

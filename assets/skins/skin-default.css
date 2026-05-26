@@ -383,6 +383,46 @@
   display: inline-block;
 }
 
+/* Table line styling (editing mode background tint) */
+.cm-editor .cm-wysiwym-table-row {
+  background-color: rgba(241, 245, 249, 0.45) !important;
+  font-family: 'Fira Code', monospace !important;
+  font-size: 0.88em !important;
+}
+
+/* Table widget (rendered WYSIWYM table) */
+.cm-wysiwym-table-widget {
+  margin: 8px 0;
+}
+
+.cm-wysiwym-table-widget table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92em;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.cm-wysiwym-table-widget th,
+.cm-wysiwym-table-widget td {
+  padding: 8px 12px;
+  border: 1px solid #e2e8f0;
+  text-align: left;
+  cursor: text;
+}
+
+.cm-wysiwym-table-widget th {
+  background-color: #f1f5f9;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.cm-wysiwym-table-widget tr:nth-child(even) {
+  background-color: #f8fafc;
+}
+
+
 /* Scoped Dark Mode overrides */
 .cm-editor.cm-wysiwym-dark {
   background-color: #0f172a !important; /* Deep Slate 900 */
@@ -500,6 +540,28 @@
 
 .cm-editor.cm-wysiwym-dark .cm-wysiwym-bullet {
   color: #38bdf8 !important;
+}
+
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-table-row {
+  background-color: rgba(30, 41, 59, 0.45) !important;
+}
+
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-table-widget table {
+  border-color: #334155;
+}
+
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-table-widget th,
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-table-widget td {
+  border-color: #334155;
+}
+
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-table-widget th {
+  background-color: #1e293b;
+  color: #f8fafc;
+}
+
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-table-widget tr:nth-child(even) {
+  background-color: rgba(30, 41, 59, 0.3);
 }
 
 .cm-editor.cm-wysiwym-dark .cm-wysiwym-codeblock-line {
@@ -675,6 +737,26 @@
   border-top: 1px solid #e2e8f0;
   margin: 24px 0;
 }
+.traven-preview table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 0.92em;
+}
+.traven-preview th,
+.traven-preview td {
+  padding: 8px 12px;
+  border: 1px solid #e2e8f0;
+  text-align: left;
+}
+.traven-preview th {
+  background-color: #f8fafc;
+  font-weight: 600;
+  color: #0f172a;
+}
+.traven-preview tr:nth-child(even) {
+  background-color: #fdfdfd;
+}
 
 /* Dark mode overrides for default skin preview */
 .traven-preview.cm-wysiwym-dark {
@@ -707,6 +789,18 @@
 }
 .traven-preview.cm-wysiwym-dark hr {
   border-top-color: #334155;
+}
+
+.traven-preview.cm-wysiwym-dark table th,
+.traven-preview.cm-wysiwym-dark table td {
+  border-color: #334155;
+}
+.traven-preview.cm-wysiwym-dark table th {
+  background-color: #1e293b;
+  color: #f8fafc;
+}
+.traven-preview.cm-wysiwym-dark table tr:nth-child(even) {
+  background-color: rgba(30, 41, 59, 0.2);
 }
 
 

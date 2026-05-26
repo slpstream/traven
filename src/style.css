@@ -132,6 +132,31 @@
   color: #38bdf8 !important;
 }
 
+/* Table line styling for dark mode */
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-table-row {
+  background-color: rgba(30, 41, 59, 0.45) !important;
+  font-family: 'Fira Code', monospace !important;
+  font-size: 0.88em !important;
+}
+
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-table-widget table {
+  border-color: #334155;
+}
+
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-table-widget th,
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-table-widget td {
+  border-color: #334155;
+}
+
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-table-widget th {
+  background-color: #1e293b;
+  color: #f8fafc;
+}
+
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-table-widget tr:nth-child(even) {
+  background-color: rgba(30, 41, 59, 0.3);
+}
+
 /* Code Blocks */
 .cm-editor.cm-wysiwym-dark .cm-wysiwym-codeblock-line {
   background-color: #1e293b;
