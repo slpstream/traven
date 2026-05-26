@@ -202,6 +202,205 @@ export function openLinkModal(editor, triggerBtn) {
 }
 
 /**
+ * Renders the Image Insertion Modal dialog.
+ * Supports two insertion paths:
+ *   1. Direct URL input — constructs ![alt](url) markdown.
+ *   2. File upload via onUploadImage callback — uploads first, then inserts.
+ *
+ * @param {Object} editor - The TravenEditor instance.
+ * @param {HTMLElement} triggerBtn - The button that triggered the modal.
+ */
+export function openImageModal(editor, triggerBtn) {
+  const uploadHandler = typeof editor.getUploadHandler === "function"
+    ? editor.getUploadHandler()
+    : null;
+
+  const form = document.createElement("div");
+
+  // Alt text field
+  const altField = document.createElement("div");
+  altField.className = "traven-modal-field";
+  altField.innerHTML = `
+    <label class="traven-modal-label" for="traven-image-alt">Alt Text</label>
+    <input type="text" id="traven-image-alt" class="traven-modal-input" placeholder="e.g. A sunset over mountains" value="" />
+  `;
+  form.appendChild(altField);
+
+  // URL field
+  const urlField = document.createElement("div");
+  urlField.className = "traven-modal-field";
+  urlField.innerHTML = `
+    <label class="traven-modal-label" for="traven-image-url">Image URL</label>
+    <input type="text" id="traven-image-url" class="traven-modal-input" placeholder="e.g. https://example.com/photo.jpg" value="" />
+  `;
+  form.appendChild(urlField);
+
+  // Optional file picker (only if upload handler is configured)
+  let fileInput = null;
+  if (uploadHandler) {
+    const fileField = document.createElement("div");
+    fileField.className = "traven-modal-field";
+
+    const fileLabel = document.createElement("label");
+    fileLabel.className = "traven-modal-label";
+    fileLabel.textContent = "Or Upload a File";
+
+    const fileRow = document.createElement("div");
+    fileRow.className = "traven-modal-file-row";
+
+    fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/*";
+    fileInput.id = "traven-image-file";
+    fileInput.style.display = "none";
+
+    const fileBtn = document.createElement("button");
+    fileBtn.type = "button";
+    fileBtn.className = "traven-modal-file-btn";
+    fileBtn.textContent = "Choose File";
+    fileBtn.addEventListener("click", () => fileInput.click());
+
+    const fileName = document.createElement("span");
+    fileName.className = "traven-modal-file-name";
+    fileName.textContent = "No file chosen";
+
+    // Thumbnail preview element
+    const thumbContainer = document.createElement("div");
+    thumbContainer.className = "traven-modal-thumb-container";
+    thumbContainer.style.display = "none";
+
+    const thumbImg = document.createElement("img");
+    thumbImg.className = "traven-modal-thumb";
+    thumbImg.alt = "File preview";
+    thumbContainer.appendChild(thumbImg);
+
+    fileInput.addEventListener("change", () => {
+      const urlInput = form.querySelector("#traven-image-url");
+      if (fileInput.files && fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+        fileName.textContent = file.name;
+        urlInput.value = "";
+        urlInput.disabled = true;
+
+        // Generate thumbnail preview
+        const objectUrl = URL.createObjectURL(file);
+        thumbImg.src = objectUrl;
+        thumbContainer.style.display = "block";
+        // Revoke object URL when image loads to free memory
+        thumbImg.onload = () => URL.revokeObjectURL(objectUrl);
+      } else {
+        fileName.textContent = "No file chosen";
+        urlInput.disabled = false;
+        thumbContainer.style.display = "none";
+        thumbImg.src = "";
+      }
+    });
+
+    fileRow.appendChild(fileBtn);
+    fileRow.appendChild(fileName);
+    fileRow.appendChild(fileInput);
+
+    fileField.appendChild(fileLabel);
+    fileField.appendChild(fileRow);
+    fileField.appendChild(thumbContainer);
+    form.appendChild(fileField);
+  }
+
+  // Error message container
+  const errorEl = document.createElement("div");
+  errorEl.className = "traven-modal-error";
+  errorEl.style.display = "none";
+  form.appendChild(errorEl);
+
+  // Pre-fill alt text with selection if any
+  const view = editor.getView();
+  const { from, to } = view.state.selection.main;
+  const selectionText = from !== to ? view.state.sliceDoc(from, to) : "";
+  if (selectionText) {
+    form.querySelector("#traven-image-alt").value = selectionText;
+  }
+
+  /**
+   * Inserts the image markdown and moves the cursor to the next line
+   * so the WYSIWYM decoration renders the image widget immediately.
+   *
+   * The image decoration check uses `cursorHead <= node.to` (inclusive).
+   * By always appending a newline and placing the cursor after it,
+   * we guarantee cursorHead > node.to and the widget renders.
+   */
+  const insertImageAndUnfocus = (altText, url) => {
+    const v = editor.getView();
+    const range = v.state.selection.main;
+    const imgMarkdown = `![${altText}](${url})`;
+    const insertion = imgMarkdown + "\n";
+
+    v.dispatch({
+      changes: { from: range.from, to: range.to, insert: insertion },
+      selection: { anchor: range.from + insertion.length }
+    });
+    v.focus();
+  };
+
+  openModal({
+    title: "Insert Image",
+    body: form,
+    triggerElement: triggerBtn,
+    buttons: [
+      {
+        text: "Cancel",
+        type: "secondary",
+        onClick: (e, overlay) => {
+          overlay.querySelector(".traven-modal-close").click();
+        }
+      },
+      {
+        text: "Insert",
+        type: "primary",
+        onClick: async (e, overlay) => {
+          const altInput = overlay.querySelector("#traven-image-alt");
+          const urlInput = overlay.querySelector("#traven-image-url");
+          const altText = altInput.value.trim() || "image";
+          const urlValue = urlInput.value.trim();
+          const hasFile = fileInput && fileInput.files && fileInput.files.length > 0;
+
+          // Validate: must have either a URL or a file
+          if (!urlValue && !hasFile) {
+            errorEl.textContent = "Please enter an image URL or choose a file.";
+            errorEl.style.display = "block";
+            return;
+          }
+
+          if (hasFile && uploadHandler) {
+            // File upload path
+            const insertBtn = overlay.querySelector(".traven-modal-btn.btn-primary");
+            const originalText = insertBtn.textContent;
+            insertBtn.textContent = "Uploading…";
+            insertBtn.classList.add("is-uploading");
+            errorEl.style.display = "none";
+
+            try {
+              const finalUrl = await uploadHandler(fileInput.files[0]);
+              insertImageAndUnfocus(altText, finalUrl);
+              overlay.querySelector(".traven-modal-close").click();
+            } catch (err) {
+              insertBtn.textContent = originalText;
+              insertBtn.classList.remove("is-uploading");
+              errorEl.textContent = "Upload failed: " + (err.message || "Unknown error");
+              errorEl.style.display = "block";
+            }
+          } else {
+            // Direct URL path
+            const url = urlValue || "#";
+            insertImageAndUnfocus(altText, url);
+            overlay.querySelector(".traven-modal-close").click();
+          }
+        }
+      }
+    ]
+  });
+}
+
+/**
  * Renders the Help Cheat Sheet Modal dialog.
  *
  * @param {Object} editor - The TravenEditor instance.

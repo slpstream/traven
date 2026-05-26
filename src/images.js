@@ -4,20 +4,23 @@ import { syntaxTree } from "@codemirror/language";
 
 // --- Image Preview Widget ---
 class ImageWidget extends WidgetType {
-  constructor(url, alt) {
+  constructor(url, alt, nodeFrom) {
     super();
     this.url = url;
     this.alt = alt;
+    this.nodeFrom = nodeFrom;
   }
 
-  toDOM() {
+  toDOM(view) {
     const container = document.createElement("div");
     container.className = "cm-wysiwym-image-widget-container";
+    container.style.cursor = "pointer";
 
     const img = document.createElement("img");
     img.src = this.url;
     img.alt = this.alt;
     img.className = "cm-wysiwym-image-preview";
+    img.draggable = false;
 
     const caption = document.createElement("div");
     caption.className = "cm-wysiwym-image-caption";
@@ -25,12 +28,23 @@ class ImageWidget extends WidgetType {
 
     container.appendChild(img);
     container.appendChild(caption);
+
+    // Click handler: place cursor inside the image node so WYSIWYM reveals the markdown
+    container.addEventListener("mousedown", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      view.dispatch({ selection: { anchor: this.nodeFrom } });
+      view.focus();
+    });
+
     return container;
   }
 
   eq(other) {
-    return other instanceof ImageWidget && other.url === this.url && other.alt === this.alt;
+    return other instanceof ImageWidget && other.url === this.url && other.alt === this.alt && other.nodeFrom === this.nodeFrom;
   }
+
+  ignoreEvent() { return false; }
 }
 
 // --- Uploading Placeholder Widget ---
@@ -97,7 +111,7 @@ function buildImageDecorations(state) {
                 collected.push({
                   from: node.from,
                   to: node.to,
-                  deco: Decoration.replace({ widget: new ImageWidget(url, alt), block: true })
+                  deco: Decoration.replace({ widget: new ImageWidget(url, alt, node.from), block: true })
                 });
               }
             }

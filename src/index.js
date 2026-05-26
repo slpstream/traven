@@ -63,6 +63,7 @@ export const DEFAULT_TOOLBAR = [
   "datetime",
   "search",
   "link",
+  "image",
   "fullscreen",
   "clear",
   "uppercase",
@@ -125,6 +126,7 @@ function buildBaseSetup(options = {}) {
  * @property {string} [caretColor] - Configurable caret color override.
  * @property {Array<string>|boolean} [toolbar=false] - Toolbar configuration array or false.
  */
+
 
 export class TravenEditor {
   /** @type {EditorView} */
@@ -1001,6 +1003,14 @@ export class TravenEditor {
    */
   getView() {
     return this.#view;
+  }
+
+  /**
+   * Returns the configured image upload handler, or null if not set.
+   * @returns {function(File): Promise<string> | null}
+   */
+  getUploadHandler() {
+    return this.#options.onUploadImage || null;
   }
 
   /**
