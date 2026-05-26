@@ -214,6 +214,7 @@ const boldDeco = Decoration.mark({ class: "cm-wysiwym-bold" });
 const italicDeco = Decoration.mark({ class: "cm-wysiwym-italic" });
 const codeDeco = Decoration.mark({ class: "cm-wysiwym-inline-code" });
 const strikethroughDeco = Decoration.mark({ class: "cm-wysiwym-strikethrough" });
+const linkDeco = Decoration.mark({ class: "cm-wysiwym-link-anchor" });
 
 // Block/Frontmatter styled decorations
 const frontmatterLineDeco = Decoration.line({ class: "cm-wysiwym-frontmatter" });
@@ -340,6 +341,62 @@ function buildWysiwymDecorations(state) {
             collected.push({ from: node.to - 1, to: node.to, deco: collapseDeco });
             // Style content
             collected.push({ from: node.from + 1, to: node.to - 1, deco: codeDeco });
+          }
+        }
+
+        // 3.5. Links [text](url) / [text](url "title")
+        if (node.name === "Link") {
+          const isCursorInside = cursorHead >= node.from && cursorHead <= node.to;
+
+          if (!isCursorInside) {
+            // Walk child nodes to find content boundaries, collapse markers/URL/title
+            const c = node.node.cursor();
+            let firstMarkEnd = null;
+            let secondMarkStart = null;
+            let linkTitle = null;
+            let markCount = 0;
+
+            if (c.firstChild()) {
+              do {
+                if (c.name === "LinkMark") {
+                  markCount++;
+                  if (markCount === 1) firstMarkEnd = c.to;   // end of "["
+                  if (markCount === 2) secondMarkStart = c.from; // start of "]"
+                  // Collapse all bracket/paren markers
+                  collected.push({ from: c.from, to: c.to, deco: collapseDeco });
+                }
+                if (c.name === "URL") {
+                  collected.push({ from: c.from, to: c.to, deco: collapseDeco });
+                }
+                if (c.name === "LinkTitle") {
+                  // Extract title text (strip surrounding quotes)
+                  const raw = state.sliceDoc(c.from, c.to);
+                  linkTitle = raw.replace(/^["'(]|["')]$/g, "");
+                  collected.push({ from: c.from, to: c.to, deco: collapseDeco });
+                }
+              } while (c.nextSibling());
+            }
+
+            // Style the visible link text (between "[" and "]")
+            if (firstMarkEnd !== null && secondMarkStart !== null && secondMarkStart > firstMarkEnd) {
+              const deco = linkTitle
+                ? Decoration.mark({ class: "cm-wysiwym-link-anchor", attributes: { title: linkTitle } })
+                : linkDeco;
+              collected.push({ from: firstMarkEnd, to: secondMarkStart, deco });
+            }
+          }
+        }
+
+        // 3.6. Autolinks <https://url>
+        if (node.name === "Autolink") {
+          const isCursorInside = cursorHead >= node.from && cursorHead <= node.to;
+
+          if (!isCursorInside) {
+            // Collapse the < and > angle brackets (first and last characters)
+            collected.push({ from: node.from, to: node.from + 1, deco: collapseDeco });
+            collected.push({ from: node.to - 1, to: node.to, deco: collapseDeco });
+            // Style the URL text between the brackets
+            collected.push({ from: node.from + 1, to: node.to - 1, deco: linkDeco });
           }
         }
 
@@ -608,9 +665,50 @@ export const wysiwymField = StateField.define({
   provide: (f) => EditorView.decorations.from(f)
 });
 
+// --- Ctrl/Cmd+Click handler for opening links ---
+const linkClickHandler = EditorView.domEventHandlers({
+  click(event, view) {
+    if (!event.ctrlKey && !event.metaKey) return false;
+
+    const pos = view.posAtCoords({ x: event.clientX, y: event.clientY });
+    if (pos === null) return false;
+
+    let linkUrl = null;
+    syntaxTree(view.state).iterate({
+      from: pos,
+      to: pos,
+      enter(node) {
+        if (node.name === "Link") {
+          const c = node.node.cursor();
+          if (c.firstChild()) {
+            do {
+              if (c.name === "URL") {
+                linkUrl = view.state.sliceDoc(c.from, c.to);
+                break;
+              }
+            } while (c.nextSibling());
+          }
+        }
+        if (node.name === "Autolink") {
+          // Autolink URL is the text between < and >
+          linkUrl = view.state.sliceDoc(node.from + 1, node.to - 1);
+        }
+      }
+    });
+
+    if (linkUrl) {
+      window.open(linkUrl, "_blank", "noopener,noreferrer");
+      event.preventDefault();
+      return true;
+    }
+    return false;
+  }
+});
+
 export const wysiwymPlugin = () => {
   return [
     suppressionField,
-    wysiwymField
+    wysiwymField,
+    linkClickHandler
   ];
 };

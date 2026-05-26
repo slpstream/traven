@@ -297,6 +297,10 @@
   cursor: pointer;
 }
 
+.cm-wysiwym-link-anchor * {
+  color: inherit !important;
+}
+
 /* Block-level Code Blocks - Slate Dark */
 .cm-editor .cm-wysiwym-codeblock-line {
   background-color: #1e293b; /* Slate 800 */

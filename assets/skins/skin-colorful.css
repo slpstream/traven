@@ -299,6 +299,10 @@
   cursor: pointer;
 }
 
+.cm-wysiwym-link-anchor * {
+  color: inherit !important;
+}
+
 /* Block-level Code Blocks - Colorful Variant */
 .cm-editor .cm-wysiwym-codeblock-line {
   background-color: #f1f5f9;

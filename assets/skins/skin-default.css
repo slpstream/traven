@@ -299,6 +299,10 @@
   cursor: pointer;
 }
 
+.cm-wysiwym-link-anchor * {
+  color: inherit !important;
+}
+
 /* Block-level Code Blocks - Neutral Slate */
 .cm-editor .cm-wysiwym-codeblock-line {
   background-color: #f8fafc;

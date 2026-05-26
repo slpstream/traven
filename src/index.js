@@ -1057,6 +1057,9 @@ export class TravenEditor {
     // 1. Strip YAML frontmatter if present
     let content = md.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/, "");
     
+    // 1.5. Convert autolinks <url> before HTML escaping destroys the angle brackets
+    content = content.replace(/<(https?:\/\/[^\s>]+)>/g, '[$1]($1)');
+
     // 2. Escape HTML characters to prevent XSS in fallback
     content = content
       .replace(/&/g, "&amp;")

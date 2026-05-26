@@ -120,6 +120,70 @@ function findSkipTarget(state, cursor, direction) {
           }
         }
       }
+
+      // 6. Link delimiters [text](url) — skip over collapsed brackets/URL
+      if (node.name === "Link") {
+        let firstMarkEnd = null;
+        let secondMarkStart = null;
+        let lastMarkEnd = null;
+        let markCount = 0;
+
+        const c = node.node.cursor();
+        if (c.firstChild()) {
+          do {
+            if (c.name === "LinkMark") {
+              markCount++;
+              if (markCount === 1) firstMarkEnd = c.to;
+              if (markCount === 2) secondMarkStart = c.from;
+            }
+          } while (c.nextSibling());
+          lastMarkEnd = node.to; // the ")" is always the last character
+        }
+
+        if (firstMarkEnd && secondMarkStart && lastMarkEnd) {
+          if (direction === "right") {
+            // Entering from left: skip "[" to land on link text
+            if (cursor >= node.from && cursor < firstMarkEnd) {
+              best = { target: firstMarkEnd, suppressRange: null };
+            }
+            // Exiting link text right: skip "](url)" to land after ")"
+            if (cursor >= secondMarkStart && cursor < lastMarkEnd) {
+              best = { target: lastMarkEnd, suppressRange: null };
+            }
+          } else {
+            // Entering from right: skip ")" and URL to land at end of link text
+            if (cursor > secondMarkStart && cursor <= lastMarkEnd) {
+              best = { target: secondMarkStart, suppressRange: null };
+            }
+            // Exiting link text left: skip "[" to land before link
+            if (cursor > node.from && cursor <= firstMarkEnd) {
+              best = { target: node.from, suppressRange: null };
+            }
+          }
+        }
+      }
+
+      // 7. Autolink delimiters <url> — skip over collapsed angle brackets
+      if (node.name === "Autolink") {
+        const openEnd = node.from + 1;
+        const closeStart = node.to - 1;
+
+        if (direction === "right") {
+          if (cursor >= node.from && cursor < openEnd) {
+            best = { target: openEnd, suppressRange: null };
+          }
+          if (cursor >= closeStart && cursor < node.to) {
+            best = { target: node.to, suppressRange: null };
+          }
+        } else {
+          if (cursor > closeStart && cursor <= node.to) {
+            best = { target: closeStart, suppressRange: null };
+          }
+          if (cursor > node.from && cursor <= openEnd) {
+            best = { target: node.from, suppressRange: null };
+          }
+        }
+      }
     }
   });
 
