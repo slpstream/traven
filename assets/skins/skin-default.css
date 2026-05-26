@@ -421,6 +421,8 @@
   border: 1px solid #e2e8f0;
   text-align: left;
   cursor: text;
+  height: 38px; /* Acts as min-height for table cells */
+  box-sizing: border-box;
 }
 
 .cm-wysiwym-table-widget th {
@@ -769,6 +771,8 @@
   padding: 8px 12px;
   border: 1px solid #e2e8f0;
   text-align: left;
+  height: 38px; /* Acts as min-height for table cells */
+  box-sizing: border-box;
 }
 .traven-preview th {
   background-color: #f8fafc;

@@ -445,6 +445,8 @@
   padding: 8px 12px;
   border: 1px solid #334155;
   text-align: left;
+  height: 38px; /* Acts as min-height for table cells */
+  box-sizing: border-box;
 }
 
 .cm-wysiwym-table-widget th {
@@ -562,6 +564,8 @@
   padding: 8px 12px;
   border: 1px solid #334155;
   text-align: left;
+  height: 38px; /* Acts as min-height for table cells */
+  box-sizing: border-box;
 }
 .traven-preview th {
   background-color: #1e293b;
@@ -571,4 +575,97 @@
 .traven-preview tr:nth-child(even) {
   background-color: rgba(30, 41, 59, 0.2);
 }
+
+/* ==========================================================================
+   Traven Modal Dialog & Table Editor - Dark Skin overrides
+   ========================================================================== */
+.traven-modal {
+  background-color: #1e293b !important; /* Slate 800 */
+  color: #f8fafc !important;
+  border-color: #334155 !important;
+}
+
+.traven-modal-header {
+  border-bottom-color: #334155 !important;
+}
+
+.traven-modal-title {
+  color: #f8fafc !important;
+}
+
+.traven-modal-close {
+  color: #94a3b8 !important;
+}
+
+.traven-modal-close:hover {
+  background-color: #334155 !important;
+  color: #f8fafc !important;
+}
+
+.traven-modal-body {
+  color: #e2e8f0 !important;
+}
+
+.traven-modal-footer {
+  background-color: #0f172a !important; /* Slate 900 */
+  border-top-color: #334155 !important;
+}
+
+.traven-modal-label {
+  color: #94a3b8 !important;
+}
+
+.traven-modal-input {
+  background-color: #0f172a !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
+}
+
+.traven-modal-input:focus {
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2) !important;
+}
+
+/* Table Editor specific controls in Dark Skin */
+.traven-table-toolbar-btn {
+  background-color: #1e293b !important;
+  color: #94a3b8 !important;
+  border-color: #334155 !important;
+}
+
+.traven-table-toolbar-btn:hover:not(:disabled) {
+  background-color: #334155 !important;
+  border-color: #475569 !important;
+  color: #f8fafc !important;
+}
+
+.traven-table-editor {
+  border-color: #334155 !important;
+}
+
+.traven-table-editor th,
+.traven-table-editor td {
+  border-color: #334155 !important;
+}
+
+.traven-table-editor th {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+}
+
+.traven-table-editor td {
+  background-color: #1e293b !important;
+  color: #cbd5e1 !important;
+}
+
+.traven-table-editor tr:nth-child(even) td {
+  background-color: #182235 !important;
+}
+
+.traven-table-editor th:focus,
+.traven-table-editor td:focus {
+  background-color: rgba(56, 189, 248, 0.1) !important;
+  box-shadow: inset 0 0 0 2px rgba(56, 189, 248, 0.4) !important;
+}
+
 

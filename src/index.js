@@ -36,6 +36,7 @@ import { wysiwymPlugin } from "./wysiwym.js";
 import { delimiterSkipKeymap } from "./delimiter-skip.js";
 import { imageDecorationPlugin, imageHandlerExtension } from "./images.js";
 import { vim } from "@replit/codemirror-vim";
+import { viewToEditor } from "./bridge.js";
 import "./style.css";
 
 const syncAnnotation = Annotation.define();
@@ -261,6 +262,11 @@ export class TravenEditor {
         extensions
       })
     });
+
+    // Register this editor instance in the view↔editor bridge
+    // so that widget classes (e.g. TableWidget) can resolve the
+    // TravenEditor from an EditorView without circular imports.
+    viewToEditor.set(this.#view, this);
 
     if (options.theme === "dark") {
       this.#view.dom.classList.add("cm-wysiwym-dark");
@@ -1205,10 +1211,12 @@ export class TravenEditor {
    * Destroy the editor instance and clean up listeners.
    */
   destroy() {
-    this.#view.destroy();
+    viewToEditor.delete(this.#view);
     if (this.#rawView) {
+      viewToEditor.delete(this.#rawView);
       this.#rawView.destroy();
     }
+    this.#view.destroy();
     this.#listeners = {};
   }
 }

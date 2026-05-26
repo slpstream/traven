@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { TravenEditor } from '../src/index.js';
+import { parseMarkdownTable, serializeTableToMarkdown } from '../src/toolbar/modal.js';
 
 // Polyfill Range.prototype.getClientRects and getBoundingClientRect for JSDOM / CodeMirror 6 compatibility
 if (typeof window !== 'undefined') {
@@ -125,3 +126,97 @@ describe('TravenEditor', () => {
     expect(editor.getValue()).toBe('Hello World with code, strike and highlight');
   });
 });
+
+describe('parseMarkdownTable', () => {
+  it('parses a basic markdown table correctly', () => {
+    const tableText = [
+      '| Col 1 | Col 2 |',
+      '|-------|-------|',
+      '| Val 1 | Val 2 |',
+      '| Val 3 | Val 4 |'
+    ].join('\n');
+
+    const result = parseMarkdownTable(tableText);
+    expect(result).not.toBeNull();
+    expect(result.headers).toEqual(['Col 1', 'Col 2']);
+    expect(result.rows).toEqual([
+      ['Val 1', 'Val 2'],
+      ['Val 3', 'Val 4']
+    ]);
+  });
+
+  it('parses alignments correctly', () => {
+    const tableText = [
+      '| Left | Center | Right | Default |',
+      '| :--- | :---:  |  ---: | ------- |',
+      '| a    | b      | c     | d       |'
+    ].join('\n');
+
+    const result = parseMarkdownTable(tableText);
+    expect(result).not.toBeNull();
+    expect(result.alignments).toEqual(['left', 'center', 'right', 'left']);
+  });
+
+  it('un-escapes pipe characters correctly and keeps cell boundaries intact', () => {
+    const tableText = [
+      '| Col 1 | Col 2 |',
+      '|-------|-------|',
+      '| a \\| b | c |'
+    ].join('\n');
+
+    const result = parseMarkdownTable(tableText);
+    expect(result).not.toBeNull();
+    expect(result.headers).toEqual(['Col 1', 'Col 2']);
+    expect(result.rows).toEqual([
+      ['a | b', 'c']
+    ]);
+  });
+
+  it('returns null for invalid tables', () => {
+    expect(parseMarkdownTable('')).toBeNull();
+    expect(parseMarkdownTable('just a plain line')).toBeNull();
+    expect(parseMarkdownTable('| header |\n| no dashes |')).toBeNull();
+  });
+});
+
+describe('serializeTableToMarkdown', () => {
+  it('serializes table structured data into a pipe-aligned string', () => {
+    const headers = ['A', 'B'];
+    const rows = [['1', '2'], ['3', '4']];
+    const alignments = [null, null];
+
+    const result = serializeTableToMarkdown(headers, rows, alignments);
+    expect(result).toBe(
+      '| A   | B   |\n' +
+      '|-----|-----|\n' +
+      '| 1   | 2   |\n' +
+      '| 3   | 4   |'
+    );
+  });
+
+  it('handles alignments in serialization correctly', () => {
+    const headers = ['L', 'C', 'R'];
+    const rows = [['a', 'b', 'c']];
+    const alignments = ['left', 'center', 'right'];
+
+    const result = serializeTableToMarkdown(headers, rows, alignments);
+    expect(result).toBe(
+      '| L   | C   | R   |\n' +
+      '|:----|:---:|----:|\n' +
+      '| a   | b   | c   |'
+    );
+  });
+
+  it('escapes pipe characters in cells during serialization', () => {
+    const headers = ['A', 'B'];
+    const rows = [['a | b', 'c']];
+
+    const result = serializeTableToMarkdown(headers, rows);
+    expect(result).toBe(
+      '| A      | B   |\n' +
+      '|--------|-----|\n' +
+      '| a \\| b | c   |'
+    );
+  });
+});
+

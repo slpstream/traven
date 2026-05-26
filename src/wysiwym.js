@@ -8,6 +8,8 @@ import {
   EditorView,
   WidgetType
 } from "@codemirror/view";
+import { viewToEditor } from "./bridge.js";
+import { parseMarkdownTable, openTableModal } from "./toolbar/modal.js";
 
 // --- Custom Widget Types ---
 
@@ -82,117 +84,89 @@ class TableWidget extends WidgetType {
     const container = document.createElement("div");
     container.className = "cm-wysiwym-table-widget";
 
-    const allLines = this.tableText.split("\n");
-    const lines = allLines.filter(l => l.trim());
-    if (lines.length < 2) {
+    // Use the shared parser to get structured data
+    const parsed = parseMarkdownTable(this.tableText);
+    if (!parsed) {
       container.textContent = this.tableText;
       return container;
     }
-
-    // Verify line[1] is a separator row
-    const isSeparator = /^[|\s:-]+$/.test(lines[1].trim());
-    if (!isSeparator) {
-      container.textContent = this.tableText;
-      return container;
-    }
-
-    // Compute start offset of each line in the original text
-    let charOffset = 0;
-    const lineStarts = {};
-    for (let i = 0; i < allLines.length; i++) {
-      lineStarts[allLines[i]] = lineStarts[allLines[i]] === undefined ? charOffset : lineStarts[allLines[i]];
-      charOffset += allLines[i].length + 1;
-    }
-
-    // Find start position of each cell's trimmed content within a line
-    const findCellContentPositions = (line) => {
-      const positions = [];
-      let i = line.indexOf("|");
-      if (i === -1) return positions;
-      i++; // skip first pipe
-      while (i < line.length) {
-        // Find next pipe
-        let nextPipe = line.indexOf("|", i);
-        if (nextPipe === -1) break;
-        // Cell raw slice is line[i..nextPipe]
-        const rawCell = line.slice(i, nextPipe);
-        // Find trimmed content start
-        const trimmedStart = i + (rawCell.length - rawCell.trimStart().length);
-        positions.push(trimmedStart);
-        i = nextPipe + 1;
-      }
-      return positions;
-    };
-
-    const parseCells = (line) => {
-      let clean = line.trim();
-      if (clean.startsWith("|")) clean = clean.slice(1);
-      if (clean.endsWith("|")) clean = clean.slice(0, -1);
-      return clean.split("|").map(c => c.trim());
-    };
 
     const table = document.createElement("table");
-    const tableFrom = this.tableFrom;
 
-    // Use a unique-offset approach: track cumulative line offsets directly
-    let cumOffset = 0;
-    const lineOffsets = [];
-    for (const l of allLines) {
-      lineOffsets.push(cumOffset);
-      cumOffset += l.length + 1;
-    }
-    // Map filtered lines to their index in allLines
-    const filteredLineIndices = [];
-    for (let i = 0; i < allLines.length; i++) {
-      if (allLines[i].trim()) filteredLineIndices.push(i);
-    }
+    // Pure function helper to convert basic inline Markdown to HTML inside cells
+    const renderInlineMarkdown = (text) => {
+      if (!text) return "";
+      // Escape HTML characters to prevent XSS
+      let html = text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
 
-    // Header (filteredLineIndices[0])
+      // Convert inline elements (images, links, bold, italic, highlight, code)
+      html = html.replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" style="max-width: 100%; height: auto; display: inline-block;">');
+      html = html.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>');
+      html = html.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+      html = html.replace(/\*(.*?)\*/g, "<em>$1</em>");
+      html = html.replace(/__(.*?)__/g, "<strong>$1</strong>");
+      html = html.replace(/_(.*?)_/g, "<em>$1</em>");
+      html = html.replace(/==(.*?)==/g, '<span class="cm-wysiwym-highlight">$1</span>');
+      html = html.replace(/`(.*?)`/g, "<code>$1</code>");
+
+      return html;
+    };
+
+
+    // Header
     const thead = document.createElement("thead");
     const headerTr = document.createElement("tr");
-    const headers = parseCells(lines[0]);
-    const hLineIdx = filteredLineIndices[0];
-    const hPositions = findCellContentPositions(allLines[hLineIdx]);
-    headers.forEach((h, j) => {
+    parsed.headers.forEach((h, colIdx) => {
       const th = document.createElement("th");
-      th.textContent = h;
-      if (hPositions[j] !== undefined) {
-        th.dataset.pos = String(tableFrom + lineOffsets[hLineIdx] + hPositions[j]);
+      th.innerHTML = renderInlineMarkdown(h);
+      if (parsed.alignments && parsed.alignments[colIdx]) {
+        th.style.textAlign = parsed.alignments[colIdx];
       }
       headerTr.appendChild(th);
     });
     thead.appendChild(headerTr);
     table.appendChild(thead);
 
-    // Body (skip separator at filteredLineIndices[1])
+    // Body
     const tbody = document.createElement("tbody");
-    for (let fi = 2; fi < filteredLineIndices.length; fi++) {
+    parsed.rows.forEach((row) => {
       const tr = document.createElement("tr");
-      const lineIdx = filteredLineIndices[fi];
-      const cells = parseCells(allLines[lineIdx]);
-      const cPositions = findCellContentPositions(allLines[lineIdx]);
-      for (let j = 0; j < headers.length; j++) {
+      for (let j = 0; j < parsed.headers.length; j++) {
         const td = document.createElement("td");
-        td.textContent = cells[j] || "";
-        if (cPositions[j] !== undefined) {
-          td.dataset.pos = String(tableFrom + lineOffsets[lineIdx] + cPositions[j]);
+        td.innerHTML = renderInlineMarkdown(row[j] || "");
+        if (parsed.alignments && parsed.alignments[j]) {
+          td.style.textAlign = parsed.alignments[j];
         }
         tr.appendChild(td);
       }
       tbody.appendChild(tr);
-    }
+    });
     table.appendChild(tbody);
     container.appendChild(table);
 
-    // Click handler: place cursor at the clicked cell's document position
+    // Click handler: open the Table Editor Modal
+    const tableFrom = this.tableFrom;
+    const tableTo = this.tableFrom + this.tableText.length;
+    const tableText = this.tableText;
     container.addEventListener("mousedown", (e) => {
-      const cell = e.target.closest("th, td");
-      if (!cell || !cell.dataset.pos) return;
+      // If user clicked a link, let the browser open it
+      if (e.target.closest("a")) {
+        return;
+      }
       e.preventDefault();
       e.stopPropagation();
-      const pos = parseInt(cell.dataset.pos);
-      view.dispatch({ selection: { anchor: pos } });
-      view.focus();
+      const editor = viewToEditor.get(view);
+      if (editor) {
+        openTableModal({
+          editor,
+          tableData: parseMarkdownTable(tableText),
+          docFrom: tableFrom,
+          docTo: tableTo
+        });
+      }
     });
 
     return container;
