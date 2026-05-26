@@ -177,6 +177,133 @@ describe('TravenEditor', () => {
       expect(html).toBe('<h1>Hello World</h1>');
     });
   });
+
+  describe('list formatting', () => {
+    it('toggles off star-based unordered lists', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: '* item',
+      });
+      editor.insertList('ul');
+      expect(editor.getValue()).toBe('item');
+    });
+
+    it('toggles off plus-based unordered lists', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: '+ item',
+      });
+      editor.insertList('ul');
+      expect(editor.getValue()).toBe('item');
+    });
+
+    it('toggles off unordered list preserving indentation', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: '  - item',
+      });
+      editor.insertList('ul');
+      expect(editor.getValue()).toBe('  item');
+    });
+
+    it('toggles task checkbox via click/mousedown', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: '  - [x] done\nsecond line',
+      });
+      editor.focus();
+      editor.setSelection(15, 15);
+      
+      const checkbox = container.querySelector('input[type="checkbox"]');
+      expect(checkbox).not.toBeNull();
+      expect(checkbox.checked).toBe(true);
+      
+      const event = new window.MouseEvent('mousedown', { bubbles: true, cancelable: true });
+      checkbox.dispatchEvent(event);
+      
+      expect(editor.getValue()).toBe('  - [ ] done\nsecond line');
+    });
+
+    it('converts task list to unordered list by stripping checkbox', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: '- [x] done',
+      });
+      editor.insertList('ul');
+      expect(editor.getValue()).toBe('- done');
+    });
+
+    it('does not format or toggle list items inside fenced code blocks', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: '```\n- code\n```',
+      });
+      const pos = editor.getValue().indexOf('- code') + 1;
+      editor.setSelection(pos, pos);
+      editor.insertList('ul');
+      expect(editor.getValue()).toBe('```\n- code\n```');
+    });
+
+    it('toggles list items nested in blockquotes preserving the quote prefix', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: '> - item',
+      });
+      editor.insertList('ul');
+      expect(editor.getValue()).toBe('> item');
+    });
+
+    it('formats multi-line selection as an ordered list with running counters', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: '- apple\nbanana\n- cherry',
+      });
+      editor.setSelection(0, editor.getValue().length);
+      editor.insertList('ol');
+      expect(editor.getValue()).toBe('1. apple\n2. banana\n3. cherry');
+    });
+
+    it('does not strip negative numbers when inserting list', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: '-3.14 text',
+      });
+      editor.setSelection(0, editor.getValue().length);
+      editor.insertList('ol');
+      expect(editor.getValue()).toBe('1. -3.14 text');
+    });
+
+    it('removes list formatting completely, including nested and indented markers', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: '  - [ ] task\n  - item\n  1. ordered',
+      });
+      editor.setSelection(0, editor.getValue().length);
+      editor.removeFormatting();
+      expect(editor.getValue()).toBe('task\nitem\nordered');
+    });
+
+    it('removes list formatting correctly in partial selections', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: '  - [ ] task',
+      });
+      const start = editor.getValue().indexOf('task');
+      editor.setSelection(start, editor.getValue().length);
+      editor.removeFormatting();
+      expect(editor.getValue()).toBe('  - [ ] task');
+    });
+
+    it('removes list formatting nested inside blockquotes completely', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: '> - item',
+      });
+      editor.setSelection(0, editor.getValue().length);
+      editor.removeFormatting();
+      expect(editor.getValue()).toBe('item');
+    });
+  });
 });
 
 describe('parseMarkdownTable', () => {

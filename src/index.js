@@ -33,7 +33,7 @@ import { undo, redo } from "@codemirror/commands";
 import { search, openSearchPanel } from "@codemirror/search";
 import { buildToolbar } from "./toolbar/toolbar.js";
 import { TOOL_REGISTRY } from "./toolbar/tools.js";
-import { wysiwymPlugin } from "./wysiwym.js";
+import { wysiwymPlugin, getListPrefixAt, getListStrippingRanges, isInCodeBlock } from "./wysiwym.js";
 import { delimiterSkipKeymap } from "./delimiter-skip.js";
 import { imageDecorationPlugin, imageHandlerExtension } from "./images.js";
 import { vim } from "@replit/codemirror-vim";
@@ -609,33 +609,40 @@ export class TravenEditor {
   removeFormatting() {
     const range = this.#view.state.selection.main;
     if (range.empty) return;
-    const rawText = this.#view.state.sliceDoc(range.from, range.to);
+    const state = this.#view.state;
+    const startLineNum = state.doc.lineAt(range.from).number;
+    const endLineNum = state.doc.lineAt(range.to).number;
+    const listRanges = getListStrippingRanges(state, range.from, range.to);
 
-    // 1. Process block-level formatting line-by-line
-    const lines = rawText.split(/\r?\n/);
     const processedLines = [];
 
-    for (const line of lines) {
-      // Remove code block fences: e.g. ``` or ```javascript
-      if (/^\s*```\w*$/.test(line)) {
-        continue;
-      }
-      // Remove horizontal rules: e.g. ---, ***, ___
-      if (/^\s*([-*_])\1{2,}\s*$/.test(line)) {
+    for (let l = startLineNum; l <= endLineNum; l++) {
+      const line = state.doc.line(l);
+      
+      const lineSelStart = Math.max(line.from, range.from);
+      const lineSelEnd = Math.min(line.to, range.to);
+      let lineText = state.sliceDoc(lineSelStart, lineSelEnd);
+
+      if (/^\s*```\w*$/.test(line.text) || /^\s*([-*_])\1{2,}\s*$/.test(line.text)) {
         continue;
       }
 
-      let cleaned = line;
-      // Strip task list markers: e.g. "- [ ] " or "* [x] "
-      cleaned = cleaned.replace(/^\s*[-*+]\s+\[[\sxX]\]\s+/, '');
-      // Strip ordered/unordered list markers: e.g. "- " or "1. "
-      cleaned = cleaned.replace(/^\s*([-*+]|\d+\.)\s+/, '');
-      // Strip blockquote markers (potentially nested): e.g. "> > "
-      cleaned = cleaned.replace(/^\s*(>\s*)+/, '');
-      // Strip heading markers: e.g. "### "
-      cleaned = cleaned.replace(/^\s*#{1,6}\s+/, '');
+      const stripRange = listRanges.find(r => {
+        return r.from >= line.from && r.to <= line.to;
+      });
 
-      processedLines.push(cleaned);
+      if (stripRange) {
+        const stripStartOffset = Math.max(0, stripRange.from - lineSelStart);
+        const stripEndOffset = Math.min(lineText.length, stripRange.to - lineSelStart);
+        if (stripEndOffset > stripStartOffset) {
+          lineText = lineText.slice(0, stripStartOffset) + lineText.slice(stripEndOffset);
+        }
+      }
+
+      lineText = lineText.replace(/^\s*(>\s*)+/, '');
+      lineText = lineText.replace(/^\s*#{1,6}\s+/, '');
+
+      processedLines.push(lineText);
     }
 
     let text = processedLines.join('\n');
@@ -918,6 +925,11 @@ export class TravenEditor {
     const state = view.state;
     const { from, to } = state.selection.main;
 
+    // Do nothing if we are inside a code block
+    if (isInCodeBlock(state, from)) {
+      return;
+    }
+
     const isOL = type === 'ol';
     const isTask = type === 'task';
     const getPrefix = (index) => {
@@ -929,52 +941,55 @@ export class TravenEditor {
     if (from === to) {
       const pos = from;
       const line = state.doc.lineAt(pos);
-      const text = line.text;
-      
-      const taskMatch = text.match(/^(-\s+\[[\sxX]\]\s+)/);
-      const ulMatch = text.match(/^(-\s+)/);
-      const olMatch = text.match(/^(\d+\.\s+)/);
+      const listInfo = getListPrefixAt(state, line.from);
 
-      if (taskMatch) {
-        const matchText = taskMatch[0];
-        if (isTask) {
-          view.dispatch({ changes: { from: line.from, to: line.from + matchText.length, insert: '' } });
-        } else if (isOL) {
-          view.dispatch({ changes: { from: line.from, to: line.from + matchText.length, insert: '1. ' } });
+      if (listInfo) {
+        if (listInfo.type === type) {
+          // Toggle off: replace list prefix with ""
+          view.dispatch({
+            changes: { from: listInfo.from, to: listInfo.from + listInfo.prefixLen, insert: '' }
+          });
         } else {
-          view.dispatch({ changes: { from: line.from, to: line.from + matchText.length, insert: '- ' } });
-        }
-      } else if (ulMatch) {
-        const matchText = ulMatch[0];
-        if (isTask) {
-          view.dispatch({ changes: { from: line.from, to: line.from + matchText.length, insert: '- [ ] ' } });
-        } else if (!isOL) {
-          view.dispatch({ changes: { from: line.from, to: line.from + matchText.length, insert: '' } });
-        } else {
-          view.dispatch({ changes: { from: line.from, to: line.from + matchText.length, insert: '1. ' } });
-        }
-      } else if (olMatch) {
-        const matchText = olMatch[0];
-        if (isTask) {
-          view.dispatch({ changes: { from: line.from, to: line.from + matchText.length, insert: '- [ ] ' } });
-        } else if (isOL) {
-          view.dispatch({ changes: { from: line.from, to: line.from + matchText.length, insert: '' } });
-        } else {
-          view.dispatch({ changes: { from: line.from, to: line.from + matchText.length, insert: '- ' } });
+          // Change type: replace list prefix with getPrefix(0)
+          view.dispatch({
+            changes: { from: listInfo.from, to: listInfo.from + listInfo.prefixLen, insert: getPrefix(0) }
+          });
         }
       } else {
-        const insertPrefix = getPrefix(0);
-        view.dispatch({ changes: { from: line.from, to: line.from, insert: insertPrefix } });
+        // Insert prefix after indentation
+        const indentStr = line.text.match(/^\s*/)?.[0] || "";
+        view.dispatch({
+          changes: { from: line.from + indentStr.length, to: line.from + indentStr.length, insert: getPrefix(0) }
+        });
       }
     } else {
-      let selectedText = state.sliceDoc(from, to);
-      const lines = selectedText.split(/\r?\n/);
+      const changes = [];
+      const startLineNum = state.doc.lineAt(from).number;
+      const endLineNum = state.doc.lineAt(to).number;
 
-      const listLines = lines.map((lineText, idx) => {
-        const cleanLine = lineText.replace(/^(-\s+\[[\sxX]\]\s+|[-\d+\.\s]+)/, '');
-        return `${getPrefix(idx)}${cleanLine}`;
-      });
-      const insertion = listLines.join('\n');
+      for (let l = startLineNum; l <= endLineNum; l++) {
+        const line = state.doc.line(l);
+        const idx = l - startLineNum;
+        const listInfo = getListPrefixAt(state, line.from);
+        const newPrefix = getPrefix(idx);
+
+        if (listInfo) {
+          // Replace existing marker with newPrefix
+          changes.push({
+            from: listInfo.from,
+            to: listInfo.from + listInfo.prefixLen,
+            insert: newPrefix
+          });
+        } else {
+          // Insert newPrefix after indentation
+          const indentStr = line.text.match(/^\s*/)?.[0] || "";
+          changes.push({
+            from: line.from + indentStr.length,
+            to: line.from + indentStr.length,
+            insert: newPrefix
+          });
+        }
+      }
 
       const charBefore = from > 0 ? state.sliceDoc(from - 1, from) : '\n';
       const charAfter = to < state.doc.length ? state.sliceDoc(to, to + 1) : '\n';
@@ -995,11 +1010,20 @@ export class TravenEditor {
         suffixSpacing = '\n';
       }
 
-      const finalInsert = `${prefixSpacing}${insertion}${suffixSpacing}`;
+      if (prefixSpacing) {
+        changes.push({ from, to: from, insert: prefixSpacing });
+      }
+      if (suffixSpacing) {
+        changes.push({ from: to, to: to, insert: suffixSpacing });
+      }
+
+      const changeSet = state.changes(changes);
+      const newFrom = changeSet.mapPos(from, 1);
+      const newTo = changeSet.mapPos(to, 1);
 
       view.dispatch({
-        changes: { from, to, insert: finalInsert },
-        selection: { anchor: from + prefixSpacing.length, head: from + prefixSpacing.length + insertion.length }
+        changes,
+        selection: { anchor: newFrom, head: newTo }
       });
     }
     view.focus();

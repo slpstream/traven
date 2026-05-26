@@ -40,16 +40,12 @@ class CheckboxWidget extends WidgetType {
       e.preventDefault();
       if (view.state.readOnly) return;
 
-      const line = view.state.doc.lineAt(this.pos);
-      const match = line.text.match(/^(\s*[-*+]\s+)\[([\sxX])\]/);
-      if (!match) return;
-
-      const isChecked = match[2].toLowerCase() === "x";
+      const marker = view.state.sliceDoc(this.pos, this.pos + 3);
+      const isChecked = /[xX]/.test(marker[1]);
       const replacement = isChecked ? "[ ]" : "[x]";
-      const bracketStart = line.from + match[1].length;
 
       view.dispatch({
-        changes: { from: bracketStart, to: bracketStart + 3, insert: replacement }
+        changes: { from: this.pos, to: this.pos + 3, insert: replacement }
       });
     });
 
@@ -475,18 +471,15 @@ function buildWysiwymDecorations(state) {
           const line = state.doc.lineAt(node.from);
           const isCursorOnLine = cursorLine === line.number;
           if (!isCursorOnLine) {
-            const markerText = state.sliceDoc(node.from, node.to);
-            if (markerText === "-" || markerText === "*" || markerText === "+") {
-              const isTask = /^\s*[-*+]\s+\[[\sxX]\]/.test(line.text);
-              if (!isTask) {
-                collected.push({
-                  from: node.from,
-                  to: node.to,
-                  deco: Decoration.replace({
-                    widget: new BulletWidget()
-                  })
-                });
-              }
+            const listInfo = getListPrefixAt(state, line.from);
+            if (listInfo && listInfo.type === "ul" && listInfo.from === node.from) {
+              collected.push({
+                from: node.from,
+                to: node.to,
+                deco: Decoration.replace({
+                  widget: new BulletWidget()
+                })
+              });
             }
           }
         }
@@ -701,3 +694,132 @@ export const wysiwymPlugin = () => {
     linkClickHandler
   ];
 };
+
+export function getListPrefixAt(state, pos) {
+  const line = state.doc.lineAt(pos);
+  const leadingMatch = line.text.match(/^([\s>]*)/);
+  const leadLen = leadingMatch ? leadingMatch[1].length : 0;
+  const startPos = line.from + leadLen;
+
+  if (startPos > line.to) return null;
+
+  const tree = syntaxTree(state);
+  let node = tree.resolveInner(startPos, 1);
+  
+  // Walk up to find a ListItem node starting on this line
+  let listItemNode = null;
+  while (node) {
+    if (node.name === "ListItem") {
+      const itemLine = state.doc.lineAt(node.from).number;
+      if (itemLine === line.number) {
+        listItemNode = node;
+        break;
+      }
+    }
+    node = node.parent;
+  }
+
+  if (!listItemNode) {
+    return null;
+  }
+
+  // Now let's extract details from the ListItem node
+  let listMarkNode = null;
+  let taskMarkerNode = null;
+  
+  const c = listItemNode.cursor();
+  while (c.next() && c.from < listItemNode.to) {
+    if (c.name === "ListMark" && c.from === startPos) {
+      listMarkNode = c.node;
+    } else if (c.name === "TaskMarker") {
+      if (listMarkNode && c.from === listMarkNode.to + 1) {
+        taskMarkerNode = c.node;
+      }
+    }
+  }
+
+  if (!listMarkNode || listMarkNode.from !== startPos) {
+    return null;
+  }
+
+  // Determine type
+  let type = null;
+  const parentName = listItemNode.parent ? listItemNode.parent.name : "";
+  if (taskMarkerNode) {
+    type = "task";
+  } else if (parentName === "BulletList") {
+    type = "ul";
+  } else if (parentName === "OrderedList") {
+    type = "ol";
+  }
+
+  if (!type) return null;
+
+  // Calculate prefix length (from startPos to end of list marker / task marker + trailing space)
+  let endPos = startPos;
+  if (taskMarkerNode) {
+    endPos = taskMarkerNode.to;
+  } else if (listMarkNode) {
+    endPos = listMarkNode.to;
+  } else {
+    return null;
+  }
+
+  // Consume one trailing space if present
+  if (endPos < line.to && state.sliceDoc(endPos, endPos + 1) === " ") {
+    endPos++;
+  }
+
+  const prefixLen = endPos - startPos;
+
+  return {
+    type,
+    from: startPos,
+    prefixLen,
+    taskMarker: taskMarkerNode ? { from: taskMarkerNode.from, to: taskMarkerNode.to } : null
+  };
+}
+
+export function getListStrippingRanges(state, from, to) {
+  const startLineNum = state.doc.lineAt(from).number;
+  const endLineNum = state.doc.lineAt(to).number;
+  const ranges = [];
+
+  for (let l = startLineNum; l <= endLineNum; l++) {
+    const line = state.doc.line(l);
+    const listInfo = getListPrefixAt(state, line.from);
+    if (listInfo) {
+      const prefixEnd = listInfo.from + listInfo.prefixLen;
+      
+      const bqMatch = line.text.match(/^(\s*>\s*)+/);
+      const indentStart = line.from + (bqMatch ? bqMatch[0].length : 0);
+      
+      const stripFrom = Math.max(indentStart, from);
+      const stripTo = Math.min(prefixEnd, to);
+      if (stripTo > stripFrom) {
+        ranges.push({
+          from: stripFrom,
+          to: stripTo
+        });
+      }
+    }
+  }
+  return ranges;
+}
+
+export function isInCodeBlock(state, pos) {
+  const tree = syntaxTree(state);
+  let node = tree.resolveInner(pos, 1);
+  while (node) {
+    if (
+      node.name === "FencedCode" ||
+      node.name === "CodeBlock" ||
+      node.name === "CodeText" ||
+      node.name === "HTMLBlock"
+    ) {
+      return true;
+    }
+    node = node.parent;
+  }
+  return false;
+}
