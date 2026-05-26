@@ -1,5 +1,5 @@
-import { EditorView, WidgetType, Decoration, DecorationSet } from "@codemirror/view";
-import { RangeSetBuilder, Extension, StateField } from "@codemirror/state";
+import { EditorView, WidgetType, Decoration } from "@codemirror/view";
+import { RangeSetBuilder, StateField } from "@codemirror/state";
 import { syntaxTree } from "@codemirror/language";
 
 // --- Image Preview Widget ---

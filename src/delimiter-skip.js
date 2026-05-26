@@ -1,6 +1,5 @@
 import { keymap, EditorView } from "@codemirror/view";
 import { syntaxTree } from "@codemirror/language";
-import { Extension } from "@codemirror/state";
 import { setSuppression, clearSuppression } from "./wysiwym.js";
 
 /**
@@ -200,6 +199,27 @@ function findSkipTarget(state, cursor, direction) {
         } else {
           if (cursor > closeStart && cursor <= node.to) {
             best = { target: closeStart, suppressRange: null };
+          }
+          if (cursor > node.from && cursor <= openEnd) {
+            best = { target: node.from, suppressRange: null };
+          }
+        }
+      }
+      // 9. ImageShortcode delimiters [image ...]
+      if (node.name === "ImageShortcode") {
+        const openEnd = node.from + 7; // after "[image "
+        const closeStart = node.to - 1; // before "]"
+
+        if (direction === "right") {
+          if (cursor >= node.from && cursor < openEnd) {
+            best = { target: Math.min(node.to, openEnd), suppressRange: null };
+          }
+          if (cursor >= closeStart && cursor < node.to) {
+            best = { target: node.to, suppressRange: null };
+          }
+        } else {
+          if (cursor > closeStart && cursor <= node.to) {
+            best = { target: Math.max(node.from, closeStart), suppressRange: null };
           }
           if (cursor > node.from && cursor <= openEnd) {
             best = { target: node.from, suppressRange: null };

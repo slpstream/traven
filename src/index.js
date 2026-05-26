@@ -1,4 +1,4 @@
-import { EditorState, Extension, Annotation, Prec, Compartment } from "@codemirror/state";
+import { EditorState, Annotation, Prec, Compartment } from "@codemirror/state";
 import {
   EditorView,
   lineNumbers as cmLineNumbers,
@@ -28,6 +28,7 @@ import { classHighlighter } from "@lezer/highlight";
 import { markdown } from "@codemirror/lang-markdown";
 import { Strikethrough, TaskList, Table } from "@lezer/markdown";
 import { Highlight } from "./highlight-parser.js";
+import { Shortcode } from "./shortcode-parser.js";
 import { yamlFrontmatter } from "@codemirror/lang-yaml";
 import { undo, redo } from "@codemirror/commands";
 import { search, openSearchPanel } from "@codemirror/search";
@@ -171,7 +172,7 @@ export class TravenEditor {
       }),
       ...(wrapLines ? [EditorView.lineWrapping] : []),
       readOnlyCompartment.of(EditorState.readOnly.of(!!options.readOnly)),
-      yamlFrontmatter({ content: markdown({ extensions: [Strikethrough, TaskList, Table, Highlight, { remove: ["SetextHeading"] }] }) }),
+      yamlFrontmatter({ content: markdown({ extensions: [Strikethrough, TaskList, Table, Highlight, Shortcode, { remove: ["SetextHeading"] }] }) }),
       wysiwymPlugin(),
       delimiterSkipKeymap(),
       imageDecorationPlugin(),
@@ -1244,6 +1245,19 @@ export class TravenEditor {
     content = processedLines.join("\n");
 
     // 6. Convert inline elements (images, links, bold, italic, code)
+    content = content.replace(/\[image\s+([^\]]+)\]/g, (match, attrsStr) => {
+      const attrs = {};
+      const attrRegex = /([a-zA-Z0-9_-]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=]+))/g;
+      let m;
+      while ((m = attrRegex.exec(attrsStr)) !== null) {
+        attrs[m[1]] = m[2] !== undefined ? m[2] : (m[3] !== undefined ? m[3] : (m[4] || ""));
+      }
+      const src = attrs.src || "";
+      const caption = attrs.caption || "";
+      const align = attrs.align || "center";
+      const size = attrs.size || "medium";
+      return `<img src="${src}" alt="${caption}" class="traven-image-shortcode align-${align} size-${size}" style="max-width: 100%; height: auto; display: block; border-radius: 6px; margin: 12px 0;">`;
+    });
     content = content.replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" style="max-width: 100%; height: auto; display: block; margin: 12px 0; border-radius: 6px;">');
     content = content.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>');
     content = content.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");

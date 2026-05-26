@@ -399,3 +399,57 @@ describe('serializeTableToMarkdown', () => {
   });
 });
 
+describe('ImageShortcode', () => {
+  let container;
+
+  beforeEach(() => {
+    container = document.createElement('div');
+    document.body.appendChild(container);
+  });
+
+  it('compiles shortcode to proper HTML in fallback renderer', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '[image src="https://example.com/pic.jpg" align="right" size="medium" caption="My caption"]',
+    });
+    const html = editor.getContentHtml();
+    expect(html).toContain('<img src="https://example.com/pic.jpg"');
+    expect(html).toContain('alt="My caption"');
+    expect(html).toContain('class="traven-image-shortcode align-right size-medium"');
+  });
+
+  it('handles single quoted and unquoted attributes correctly', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: "[image src='https://example.com/pic.jpg' align=left size='small' caption='Single quotes']",
+    });
+    const html = editor.getContentHtml();
+    expect(html).toContain('<img src="https://example.com/pic.jpg"');
+    expect(html).toContain('alt="Single quotes"');
+    expect(html).toContain('class="traven-image-shortcode align-left size-small"');
+  });
+
+  it('renders ImageShortcodeWidget inside WYSIWYM editor when cursor is outside', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '[image src="https://example.com/pic.jpg" align="center" size="large" caption="WYSIWYM check"]\nSome text here',
+    });
+    // Set selection cursor to the very end of the document, outside the shortcode
+    editor.setSelection(editor.getValue().length, editor.getValue().length);
+    
+    // Check if the shortcode container widget is rendered
+    const widgetEl = container.querySelector('.cm-wysiwym-image-shortcode-container');
+    expect(widgetEl).not.toBeNull();
+    expect(widgetEl.classList.contains('align-center')).toBe(true);
+    expect(widgetEl.classList.contains('size-large')).toBe(true);
+    
+    const badge = widgetEl.querySelector('.tag-name');
+    expect(badge).not.toBeNull();
+    expect(badge.textContent).toBe('image');
+    
+    const captionEl = widgetEl.querySelector('.meta-caption');
+    expect(captionEl).not.toBeNull();
+    expect(captionEl.textContent).toBe('WYSIWYM check');
+  });
+});
+

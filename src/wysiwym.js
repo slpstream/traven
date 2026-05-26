@@ -1,8 +1,7 @@
 import { syntaxTree } from "@codemirror/language";
-import { RangeSetBuilder, Extension, StateField, StateEffect } from "@codemirror/state";
+import { RangeSetBuilder, StateField, StateEffect } from "@codemirror/state";
 import {
   Decoration,
-  DecorationSet,
   ViewPlugin,
   ViewUpdate,
   EditorView,
@@ -170,6 +169,92 @@ class TableWidget extends WidgetType {
 
   eq(other) {
     return this.tableText === other.tableText && this.tableFrom === other.tableFrom;
+  }
+
+  ignoreEvent() { return false; }
+}
+
+class ImageShortcodeWidget extends WidgetType {
+  constructor(attrs, nodeFrom) {
+    super();
+    this.attrs = attrs;
+    this.nodeFrom = nodeFrom;
+  }
+
+  toDOM(view) {
+    const container = document.createElement("div");
+    container.className = "cm-wysiwym-image-shortcode-container";
+
+    const src = this.attrs.src || "";
+    const caption = this.attrs.caption || "";
+    const align = this.attrs.align || "center";
+    const size = this.attrs.size || "medium";
+
+    container.classList.add(`align-${align}`);
+    container.classList.add(`size-${size}`);
+
+    const img = document.createElement("img");
+    img.src = src || "data:image/svg+xml;charset=utf-8,%3Csvg xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg' viewBox%3D'0 0 100 100'%3E%3Crect width%3D'100' height%3D'100' fill%3D'%23eee'%2F%3E%3Ctext x%3D'50%25' y%3D'50%25' dominant-baseline%3D'middle' text-anchor%3D'middle' font-family%3D'sans-serif' font-size%3D'10' fill%3D'%23999'%3ENo Image%3C%2Ftext%3E%3C%2Fsvg%3E";
+    img.alt = caption || "Image shortcode";
+    img.draggable = false;
+    
+    img.onerror = () => {
+      img.src = "data:image/svg+xml;charset=utf-8,%3Csvg xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg' viewBox%3D'0 0 100 100'%3E%3Crect width%3D'100' height%3D'100' fill%3D'%23fee'%2F%3E%3Ctext x%3D'50%25' y%3D'50%25' dominant-baseline%3D'middle' text-anchor%3D'middle' font-family%3D'sans-serif' font-size%3D'8' fill%3D'%23b00'%3EImage Failed to Load%3C%2Ftext%3E%3C%2Fsvg%3E";
+    };
+
+    container.appendChild(img);
+
+    const metaRow = document.createElement("div");
+    metaRow.className = "shortcode-meta";
+
+    const tagBadge = document.createElement("span");
+    tagBadge.className = "meta-badge tag-name";
+    tagBadge.textContent = "image";
+    metaRow.appendChild(tagBadge);
+
+    if (align && align !== "center") {
+      const alignBadge = document.createElement("span");
+      alignBadge.className = "meta-badge align-badge";
+      alignBadge.textContent = align;
+      metaRow.appendChild(alignBadge);
+    }
+
+    if (size && size !== "medium") {
+      const sizeBadge = document.createElement("span");
+      sizeBadge.className = "meta-badge size-badge";
+      sizeBadge.textContent = size;
+      metaRow.appendChild(sizeBadge);
+    }
+
+    if (caption) {
+      const captionText = document.createElement("span");
+      captionText.className = "meta-caption";
+      captionText.textContent = caption;
+      metaRow.appendChild(captionText);
+    }
+
+    container.appendChild(metaRow);
+
+    // Mousedown listener to focus and reveal raw shortcode markdown
+    container.addEventListener("mousedown", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      view.dispatch({ selection: { anchor: this.nodeFrom } });
+      view.focus();
+    });
+
+    return container;
+  }
+
+  eq(other) {
+    return (
+      other instanceof ImageShortcodeWidget &&
+      this.nodeFrom === other.nodeFrom &&
+      this.attrs.src === other.attrs.src &&
+      this.attrs.caption === other.attrs.caption &&
+      this.attrs.align === other.attrs.align &&
+      this.attrs.size === other.attrs.size
+    );
   }
 
   ignoreEvent() { return false; }
@@ -384,7 +469,46 @@ function buildWysiwymDecorations(state) {
             collected.push({ from: node.from + 1, to: node.to - 1, deco: linkDeco });
           }
         }
+        // 3.7. Custom ImageShortcode [image src="..." ...]
+        if (node.name === "ImageShortcode") {
+          const isCursorInside = cursorHead >= node.from && cursorHead <= node.to;
 
+          if (!isCursorInside) {
+            const attrs = {};
+            const c = node.node.cursor();
+            if (c.firstChild()) {
+              do {
+                if (c.name === "ShortcodeAttribute") {
+                  const cc = c.node.cursor();
+                  let name = "";
+                  let val = "";
+                  if (cc.firstChild()) {
+                    do {
+                      if (cc.name === "ShortcodeAttributeName") {
+                        name = state.sliceDoc(cc.from, cc.to);
+                      }
+                      if (cc.name === "ShortcodeAttributeValue") {
+                        val = state.sliceDoc(cc.from, cc.to);
+                        val = val.replace(/^["']|["']$/g, "");
+                      }
+                    } while (cc.nextSibling());
+                  }
+                  if (name) {
+                    attrs[name] = val;
+                  }
+                }
+              } while (c.nextSibling());
+            }
+
+            const widget = new ImageShortcodeWidget(attrs, node.from);
+            collected.push({
+              from: node.from,
+              to: node.to,
+              deco: Decoration.replace({ widget, block: true })
+            });
+            return false;
+          }
+        }
         // 4. Headings (ATXHeading1-6, SetextHeading1-2, etc.)
         const headingMatch = node.name.match(/Heading([1-6])$/);
         if (headingMatch) {
