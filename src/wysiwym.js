@@ -492,7 +492,7 @@ function buildWysiwymDecorations(state) {
         }
 
         // 9. YAML Frontmatter
-        if (node.name.toLowerCase() === "frontmatter" || node.name === "yaml-frontmatter") {
+        if (node.name === "Frontmatter") {
           const isCursorInside = cursorHead >= node.from && cursorHead <= node.to;
           const startLine = state.doc.lineAt(node.from).number;
           const endLine = state.doc.lineAt(node.to).number;

@@ -125,6 +125,58 @@ describe('TravenEditor', () => {
     editor.removeFormatting();
     expect(editor.getValue()).toBe('Hello World with code, strike and highlight');
   });
+
+  describe('frontmatter handling', () => {
+    it('strips YAML frontmatter correctly in fallback renderer', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: '---\ntitle: test\n---\n# Hello World',
+      });
+      const html = editor.getContentHtml();
+      expect(html).toContain('<h1>Hello World</h1>');
+      expect(html).not.toContain('title: test');
+      expect(html).not.toContain('---');
+    });
+
+    it('strips YAML frontmatter with CRLF line endings correctly', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: '---\r\ntitle: test\r\n---\r\n# Hello World',
+      });
+      const html = editor.getContentHtml();
+      expect(html).toContain('<h1>Hello World</h1>');
+      expect(html).not.toContain('title: test');
+    });
+
+    it('does not strip horizontal rules at start of document', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: '---\n# Hello World',
+      });
+      const html = editor.getContentHtml();
+      expect(html).toContain('<hr>');
+      expect(html).toContain('<h1>Hello World</h1>');
+    });
+
+    it('strips frontmatter even if a value contains three dashes', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: '---\ndescription: "a --- b"\n---\n# Hello World',
+      });
+      const html = editor.getContentHtml();
+      expect(html).toContain('<h1>Hello World</h1>');
+      expect(html).not.toContain('description');
+    });
+
+    it('returns full content when no frontmatter is present', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: '# Hello World',
+      });
+      const html = editor.getContentHtml();
+      expect(html).toBe('<h1>Hello World</h1>');
+    });
+  });
 });
 
 describe('parseMarkdownTable', () => {

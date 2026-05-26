@@ -21,7 +21,8 @@ import {
   foldKeymap,
   syntaxHighlighting,
   bracketMatching,
-  foldGutter
+  foldGutter,
+  syntaxTree
 } from "@codemirror/language";
 import { classHighlighter } from "@lezer/highlight";
 import { markdown } from "@codemirror/lang-markdown";
@@ -1067,13 +1068,47 @@ export class TravenEditor {
   }
 
   /**
+   * Helper method to strip frontmatter from raw markdown content using Lezer's parsed syntax tree.
+   * @param {string} md - The raw markdown content.
+   * @returns {string} The markdown content without frontmatter.
+   */
+  #stripFrontmatter(md) {
+    if (!this.#view) return md;
+    const tree = syntaxTree(this.#view.state);
+    let frontmatterTo = 0;
+    tree.iterate({
+      from: 0,
+      to: Math.min(md.length, 500), // Only scan the document head
+      enter(node) {
+        if (node.name === "Frontmatter" && node.from === 0) {
+          // A valid frontmatter block must contain both opening and closing DashLine nodes.
+          let dashCount = 0;
+          const c = node.node.cursor();
+          if (c.firstChild()) {
+            do {
+              if (c.name === "DashLine") {
+                dashCount++;
+              }
+            } while (c.nextSibling());
+          }
+          if (dashCount >= 2) {
+            frontmatterTo = node.to;
+            return false; // stop iteration
+          }
+        }
+      }
+    });
+    return frontmatterTo > 0 ? md.slice(frontmatterTo).replace(/^\r?\n/, "") : md;
+  }
+
+  /**
    * Simple fallback Markdown parser to HTML.
    * @param {string} md
    * @returns {string}
    */
   #fallbackRender(md) {
     // 1. Strip YAML frontmatter if present
-    let content = md.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/, "");
+    let content = this.#stripFrontmatter(md);
     
     // 1.5. Convert autolinks <url> before HTML escaping destroys the angle brackets
     content = content.replace(/<(https?:\/\/[^\s>]+)>/g, '[$1]($1)');
