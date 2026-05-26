@@ -348,7 +348,7 @@ button.btn-heading {
   box-sizing: border-box;
 }
 .traven-modal-input:focus {
-  border-color: var(--accent, #6366f1);
+  border-color: var(--accent, #475569);
 }
 
 .traven-modal-btn {
@@ -361,12 +361,12 @@ button.btn-heading {
   font-family: inherit;
 }
 .traven-modal-btn.btn-primary {
-  background-color: var(--accent, #6366f1);
+  background-color: var(--accent, #334155);
   color: white;
   border: 1px solid transparent;
 }
 .traven-modal-btn.btn-primary:hover {
-  background-color: var(--accent-hover, #4f46e5);
+  background-color: var(--accent-hover, #1e293b);
 }
 .traven-modal-btn.btn-secondary {
   background-color: var(--bg-primary, #ffffff);
@@ -390,7 +390,7 @@ button.btn-heading {
 .help-section-title {
   font-weight: 700;
   font-size: 0.9em;
-  color: var(--accent, #6366f1);
+  color: var(--accent, #475569);
   margin-top: 8px;
   margin-bottom: 4px;
   text-transform: uppercase;
