@@ -39,6 +39,7 @@ import "./style.css";
 
 const syncAnnotation = Annotation.define();
 const vimCompartment = new Compartment();
+const readOnlyCompartment = new Compartment();
 
 export const DEFAULT_TOOLBAR = [
   "undo",
@@ -163,6 +164,7 @@ export class TravenEditor {
         foldGutter: showLineNumbers
       }),
       ...(wrapLines ? [EditorView.lineWrapping] : []),
+      readOnlyCompartment.of(EditorState.readOnly.of(!!options.readOnly)),
       yamlFrontmatter({ content: markdown({ extensions: [Strikethrough, TaskList, Table, { remove: ["SetextHeading"] }] }) }),
       wysiwymPlugin(),
       delimiterSkipKeymap(),
@@ -268,6 +270,7 @@ export class TravenEditor {
           foldGutter: showSourceLineNumbers
         }),
         ...(wrapSourceLines ? [EditorView.lineWrapping] : []),
+        readOnlyCompartment.of(EditorState.readOnly.of(!!options.readOnly)),
         EditorView.updateListener.of((update) => {
           if (update.docChanged) {
             // Propagate change back to primary editor
@@ -339,6 +342,57 @@ export class TravenEditor {
     this.#view.dispatch({
       changes: { from: 0, to: this.#view.state.doc.length, insert: value }
     });
+  }
+
+  /**
+   * Focuses the primary editor.
+   */
+  focus() {
+    this.#view.focus();
+  }
+
+  /**
+   * Sets the editor to read-only or read-write mode dynamically.
+   * @param {boolean} readOnly
+   */
+  setReadOnly(readOnly) {
+    this.#view.dispatch({
+      effects: readOnlyCompartment.reconfigure(EditorState.readOnly.of(readOnly))
+    });
+    if (this.#rawView) {
+      this.#rawView.dispatch({
+        effects: readOnlyCompartment.reconfigure(EditorState.readOnly.of(readOnly))
+      });
+    }
+  }
+
+  /**
+   * Returns whether the editor is currently in read-only mode.
+   * @returns {boolean}
+   */
+  isReadOnly() {
+    return this.#view.state.readOnly;
+  }
+
+  /**
+   * Returns the currently selected text.
+   * @returns {string}
+   */
+  getSelection() {
+    const range = this.#view.state.selection.main;
+    return this.#view.state.sliceDoc(range.from, range.to);
+  }
+
+  /**
+   * Sets the selection range in the editor.
+   * @param {number} anchor - The anchor of the selection.
+   * @param {number} [head] - The head of the selection. Defaults to anchor (caret position).
+   */
+  setSelection(anchor, head = anchor) {
+    this.#view.dispatch({
+      selection: { anchor, head }
+    });
+    this.#view.focus();
   }
 
   /**

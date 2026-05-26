@@ -16,7 +16,9 @@
   "main": "dist/traven.js",
   "scripts": {
     "build": "esbuild src/index.js --bundle --minify --format=esm --outfile=dist/traven.js --loader:.css=css",
-    "watch": "esbuild src/index.js --bundle --format=esm --outfile=dist/traven.js --loader:.css=css --watch"
+    "watch": "esbuild src/index.js --bundle --format=esm --outfile=dist/traven.js --loader:.css=css --watch",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "codemirror": "^6.0.2",
@@ -31,6 +33,8 @@
     "@replit/codemirror-vim": "^6.2.1"
   },
   "devDependencies": {
-    "esbuild": "^0.20.0"
+    "esbuild": "^0.20.0",
+    "jsdom": "^24.0.0",
+    "vitest": "^1.6.0"
   }
 }
