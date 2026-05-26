@@ -28,12 +28,6 @@
   ?>
 
   <main>
-    <div>
-      <p class="description-text">
-        Experience a framework-agnostic WYSIWYM editor. Editing syntax markers (like <code>**</code> and <code>_</code>)
-        show smoothly as you edit, and collapse into clean formatted blocks when the cursor leaves them.
-      </p>
-    </div>
 
     <div class="sandbox-grid">
       <!-- Editor Card -->

@@ -140,7 +140,7 @@ $customization_dropdowns_html = '
 ' . $skin_options_html . '</select>
 <select id="toolbar-select" class="nav-btn btn-toolbar-select" style="padding: 6px 12px; font-family: inherit; font-size: 0.9em; cursor: pointer; margin-right: 8px;">
 ' . $toolbar_options_html . '</select>
-<select id="theme-select" class="nav-btn btn-theme-select" style="padding: 6px 12px; font-family: inherit; font-size: 0.9em; cursor: pointer; margin-right: 8px;">
+<select id="theme-select" class="nav-btn btn-theme-select" style="display: none; padding: 6px 12px; font-family: inherit; font-size: 0.9em; cursor: pointer; margin-right: 8px;">
   <option value="light">Light Editor Theme</option>
   <option value="dark">Dark Editor Theme</option>
 </select>
