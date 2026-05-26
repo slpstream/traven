@@ -99,6 +99,9 @@
             </svg>
             WYSIWYM Editing View
           </div>
+          <button type="button" class="copy-btn" id="copy-wysiwym-btn" title="Copy Markdown to Clipboard">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><polyline points="168 168 216 168 216 40 88 40 88 88" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><rect x="40" y="88" width="128" height="128" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>
+          </button>
         </div>
         <div id="editor" class="editor-mount"></div>
       </div>
@@ -114,7 +117,11 @@
             </svg>
             Raw Markdown Content
           </div>
-          <span class="output-label-badge">EDITABLE RAW SOURCE</span>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <button type="button" class="copy-btn" id="copy-raw-btn" title="Copy Markdown to Clipboard">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><polyline points="168 168 216 168 216 40 88 40 88 88" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><rect x="40" y="88" width="128" height="128" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>
+            </button>
+          </div>
         </div>
         <div id="raw-editor" class="raw-editor-mount"></div>
       </div>
@@ -195,6 +202,37 @@ This demo illustrates a hybrid layout where:
       combinedPreview.value = combined;
     }
 
+    // Helper to setup flat copy button
+    function setupCopyButton(buttonId, textSourceFn) {
+      const button = document.getElementById(buttonId);
+      if (!button) return;
+
+      const copyIconHtml = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><polyline points="168 168 216 168 216 40 88 40 88 88" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><rect x="40" y="88" width="128" height="128" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>`;
+      const checkIconHtml = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><polyline points="40 144 96 200 224 72" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>`;
+
+      let timeoutId = null;
+
+      button.addEventListener('click', () => {
+        const textToCopy = textSourceFn();
+        navigator.clipboard.writeText(textToCopy).then(() => {
+          button.innerHTML = checkIconHtml;
+          button.classList.add('copied');
+          
+          if (timeoutId) {
+            clearTimeout(timeoutId);
+          }
+          
+          timeoutId = setTimeout(() => {
+            button.innerHTML = copyIconHtml;
+            button.classList.remove('copied');
+            timeoutId = null;
+          }, 10000);
+        }).catch(err => {
+          console.error('Failed to copy text: ', err);
+        });
+      });
+    }
+
     // Attach listeners to form inputs
     titleInput.addEventListener("input", updateCombinedPreview);
     authorInput.addEventListener("input", updateCombinedPreview);
@@ -239,6 +277,10 @@ This demo illustrates a hybrid layout where:
       });
       // Initial preview compilation
       updateCombinedPreview();
+
+      // Set up copy buttons (only copy editable content, excluding metadata)
+      setupCopyButton('copy-wysiwym-btn', () => window.editor.getValue());
+      setupCopyButton('copy-raw-btn', () => window.editor.getValue());
     });
   </script>
 </body>

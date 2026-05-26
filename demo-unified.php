@@ -77,6 +77,9 @@
             <button type="button" id="tab-markdown" class="unified-tab">Markdown</button>
             <button type="button" id="tab-preview" class="unified-tab">Preview</button>
           </div>
+          <button type="button" class="copy-btn" id="copy-markdown-btn" title="Copy Markdown to Clipboard">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><polyline points="168 168 216 168 216 40 88 40 88 88" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><rect x="40" y="88" width="128" height="128" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>
+          </button>
         </div>
         <div class="editor-wrapper mode-wysiwym">
           <div id="editor" class="editor-mount"></div>
@@ -174,6 +177,37 @@ This demo illustrates a unified layout where:
       return URL.createObjectURL(file);
     };
 
+    // Helper to setup flat copy button
+    function setupCopyButton(buttonId, textSourceFn) {
+      const button = document.getElementById(buttonId);
+      if (!button) return;
+
+      const copyIconHtml = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><polyline points="168 168 216 168 216 40 88 40 88 88" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><rect x="40" y="88" width="128" height="128" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>`;
+      const checkIconHtml = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><polyline points="40 144 96 200 224 72" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>`;
+
+      let timeoutId = null;
+
+      button.addEventListener('click', () => {
+        const textToCopy = textSourceFn();
+        navigator.clipboard.writeText(textToCopy).then(() => {
+          button.innerHTML = checkIconHtml;
+          button.classList.add('copied');
+          
+          if (timeoutId) {
+            clearTimeout(timeoutId);
+          }
+          
+          timeoutId = setTimeout(() => {
+            button.innerHTML = copyIconHtml;
+            button.classList.remove('copied');
+            timeoutId = null;
+          }, 10000);
+        }).catch(err => {
+          console.error('Failed to copy text: ', err);
+        });
+      });
+    }
+
     // 4. Initialize Traven Editor with tabbed layout
     document.fonts.ready.then(() => {
       window.editor = new TravenEditor({
@@ -192,6 +226,9 @@ This demo illustrates a unified layout where:
         document.getElementById("stats-chars").textContent = `Characters: ${stats.characters}`;
         document.getElementById("stats-readtime").textContent = `Read Time: ${stats.readTime} min`;
       });
+
+      // Set up the copy button (only copy editable content, excluding metadata)
+      setupCopyButton('copy-markdown-btn', () => window.editor.getValue());
 
       // Tab switching logic
       const wysiwymTab = document.getElementById('tab-wysiwym');
@@ -221,11 +258,11 @@ This demo illustrates a unified layout where:
           rawEditorEl.style.display = "none";
           previewEl.style.display = "none";
         } else if (isMarkdown) {
-          editorEl.style.display = "none";
+          editorEl.style.display = "flex";
           rawEditorEl.style.display = "flex";
           previewEl.style.display = "none";
         } else if (isPreview) {
-          editorEl.style.display = "none";
+          editorEl.style.display = "flex";
           rawEditorEl.style.display = "none";
           previewEl.style.display = "block";
           

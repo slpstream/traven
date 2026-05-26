@@ -176,6 +176,22 @@ describe('TravenEditor', () => {
       const html = editor.getContentHtml();
       expect(html).toBe('<h1>Hello World</h1>');
     });
+
+    it('does not apply frontmatter styling to a heading immediately following frontmatter without a blank line', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: '---\ntitle: test\n---\n# Heading',
+      });
+      // Move cursor to the end of the document to trigger collapsed decorations
+      editor.setSelection(editor.getValue().length, editor.getValue().length);
+      
+      const lines = container.querySelectorAll('.cm-line');
+      // The 4th line (index 3) should be the heading line
+      const headingLine = lines[3];
+      expect(headingLine).toBeDefined();
+      expect(headingLine.classList.contains('cm-wysiwym-h1')).toBe(true);
+      expect(headingLine.classList.contains('cm-wysiwym-frontmatter')).toBe(false);
+    });
   });
 
   describe('list formatting', () => {

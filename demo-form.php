@@ -28,8 +28,8 @@
   ?>
 
   <main>
-    <!-- Left Sidebar: Metadata Form and Unified Source -->
-    <div style="display: flex; flex-direction: column; gap: 30px;">
+    <!-- Left Area: Sidebar Form & Terminal Console (stacked vertically) -->
+    <div class="form-sidebar" style="display: flex; flex-direction: column; gap: 30px;">
       <!-- Form Input Card -->
       <div class="sandbox-card">
         <div class="card-header">
@@ -96,6 +96,9 @@
           </svg>
           Body Content Editor
         </div>
+        <button type="button" class="copy-btn" id="copy-markdown-btn" title="Copy Markdown to Clipboard">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><polyline points="168 168 216 168 216 40 88 40 88 88" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><rect x="40" y="88" width="128" height="128" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>
+        </button>
       </div>
       <div class="editor-wrapper">
         <div id="editor" class="editor-mount"></div>
@@ -181,6 +184,37 @@ Try modifying the inputs in the form or editing the body text here to see how th
       combinedPreview.value = combined;
     }
 
+    // Helper to setup flat copy button
+    function setupCopyButton(buttonId, textSourceFn) {
+      const button = document.getElementById(buttonId);
+      if (!button) return;
+
+      const copyIconHtml = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><polyline points="168 168 216 168 216 40 88 40 88 88" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><rect x="40" y="88" width="128" height="128" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>`;
+      const checkIconHtml = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><polyline points="40 144 96 200 224 72" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>`;
+
+      let timeoutId = null;
+
+      button.addEventListener('click', () => {
+        const textToCopy = textSourceFn();
+        navigator.clipboard.writeText(textToCopy).then(() => {
+          button.innerHTML = checkIconHtml;
+          button.classList.add('copied');
+          
+          if (timeoutId) {
+            clearTimeout(timeoutId);
+          }
+          
+          timeoutId = setTimeout(() => {
+            button.innerHTML = copyIconHtml;
+            button.classList.remove('copied');
+            timeoutId = null;
+          }, 10000);
+        }).catch(err => {
+          console.error('Failed to copy text: ', err);
+        });
+      });
+    }
+
     // Attach listeners to form inputs
     titleInput.addEventListener("input", updateCombinedPreview);
     authorInput.addEventListener("input", updateCombinedPreview);
@@ -216,6 +250,9 @@ Try modifying the inputs in the form or editing the body text here to see how th
       });
       // Initial preview compilation
       updateCombinedPreview();
+
+      // Set up the copy button
+      setupCopyButton('copy-markdown-btn', () => window.editor.getValue());
     });
   </script>
 </body>

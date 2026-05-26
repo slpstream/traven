@@ -129,15 +129,20 @@ header {
 }
 
 
-.editor-mount {
+.editor-mount,
+.raw-editor-mount {
   flex: 1;
-  padding: 16px 20px;
+  padding: 0;
   outline: none;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
-.editor-mount .cm-editor {
-  height: 100%;
+.editor-mount .cm-editor,
+.raw-editor-mount .cm-editor {
+  flex: 1;
+  min-height: 0;
 }
 
 /* ==========================================================================
@@ -186,13 +191,10 @@ header {
 
 
 .raw-editor-mount {
-  flex: 1;
-  overflow: hidden;
   background-color: #ffffff;
 }
 
 .raw-editor-mount .cm-editor {
-  height: 100%;
   background-color: #ffffff !important;
   color: #1e293b !important;
   font-family: 'Fira Code', monospace !important;
@@ -259,6 +261,27 @@ header {
 @media (max-width: 1024px) {
   .form-demo main {
     grid-template-columns: 1fr;
+  }
+}
+
+.form-demo .form-sidebar {
+  min-height: 0;
+}
+
+@media (min-width: 1025px) {
+  body.form-demo {
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .form-demo main {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .form-demo .form-sidebar {
+    height: 100%;
+    overflow-y: auto;
   }
 }
 
@@ -349,6 +372,7 @@ header {
 
 .terminal-view {
   flex: 1;
+  min-height: 0;
   font-family: 'Fira Code', monospace;
   font-size: 0.85em;
   color: #94a3b8;
@@ -358,7 +382,7 @@ header {
   outline: none;
   line-height: 1.5;
   width: 100%;
-  height: 250px;
+  height: auto;
   box-sizing: border-box;
   white-space: pre-wrap;
   overflow-wrap: break-word;
@@ -385,11 +409,9 @@ header {
 .form-demo .editor-mount {
   flex: 1;
   overflow: hidden;
-  height: 500px;
 }
 
 .form-demo .editor-mount .cm-editor {
-  height: 100%;
   font-family: 'Atkinson Hyperlegible Next', sans-serif;
 }
 
@@ -467,7 +489,6 @@ header {
 }
 
 .hybrid-demo .editor-mount .cm-editor {
-  height: 100%;
   font-family: 'Atkinson Hyperlegible Next', sans-serif;
 }
 
@@ -631,19 +652,23 @@ header {
 
 .unified-demo .editor-wrapper.mode-wysiwym #editor .cm-editor {
   flex: 1;
-  height: 100%;
+  min-height: 0;
 }
 
 .unified-demo .editor-wrapper.mode-wysiwym #raw-editor {
   display: none !important;
 }
 
-.unified-demo .editor-wrapper.mode-markdown #editor {
+.unified-demo .editor-wrapper.mode-markdown #editor,
+.unified-demo .editor-wrapper.mode-preview #editor {
+  display: flex;
+  flex-direction: column;
   flex: 0 0 auto;
   height: auto;
 }
 
-.unified-demo .editor-wrapper.mode-markdown #editor .cm-editor {
+.unified-demo .editor-wrapper.mode-markdown #editor .cm-editor,
+.unified-demo .editor-wrapper.mode-preview #editor .cm-editor {
   display: none !important;
 }
 
@@ -656,7 +681,13 @@ header {
 
 .unified-demo .editor-wrapper.mode-markdown #raw-editor .cm-editor {
   flex: 1;
-  height: 100%;
+  min-height: 0;
+}
+
+.unified-demo .html-preview-mount {
+  flex: 1 !important;
+  height: auto !important;
+  min-height: 0 !important;
 }
 
 /* Greyed-out Toolbar in Markdown Mode */
@@ -666,4 +697,31 @@ header {
   user-select: none;
   filter: grayscale(40%);
   transition: all 0.2s ease;
+}
+
+/* Flat Copy-to-Clipboard Button */
+.copy-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  padding: 4px;
+  color: #475569; /* slate-600 */
+  cursor: pointer;
+  transition: color 0.2s ease;
+  outline: none;
+}
+
+.copy-btn:hover {
+  color: #000000; /* black on hover */
+}
+
+.copy-btn.copied {
+  color: #475569; /* slate-600 checkmark feedback */
+}
+
+.copy-btn svg {
+  width: 16px;
+  height: 16px;
 }

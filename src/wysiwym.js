@@ -610,9 +610,18 @@ function buildWysiwymDecorations(state) {
 
         // 9. YAML Frontmatter
         if (node.name === "Frontmatter") {
-          const isCursorInside = cursorHead >= node.from && cursorHead <= node.to;
+          let frontmatterTo = node.to;
+          // Exclude any trailing newline to prevent line merging and incorrect endLine resolution
+          if (frontmatterTo > node.from && state.sliceDoc(frontmatterTo - 1, frontmatterTo) === "\n") {
+            frontmatterTo--;
+            if (frontmatterTo > node.from && state.sliceDoc(frontmatterTo - 1, frontmatterTo) === "\r") {
+              frontmatterTo--;
+            }
+          }
+
+          const isCursorInside = cursorHead >= node.from && cursorHead <= frontmatterTo;
           const startLine = state.doc.lineAt(node.from).number;
-          const endLine = state.doc.lineAt(node.to).number;
+          const endLine = state.doc.lineAt(frontmatterTo).number;
 
           for (let i = startLine; i <= endLine; i++) {
             // If the cursor is outside, do not decorate the first and last lines (delimiters are collapsed)
@@ -633,7 +642,7 @@ function buildWysiwymDecorations(state) {
           // If the cursor is outside, collapse the '---' delimiters (first 3 and last 3 characters)
           if (!isCursorInside) {
             collected.push({ from: node.from, to: node.from + 3, deco: collapseDeco });
-            collected.push({ from: node.to - 3, to: node.to, deco: collapseDeco });
+            collected.push({ from: frontmatterTo - 3, to: frontmatterTo, deco: collapseDeco });
           }
         }
 
