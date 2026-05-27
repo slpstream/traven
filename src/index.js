@@ -1135,6 +1135,19 @@ export class TravenEditor {
     // 1. Strip YAML frontmatter if present
     let content = this.#stripFrontmatter(md);
     
+    // Extract fenced code blocks to avoid splitting them on empty lines or parsing inline elements inside
+    const codeBlocks = [];
+    content = content.replace(/^```([a-zA-Z0-9_\-]*)\s*\r?\n([\s\S]*?)\r?\n```\s*$/gm, (match, lang, code) => {
+      const index = codeBlocks.length;
+      const classAttr = lang ? ` class="language-${lang}"` : "";
+      const escapedCode = code
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+      codeBlocks.push(`<pre><code${classAttr}>${escapedCode}</code></pre>`);
+      return `\n\n__CODE_BLOCK_PLACEHOLDER_${index}__\n\n`;
+    });
+
     // 1.5. Convert autolinks <url> before HTML escaping destroys the angle brackets
     content = content.replace(/<(https?:\/\/[^\s>]+)>/g, '[$1]($1)');
 
@@ -1270,14 +1283,27 @@ export class TravenEditor {
     const htmlBlocks = blocks.map(block => {
       const trimmed = block.trim();
       if (!trimmed) return "";
+      
+      // If it's a code block placeholder, don't wrap in <p>
+      if (trimmed.startsWith("__CODE_BLOCK_PLACEHOLDER_")) {
+        return trimmed;
+      }
+      
       // If it's already an HTML block tag, image, or hr, don't wrap in <p>
-      if (/^<(h[1-6]|blockquote|ul|li|img|hr|table)/i.test(trimmed)) {
+      if (/^<(h[1-6]|blockquote|ul|li|img|hr|table|pre)/i.test(trimmed)) {
         return trimmed;
       }
       return `<p>${trimmed.replace(/\n/g, "<br>")}</p>`;
     });
 
-    return htmlBlocks.filter(Boolean).join("\n");
+    content = htmlBlocks.filter(Boolean).join("\n");
+
+    // Restore fenced code blocks
+    for (let i = 0; i < codeBlocks.length; i++) {
+      content = content.replace(`__CODE_BLOCK_PLACEHOLDER_${i}__`, codeBlocks[i]);
+    }
+
+    return content;
   }
 
   /**

@@ -1,0 +1,503 @@
+/* Traven Editor Skin - Write (Distraction-Free) */
+
+@import url('https://fonts.googleapis.com/css2?family=Goudy+Bookletter+1911&family=Victor+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+/* Main editor layout and Goudy typography */
+.cm-editor {
+  font-family: 'Goudy Bookletter 1911', Georgia, serif !important;
+  font-size: 20px !important;
+  line-height: 1.65 !important;
+  background-color: transparent !important;
+  color: #1a1a1a !important;
+}
+
+.cm-editor:focus,
+.cm-editor.cm-focused {
+  outline: none !important;
+}
+
+.cm-scroller {
+  font-family: inherit !important;
+  line-height: inherit !important;
+  padding: 0 !important;
+}
+
+.cm-content {
+  padding: 0 12px !important;
+}
+
+/* Invisible Gutter (Plain paper style) */
+.cm-gutters {
+  display: none !important;
+}
+
+/* Active line highlighting */
+.cm-activeLine {
+  background-color: transparent !important;
+}
+
+.cm-activeLineGutter {
+  background-color: transparent !important;
+}
+
+/* Selection highlight - clean neutral slate tint */
+.cm-selectionBackground, 
+.cm-native-selection {
+  background-color: rgba(148, 163, 184, 0.18) !important;
+}
+
+.cm-editor.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground {
+  background-color: rgba(148, 163, 184, 0.28) !important;
+}
+
+/* Token hiding with smooth transition properties */
+.cm-token-hidden {
+  font-size: 0 !important;
+  opacity: 0 !important;
+  display: inline-block;
+  width: 0;
+  overflow: hidden;
+  transition: opacity 0.12s cubic-bezier(0.4, 0, 0.2, 1), 
+              font-size 0.12s cubic-bezier(0.4, 0, 0.2, 1), 
+              width 0.12s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Bold, Italic & Strikethrough visual enhancements */
+.cm-wysiwym-bold {
+  font-weight: bold;
+  color: #111111;
+}
+
+.cm-wysiwym-italic {
+  font-style: italic;
+  color: #1a1a1a;
+}
+
+.cm-wysiwym-strikethrough {
+  text-decoration: line-through;
+  color: #64748b;
+}
+
+/* Highlight text - soft pastel yellow */
+.cm-wysiwym-highlight {
+  background-color: rgba(250, 204, 21, 0.25);
+  border-radius: 3px;
+  padding: 1px 0;
+}
+
+/* Inline code pill styling - Victor Mono */
+.cm-wysiwym-inline-code {
+  font-family: 'Victor Mono', Courier, monospace !important;
+  font-size: 0.70em !important;
+  background-color: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #0f172a !important;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+/* Headings style - Goudy Bookletter 1911 typography */
+.cm-editor .cm-wysiwym-h1, 
+.cm-editor .cm-wysiwym-h2, 
+.cm-editor .cm-wysiwym-h3, 
+.cm-editor .cm-wysiwym-h4, 
+.cm-editor .cm-wysiwym-h5, 
+.cm-editor .cm-wysiwym-h6 {
+  font-family: 'Goudy Bookletter 1911', Georgia, serif !important;
+  color: #111111 !important;
+  letter-spacing: -0.01em !important;
+  text-decoration: none;
+}
+
+/* Disable underlines on heading text spans from CodeMirror highlight style */
+.cm-editor .cmt-heading,
+.cm-editor .tok-heading,
+.cm-editor .cm-wysiwym-h1 span,
+.cm-editor .cm-wysiwym-h2 span,
+.cm-editor .cm-wysiwym-h3 span,
+.cm-editor .cm-wysiwym-h4 span,
+.cm-editor .cm-wysiwym-h5 span,
+.cm-editor .cm-wysiwym-h6 span {
+  text-decoration: none;
+}
+
+.cm-editor .cm-wysiwym-h1 {
+  font-size: 2em;
+  font-weight: bold;
+  line-height: 1.25;
+  padding-top: 24px;
+  padding-bottom: 12px;
+  margin: 0;
+}
+
+.cm-editor .cm-wysiwym-h2 {
+  font-size: 1.5em;
+  font-weight: bold;
+  line-height: 1.3;
+  padding-top: 20px;
+  padding-bottom: 10px;
+  margin: 0;
+}
+
+.cm-editor .cm-wysiwym-h3 {
+  font-size: 1.25em;
+  font-weight: bold;
+  line-height: 1.4;
+  padding-top: 18px;
+  padding-bottom: 8px;
+  margin: 0;
+}
+
+.cm-editor .cm-wysiwym-h4 {
+  font-size: 1.1em;
+  font-weight: bold;
+  line-height: 1.5;
+  padding-top: 14px;
+  padding-bottom: 6px;
+  margin: 0;
+}
+
+/* Blockquotes - Goudy italic style */
+.cm-editor .cm-wysiwym-blockquote {
+  border-left: 3px solid #cbd5e1;
+  padding-left: 16px;
+  margin: 4px 0;
+}
+
+.cm-editor .cm-wysiwym-blockquote,
+.cm-editor .cm-wysiwym-blockquote * {
+  font-style: italic;
+  color: #475569;
+}
+
+/* YAML Frontmatter blocks - Victor Mono */
+.cm-wysiwym-frontmatter {
+  background-color: #fafafa !important;
+  border-left: 4px solid #64748b !important;
+  font-family: 'Victor Mono', Courier, monospace !important;
+  font-size: 0.70em !important;
+  line-height: 2 !important;
+  padding: 4px 0 4px 16px !important;
+  margin: 0 !important;
+  opacity: 0.8;
+}
+
+.cm-wysiwym-frontmatter,
+.cm-wysiwym-frontmatter span {
+  color: #64748b !important;
+  font-family: inherit !important;
+  font-size: inherit !important;
+}
+
+.cm-wysiwym-frontmatter-active {
+  background-color: #f8fafc !important;
+  border-left: 4px solid #64748b !important;
+  font-family: 'Victor Mono', Courier, monospace !important;
+  font-size: 0.70em !important;
+  line-height: 2 !important;
+  padding: 4px 0 4px 16px !important;
+  margin: 0 !important;
+  opacity: 0.8;
+}
+
+.cm-wysiwym-frontmatter-active,
+.cm-wysiwym-frontmatter-active span {
+  color: #334155 !important;
+  font-family: inherit !important;
+  font-size: inherit !important;
+}
+
+/* Horizontal Rules */
+.cm-wysiwym-hr-widget {
+  border: 0;
+  border-top: 2px dashed #cbd5e1;
+  margin: 0 !important;
+  padding: 12px 0 !important;
+  display: block;
+  width: 100%;
+}
+
+/* Image container styling */
+.cm-wysiwym-image-widget-container,
+.cm-wysiwym-image-shortcode-container {
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+  margin: 0 !important;
+  padding: 16px 0;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  background-color: #ffffff;
+  transition: box-shadow 0.2s ease;
+}
+
+.cm-wysiwym-image-widget-container:hover,
+.cm-wysiwym-image-shortcode-container:hover {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+.cm-wysiwym-image-preview {
+  display: block;
+  max-width: 100%;
+  max-height: 380px;
+  height: auto;
+  object-fit: contain;
+  margin: 0 auto;
+  padding: 10px;
+}
+
+.cm-wysiwym-image-caption,
+.cm-wysiwym-image-shortcode-container .shortcode-meta {
+  font-family: 'Goudy Bookletter 1911', Georgia, serif;
+  font-size: 0.82em;
+  color: #64748b;
+  padding: 8px 16px;
+  border-top: 1px solid #f1f5f9;
+  background-color: #f8fafc;
+}
+
+.cm-wysiwym-image-shortcode-container .shortcode-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.cm-wysiwym-image-shortcode-container .meta-badge {
+  background-color: #cbd5e1;
+  color: #334155;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.82em;
+  text-transform: uppercase;
+}
+
+/* Links */
+.cm-wysiwym-link-anchor {
+  color: #475569;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.cm-wysiwym-link-anchor * {
+  color: inherit !important;
+}
+
+/* Block-level Code Blocks - Victor Mono */
+.cm-editor .cm-wysiwym-codeblock-line {
+  background-color: #f8fafc;
+  font-family: 'Victor Mono', Courier, monospace !important;
+  font-size: 0.70em !important;
+  line-height: 2 !important;
+  padding-left: 24px !important;
+  padding-right: 24px !important;
+}
+
+.cm-editor .cm-wysiwym-codeblock-line-first {
+  padding-top: 14px !important;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  border-top: 1px solid #e2e8f0;
+  border-left: 1px solid #e2e8f0;
+  border-right: 1px solid #e2e8f0;
+}
+
+.cm-editor .cm-wysiwym-codeblock-line-last {
+  padding-bottom: 14px !important;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  border-bottom: 1px solid #e2e8f0;
+  border-left: 1px solid #e2e8f0;
+  border-right: 1px solid #e2e8f0;
+}
+
+.cm-editor .cm-wysiwym-codeblock-line:not(.cm-wysiwym-codeblock-line-first):not(.cm-wysiwym-codeblock-line-last) {
+  border-left: 1px solid #e2e8f0;
+  border-right: 1px solid #e2e8f0;
+}
+
+/* Caret color overrides */
+.cm-editor .cm-cursor {
+  border-left-color: #1a1a1a !important;
+}
+.cm-editor .cm-fat-cursor {
+  background-color: #1a1a1a !important;
+  opacity: 0.6 !important;
+}
+
+/* Syntax Highlighting */
+.cm-editor .tok-markup,
+.cm-editor .cmt-markup,
+.cm-editor .tok-meta,
+.cm-editor .cmt-meta,
+.cm-editor .tok-punctuation,
+.cm-editor .cmt-punctuation,
+.cm-editor .tok-list,
+.cm-editor .cmt-list {
+  color: #1a1a1a !important;
+}
+
+.cm-editor .tok-comment,
+.cm-editor .cmt-comment {
+  color: #64748b !important;
+  font-style: italic;
+}
+
+.cm-editor .tok-keyword,
+.cm-editor .cmt-keyword {
+  color: #111111 !important;
+  font-weight: bold;
+}
+
+.cm-editor .tok-string,
+.cm-editor .cmt-string {
+  color: #1a1a1a !important;
+}
+
+.cm-editor .tok-number,
+.cm-editor .cmt-number {
+  color: #111111 !important;
+}
+
+/* Bullet list marker styling */
+.cm-wysiwym-bullet {
+  color: #64748b;
+  font-weight: bold;
+  margin-right: 0.35em;
+  display: inline-block;
+}
+
+/* Table line styling - Victor Mono */
+.cm-editor .cm-wysiwym-table-row {
+  background-color: rgba(241, 245, 249, 0.45) !important;
+  font-family: 'Victor Mono', Courier, monospace !important;
+  font-size: 0.70em !important;
+  line-height: 2 !important;
+}
+
+/* Table widget */
+.cm-wysiwym-table-widget {
+  margin: 8px 0;
+}
+
+.cm-wysiwym-table-widget table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92em;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.cm-wysiwym-table-widget th,
+.cm-wysiwym-table-widget td {
+  padding: 8px 12px;
+  border: 1px solid #e2e8f0;
+  text-align: left;
+  cursor: text;
+  height: 38px;
+  box-sizing: border-box;
+}
+
+.cm-wysiwym-table-widget th {
+  background-color: #f1f5f9;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.cm-wysiwym-table-widget tr:nth-child(even) {
+  background-color: #f8fafc;
+}
+
+/* Raw Editor specific styling overrides */
+.raw-editor-mount .cm-editor,
+.raw-editor-mount .cm-content,
+.raw-editor-mount .cm-scroller,
+.raw-editor-mount .cm-line {
+  font-family: 'Victor Mono', Courier, monospace !important;
+  font-size: 14px !important;
+  line-height: 2 !important;
+  background-color: transparent !important;
+  color: #1a1a1a !important;
+}
+
+/* --- HTML Preview Styles --- */
+.traven-preview {
+  background-color: transparent !important;
+  color: #1a1a1a !important;
+  font-family: 'Goudy Bookletter 1911', Georgia, serif !important;
+  font-size: 20px !important;
+  line-height: 1.65 !important;
+  padding: 0 12px !important;
+}
+
+.traven-preview h1, 
+.traven-preview h2, 
+.traven-preview h3, 
+.traven-preview h4, 
+.traven-preview h5, 
+.traven-preview h6 {
+  font-family: 'Goudy Bookletter 1911', Georgia, serif !important;
+  color: #111111 !important;
+  font-weight: bold;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  line-height: 1.25;
+}
+
+.traven-preview h1 { font-size: 2em; }
+.traven-preview h2 { font-size: 1.5em; }
+.traven-preview h3 { font-size: 1.25em; }
+
+.traven-preview p {
+  margin-top: 0;
+  margin-bottom: 1.5em;
+  line-height: 1.65;
+}
+
+.traven-preview blockquote {
+  border-left: 3px solid #cbd5e1;
+  padding-left: 14px;
+  margin: 16px 0;
+  font-style: italic;
+  color: #475569;
+}
+
+.traven-preview ul, 
+.traven-preview ol {
+  padding-left: 24px;
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.traven-preview li {
+  margin-bottom: 4px;
+}
+
+.traven-preview code {
+  font-family: 'Victor Mono', Courier, monospace !important;
+  font-size: 0.70em;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+.traven-preview pre {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 16px;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+.traven-preview pre code {
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  font-size: 14px !important;
+  line-height: 2 !important;
+}

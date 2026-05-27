@@ -8,7 +8,7 @@
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License"></a>
-  <img src="https://img.shields.io/badge/version-0.1.3-orange.svg" alt="Version 0.1.3">
+  <img src="https://img.shields.io/badge/version-0.1.4-orange.svg" alt="Version 0.1.4">
   <img src="https://img.shields.io/badge/dependency-CodeMirror_6-6aa00.svg" alt="CodeMirror 6">
 </p>
 
@@ -334,10 +334,10 @@ You can customize the toolbar layout by passing an array of tool keys to the con
 #### Available Toolbar Stylesheets
 
 Alternative pre-configured toolbar presentation sheets are available in `assets/toolbars/` and can be loaded dynamically or statically to swap editor layouts:
-*   `toolbar-default.css`: The default clean toolbar skin.
+*   `toolbar-default.css`: The default clean toolbar skin, containing the full set of all available buttons.
 *   `toolbar-compact.css` / `toolbar-compact-dark.css`: Slim layouts with reduced padding.
 *   `toolbar-reduced.css` / `toolbar-reduced-dark.css`: Ultra-minimalist layouts for simplified interfaces.
-*   `toolbar-expandable.css` / `toolbar-expandable-dark.css`: A dynamic "2-in-1" toolbar that displays in a compact format by default and expands to show the full default set of buttons when clicking the 3-vertical-dots toggle.
+*   `toolbar-expandable.css` / `toolbar-expandable-dark.css`: A dynamic "2-in-1" toolbar that toggles between core buttons and the full set when expanded.
 
 #### Toolbar Buttons & Selectors Reference
 

@@ -110,6 +110,7 @@ if (empty($demos)) {
         'demo-form.php' => 'Form Demo',
         'demo-hybrid.php' => 'Hybrid Demo',
         'demo-unified.php' => 'Unified Demo',
+        'demo-write.php' => 'Write Demo',
     ];
 }
 

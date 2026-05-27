@@ -128,3 +128,17 @@ button.btn-heading,
 .form-demo .toolbar-btn:active {
   background-color: var(--rail-active-bg) !important;
 }
+
+/* Toggle expand/collapse button icon states */
+.traven-toolbar-container:not(.is-expanded) .btn-expand-toggle .icon-collapsed {
+  display: inline-block !important;
+}
+.traven-toolbar-container:not(.is-expanded) .btn-expand-toggle .icon-expanded {
+  display: none !important;
+}
+.traven-toolbar-container.is-expanded .btn-expand-toggle .icon-collapsed {
+  display: none !important;
+}
+.traven-toolbar-container.is-expanded .btn-expand-toggle .icon-expanded {
+  display: inline-block !important;
+}

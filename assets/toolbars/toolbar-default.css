@@ -686,4 +686,7 @@ button.btn-heading {
 .btn-expand-toggle {
   display: none !important;
 }
+.btn-expand-toggle .icon-expanded {
+  display: none !important;
+}
 
