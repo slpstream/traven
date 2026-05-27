@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Traven Editor — Premium WYSIWYM Markdown Editor</title>
+  <title>Traven Editor — WYSIWYM Markdown Editor</title>
 
   <!-- Preload Critical Fonts & Styles -->
   <link rel="preload" href="assets/fonts/fonts.css" as="style">

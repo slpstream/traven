@@ -211,10 +211,98 @@ export function buildToolbar(editor, config, keybindings = {}) {
     }
   });
 
-  // Setup Roving Tabindex for all main toolbar items
+  // Append Expand/Collapse toggle button (3-dots vertical icon)
+  const toggleBtn = document.createElement("button");
+  toggleBtn.type = "button";
+  toggleBtn.className = "toolbar-btn btn-expand-toggle";
+  toggleBtn.setAttribute("title", "Toggle Expand Toolbar");
+  toggleBtn.setAttribute("aria-label", "Toggle Expand Toolbar");
+  toggleBtn.innerHTML = `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+      <rect width="256" height="256" fill="none"/>
+      <circle cx="128" cy="60" r="16" fill="currentColor"/>
+      <circle cx="128" cy="128" r="16" fill="currentColor"/>
+      <circle cx="128" cy="196" r="16" fill="currentColor"/>
+    </svg>
+  `;
+
+  // Restore toolbar expansion state from localStorage
+  let isExpanded = false;
+  try {
+    isExpanded = localStorage.getItem("traven-toolbar-expanded") === "true";
+  } catch (err) {
+    console.warn("TravenEditor: Failed to read from localStorage", err);
+  }
+  if (isExpanded) {
+    container.classList.add("is-expanded");
+  }
+
+  toggleBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    const currentlyExpanded = container.classList.toggle("is-expanded");
+    try {
+      localStorage.setItem("traven-toolbar-expanded", currentlyExpanded ? "true" : "false");
+    } catch (err) {
+      console.warn("TravenEditor: Failed to write to localStorage", err);
+    }
+
+    // If collapsing and focus was on a button that gets hidden, focus the toggle button instead
+    if (!currentlyExpanded) {
+      const activeEl = document.activeElement;
+      if (container.contains(activeEl) && activeEl !== toggleBtn && !isButtonVisible(activeEl)) {
+        toggleBtn.focus();
+      }
+    }
+
+    if (editor && typeof editor.getView === "function") {
+      const view = editor.getView();
+      if (view) {
+        view.requestMeasure();
+      }
+    }
+  });
+
+  container.appendChild(toggleBtn);
+
+  /**
+   * Checks if a toolbar button is visible.
+   * @param {HTMLElement} btn
+   * @returns {boolean}
+   */
+  function isButtonVisible(btn) {
+    // In a real browser, offsetParent is non-null for visible elements.
+    // In headless/test environments (like JSDOM), offsetParent might be null for all elements,
+    // so we fallback to checking if the computed style display is not 'none'.
+    if (!btn.ownerDocument.body.contains(btn)) {
+      return false; // Not in DOM yet
+    }
+    
+    // If the browser supports offsetParent and at least one element has a non-null offsetParent,
+    // we can trust offsetParent. Otherwise, we fallback to computed style.
+    const hasLayout = Array.from(container.querySelectorAll(".toolbar-btn")).some(el => el.offsetParent !== null);
+    if (hasLayout) {
+      return btn.offsetParent !== null;
+    }
+    
+    return window.getComputedStyle(btn).display !== 'none';
+  }
+
+  // Setup initial roving tabindex (all buttons get tabindex="0" so browser can focus the first visible one,
+  // then the focusin handler will immediately correct other buttons to "-1")
   const mainItems = Array.from(container.querySelectorAll("button.toolbar-btn"));
-  mainItems.forEach((item, index) => {
-    item.setAttribute("tabindex", index === 0 ? "0" : "-1");
+  mainItems.forEach((item) => {
+    item.setAttribute("tabindex", "0");
+  });
+
+  // Dynamically manage tabindex of all buttons upon focus
+  container.addEventListener("focusin", (e) => {
+    const target = e.target;
+    if (target.classList.contains("toolbar-btn")) {
+      const items = Array.from(container.querySelectorAll("button.toolbar-btn"));
+      items.forEach((item) => {
+        item.setAttribute("tabindex", item === target ? "0" : "-1");
+      });
+    }
   });
 
   // Container keydown listener for navigating main toolbar items
@@ -232,7 +320,8 @@ export function buildToolbar(editor, config, keybindings = {}) {
       }
     }
 
-    const items = Array.from(container.querySelectorAll("button.toolbar-btn"));
+    // Filter to only visible buttons
+    const items = Array.from(container.querySelectorAll("button.toolbar-btn")).filter(isButtonVisible);
     const currentIndex = items.indexOf(document.activeElement);
     if (currentIndex === -1) return;
 
