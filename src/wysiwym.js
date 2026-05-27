@@ -296,6 +296,9 @@ const codeBlockLineSingleDeco = Decoration.line({ class: "cm-wysiwym-codeblock-l
 // Table line styles
 const tableRowLineDeco = Decoration.line({ class: "cm-wysiwym-table-row" });
 
+// Collapsed fenced code line style
+const collapsedFenceLineDeco = Decoration.line({ class: "cm-wysiwym-collapsed-fence" });
+
 
 // --- Suppression StateField ---
 export const setSuppression = StateEffect.define();
@@ -736,6 +739,14 @@ function buildWysiwymDecorations(state) {
             const endLineObj = state.doc.line(endLine);
             collected.push({ from: startLineObj.from, to: startLineObj.to, deco: collapseDeco });
             collected.push({ from: endLineObj.from, to: endLineObj.to, deco: collapseDeco });
+            if (!decoratedLines.has(startLine)) {
+              collected.push({ from: startLineObj.from, to: startLineObj.from, deco: collapsedFenceLineDeco });
+              decoratedLines.add(startLine);
+            }
+            if (!decoratedLines.has(endLine)) {
+              collected.push({ from: endLineObj.from, to: endLineObj.from, deco: collapsedFenceLineDeco });
+              decoratedLines.add(endLine);
+            }
           }
         }
       }

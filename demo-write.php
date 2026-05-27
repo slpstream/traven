@@ -16,7 +16,7 @@
   <style>
     /* Reset & Base distraction-free styles */
     body {
-      background-color: #ffffff !important;
+      background-color: #fcfbf9 !important;
       color: #1a1a1a !important;
       font-family: 'Goudy Bookletter 1911', Georgia, serif !important;
       margin: 0;
@@ -168,7 +168,7 @@
 
     /* Fullscreen Mode styling overrides for distraction-free writing layout */
     .editor-wrapper.is-fullscreen {
-      background-color: #ffffff !important;
+      background-color: #fcfbf9 !important;
       overflow-y: auto !important;
       padding: 0 !important;
     }
@@ -181,9 +181,44 @@
       padding: 0 20px !important;
       box-sizing: border-box !important;
     }
+
+    /* Brand Link top-left */
+    .write-brand {
+      position: absolute;
+      top: 24px;
+      left: 24px;
+      z-index: 100;
+      opacity: 0.55;
+      transition: opacity 0.2s ease;
+    }
+
+    .write-brand:hover {
+      opacity: 1;
+    }
+
+    .write-brand img {
+      height: 20px;
+      width: auto;
+      display: block;
+    }
+
+    @media (max-width: 1024px) {
+      .write-brand {
+        position: static;
+        margin: 24px auto 0 auto;
+      }
+      .write-container {
+        margin-top: 40px;
+      }
+    }
   </style>
 </head>
 <body>
+
+  <!-- Return to traven.dev wordmark -->
+  <a href="https://traven.dev" class="write-brand" title="Return to Traven homepage">
+    <img src="assets/images/traven.png" alt="Traven logo">
+  </a>
 
   <div class="write-container">
     <!-- Header with clean tabs -->
@@ -216,23 +251,24 @@
 
     const initialText = `# A Quiet Space
 
-This is Traven's distraction-free writing layout. The design features Goudy Bookletter 1911 as the primary typeface, Victor Mono for monospace formatting, and a fixed, top-centered floating toolbar.
+This is Traven's distraction-free writing layout. The design features Goudy Bookletter 1911 as the primary typeface and a fixed, top-centered floating toolbar. Switch between WYSIWYM, Markdown, and Preview tabs above to view raw markdown or see what your work will look like when rendered as a web page.
 
 ## Focus on Writing
 
 To maintain a clean screen, use the manual toolbar toggle button (located at the top right next to "Copy Markdown") to show or hide the floating toolbar at any time.
 
-1. Toggle the toolbar on to access formatting tools for bold, italics, links, and code blocks.
+1. Toggle the toolbar on to access formatting tools for **bold**, *italics*, **[links](https://traven.dev)**, \`inline code\`, and a lot more that users expect in a featurerich text editor.
 2. Toggle it off to hide all visual styling controls and write in complete peace.
-3. Switch between WYSIWYM, Markdown, and Preview tabs above to view raw markdown or render your work.
+3. The toolbar itself can be expanded to a full-length feature set of all available buttons, or collapsed to show just the most frequently-used tools.
 
-\`\`\`javascript
-// Victor Mono handles the code styling
+\`\`\`
+Victor Mono handles the code styling
 const message = "A clean canvas for your thoughts";
 console.log(message);
 \`\`\`
 
-Feel free to write here, format text, or switch views above.`;
+Feel free to write here, format text, or switch views above. ==You can edit both in the WYSIWYM tab and the Markdown tab==, with live updates in both without reload or any need to save (only the Preview tab is a static view.) 
+Think of this page as an interactive sandbox, so use all the toys in the toolbar to play around and see the power of a fast, unobtrusive Markdown editor.`;
 
     // Initialize Traven Editor
     document.fonts.ready.then(() => {
