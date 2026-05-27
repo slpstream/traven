@@ -337,6 +337,7 @@ Alternative pre-configured toolbar presentation sheets are available in `assets/
 *   `toolbar-default.css`: The default clean toolbar skin.
 *   `toolbar-compact.css` / `toolbar-compact-dark.css`: Slim layouts with reduced padding.
 *   `toolbar-reduced.css` / `toolbar-reduced-dark.css`: Ultra-minimalist layouts for simplified interfaces.
+*   `toolbar-expandable.css` / `toolbar-expandable-dark.css`: A dynamic "2-in-1" toolbar that displays in a compact format by default and expands to show the full default set of buttons when clicking the 3-vertical-dots toggle.
 
 #### Toolbar Buttons & Selectors Reference
 
