@@ -186,22 +186,26 @@ function findSkipTarget(state, cursor, direction) {
 
       // 8. Autolink delimiters <url> — skip over collapsed angle brackets
       if (node.name === "Autolink") {
-        const openEnd = node.from + 1;
-        const closeStart = node.to - 1;
+        const text = state.sliceDoc(node.from, node.to);
+        const isBracketed = text.startsWith("<") && text.endsWith(">");
+        if (isBracketed) {
+          const openEnd = node.from + 1;
+          const closeStart = node.to - 1;
 
-        if (direction === "right") {
-          if (cursor >= node.from && cursor < openEnd) {
-            best = { target: openEnd, suppressRange: null };
-          }
-          if (cursor >= closeStart && cursor < node.to) {
-            best = { target: node.to, suppressRange: null };
-          }
-        } else {
-          if (cursor > closeStart && cursor <= node.to) {
-            best = { target: closeStart, suppressRange: null };
-          }
-          if (cursor > node.from && cursor <= openEnd) {
-            best = { target: node.from, suppressRange: null };
+          if (direction === "right") {
+            if (cursor >= node.from && cursor < openEnd) {
+              best = { target: openEnd, suppressRange: null };
+            }
+            if (cursor >= closeStart && cursor < node.to) {
+              best = { target: node.to, suppressRange: null };
+            }
+          } else {
+            if (cursor > closeStart && cursor <= node.to) {
+              best = { target: closeStart, suppressRange: null };
+            }
+            if (cursor > node.from && cursor <= openEnd) {
+              best = { target: node.from, suppressRange: null };
+            }
           }
         }
       }

@@ -26,7 +26,7 @@ import {
 } from "@codemirror/language";
 import { classHighlighter } from "@lezer/highlight";
 import { markdown } from "@codemirror/lang-markdown";
-import { Strikethrough, TaskList, Table } from "@lezer/markdown";
+import { Strikethrough, TaskList, Table, Autolink } from "@lezer/markdown";
 import { Highlight } from "./highlight-parser.js";
 import { Shortcode } from "./shortcode-parser.js";
 import { yamlFrontmatter } from "@codemirror/lang-yaml";
@@ -173,7 +173,7 @@ export class TravenEditor {
       }),
       ...(wrapLines ? [EditorView.lineWrapping] : []),
       readOnlyCompartment.of(EditorState.readOnly.of(!!options.readOnly)),
-      yamlFrontmatter({ content: markdown({ extensions: [Strikethrough, TaskList, Table, Highlight, Shortcode, { remove: ["SetextHeading"] }] }) }),
+      yamlFrontmatter({ content: markdown({ extensions: [Strikethrough, TaskList, Table, Autolink, Highlight, Shortcode, { remove: ["SetextHeading"] }] }) }),
       wysiwymPlugin(),
       delimiterSkipKeymap(),
       imageDecorationPlugin(),
@@ -1151,6 +1151,63 @@ export class TravenEditor {
 
     // 1.5. Convert autolinks <url> before HTML escaping destroys the angle brackets
     content = content.replace(/<(https?:\/\/[^\s>]+)>/g, '[$1]($1)');
+
+    // 1.6. Protect existing markdown links, image shortcodes, and inline code from being double-processed
+    const inlineCodePlaceholders = [];
+    content = content.replace(/(`[^`\n]+`)/g, (match) => {
+      const index = inlineCodePlaceholders.length;
+      inlineCodePlaceholders.push(match);
+      return `__INLINE_CODE_PLACEHOLDER_${index}__`;
+    });
+
+    const shortcodePlaceholders = [];
+    content = content.replace(/(\[image\s+[^\]]+\])/g, (match) => {
+      const index = shortcodePlaceholders.length;
+      shortcodePlaceholders.push(match);
+      return `__IMAGE_SHORTCODE_PLACEHOLDER_${index}__`;
+    });
+
+    const linkPlaceholders = [];
+    content = content.replace(/(!?\[[^\]]*\]\([^)]+\))/g, (match) => {
+      const index = linkPlaceholders.length;
+      linkPlaceholders.push(match);
+      return `__LINK_PLACEHOLDER_${index}__`;
+    });
+
+    // 1.7. Convert naked URLs (http://, https://, www.)
+    content = content.replace(/\b(https?:\/\/[^\s()<>]+|www\.[^\s()<>]+)\b/g, (match) => {
+      // Clean up trailing punctuation if they are not balanced inside parentheses
+      let cleanUrl = match;
+      let trailing = "";
+      const puncMatch = cleanUrl.match(/[.,;:?!)]+$/);
+      if (puncMatch) {
+        const punc = puncMatch[0];
+        if (punc.endsWith(')') && (cleanUrl.match(/\(/g) || []).length >= (cleanUrl.match(/\)/g) || []).length) {
+          // parentheses are balanced, do not strip
+        } else {
+          cleanUrl = cleanUrl.slice(0, -punc.length);
+          trailing = punc;
+        }
+      }
+      const href = cleanUrl.startsWith('www.') ? `https://${cleanUrl}` : cleanUrl;
+      return `[${cleanUrl}](${href})${trailing}`;
+    });
+
+    // 1.8. Convert naked emails
+    content = content.replace(/\b([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})\b/g, (match) => {
+      return `[${match}](mailto:${match})`;
+    });
+
+    // 1.9. Restore protected placeholders
+    content = content.replace(/__LINK_PLACEHOLDER_(\d+)__/g, (match, index) => {
+      return linkPlaceholders[parseInt(index)];
+    });
+    content = content.replace(/__IMAGE_SHORTCODE_PLACEHOLDER_(\d+)__/g, (match, index) => {
+      return shortcodePlaceholders[parseInt(index)];
+    });
+    content = content.replace(/__INLINE_CODE_PLACEHOLDER_(\d+)__/g, (match, index) => {
+      return inlineCodePlaceholders[parseInt(index)];
+    });
 
     // 2. Escape HTML characters to prevent XSS in fallback
     content = content

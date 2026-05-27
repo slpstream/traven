@@ -479,7 +479,7 @@ function buildWysiwymDecorations(state) {
           }
         }
 
-        // 3.6. Autolinks <https://url>
+        // 3.6. Autolinks <https://url> (which is mapped to "Autolink" in CommonMark)
         if (node.name === "Autolink") {
           const isCursorInside = cursorHead >= node.from && cursorHead <= node.to;
 
@@ -489,6 +489,17 @@ function buildWysiwymDecorations(state) {
             collected.push({ from: node.to - 1, to: node.to, deco: collapseDeco });
             // Style the URL text between the brackets
             collected.push({ from: node.from + 1, to: node.to - 1, deco: linkDeco });
+          }
+        }
+        // Naked GFM Autolinks (which are mapped directly to "URL" under GFM parser extension)
+        if (node.name === "URL") {
+          const parent = node.node.parent;
+          const isNaked = parent && parent.name !== "Link" && parent.name !== "Image" && parent.name !== "Autolink";
+          if (isNaked) {
+            const isCursorInside = cursorHead >= node.from && cursorHead <= node.to;
+            if (!isCursorInside) {
+              collected.push({ from: node.from, to: node.to, deco: linkDeco });
+            }
           }
         }
         // 3.7. Custom ImageShortcode [image src="..." ...]
@@ -836,8 +847,19 @@ const linkClickHandler = EditorView.domEventHandlers({
           }
         }
         if (node.name === "Autolink") {
-          // Autolink URL is the text between < and >
-          linkUrl = view.state.sliceDoc(node.from + 1, node.to - 1);
+          const text = view.state.sliceDoc(node.from, node.to);
+          if (text.startsWith("<") && text.endsWith(">")) {
+            linkUrl = text.slice(1, -1);
+          } else {
+            linkUrl = text;
+          }
+        }
+        if (node.name === "URL") {
+          const parent = node.node.parent;
+          const isNaked = parent && parent.name !== "Link" && parent.name !== "Image" && parent.name !== "Autolink";
+          if (isNaked) {
+            linkUrl = view.state.sliceDoc(node.from, node.to);
+          }
         }
       }
     });

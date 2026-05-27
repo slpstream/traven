@@ -8,7 +8,7 @@
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License"></a>
-  <img src="https://img.shields.io/badge/version-0.1.4-orange.svg" alt="Version 0.1.4">
+  <img src="https://img.shields.io/badge/version-0.1.5-orange.svg" alt="Version 0.1.5">
   <img src="https://img.shields.io/badge/dependency-CodeMirror_6-6aa00.svg" alt="CodeMirror 6">
 </p>
 
@@ -28,7 +28,7 @@ Traven is highly modular and straightforward to customize or extend. If you need
 
 ## Live Demos
 
-Go to **[Traven.dev](https://traven.dev)** to try the Traven framework-agnostic WYSIWYM editor live. 
+Go to **[Traven.dev](https://traven.dev)** to try the Traven framework-agnostic WYSIWYM editor with live previews in different demo sandboxes. 
 
 Mix and match different combinations of toolbar buttons, skins, and editor layouts to see the flexibility of how Traven can be themed and configured to fit any setting where JavaScript can be loaded.
 

@@ -546,5 +546,53 @@ describe('ImageShortcode', () => {
       expect(html).not.toContain('href="java');
     });
   });
+
+  describe('GFM naked autolinks', () => {
+    it('compiles naked URLs, www links, and emails to HTML links in fallback renderer', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: [
+          'Visit https://github.com/slpstream/traven/issues for issues.',
+          'Go to www.google.com for search.',
+          'Email hello@example.com for support.',
+          'Do not convert `https://ignored.com` or [Google](https://google.com) twice.'
+        ].join('\n'),
+      });
+      const html = editor.getContentHtml();
+      expect(html).toContain('<a href="https://github.com/slpstream/traven/issues" target="_blank">https://github.com/slpstream/traven/issues</a>');
+      expect(html).toContain('<a href="https://www.google.com" target="_blank">www.google.com</a>');
+      expect(html).toContain('<a href="mailto:hello@example.com" target="_blank">hello@example.com</a>');
+      expect(html).toContain('<code>https://ignored.com</code>');
+      expect(html).toContain('<a href="https://google.com" target="_blank">Google</a>');
+    });
+
+    it('correctly styles naked autolinks in the editor without collapsing delimiters', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: 'Link: https://github.com',
+      });
+      // Move cursor away to trigger formatting
+      editor.setSelection(0, 0);
+      const textNode = container.querySelector('.cm-wysiwym-link-anchor');
+      expect(textNode).not.toBeNull();
+      expect(textNode.textContent).toBe('https://github.com');
+      
+      const lineEl = container.querySelector('.cm-line');
+      expect(lineEl).not.toBeNull();
+      expect(lineEl.textContent).toBe('Link: https://github.com');
+    });
+
+    it('collapses angle brackets for standard autolinks', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: 'Link: <https://github.com>',
+      });
+      editor.setSelection(0, 0);
+      
+      const lineEl = container.querySelector('.cm-line');
+      expect(lineEl).not.toBeNull();
+      expect(lineEl.textContent).toBe('Link: https://github.com');
+    });
+  });
 });
 
