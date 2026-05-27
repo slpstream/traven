@@ -322,6 +322,23 @@ export const suppressionField = StateField.define({
   }
 });
 
+// --- Focus StateField ---
+export const setFocusEffect = StateEffect.define();
+
+export const focusField = StateField.define({
+  create() {
+    return false;
+  },
+  update(value, tr) {
+    for (const effect of tr.effects) {
+      if (effect.is(setFocusEffect)) {
+        return effect.value;
+      }
+    }
+    return value;
+  }
+});
+
 // --- Helper to get heading decoration ---
 function getHeadingDeco(level) {
   switch (level) {
@@ -337,8 +354,9 @@ function getHeadingDeco(level) {
 // --- Decoration Builder ---
 function buildWysiwymDecorations(state) {
   const collected = [];
-  const cursorHead = state.selection.main.head;
-  const cursorLine = state.doc.lineAt(cursorHead).number;
+  const hasFocus = state.field(focusField, false);
+  const cursorHead = hasFocus ? state.selection.main.head : -1;
+  const cursorLine = hasFocus ? state.doc.lineAt(state.selection.main.head).number : -1;
   const suppressed = state.field(suppressionField, false) || null;
 
   // Track lines that already have line decorations applied to avoid duplicate line class definitions
@@ -783,7 +801,8 @@ export const wysiwymField = StateField.define({
     return buildWysiwymDecorations(state);
   },
   update(decorations, tr) {
-    if (tr.docChanged || tr.selection) {
+    const focusChanged = tr.effects.some(e => e.is(setFocusEffect));
+    if (tr.docChanged || tr.selection || focusChanged) {
       return buildWysiwymDecorations(tr.state);
     }
     return decorations.map(tr.changes);
@@ -834,6 +853,8 @@ const linkClickHandler = EditorView.domEventHandlers({
 export const wysiwymPlugin = () => {
   return [
     suppressionField,
+    focusField,
+    EditorView.focusChangeEffect.of((state, focusing) => setFocusEffect.of(focusing)),
     wysiwymField,
     linkClickHandler
   ];

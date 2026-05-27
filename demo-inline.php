@@ -133,7 +133,12 @@
         onUploadImage: mockImageUpload,
         toolbar: DEFAULT_TOOLBAR,
         theme: localStorage.getItem("traven-selected-theme") || "light",
-        vimMode: localStorage.getItem("traven-selected-vim") === "true"
+        vimMode: localStorage.getItem("traven-selected-vim") === "true",
+        onSave: (content) => {
+          if (typeof window.showSaveToast === "function") {
+            window.showSaveToast();
+          }
+        }
       });
 
       // Set up the copy button to copy only editable content (excluding YAML frontmatter)

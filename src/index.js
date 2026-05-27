@@ -1319,3 +1319,5 @@ export class TravenEditor {
     this.#listeners = {};
   }
 }
+
+export { getCM } from "@replit/codemirror-vim";

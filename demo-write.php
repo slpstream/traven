@@ -211,9 +211,53 @@
         margin-top: 40px;
       }
     }
+
+    /* Toast Notification */
+    .save-toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background-color: #1a1a1a;
+      color: #fcfbf9;
+      padding: 10px 20px;
+      border-radius: 20px;
+      font-size: 0.9em;
+      font-weight: 500;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 10000;
+      opacity: 0;
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .save-toast.is-show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    .save-toast svg {
+      width: 16px;
+      height: 16px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
   </style>
 </head>
 <body>
+
+  <!-- Toast Notification element -->
+  <div id="save-toast" class="save-toast">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    <span>Saved</span>
+  </div>
 
   <!-- Return to traven.dev wordmark -->
   <a href="https://traven.dev" class="write-brand" title="Return to Traven homepage">
@@ -270,29 +314,63 @@ console.log(message);
 Feel free to write here, format text, or switch views above. ==You can edit both in the WYSIWYM tab and the Markdown tab==, with live updates in both without reload or any need to save (only the Preview tab is a static view.) 
 Think of this page as an interactive sandbox, so use all the toys in the toolbar to play around and see the power of a fast, unobtrusive Markdown editor.`;
 
+    // Simulate async image upload
+    const mockImageUpload = async (file) => {
+      console.log("Mock uploading file:", file.name);
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      return URL.createObjectURL(file);
+    };
+
+    // Toast notification logic
+    const toast = document.getElementById('save-toast');
+    let toastTimeout = null;
+    function showSaveToast() {
+      if (toast) {
+        toast.classList.add('is-show');
+        if (toastTimeout) clearTimeout(toastTimeout);
+        toastTimeout = setTimeout(() => {
+          toast.classList.remove('is-show');
+        }, 2000);
+      }
+    }
+
     // Initialize Traven Editor
     document.fonts.ready.then(() => {
       window.editor = new TravenEditor({
         element: document.getElementById("editor"),
         sourceElement: document.getElementById("raw-editor"),
         initialValue: initialText,
+        onUploadImage: mockImageUpload,
         toolbar: DEFAULT_TOOLBAR,
-        theme: "light"
+        theme: "light",
+        onSave: (content) => {
+          showSaveToast();
+        }
       });
 
       // Setup copy button
       const copyBtn = document.getElementById('copy-markdown-btn');
-      if (copyBtn) {
-        const copyIconHtml = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><polyline points="168 168 216 168 216 40 88 40 88 88" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><rect x="40" y="88" width="128" height="128" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>`;
-        const checkIconHtml = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><polyline points="40 144 96 200 224 72" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>`;
-        let timeoutId = null;
+      const markdownIconHtml = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><polyline points="168 168 216 168 216 40 88 40 88 88" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><rect x="40" y="88" width="128" height="128" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>`;
+      const mdIconHtml = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><path d="M208,224V88L152,32H56a8,8,0,0,0-8,8v72" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><polyline points="152 32 152 88 208 88" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><path d="M128,152v56h16a28,28,0,0,0,0-56Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><polyline points="96 208 96 152 68 192 40 152 40 208" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>`;
+      const htmlIconHtml = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><path d="M48,120V40a8,8,0,0,1,8-8h96l56,56v32" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><polyline points="152 32 152 88 208 88" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><line x1="24" y1="160" x2="24" y2="208" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><line x1="60" y1="160" x2="60" y2="208" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><line x1="100" y1="160" x2="100" y2="208" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><line x1="116" y1="160" x2="84" y2="160" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><line x1="60" y1="184" x2="24" y2="184" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><polyline points="140 208 140 160 164 192 188 160 188 208" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><polyline points="216 160 216 208 244 208" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>`;
+      const checkIconHtml = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><polyline points="40 144 96 200 224 72" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>`;
+      let timeoutId = null;
+      let activeTabMode = 'wysiwym';
 
+      if (copyBtn) {
         copyBtn.addEventListener('click', () => {
-          navigator.clipboard.writeText(window.editor.getValue()).then(() => {
+          const textToCopy = (activeTabMode === 'preview') ? window.editor.getContentHtml() : window.editor.getValue();
+          navigator.clipboard.writeText(textToCopy).then(() => {
             copyBtn.innerHTML = checkIconHtml;
             if (timeoutId) clearTimeout(timeoutId);
             timeoutId = setTimeout(() => {
-              copyBtn.innerHTML = copyIconHtml;
+              if (activeTabMode === 'preview') {
+                copyBtn.innerHTML = htmlIconHtml;
+              } else if (activeTabMode === 'markdown') {
+                copyBtn.innerHTML = mdIconHtml;
+              } else {
+                copyBtn.innerHTML = markdownIconHtml;
+              }
             }, 2000);
           });
         });
@@ -340,6 +418,8 @@ Think of this page as an interactive sandbox, so use all the toys in the toolbar
         const isMarkdown = mode === 'markdown';
         const isPreview = mode === 'preview';
 
+        activeTabMode = mode;
+
         wysiwymTab.classList.toggle('is-active', isWysiwym);
         markdownTab.classList.toggle('is-active', isMarkdown);
         previewTab.classList.toggle('is-active', isPreview);
@@ -350,6 +430,22 @@ Think of this page as an interactive sandbox, so use all the toys in the toolbar
 
         if (toggleToolbarBtn) {
           toggleToolbarBtn.style.display = isWysiwym ? "inline-flex" : "none";
+        }
+
+        if (copyBtn) {
+          if (isPreview) {
+            copyBtn.innerHTML = htmlIconHtml;
+            copyBtn.title = "Copy HTML";
+            copyBtn.setAttribute('aria-label', "Copy HTML");
+          } else if (isMarkdown) {
+            copyBtn.innerHTML = mdIconHtml;
+            copyBtn.title = "Copy Markdown";
+            copyBtn.setAttribute('aria-label', "Copy Markdown");
+          } else {
+            copyBtn.innerHTML = markdownIconHtml;
+            copyBtn.title = "Copy Markdown";
+            copyBtn.setAttribute('aria-label', "Copy Markdown");
+          }
         }
 
         if (isPreview) {

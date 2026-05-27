@@ -467,5 +467,26 @@ describe('ImageShortcode', () => {
     expect(captionEl).not.toBeNull();
     expect(captionEl.textContent).toBe('WYSIWYM check');
   });
+
+  it('collapses delimiters on first line when unfocused, and reveals them when focused', async () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '# Heading',
+    });
+    
+    const lineEl = container.querySelector('.cm-line');
+    expect(lineEl).not.toBeNull();
+    // Delimiters should be collapsed (hidden) when unfocused
+    expect(lineEl.textContent).toBe('Heading');
+
+    // Focus the editor
+    editor.focus();
+    
+    // Wait a tick for CodeMirror to process transaction
+    await new Promise(resolve => setTimeout(resolve, 50));
+    
+    // Delimiters should be visible when focused
+    expect(lineEl.textContent).toBe('# Heading');
+  });
 });
 

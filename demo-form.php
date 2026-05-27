@@ -236,6 +236,13 @@ Try modifying the inputs in the form or editing the body text here to see how th
       }
     });
 
+    // Simulate async image upload
+    const mockImageUpload = async (file) => {
+      console.log("Mock uploading file:", file.name);
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      return URL.createObjectURL(file);
+    };
+
     // 4. Initialize Traven with only the Markdown body content
     document.fonts.ready.then(() => {
       window.editor = new TravenEditor({
@@ -244,9 +251,15 @@ Try modifying the inputs in the form or editing the body text here to see how th
         onChange: () => {
           updateCombinedPreview();
         },
+        onUploadImage: mockImageUpload,
         toolbar: DEFAULT_TOOLBAR,
         theme: localStorage.getItem("traven-selected-theme") || "light",
-        vimMode: localStorage.getItem("traven-selected-vim") === "true"
+        vimMode: localStorage.getItem("traven-selected-vim") === "true",
+        onSave: (content) => {
+          if (typeof window.showSaveToast === "function") {
+            window.showSaveToast();
+          }
+        }
       });
       // Initial preview compilation
       updateCombinedPreview();

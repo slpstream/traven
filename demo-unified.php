@@ -77,26 +77,42 @@
             <button type="button" id="tab-markdown" class="unified-tab">Markdown</button>
             <button type="button" id="tab-preview" class="unified-tab">Preview</button>
           </div>
-          <button type="button" class="copy-btn" id="copy-markdown-btn" title="Copy Markdown to Clipboard">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><polyline points="168 168 216 168 216 40 88 40 88 88" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><rect x="40" y="88" width="128" height="128" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>
-          </button>
+          <div style="display: flex; gap: 12px; align-items: center;">
+            <div id="preview-actions" style="display: none; gap: 12px; align-items: center;">
+              <button type="button" id="toggle-raw-html-btn" class="nav-btn" style="padding: 4px 10px; font-size: 0.8em; font-weight: 600; cursor: pointer; border: 1px solid var(--border-color); background-color: #ffffff; border-radius: 6px; user-select: none;">View Raw HTML</button>
+              <button type="button" class="copy-btn" id="copy-html-btn" title="Copy HTML to Clipboard">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><polyline points="168 168 216 168 216 40 88 40 88 88" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><rect x="40" y="88" width="128" height="128" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>
+              </button>
+            </div>
+            <button type="button" class="copy-btn" id="copy-markdown-btn" title="Copy Markdown to Clipboard">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><polyline points="168 168 216 168 216 40 88 40 88 88" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><rect x="40" y="88" width="128" height="128" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>
+            </button>
+          </div>
         </div>
         <div class="editor-wrapper mode-wysiwym">
           <div id="editor" class="editor-mount"></div>
           <div id="raw-editor" class="raw-editor-mount"></div>
           <div id="html-preview" class="html-preview-mount traven-preview" style="display: none; padding: 24px 32px; overflow-y: auto; height: 100%; box-sizing: border-box;"></div>
+          <div id="html-raw-preview" style="display: none; padding: 24px 32px; overflow-y: auto; height: 100%; box-sizing: border-box; font-family: 'Fira Code', monospace; font-size: 0.9em; white-space: pre-wrap; word-break: break-all;"></div>
         </div>
-        <div class="card-footer" style="padding: 12px 20px; border-top: 1px solid var(--border-color); font-size: 0.85em; color: var(--text-secondary); display: flex; gap: 20px; justify-content: flex-end; background-color: #fafafa; font-weight: 500; font-family: inherit;">
-          <span id="stats-words">Words: 0</span>
-          <span id="stats-chars">Characters: 0</span>
-          <span id="stats-readtime">Read Time: 0 min</span>
+        <div class="card-footer" style="padding: 12px 20px; border-top: 1px solid var(--border-color); font-size: 0.85em; color: var(--text-secondary); display: flex; align-items: center; justify-content: space-between; background-color: #fafafa; font-weight: 500; font-family: inherit;">
+          <!-- Vim Mode Status Indicator -->
+          <div id="vim-status-container" style="display: none; align-items: center; gap: 8px;">
+            <span id="vim-mode-badge" style="display: inline-block; padding: 3px 8px; border-radius: 4px; font-weight: 700; text-transform: uppercase; font-size: 0.8em; letter-spacing: 0.05em; background-color: #64748b; color: #ffffff; transition: background-color 0.2s ease, color 0.2s ease;">NORMAL</span>
+          </div>
+          <!-- Right Stats -->
+          <div style="display: flex; gap: 20px; margin-left: auto;">
+            <span id="stats-words">Words: 0</span>
+            <span id="stats-chars">Characters: 0</span>
+            <span id="stats-readtime">Read Time: 0 min</span>
+          </div>
         </div>
       </div>
     </div>
   </main>
 
   <script type="module">
-    import { TravenEditor, DEFAULT_TOOLBAR } from "./dist/traven.js";
+    import { TravenEditor, DEFAULT_TOOLBAR, getCM } from "./dist/traven.js";
 
     // Raw starting document (loaded from database)
     const initialRawFile = `---
@@ -217,8 +233,74 @@ This demo illustrates a unified layout where:
         onUploadImage: mockImageUpload,
         toolbar: DEFAULT_TOOLBAR,
         theme: localStorage.getItem("traven-selected-theme") || "light",
-        vimMode: localStorage.getItem("traven-selected-vim") === "true"
+        vimMode: localStorage.getItem("traven-selected-vim") === "true",
+        onSave: (content) => {
+          if (typeof window.showSaveToast === "function") {
+            window.showSaveToast();
+          }
+        }
       });
+
+      // Vim mode listener helper
+      function updateVimStatusUI(mode) {
+        const container = document.getElementById("vim-status-container");
+        const badge = document.getElementById("vim-mode-badge");
+        const vimEnabled = localStorage.getItem("traven-selected-vim") === "true";
+
+        if (!vimEnabled) {
+          container.style.display = "none";
+          return;
+        }
+
+        container.style.display = "flex";
+        badge.textContent = mode;
+
+        if (mode === "insert") {
+          badge.style.backgroundColor = "#8fcc00";
+          badge.style.color = "#000000";
+        } else if (mode === "visual") {
+          badge.style.backgroundColor = "#f59e0b";
+          badge.style.color = "#000000";
+        } else if (mode === "replace") {
+          badge.style.backgroundColor = "#ef4444";
+          badge.style.color = "#ffffff";
+        } else {
+          badge.style.backgroundColor = "#64748b";
+          badge.style.color = "#ffffff";
+        }
+      }
+
+      function attachVimModeListener() {
+        const view = window.editor.getView();
+        if (!view) return;
+        const cm = getCM(view);
+        if (cm) {
+          cm.on("vim-mode-change", (modeObj) => {
+            updateVimStatusUI(modeObj.mode);
+          });
+          updateVimStatusUI("normal");
+        }
+      }
+
+      // Initialize Vim Mode Status UI on load
+      const vimEnabledOnLoad = localStorage.getItem("traven-selected-vim") === "true";
+      if (vimEnabledOnLoad) {
+        attachVimModeListener();
+      }
+
+      // Listen for Vim mode settings checkbox changes
+      const vimCheckbox = document.getElementById("vim-checkbox");
+      if (vimCheckbox) {
+        vimCheckbox.addEventListener("change", (e) => {
+          setTimeout(() => {
+            if (e.target.checked) {
+              attachVimModeListener();
+            } else {
+              document.getElementById("vim-status-container").style.display = "none";
+            }
+          }, 100);
+        });
+      }
 
       // Update statistics
       window.editor.on("statsUpdate", (stats) => {
@@ -229,6 +311,20 @@ This demo illustrates a unified layout where:
 
       // Set up the copy button (only copy editable content, excluding metadata)
       setupCopyButton('copy-markdown-btn', () => window.editor.getValue());
+
+      // Set up the copy HTML button
+      setupCopyButton('copy-html-btn', () => window.editor.getContentHtml());
+
+      // Toggle raw HTML state
+      let showRawHtml = false;
+      const toggleRawHtmlBtn = document.getElementById('toggle-raw-html-btn');
+      if (toggleRawHtmlBtn) {
+        toggleRawHtmlBtn.addEventListener('click', () => {
+          showRawHtml = !showRawHtml;
+          toggleRawHtmlBtn.textContent = showRawHtml ? "View Rendered HTML" : "View Raw HTML";
+          activateTab('preview');
+        });
+      }
 
       // Tab switching logic
       const wysiwymTab = document.getElementById('tab-wysiwym');
@@ -252,30 +348,54 @@ This demo illustrates a unified layout where:
         const editorEl = document.getElementById("editor");
         const rawEditorEl = document.getElementById("raw-editor");
         const previewEl = document.getElementById("html-preview");
+        const rawPreviewEl = document.getElementById("html-raw-preview");
+        const previewActions = document.getElementById("preview-actions");
+        const copyMarkdownBtn = document.getElementById("copy-markdown-btn");
 
         if (isWysiwym) {
           editorEl.style.display = "flex";
           rawEditorEl.style.display = "none";
           previewEl.style.display = "none";
+          rawPreviewEl.style.display = "none";
+          previewActions.style.display = "none";
+          copyMarkdownBtn.style.display = "inline-flex";
         } else if (isMarkdown) {
           editorEl.style.display = "flex";
           rawEditorEl.style.display = "flex";
           previewEl.style.display = "none";
+          rawPreviewEl.style.display = "none";
+          previewActions.style.display = "none";
+          copyMarkdownBtn.style.display = "inline-flex";
         } else if (isPreview) {
           editorEl.style.display = "flex";
           rawEditorEl.style.display = "none";
-          previewEl.style.display = "block";
+          previewActions.style.display = "flex";
+          copyMarkdownBtn.style.display = "none";
+          
+          if (showRawHtml) {
+            previewEl.style.display = "none";
+            rawPreviewEl.style.display = "block";
+          } else {
+            previewEl.style.display = "block";
+            rawPreviewEl.style.display = "none";
+          }
           
           // Apply custom rendering or fallback rendering
           const isDark = localStorage.getItem("traven-selected-theme") === "dark";
           if (isDark) {
             previewEl.style.backgroundColor = "#0f172a";
             previewEl.style.color = "#e2e8f0";
+            rawPreviewEl.style.backgroundColor = "#0f172a";
+            rawPreviewEl.style.color = "#94a3b8";
           } else {
             previewEl.style.backgroundColor = "#ffffff";
             previewEl.style.color = "#1e293b";
+            rawPreviewEl.style.backgroundColor = "#fafafa";
+            rawPreviewEl.style.color = "#334155";
           }
-          previewEl.innerHTML = window.editor.getContentHtml();
+          const htmlContent = window.editor.getContentHtml();
+          previewEl.innerHTML = htmlContent;
+          rawPreviewEl.textContent = htmlContent;
         }
 
         // Grey out toolbar in Markdown and Preview modes

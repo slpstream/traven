@@ -220,6 +220,11 @@ export function openImageModal(editor, triggerBtn) {
 
   const form = document.createElement("div");
 
+  // Error message container (defined early to allow dropzone drag/drop validation error display)
+  const errorEl = document.createElement("div");
+  errorEl.className = "traven-modal-error";
+  errorEl.style.display = "none";
+
   // Alt text field
   const altField = document.createElement("div");
   altField.className = "traven-modal-field";
@@ -248,8 +253,8 @@ export function openImageModal(editor, triggerBtn) {
     fileLabel.className = "traven-modal-label";
     fileLabel.textContent = "Or Upload a File";
 
-    const fileRow = document.createElement("div");
-    fileRow.className = "traven-modal-file-row";
+    const dropzone = document.createElement("div");
+    dropzone.className = "traven-modal-dropzone";
 
     fileInput = document.createElement("input");
     fileInput.type = "file";
@@ -257,62 +262,167 @@ export function openImageModal(editor, triggerBtn) {
     fileInput.id = "traven-image-file";
     fileInput.style.display = "none";
 
-    const fileBtn = document.createElement("button");
-    fileBtn.type = "button";
-    fileBtn.className = "traven-modal-file-btn";
-    fileBtn.textContent = "Choose File";
-    fileBtn.addEventListener("click", () => fileInput.click());
+    // Inner prompt element (visible when no file is chosen)
+    const promptEl = document.createElement("div");
+    promptEl.className = "traven-modal-dropzone-prompt";
+    promptEl.innerHTML = `
+      <svg class="traven-modal-dropzone-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor">
+        <path d="M228,144v64a12,12,0,0,1-12,12H40a12,12,0,0,1-12-12V144a12,12,0,0,1,24,0v52H204V144a12,12,0,0,1,24,0ZM96.49,80.49,116,61V136a12,12,0,0,0,24,0V61l19.51,19.51a12,12,0,0,0,17-17l-40-40a12,12,0,0,0-17,0l-40,40a12,12,0,1,0,17,17Z"/>
+      </svg>
+      <div class="traven-modal-dropzone-text">Drag & drop image here or click to browse</div>
+    `;
 
-    const fileName = document.createElement("span");
-    fileName.className = "traven-modal-file-name";
-    fileName.textContent = "No file chosen";
+    // Preview element (visible when file is chosen)
+    const previewEl = document.createElement("div");
+    previewEl.className = "traven-modal-dropzone-preview";
+    previewEl.style.display = "none";
 
-    // Thumbnail preview element
     const thumbContainer = document.createElement("div");
     thumbContainer.className = "traven-modal-thumb-container";
-    thumbContainer.style.display = "none";
+    thumbContainer.style.position = "relative"; // allow absolute close button positioning
 
     const thumbImg = document.createElement("img");
     thumbImg.className = "traven-modal-thumb";
     thumbImg.alt = "File preview";
     thumbContainer.appendChild(thumbImg);
 
+    const removeBtn = document.createElement("button");
+    removeBtn.type = "button";
+    removeBtn.className = "traven-modal-remove-btn";
+    removeBtn.setAttribute("aria-label", "Remove file");
+    removeBtn.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+        <rect width="256" height="256" fill="none"/>
+        <path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm37.66,130.34a8,8,0,0,1-11.32,11.32L128,139.31l-26.34,26.35a8,8,0,0,1-11.32-11.32L116.69,128,90.34,101.66a8,8,0,0,1,11.32-11.32L128,116.69l26.34-26.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/>
+      </svg>
+    `;
+    thumbContainer.appendChild(removeBtn);
+
+    const fileMeta = document.createElement("div");
+    fileMeta.className = "traven-modal-file-meta";
+
+    const fileName = document.createElement("span");
+    fileName.className = "traven-modal-file-name";
+    fileName.textContent = "No file chosen";
+
+    const fileDetails = document.createElement("span");
+    fileDetails.className = "traven-modal-file-details";
+
+    const fileSizeEl = document.createElement("span");
+    fileSizeEl.className = "traven-modal-file-size";
+
+    const fileDimsEl = document.createElement("span");
+    fileDimsEl.className = "traven-modal-file-dims";
+
+    fileDetails.appendChild(fileSizeEl);
+    fileDetails.appendChild(fileDimsEl);
+
+    fileMeta.appendChild(fileName);
+    fileMeta.appendChild(fileDetails);
+
+    previewEl.appendChild(thumbContainer);
+    previewEl.appendChild(fileMeta);
+
+    dropzone.appendChild(promptEl);
+    dropzone.appendChild(previewEl);
+    dropzone.appendChild(fileInput);
+
+    // Click on dropzone triggers file dialog, unless clicking the remove button
+    dropzone.addEventListener("click", (e) => {
+      if (e.target.closest(".traven-modal-remove-btn")) {
+        return;
+      }
+      fileInput.click();
+    });
+
+    // Drag-and-drop event listeners
+    ["dragenter", "dragover"].forEach((eventName) => {
+      dropzone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropzone.classList.add("is-dragover");
+      });
+    });
+
+    ["dragleave", "drop"].forEach((eventName) => {
+      dropzone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropzone.classList.remove("is-dragover");
+      });
+    });
+
+    dropzone.addEventListener("drop", (e) => {
+      const files = e.dataTransfer?.files;
+      if (files && files.length > 0) {
+        if (files[0].type.startsWith("image/")) {
+          fileInput.files = files;
+          fileInput.dispatchEvent(new Event("change"));
+        } else {
+          errorEl.textContent = "Only image files are supported.";
+          errorEl.style.display = "block";
+        }
+      }
+    });
+
+    // Format bytes to human readable format
+    const formatBytes = (bytes) => {
+      if (bytes === 0) return "0 B";
+      const k = 1024;
+      const sizes = ["B", "KB", "MB"];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
+    };
+
     fileInput.addEventListener("change", () => {
       const urlInput = form.querySelector("#traven-image-url");
       if (fileInput.files && fileInput.files.length > 0) {
         const file = fileInput.files[0];
         fileName.textContent = file.name;
+        fileSizeEl.textContent = formatBytes(file.size);
+        fileDimsEl.textContent = "";
+
         urlInput.value = "";
         urlInput.disabled = true;
 
         // Generate thumbnail preview
         const objectUrl = URL.createObjectURL(file);
         thumbImg.src = objectUrl;
-        thumbContainer.style.display = "block";
+        
+        promptEl.style.display = "none";
+        previewEl.style.display = "flex";
+        dropzone.classList.add("has-file");
+        errorEl.style.display = "none";
+
         // Revoke object URL when image loads to free memory
-        thumbImg.onload = () => URL.revokeObjectURL(objectUrl);
+        thumbImg.onload = () => {
+          fileDimsEl.textContent = ` • ${thumbImg.naturalWidth}×${thumbImg.naturalHeight}`;
+          URL.revokeObjectURL(objectUrl);
+        };
       } else {
         fileName.textContent = "No file chosen";
+        fileSizeEl.textContent = "";
+        fileDimsEl.textContent = "";
         urlInput.disabled = false;
-        thumbContainer.style.display = "none";
+        promptEl.style.display = "flex";
+        previewEl.style.display = "none";
+        dropzone.classList.remove("has-file");
         thumbImg.src = "";
       }
     });
 
-    fileRow.appendChild(fileBtn);
-    fileRow.appendChild(fileName);
-    fileRow.appendChild(fileInput);
+    removeBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      fileInput.value = "";
+      fileInput.dispatchEvent(new Event("change"));
+    });
 
     fileField.appendChild(fileLabel);
-    fileField.appendChild(fileRow);
-    fileField.appendChild(thumbContainer);
+    fileField.appendChild(dropzone);
     form.appendChild(fileField);
   }
 
-  // Error message container
-  const errorEl = document.createElement("div");
-  errorEl.className = "traven-modal-error";
-  errorEl.style.display = "none";
   form.appendChild(errorEl);
 
   // Pre-fill alt text with selection if any

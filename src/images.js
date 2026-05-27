@@ -1,6 +1,7 @@
 import { EditorView, WidgetType, Decoration } from "@codemirror/view";
 import { RangeSetBuilder, StateField } from "@codemirror/state";
 import { syntaxTree } from "@codemirror/language";
+import { focusField, setFocusEffect } from "./wysiwym.js";
 
 // --- Image Preview Widget ---
 class ImageWidget extends WidgetType {
@@ -84,7 +85,8 @@ class UploadingWidget extends WidgetType {
 // --- Image Decoration ViewPlugin ---
 function buildImageDecorations(state) {
   const collected = [];
-  const cursorHead = state.selection.main.head;
+  const hasFocus = state.field(focusField, false);
+  const cursorHead = hasFocus ? state.selection.main.head : -1;
 
   syntaxTree(state).iterate({
     from: 0,
@@ -134,7 +136,8 @@ export const imageDecorationField = StateField.define({
     return buildImageDecorations(state);
   },
   update(decorations, tr) {
-    if (tr.docChanged || tr.selection) {
+    const focusChanged = tr.effects.some(e => e.is(setFocusEffect));
+    if (tr.docChanged || tr.selection || focusChanged) {
       return buildImageDecorations(tr.state);
     }
     return decorations.map(tr.changes);
