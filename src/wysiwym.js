@@ -9,6 +9,7 @@ import {
 } from "@codemirror/view";
 import { viewToEditor } from "./bridge.js";
 import { parseMarkdownTable, openTableModal } from "./toolbar/modal.js";
+import { sanitizeUrl } from "./security.js";
 
 // --- Custom Widget Types ---
 
@@ -98,8 +99,8 @@ class TableWidget extends WidgetType {
         .replace(/>/g, "&gt;");
 
       // Convert inline elements (images, links, bold, italic, highlight, code)
-      html = html.replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" style="max-width: 100%; height: auto; display: inline-block;">');
-      html = html.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>');
+      html = html.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, src) => `<img src="${sanitizeUrl(src)}" alt="${alt}" style="max-width: 100%; height: auto; display: inline-block;">`);
+      html = html.replace(/\[(.*?)\]\((.*?)\)/g, (match, text, url) => `<a href="${sanitizeUrl(url)}" target="_blank">${text}</a>`);
       html = html.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
       html = html.replace(/\*(.*?)\*/g, "<em>$1</em>");
       html = html.replace(/__(.*?)__/g, "<strong>$1</strong>");

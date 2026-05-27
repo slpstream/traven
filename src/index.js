@@ -39,6 +39,7 @@ import { delimiterSkipKeymap } from "./delimiter-skip.js";
 import { imageDecorationPlugin, imageHandlerExtension } from "./images.js";
 import { vim } from "@replit/codemirror-vim";
 import { viewToEditor } from "./bridge.js";
+import { sanitizeUrl } from "./security.js";
 import "./style.css";
 
 const syncAnnotation = Annotation.define();
@@ -1265,14 +1266,14 @@ export class TravenEditor {
       while ((m = attrRegex.exec(attrsStr)) !== null) {
         attrs[m[1]] = m[2] !== undefined ? m[2] : (m[3] !== undefined ? m[3] : (m[4] || ""));
       }
-      const src = attrs.src || "";
+      const src = sanitizeUrl(attrs.src || "");
       const caption = attrs.caption || "";
       const align = attrs.align || "center";
       const size = attrs.size || "medium";
       return `<img src="${src}" alt="${caption}" class="traven-image-shortcode align-${align} size-${size}" style="max-width: 100%; height: auto; display: block; border-radius: 6px; margin: 12px 0;">`;
     });
-    content = content.replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" style="max-width: 100%; height: auto; display: block; margin: 12px 0; border-radius: 6px;">');
-    content = content.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>');
+    content = content.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, src) => `<img src="${sanitizeUrl(src)}" alt="${alt}" style="max-width: 100%; height: auto; display: block; margin: 12px 0; border-radius: 6px;">`);
+    content = content.replace(/\[(.*?)\]\((.*?)\)/g, (match, text, url) => `<a href="${sanitizeUrl(url)}" target="_blank">${text}</a>`);
     content = content.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
     content = content.replace(/\*(.*?)\*/g, "<em>$1</em>");
     content = content.replace(/==(.*?)==/g, "<mark>$1</mark>");

@@ -488,5 +488,63 @@ describe('ImageShortcode', () => {
     // Delimiters should be visible when focused
     expect(lineEl.textContent).toBe('# Heading');
   });
+
+  describe('URL sanitization and security', () => {
+    it('allows safe URLs, relative paths, anchor hashtags, and blog slugs', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: [
+          '[Google](https://google.com)',
+          '[Relative](/about-us)',
+          '[Anchor](#section-1)',
+          '[Slug](my-cool-blog-post)',
+          '[Mail](mailto:user@example.com)',
+          '[Phone](tel:+1234567890)',
+        ].join('\n\n'),
+      });
+      const html = editor.getContentHtml();
+      expect(html).toContain('href="https://google.com"');
+      expect(html).toContain('href="/about-us"');
+      expect(html).toContain('href="#section-1"');
+      expect(html).toContain('href="my-cool-blog-post"');
+      expect(html).toContain('href="mailto:user@example.com"');
+      expect(html).toContain('href="tel:+1234567890"');
+    });
+
+    it('neutralizes dangerous protocols like javascript:, data:, and vbscript:', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: [
+          '[XSS 1](javascript:alert(1))',
+          '[XSS 2](data:text/html,<script>alert(1)</script>)',
+          '[XSS 3](vbscript:msgbox(1))',
+          '![Image XSS](javascript:alert(1))',
+          '[image src="javascript:alert(1)" caption="Shortcode XSS"]',
+        ].join('\n\n'),
+      });
+      const html = editor.getContentHtml();
+      // Verify that all unsafe hrefs and sources are neutralized to about:blank
+      expect(html).toContain('href="about:blank"');
+      expect(html).not.toContain('href="javascript:');
+      expect(html).not.toContain('href="data:');
+      expect(html).not.toContain('href="vbscript:');
+      expect(html).toContain('src="about:blank"');
+      expect(html).not.toContain('src="javascript:');
+    });
+
+    it('neutralizes obfuscated javascript URLs', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: [
+          '[Obfuscated 1](j&#97;vascript:alert(1))',
+          '[Obfuscated 2](java%0ascript:alert(1))',
+        ].join('\n\n'),
+      });
+      const html = editor.getContentHtml();
+      expect(html).toContain('href="about:blank"');
+      expect(html).not.toContain('href="j&#97;vascript:');
+      expect(html).not.toContain('href="java');
+    });
+  });
 });
 
