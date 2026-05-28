@@ -134,6 +134,7 @@
         toolbar: DEFAULT_TOOLBAR,
         theme: localStorage.getItem("traven-selected-theme") || "light",
         vimMode: localStorage.getItem("traven-selected-vim") === "true",
+        katex: true,
         onSave: (content) => {
           if (typeof window.showSaveToast === "function") {
             window.showSaveToast();

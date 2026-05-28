@@ -30,7 +30,7 @@ Traven is highly modular and straightforward to customize or extend. If you need
 
 Go to **[Traven.dev](https://traven.dev)** to try the Traven framework-agnostic WYSIWYM editor with live previews in different demo sandboxes. 
 
-Mix and match different combinations of toolbar buttons, skins, and editor layouts to see the flexibility of how Traven can be themed and configured to fit any setting where JavaScript can be loaded.
+Mix and match different combinations of toolbar buttons, skins, and editor layouts to see the flexibility of how Traven can be themed and configured to fit any setting where JavaScript works.
 
 ---
 
@@ -44,6 +44,7 @@ Mix and match different combinations of toolbar buttons, skins, and editor layou
 *   **Vim Emulation Mode**: Toggleable Vim normal/visual/insert mode keybindings dynamically at runtime.
 *   **Real-Time Statistics**: Out-of-the-box support for tracking words, characters, and estimated reading times with statistics update event listeners.
 *   **Dynamic HTML Preview Rendering**: Features a compilation hook for registering custom Markdown renderers to generate structural, skin-synced HTML previews.
+*   **LaTeX Math Rendering**: Native support for inline (`$ ... $`) and display (`$$ ... $$`) LaTeX equations. Math is dynamically parsed via custom Lezer syntax extensions and rendered asynchronously using KaTeX (supporting pre-loaded global instances, locally-hosted files, or optional CDN assets). Delimiters collapse gracefully, and equations automatically update in both the WYSIWYM editing canvas and the fallback HTML preview.
 *   **Zero Peer Dependencies**: Bundles CodeMirror and Vim emulation modules internally using `esbuild`. Simply drop in the compiled script and a stylesheet to start editing.
 
 ---
@@ -117,6 +118,7 @@ Initializes a new editor instance.
 | `vimMode` | `boolean` | `false` | Enables Vim keybindings and normal mode emulation in both editing panes. |
 | `readOnly` | `boolean` | `false` | Enables read-only mode for both primary and secondary editor panes. |
 | `keybindings` | `object` | `{}` | Key-value pairs overriding default tool keybindings (e.g. `{ bold: "Ctrl-Shift-b" }`). |
+| `katex` | `boolean \| string \| object` | `false` | Configures KaTeX loading. If `false` (default), only uses local preloaded `window.katex`. If `true`, loads from JSDelivr CDN. If a string or object, defines custom self-hosted paths (e.g. `{ js: "path/to/katex.js", css: "path/to/katex.css" }`). |
 
 ---
 

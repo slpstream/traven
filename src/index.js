@@ -29,6 +29,7 @@ import { markdown } from "@codemirror/lang-markdown";
 import { Strikethrough, TaskList, Table, Autolink } from "@lezer/markdown";
 import { Highlight } from "./highlight-parser.js";
 import { Shortcode } from "./shortcode-parser.js";
+import { MathExtension, ensureKatex, configureKatex } from "./math-parser.js";
 import { yamlFrontmatter } from "@codemirror/lang-yaml";
 import { undo, redo } from "@codemirror/commands";
 import { search, openSearchPanel } from "@codemirror/search";
@@ -154,6 +155,11 @@ export class TravenEditor {
       throw new Error("TravenEditor requires a parent element option.");
     }
     this.#options = options;
+    
+    // Configure KaTeX loading (e.g. from CDN if options.katex is set)
+    configureKatex(options.katex);
+    // Asynchronously ensure KaTeX resources are loaded
+    ensureKatex();
 
     const showLineNumbers = !!options.lineNumbers;
     const showSourceLineNumbers = !!options.sourceLineNumbers;
@@ -173,7 +179,7 @@ export class TravenEditor {
       }),
       ...(wrapLines ? [EditorView.lineWrapping] : []),
       readOnlyCompartment.of(EditorState.readOnly.of(!!options.readOnly)),
-      yamlFrontmatter({ content: markdown({ extensions: [Strikethrough, TaskList, Table, Autolink, Highlight, Shortcode, { remove: ["SetextHeading"] }] }) }),
+      yamlFrontmatter({ content: markdown({ extensions: [Strikethrough, TaskList, Table, Autolink, Highlight, Shortcode, MathExtension, { remove: ["SetextHeading"] }] }) }),
       wysiwymPlugin(),
       delimiterSkipKeymap(),
       imageDecorationPlugin(),
@@ -1138,7 +1144,7 @@ export class TravenEditor {
     
     // Extract fenced code blocks to avoid splitting them on empty lines or parsing inline elements inside
     const codeBlocks = [];
-    content = content.replace(/^```([a-zA-Z0-9_\-]*)\s*\r?\n([\s\S]*?)\r?\n```\s*$/gm, (match, lang, code) => {
+    content = content.replace(/^```\s*([a-zA-Z0-9_\-]*)([^\r\n]*)\r?\n([\s\S]*?)\r?\n```\s*$/gm, (match, lang, meta, code) => {
       const index = codeBlocks.length;
       const classAttr = lang ? ` class="language-${lang}"` : "";
       const escapedCode = code
@@ -1146,7 +1152,35 @@ export class TravenEditor {
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;");
       codeBlocks.push(`<pre><code${classAttr}>${escapedCode}</code></pre>`);
-      return `\n\n__CODE_BLOCK_PLACEHOLDER_${index}__\n\n`;
+      return `\n\nCODEBLOCKPLACEHOLDER${index}\n\n`;
+    });
+
+    // Extract math blocks early to avoid conflict with markdown parsing/escaping
+    const mathBlocks = [];
+    // 1. Display math blocks ($$ ... $$)
+    content = content.replace(/(?<!\\)\$\$([\s\S]*?)(?<!\\)\$\$/g, (match, math) => {
+      const index = mathBlocks.length;
+      let rendered = "";
+      if (typeof window !== "undefined" && window.katex) {
+        rendered = window.katex.renderToString(math, { displayMode: true, throwOnError: false });
+      } else {
+        rendered = `<div class="katex-display-fallback">$$${math}$$</div>`;
+      }
+      mathBlocks.push({ rendered, isDisplay: true });
+      return `\n\nMATHBLOCKPLACEHOLDER${index}\n\n`;
+    });
+
+    // 2. Inline math ($ ... $)
+    content = content.replace(/(?<!\\)\$((?!\s)[^\$\n\r]+?(?<!\s)(?<!\\))\$/g, (match, math) => {
+      const index = mathBlocks.length;
+      let rendered = "";
+      if (typeof window !== "undefined" && window.katex) {
+        rendered = window.katex.renderToString(math, { displayMode: false, throwOnError: false });
+      } else {
+        rendered = `<span class="katex-inline-fallback">$${math}$</span>`;
+      }
+      mathBlocks.push({ rendered, isDisplay: false });
+      return `MATHBLOCKPLACEHOLDER${index}`;
     });
 
     // 1.5. Convert autolinks <url> before HTML escaping destroys the angle brackets
@@ -1247,10 +1281,23 @@ export class TravenEditor {
         return clean.split("|").map(cell => cell.trim());
       };
 
+      // Parse GFM column alignments
+      const separators = parseCells(separatorRow);
+      const alignments = separators.map(sep => {
+        const left = sep.startsWith(":");
+        const right = sep.endsWith(":");
+        if (left && right) return "center";
+        if (right) return "right";
+        if (left) return "left";
+        return "";
+      });
+
       const headers = parseCells(headerRow);
       let html = "<table>\n<thead>\n<tr>\n";
-      headers.forEach(h => {
-        html += `<th>${h}</th>\n`;
+      headers.forEach((h, k) => {
+        const align = alignments[k];
+        const styleAttr = align ? ` style="text-align: ${align};"` : "";
+        html += `<th${styleAttr}>${h}</th>\n`;
       });
       html += "</tr>\n</thead>\n<tbody>\n";
 
@@ -1258,7 +1305,9 @@ export class TravenEditor {
         const cells = parseCells(rows[j]);
         html += "<tr>\n";
         for (let k = 0; k < headers.length; k++) {
-          html += `<td>${cells[k] || ""}</td>\n`;
+          const align = alignments[k];
+          const styleAttr = align ? ` style="text-align: ${align};"` : "";
+          html += `<td${styleAttr}>${cells[k] || ""}</td>\n`;
         }
         html += "</tr>\n";
       }
@@ -1290,28 +1339,101 @@ export class TravenEditor {
     }
     content = processedTableLines.join("\n");
 
-    // 5. Convert lists
-    let inList = false;
+    // 5. Convert lists using an HTML5-compliant state-machine parser
+    const listStack = [];
+    const getIndentLength = (str) => str.replace(/\t/g, "    ").length;
+    
     const lines = content.split("\n");
     const processedLines = [];
+    
     for (const line of lines) {
-      const listMatch = line.match(/^[\*\-] (.*?)$/);
+      const listMatch = line.match(/^(\s*)(?:([-*+])|(\d+)\.)\s+(.*)$/);
       if (listMatch) {
-        if (!inList) {
-          processedLines.push("<ul>");
-          inList = true;
+        const indentStr = listMatch[1];
+        const indent = getIndentLength(indentStr);
+        const isOrdered = !!listMatch[3];
+        const type = isOrdered ? "ol" : "ul";
+        const rest = listMatch[4];
+        
+        // Parse checkboxes/task lists
+        let checkboxHtml = "";
+        let itemContent = rest;
+        const taskMatch = rest.match(/^\[([ xX])\]\s+(.*)$/);
+        if (taskMatch) {
+          const checked = taskMatch[1].toLowerCase() === "x";
+          checkboxHtml = `<input type="checkbox" disabled${checked ? " checked" : ""}> `;
+          itemContent = taskMatch[2];
         }
-        processedLines.push(`<li>${listMatch[1]}</li>`);
+        
+        if (listStack.length === 0) {
+          // Open new outer list
+          listStack.push({ type, indent, hasOpenItem: true });
+          processedLines.push(`<${type}>`);
+          processedLines.push(`<li>${checkboxHtml}${itemContent}`);
+        } else {
+          let top = listStack[listStack.length - 1];
+          if (indent > top.indent) {
+            // Nest a new list inside the current open list item
+            listStack.push({ type, indent, hasOpenItem: true });
+            processedLines.push(`<${type}>`);
+            processedLines.push(`<li>${checkboxHtml}${itemContent}`);
+          } else {
+            // Close nested lists if the indent is smaller
+            while (listStack.length > 0 && listStack[listStack.length - 1].indent > indent) {
+              const popped = listStack.pop();
+              if (popped.hasOpenItem) {
+                processedLines.push("</li>");
+              }
+              processedLines.push(`</${popped.type}>`);
+            }
+            
+            if (listStack.length === 0) {
+              listStack.push({ type, indent, hasOpenItem: true });
+              processedLines.push(`<${type}>`);
+              processedLines.push(`<li>${checkboxHtml}${itemContent}`);
+            } else {
+              top = listStack[listStack.length - 1];
+              if (top.type !== type) {
+                // Transition list type (e.g. ul -> ol) at same indent level
+                listStack.pop();
+                if (top.hasOpenItem) {
+                  processedLines.push("</li>");
+                }
+                processedLines.push(`</${top.type}>`);
+                listStack.push({ type, indent, hasOpenItem: true });
+                processedLines.push(`<${type}>`);
+                processedLines.push(`<li>${checkboxHtml}${itemContent}`);
+              } else {
+                // Add another item at the same indentation level
+                if (top.hasOpenItem) {
+                  processedLines.push("</li>");
+                }
+                top.hasOpenItem = true;
+                processedLines.push(`<li>${checkboxHtml}${itemContent}`);
+              }
+            }
+          }
+        }
       } else {
-        if (inList) {
-          processedLines.push("</ul>");
-          inList = false;
+        // Not a list item: close all open list tags
+        while (listStack.length > 0) {
+          const popped = listStack.pop();
+          if (popped.hasOpenItem) {
+            processedLines.push("</li>");
+          }
+          processedLines.push(`</${popped.type}>`);
         }
         processedLines.push(line);
       }
     }
-    if (inList) {
-      processedLines.push("</ul>");
+    
+    // Close any remaining list tags at end of content
+    while (listStack.length > 0) {
+      const popped = listStack.pop();
+      if (popped.hasOpenItem) {
+        processedLines.push("</li>");
+      }
+      processedLines.push(`</${popped.type}>`);
     }
     content = processedLines.join("\n");
 
@@ -1332,8 +1454,11 @@ export class TravenEditor {
     content = content.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, src) => `<img src="${sanitizeUrl(src)}" alt="${alt}" style="max-width: 100%; height: auto; display: block; margin: 12px 0; border-radius: 6px;">`);
     content = content.replace(/\[(.*?)\]\((.*?)\)/g, (match, text, url) => `<a href="${sanitizeUrl(url)}" target="_blank">${text}</a>`);
     content = content.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+    content = content.replace(/__(.*?)__/g, "<strong>$1</strong>");
     content = content.replace(/\*(.*?)\*/g, "<em>$1</em>");
+    content = content.replace(/_(.*?)_/g, "<em>$1</em>");
     content = content.replace(/==(.*?)==/g, "<mark>$1</mark>");
+    content = content.replace(/~~(.*?)~~/g, "<del>$1</del>");
     content = content.replace(/`(.*?)`/g, "<code>$1</code>");
 
     // 7. Convert paragraphs (blank lines split)
@@ -1343,12 +1468,20 @@ export class TravenEditor {
       if (!trimmed) return "";
       
       // If it's a code block placeholder, don't wrap in <p>
-      if (trimmed.startsWith("__CODE_BLOCK_PLACEHOLDER_")) {
+      if (trimmed.startsWith("CODEBLOCKPLACEHOLDER")) {
         return trimmed;
       }
       
+      // If it's a display math placeholder, don't wrap in <p>
+      if (trimmed.startsWith("MATHBLOCKPLACEHOLDER")) {
+        const idx = parseInt(trimmed.substring("MATHBLOCKPLACEHOLDER".length));
+        if (mathBlocks[idx] && mathBlocks[idx].isDisplay) {
+          return trimmed;
+        }
+      }
+      
       // If it's already an HTML block tag, image, or hr, don't wrap in <p>
-      if (/^<(h[1-6]|blockquote|ul|li|img|hr|table|pre)/i.test(trimmed)) {
+      if (/^<(h[1-6]|blockquote|ul|ol|li|img|hr|table|pre)/i.test(trimmed)) {
         return trimmed;
       }
       return `<p>${trimmed.replace(/\n/g, "<br>")}</p>`;
@@ -1356,9 +1489,14 @@ export class TravenEditor {
 
     content = htmlBlocks.filter(Boolean).join("\n");
 
+    // Restore math blocks
+    for (let i = 0; i < mathBlocks.length; i++) {
+      content = content.replace(`MATHBLOCKPLACEHOLDER${i}`, () => mathBlocks[i].rendered);
+    }
+
     // Restore fenced code blocks
     for (let i = 0; i < codeBlocks.length; i++) {
-      content = content.replace(`__CODE_BLOCK_PLACEHOLDER_${i}__`, codeBlocks[i]);
+      content = content.replace(`CODEBLOCKPLACEHOLDER${i}`, () => codeBlocks[i]);
     }
 
     return content;

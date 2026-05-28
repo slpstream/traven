@@ -255,6 +255,7 @@ Try modifying the inputs in the form or editing the body text here to see how th
         toolbar: DEFAULT_TOOLBAR,
         theme: localStorage.getItem("traven-selected-theme") || "light",
         vimMode: localStorage.getItem("traven-selected-vim") === "true",
+        katex: true,
         onSave: (content) => {
           if (typeof window.showSaveToast === "function") {
             window.showSaveToast();

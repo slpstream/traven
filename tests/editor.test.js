@@ -23,6 +23,14 @@ if (typeof window !== 'undefined') {
       y: 0
     };
   };
+
+  window.katex = {
+    renderToString: (math, opts) => {
+      const tag = opts && opts.displayMode ? 'div' : 'span';
+      const mode = opts && opts.displayMode ? 'display' : 'inline';
+      return `<${tag} class="katex-${mode}-mocked">${math}</${tag}>`;
+    }
+  };
 }
 
 describe('TravenEditor', () => {
@@ -595,4 +603,157 @@ describe('ImageShortcode', () => {
     });
   });
 });
+
+describe('fallback rendering inline formats', () => {
+  let container;
+
+  beforeEach(() => {
+    container = document.createElement('div');
+    document.body.appendChild(container);
+  });
+
+  it('compiles underscore bold and italics correctly', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: 'This is __bold__ and this is _italic_.',
+    });
+    const html = editor.getContentHtml();
+    expect(html).toContain('This is <strong>bold</strong> and this is <em>italic</em>.');
+  });
+
+  it('compiles strikethrough formatting correctly', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: 'This is ~~strikethrough~~ text.',
+    });
+    const html = editor.getContentHtml();
+    expect(html).toContain('This is <del>strikethrough</del> text.');
+  });
+
+  it('compiles fenced code blocks correctly', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: "```js\nconsole.log(42);\n```",
+    });
+    const html = editor.getContentHtml();
+    console.log("CODE BLOCK HTML:", html);
+    expect(html).toContain('<pre><code class="language-js">console.log(42);</code></pre>');
+  });
+
+  it('compiles fenced code blocks with metadata attributes correctly', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: "```js [greet.js] {1,3}\nconsole.log(42);\n```",
+    });
+    const html = editor.getContentHtml();
+    expect(html).toContain('<pre><code class="language-js">console.log(42);</code></pre>');
+  });
+});
+
+describe('fallback rendering list formats', () => {
+  let container;
+
+  beforeEach(() => {
+    container = document.createElement('div');
+    document.body.appendChild(container);
+  });
+
+  it('compiles nested unordered lists with HTML5-compliant markup', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '- Parent 1\n  - Nested 1\n- Parent 2',
+    });
+    const html = editor.getContentHtml();
+    expect(html).toContain('<ul>\n<li>Parent 1\n<ul>\n<li>Nested 1\n</li>\n</ul>\n</li>\n<li>Parent 2\n</li>\n</ul>');
+  });
+
+  it('compiles ordered lists correctly', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '1. First step\n2. Second step',
+    });
+    const html = editor.getContentHtml();
+    expect(html).toContain('<ol>\n<li>First step\n</li>\n<li>Second step\n</li>\n</ol>');
+  });
+
+  it('compiles task checkboxes correctly', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '- [ ] Uncompleted task\n- [x] Completed task',
+    });
+    const html = editor.getContentHtml();
+    expect(html).toContain('<li><input type="checkbox" disabled> Uncompleted task\n</li>');
+    expect(html).toContain('<li><input type="checkbox" disabled checked> Completed task\n</li>');
+  });
+});
+
+describe('fallback rendering table alignment', () => {
+  let container;
+
+  beforeEach(() => {
+    container = document.createElement('div');
+    document.body.appendChild(container);
+  });
+
+  it('applies text-align inline styles correctly based on separator markers', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '| Left | Center | Right | Default |\n| :--- | :---: | ---: | --- |\n| a | b | c | d |',
+    });
+    const html = editor.getContentHtml();
+    expect(html).toContain('<th style="text-align: left;">Left</th>');
+    expect(html).toContain('<th style="text-align: center;">Center</th>');
+    expect(html).toContain('<th style="text-align: right;">Right</th>');
+    expect(html).toContain('<th>Default</th>');
+    
+    expect(html).toContain('<td style="text-align: left;">a</td>');
+    expect(html).toContain('<td style="text-align: center;">b</td>');
+    expect(html).toContain('<td style="text-align: right;">c</td>');
+    expect(html).toContain('<td>d</td>');
+  });
+});
+
+describe('fallback rendering LaTeX math', () => {
+  let container;
+
+  beforeEach(() => {
+    container = document.createElement('div');
+    document.body.appendChild(container);
+  });
+
+  it('renders inline math correctly with KaTeX mock', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: 'Equation $E = mc^2$ is famous.',
+    });
+    const html = editor.getContentHtml();
+    expect(html).toContain('Equation <span class="katex-inline-mocked">E = mc^2</span> is famous.');
+  });
+
+  it('renders display/block math correctly with KaTeX mock', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '$$\n\\sum_{i=1}^n x_i\n$$',
+    });
+    const html = editor.getContentHtml();
+    expect(html).toContain('<div class="katex-display-mocked">\n\\sum_{i=1}^n x_i\n</div>');
+  });
+
+  it('falls back to raw markup when window.katex is missing', () => {
+    const originalKatex = window.katex;
+    delete window.katex;
+    try {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: 'Equation $E = mc^2$ and $$\n\\sum x_i\n$$',
+      });
+      const html = editor.getContentHtml();
+      expect(html).toContain('Equation <span class="katex-inline-fallback">$E = mc^2$</span>');
+      expect(html).toContain('<div class="katex-display-fallback">$$\n\\sum x_i\n$$</div>');
+    } finally {
+      window.katex = originalKatex;
+    }
+  });
+});
+
 
