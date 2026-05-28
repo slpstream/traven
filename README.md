@@ -385,9 +385,9 @@ To hide buttons or re-style them, override classes in your local stylesheets:
 
 ---
 
-## Custom Shortcodes Architecture (Roadmap)
+## Custom Shortcodes Architecture
 
-Traven is structured to allow easy parsing of custom shortcodes (e.g., `[gallery ids="1,2"]` or `{{ youtube id="xyz" }}`). Custom shortcode rendering utilizes the decoupled architecture:
+Traven is structured to allow easy parsing of custom shortcodes (e.g., `[gallery ids="1,2"]` or `[youtube id="xyz"]`. Note: examples from roadmap). Custom shortcode rendering utilizes the decoupled architecture:
 
 1.  **Scanner (`src/wysiwym.js`)**: Matches shortcode delimiters using regex scans.
 2.  **Replacement Widget (`src/index.js`)**: Injects a custom CodeMirror `WidgetType` returning custom interactive preview elements when the cursor is outside the shortcode range.
@@ -405,6 +405,9 @@ npm install
 
 # Run bundling build (produces dist/traven.js and dist/traven.css)
 npm run build
+
+# Optional tests
+npm run test
 
 # Start esbuild watch mode for live development
 npm run watch

@@ -157,7 +157,7 @@ async function handleOptimisticUpload(
 ) {
   if (!uploadFn) return;
 
-  const placeholder = `![Uploading ${file.name}...]()`;
+  const placeholder = `[image alt="Uploading ${file.name}..."]`;
 
   // 1. Insert placeholder
   view.dispatch({
@@ -176,7 +176,7 @@ async function handleOptimisticUpload(
         changes: {
           from: offset,
           to: offset + placeholder.length,
-          insert: `![${file.name}](${finalUrl})`
+          insert: `[image src="${finalUrl}" alt="${file.name}" align="center" size="medium"]`
         }
       });
     }

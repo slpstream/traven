@@ -225,6 +225,46 @@ export function openImageModal(editor, triggerBtn) {
   errorEl.className = "traven-modal-error";
   errorEl.style.display = "none";
 
+  let isAdvanced = true;
+
+  // Toggle button at the top
+  const toggleRow = document.createElement("div");
+  toggleRow.className = "traven-modal-field";
+  toggleRow.style.display = "flex";
+  toggleRow.style.justify = "flex-end";
+  toggleRow.style.marginBottom = "12px";
+
+  const toggleBtn = document.createElement("button");
+  toggleBtn.type = "button";
+  toggleBtn.className = "traven-modal-toggle-btn";
+  toggleBtn.style.background = "none";
+  toggleBtn.style.border = "none";
+  toggleBtn.style.cursor = "pointer";
+  toggleBtn.style.padding = "4px";
+  toggleBtn.style.display = "inline-flex";
+  toggleBtn.style.alignItems = "center";
+  toggleBtn.style.justifyContent = "center";
+  toggleBtn.style.borderRadius = "4px";
+  toggleBtn.style.width = "28px";
+  toggleBtn.style.height = "28px";
+  toggleBtn.style.transition = "all 0.15s ease";
+  toggleBtn.style.color = "var(--accent, #334155)";
+  toggleBtn.title = "Legacy Markdown";
+
+  toggleBtn.innerHTML = `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" style="width: 18px; height: 18px; pointer-events: none;">
+      <rect width="256" height="256" fill="none"/>
+      <circle cx="104" cy="80" r="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+      <circle cx="168" cy="176" r="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+      <line x1="128" y1="80" x2="216" y2="80" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+      <line x1="40" y1="80" x2="80" y2="80" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+      <line x1="192" y1="176" x2="216" y2="176" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+      <line x1="40" y1="176" x2="144" y2="176" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+    </svg>
+  `;
+  toggleRow.appendChild(toggleBtn);
+  form.appendChild(toggleRow);
+
   // Alt text field
   const altField = document.createElement("div");
   altField.className = "traven-modal-field";
@@ -423,6 +463,61 @@ export function openImageModal(editor, triggerBtn) {
     form.appendChild(fileField);
   }
 
+  // Caption field
+  const captionField = document.createElement("div");
+  captionField.className = "traven-modal-field";
+  captionField.innerHTML = `
+    <label class="traven-modal-label" for="traven-image-caption">Caption</label>
+    <input type="text" id="traven-image-caption" class="traven-modal-input" placeholder="e.g. Figure 1: The view from above" value="" />
+  `;
+  form.appendChild(captionField);
+
+  // Group Row for Alignment and Size
+  const groupRow = document.createElement("div");
+  groupRow.className = "traven-modal-field";
+  groupRow.style.display = "flex";
+  groupRow.style.gap = "12px";
+  groupRow.style.marginBottom = "16px";
+
+  const alignCol = document.createElement("div");
+  alignCol.style.flex = "1";
+  alignCol.innerHTML = `
+    <label class="traven-modal-label" for="traven-image-align">Alignment</label>
+    <select id="traven-image-align" class="traven-modal-input">
+      <option value="" selected>Default (Center)</option>
+      <option value="left">Left</option>
+      <option value="right">Right</option>
+      <option value="center">Center</option>
+      <option value="fullbleed">Full Bleed</option>
+    </select>
+  `;
+
+  const sizeCol = document.createElement("div");
+  sizeCol.style.flex = "1";
+  sizeCol.innerHTML = `
+    <label class="traven-modal-label" for="traven-image-size">Size</label>
+    <select id="traven-image-size" class="traven-modal-input">
+      <option value="" selected>Default (Medium)</option>
+      <option value="small">Small</option>
+      <option value="medium">Medium</option>
+      <option value="large">Large</option>
+      <option value="full">Full (content width)</option>
+    </select>
+  `;
+
+  groupRow.appendChild(alignCol);
+  groupRow.appendChild(sizeCol);
+  form.appendChild(groupRow);
+
+  // CSS Class field
+  const classField = document.createElement("div");
+  classField.className = "traven-modal-field";
+  classField.innerHTML = `
+    <label class="traven-modal-label" for="traven-image-class">CSS Class</label>
+    <input type="text" id="traven-image-class" class="traven-modal-input" placeholder="e.g. shadow shadow-lg border" value="" />
+  `;
+  form.appendChild(classField);
+
   form.appendChild(errorEl);
 
   // Pre-fill alt text with selection if any
@@ -433,23 +528,70 @@ export function openImageModal(editor, triggerBtn) {
     form.querySelector("#traven-image-alt").value = selectionText;
   }
 
+  const captionInput = form.querySelector("#traven-image-caption");
+  const alignSelect = form.querySelector("#traven-image-align");
+  const sizeSelect = form.querySelector("#traven-image-size");
+  const classInput = form.querySelector("#traven-image-class");
+
+  const updateToggleState = () => {
+    if (isAdvanced) {
+      toggleBtn.style.color = "var(--accent, #334155)";
+      toggleBtn.title = "Legacy Markdown";
+      captionInput.disabled = false;
+      alignSelect.disabled = false;
+      sizeSelect.disabled = false;
+      classInput.disabled = false;
+    } else {
+      toggleBtn.style.color = "var(--text-secondary, #64748b)";
+      toggleBtn.title = "Advanced Settings";
+      captionInput.disabled = true;
+      alignSelect.disabled = true;
+      sizeSelect.disabled = true;
+      classInput.disabled = true;
+    }
+  };
+
+  toggleBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    isAdvanced = !isAdvanced;
+    updateToggleState();
+  });
+
+  // Initial state call
+  updateToggleState();
+
   /**
    * Inserts the image markdown and moves the cursor to the next line
    * so the WYSIWYM decoration renders the image widget immediately.
-   *
-   * The image decoration check uses `cursorHead <= node.to` (inclusive).
-   * By always appending a newline and placing the cursor after it,
-   * we guarantee cursorHead > node.to and the widget renders.
    */
   const insertImageAndUnfocus = (altText, url) => {
     const v = editor.getView();
     const range = v.state.selection.main;
-    const imgMarkdown = `![${altText}](${url})`;
-    const insertion = imgMarkdown + "\n";
+    
+    let insertion = "";
+    if (!isAdvanced) {
+      insertion = `![${altText}](${url})`;
+    } else {
+      const captionText = captionInput.value.trim();
+      const alignVal = alignSelect.value;
+      const sizeVal = sizeSelect.value;
+      const classVal = classInput.value.trim();
+
+      const attrParts = [`src="${url}"`];
+      if (alignVal) attrParts.push(`align="${alignVal}"`);
+      if (sizeVal) attrParts.push(`size="${sizeVal}"`);
+      if (altText && altText !== "image") attrParts.push(`alt="${altText}"`);
+      if (captionText) attrParts.push(`caption="${captionText}"`);
+      if (classVal) attrParts.push(`class="${classVal}"`);
+
+      insertion = `[image ${attrParts.join(" ")}]`;
+    }
+    
+    const insertionText = insertion + "\n";
 
     v.dispatch({
-      changes: { from: range.from, to: range.to, insert: insertion },
-      selection: { anchor: range.from + insertion.length }
+      changes: { from: range.from, to: range.to, insert: insertionText },
+      selection: { anchor: range.from + insertionText.length }
     });
     v.focus();
   };

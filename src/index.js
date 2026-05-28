@@ -1447,9 +1447,12 @@ export class TravenEditor {
       }
       const src = sanitizeUrl(attrs.src || "");
       const caption = attrs.caption || "";
+      const alt = attrs.alt || caption;
       const align = attrs.align || "center";
       const size = attrs.size || "medium";
-      return `<img src="${src}" alt="${caption}" class="traven-image-shortcode align-${align} size-${size}" style="max-width: 100%; height: auto; display: block; border-radius: 6px; margin: 12px 0;">`;
+      const customClass = attrs.class ? ` ${attrs.class}` : "";
+
+      return `<img src="${src}" alt="${alt}" class="traven-image-shortcode align-${align} size-${size}${customClass}">`;
     });
     content = content.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, src) => `<img src="${sanitizeUrl(src)}" alt="${alt}" style="max-width: 100%; height: auto; display: block; margin: 12px 0; border-radius: 6px;">`);
     content = content.replace(/\[(.*?)\]\((.*?)\)/g, (match, text, url) => `<a href="${sanitizeUrl(url)}" target="_blank">${text}</a>`);

@@ -476,6 +476,33 @@ describe('ImageShortcode', () => {
     expect(captionEl.textContent).toBe('WYSIWYM check');
   });
 
+  it('compiles shortcode with explicit alt, class and custom attributes, and defaults align and size', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '[image src="https://example.com/pic.jpg" alt="Custom Alt" class="my-custom-class shadow-md"]',
+    });
+    const html = editor.getContentHtml();
+    expect(html).toContain('<img src="https://example.com/pic.jpg"');
+    expect(html).toContain('alt="Custom Alt"');
+    expect(html).toContain('class="traven-image-shortcode align-center size-medium my-custom-class shadow-md"');
+  });
+
+  it('renders ImageShortcodeWidget with custom class and uploading state inside WYSIWYM', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '[image src="https://example.com/pic.jpg" align="left" size="small" class="custom-wysiwym-style"]\n[image alt="Uploading photo.jpg..."]\nSome text',
+    });
+    editor.setSelection(editor.getValue().length, editor.getValue().length);
+
+    const activeWidget = container.querySelector('.cm-wysiwym-image-shortcode-container');
+    expect(activeWidget).not.toBeNull();
+    expect(activeWidget.classList.contains('custom-wysiwym-style')).toBe(true);
+
+    const uploadingWidget = container.querySelector('.cm-wysiwym-image-uploading');
+    expect(uploadingWidget).not.toBeNull();
+    expect(uploadingWidget.textContent).toContain('Uploading photo.jpg...');
+  });
+
   it('collapses delimiters on first line when unfocused, and reveals them when focused', async () => {
     const editor = new TravenEditor({
       element: container,
