@@ -10,6 +10,8 @@ Traven supports two main ways to insert images:
 1. **Direct Image URL**: Paste a URL link to a remote or self-hosted image.
 2. **File Upload**: Choose a local file via the system file dialog, drag it directly into the editing area, or paste it from the clipboard.
 
+Every insertion can generate either standard Markdown image syntax (`![alt](src)`) or Traven's custom `[image]` shortcode. Traven remains fully backwards-compatible and non-breaking for standard Markdown image syntax, making the custom shortcode completely optional.
+
 The "Insert Image" toolbar button dynamically adjusts its user interface depending on whether the host application supports file uploads.
 
 ---
@@ -113,7 +115,7 @@ Configuring `onUploadImage` does more than enable the file picker button inside 
 1. **Drag and Drop**: The author drags an image file from their desktop and drops it onto the editor workspace.
 2. **Copy and Paste**: The author copies an image (e.g. from an image editor or a screenshot tool) and pastes it (`Ctrl+V` / `Cmd+V`) directly into the editor text pane.
 3. **Optimistic Loading Feedback**: Traven intercepts the event, generates a temporary optimistic loading state (an animated spinner widget inline at the cursor drop location), and begins uploading the file in the background.
-4. **Markdown Insertion**: Once the `onUploadImage` promise resolves, the editor replaces the loading indicator with the standard image markdown tag: `![alt](resolved_url)`.
+4. **Shortcode Insertion**: Once the `onUploadImage` promise resolves, the editor replaces the loading indicator with the custom image shortcode containing explicit alignment and sizing defaults: `[image src="resolved_url" alt="filename.png" align="center" size="medium"]`. 
 
 If the upload fails, the spinner indicator is cleanly removed, and a localized error warning is logged to prevent editor state corruption.
 
@@ -165,4 +167,28 @@ This section answers architectural and implementation questions regarding image 
 
 ### Q: How do I handle authentication and CSRF protection for uploads?
 **A:** Since your custom `onUploadImage` function runs directly within the context of the user's browser tab, it has full access to the page's cookies, storage, and DOM. You can read CSRF tokens from page meta tags and add them as custom request headers in your fetch callback, or let the browser attach authentication session cookies automatically. Refer to [Section 3's backend REST API recipe](#recipe-2-backend-rest-api-uploads-production) for a complete example.
+
+---
+
+## 7. Custom `[image]` Shortcode & Backwards Compatibility
+
+Traven features a built-in custom `[image]` shortcode for modular page building:
+```markdown
+[image src="photo.jpg" align="right" size="medium" alt="Description" caption="Caption text" class="custom-class"]
+```
+
+### Backwards Compatibility
+The custom shortcode is completely optional. Traven is fully backwards-compatible and will not break existing content that uses standard Markdown image declarations (`![alt](src)`). Both syntaxes are supported simultaneously.
+
+### Toggle Modal Option
+The Image Insertion Modal features a sliders-icon toggle button to switch between:
+- **Advanced settings mode**: Inserts custom `[image]` shortcode syntax and reveals settings for caption, custom CSS class, alignment, and size.
+- **Legacy mode**: Inserts standard `![alt](src)` Markdown and disables the advanced layout inputs.
+
+### CSS Styling & Theme Separation
+When parsing `[image]` shortcodes, the fallback HTML renderer generates clean semantic `<img>` tags with zero inline styling attributes:
+```html
+<img src="photo.jpg" alt="Description" class="traven-image-shortcode align-right size-medium custom-class">
+```
+All layout styles (display type, margin, floats, width) are delegated entirely to the skin stylesheets (e.g., `skin-default.css`, `skin-dark.css`, `skin-colorful.css`, `skin-write.css`) via these CSS selector classes.
 

@@ -221,22 +221,27 @@ class TableWidget extends WidgetType {
 }
 
 class ImageShortcodeWidget extends WidgetType {
-  constructor(attrs, nodeFrom) {
+  constructor(attrs, nodeFrom, rawText) {
     super();
     this.attrs = attrs;
     this.nodeFrom = nodeFrom;
+    this.rawText = rawText;
   }
 
   toDOM(view) {
     const container = document.createElement("div");
     container.className = "cm-wysiwym-image-shortcode-container";
 
+    if (this.rawText) {
+      container.title = this.rawText;
+    }
+
     const src = this.attrs.src || "";
     const caption = this.attrs.caption || "";
-    const alt = this.attrs.alt || "";
     const align = this.attrs.align || "center";
     const size = this.attrs.size || "medium";
     const customClass = this.attrs.class || "";
+    const alt = this.attrs.alt || "";
 
     const isUploading = !src || alt.startsWith("Uploading") || caption.startsWith("Uploading");
 
@@ -288,25 +293,6 @@ class ImageShortcodeWidget extends WidgetType {
     const metaRow = document.createElement("div");
     metaRow.className = "shortcode-meta";
 
-    const tagBadge = document.createElement("span");
-    tagBadge.className = "meta-badge tag-name";
-    tagBadge.textContent = "image";
-    metaRow.appendChild(tagBadge);
-
-    if (align && align !== "center") {
-      const alignBadge = document.createElement("span");
-      alignBadge.className = "meta-badge align-badge";
-      alignBadge.textContent = align;
-      metaRow.appendChild(alignBadge);
-    }
-
-    if (size && size !== "medium") {
-      const sizeBadge = document.createElement("span");
-      sizeBadge.className = "meta-badge size-badge";
-      sizeBadge.textContent = size;
-      metaRow.appendChild(sizeBadge);
-    }
-
     if (caption) {
       const captionText = document.createElement("span");
       captionText.className = "meta-caption";
@@ -314,7 +300,14 @@ class ImageShortcodeWidget extends WidgetType {
       metaRow.appendChild(captionText);
     }
 
-    container.appendChild(metaRow);
+    if (metaRow.childNodes.length > 0) {
+      container.appendChild(metaRow);
+    }
+
+    const editIcon = document.createElement("div");
+    editIcon.className = "image-edit-icon";
+    editIcon.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`;
+    container.appendChild(editIcon);
 
     // Mousedown listener to focus and reveal raw shortcode markdown
     container.addEventListener("mousedown", (e) => {
@@ -331,6 +324,7 @@ class ImageShortcodeWidget extends WidgetType {
     return (
       other instanceof ImageShortcodeWidget &&
       this.nodeFrom === other.nodeFrom &&
+      this.rawText === other.rawText &&
       this.attrs.src === other.attrs.src &&
       this.attrs.caption === other.attrs.caption &&
       this.attrs.align === other.attrs.align &&
@@ -648,7 +642,8 @@ function buildWysiwymDecorations(state) {
               } while (c.nextSibling());
             }
 
-            const widget = new ImageShortcodeWidget(attrs, node.from);
+            const rawText = state.sliceDoc(node.from, node.to);
+            const widget = new ImageShortcodeWidget(attrs, node.from, rawText);
             collected.push({
               from: node.from,
               to: node.to,

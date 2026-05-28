@@ -467,9 +467,12 @@ describe('ImageShortcode', () => {
     expect(widgetEl.classList.contains('align-center')).toBe(true);
     expect(widgetEl.classList.contains('size-large')).toBe(true);
     
+    // Center alignment hides all badges
     const badge = widgetEl.querySelector('.tag-name');
-    expect(badge).not.toBeNull();
-    expect(badge.textContent).toBe('image');
+    expect(badge).toBeNull();
+    
+    // Native tooltip contains the raw shortcode
+    expect(widgetEl.title).toBe('[image src="https://example.com/pic.jpg" align="center" size="large" caption="WYSIWYM check"]');
     
     const captionEl = widgetEl.querySelector('.meta-caption');
     expect(captionEl).not.toBeNull();
@@ -497,6 +500,14 @@ describe('ImageShortcode', () => {
     const activeWidget = container.querySelector('.cm-wysiwym-image-shortcode-container');
     expect(activeWidget).not.toBeNull();
     expect(activeWidget.classList.contains('custom-wysiwym-style')).toBe(true);
+
+    // Verify edit icon is present
+    const editIcon = activeWidget.querySelector('.image-edit-icon');
+    expect(editIcon).not.toBeNull();
+
+    // Verify that the alignment badge (e.g. left) is NOT present
+    const alignBadge = activeWidget.querySelector('.align-badge');
+    expect(alignBadge).toBeNull();
 
     const uploadingWidget = container.querySelector('.cm-wysiwym-image-uploading');
     expect(uploadingWidget).not.toBeNull();

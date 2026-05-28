@@ -252,7 +252,7 @@
   flex-direction: column;
   max-width: 100%;
   margin: 0 !important;
-  padding: 16px 0;
+  padding: 12px 0;
   border: 1px solid #e2e8f0;
   border-radius: 12px;
   overflow: hidden;
@@ -269,7 +269,7 @@
 .cm-wysiwym-image-preview {
   display: block;
   max-width: 100%;
-  max-height: 380px;
+  max-height: none;
   height: auto;
   object-fit: contain;
   margin: 0 auto;
@@ -310,19 +310,17 @@
 }
 
 .cm-wysiwym-image-shortcode-container.align-left {
-  float: left;
-  margin: 12px 16px 12px 0 !important;
+  margin: 0 auto 0 0 !important;
 }
 .cm-wysiwym-image-shortcode-container.align-right {
-  float: right;
-  margin: 12px 0 12px 16px !important;
+  margin: 0 0 0 auto !important;
 }
 .cm-wysiwym-image-shortcode-container.align-center {
-  margin: 12px auto !important;
+  margin: 0 auto !important;
 }
 .cm-wysiwym-image-shortcode-container.align-fullbleed {
   width: 100% !important;
-  margin: 12px 0 !important;
+  margin: 0 !important;
 }
 
 .cm-wysiwym-image-shortcode-container.size-small {
@@ -340,12 +338,90 @@
 .cm-wysiwym-image-shortcode-container img {
   display: block;
   max-width: 100%;
-  max-height: 380px;
+  max-height: none;
   height: auto;
   object-fit: contain;
   margin: 0 auto;
-  padding: 10px;
+  padding: 6px;
 }
+
+.cm-wysiwym-image-shortcode-container.align-left img,
+.cm-wysiwym-image-shortcode-container.align-right img {
+  max-height: 100px;
+}
+
+/* Image Shortcode Styling Adjustments */
+.cm-wysiwym-image-shortcode-container {
+  position: relative;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border-style: dashed !important;
+}
+
+.cm-wysiwym-image-shortcode-container:hover {
+  box-shadow: none !important;
+}
+
+.cm-wysiwym-image-shortcode-container .shortcode-meta {
+  background-color: transparent !important;
+}
+
+/* Edit icon on hover */
+.cm-wysiwym-image-shortcode-container .image-edit-icon {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  color: #64748b;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, background-color 0.2s ease;
+  z-index: 10;
+}
+
+.cm-wysiwym-image-shortcode-container:hover .image-edit-icon {
+  opacity: 1;
+}
+
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-image-shortcode-container .image-edit-icon {
+  background-color: rgba(30, 41, 59, 0.9) !important;
+  border-color: #475569 !important;
+  color: #94a3b8 !important;
+}
+
+/* Center & Fullbleed images custom styling */
+.cm-wysiwym-image-shortcode-container.align-center,
+.cm-wysiwym-image-shortcode-container.align-fullbleed {
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.cm-wysiwym-image-shortcode-container.align-center:hover,
+.cm-wysiwym-image-shortcode-container.align-fullbleed:hover {
+  box-shadow: none !important;
+}
+
+.cm-wysiwym-image-shortcode-container.align-center .shortcode-meta,
+.cm-wysiwym-image-shortcode-container.align-fullbleed .shortcode-meta {
+  border-top: none !important;
+  justify-content: center;
+}
+
+.cm-wysiwym-image-shortcode-container.align-center .meta-caption,
+.cm-wysiwym-image-shortcode-container.align-fullbleed .meta-caption {
+  width: 100%;
+  text-align: center;
+}
+
+
 
 /* Optimistic uploading panel */
 .cm-wysiwym-image-uploading {

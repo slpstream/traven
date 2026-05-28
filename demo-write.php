@@ -297,6 +297,8 @@
 
 This is Traven's distraction-free writing layout. The design features Goudy Bookletter 1911 as the primary typeface and a fixed, top-centered floating toolbar. Switch between WYSIWYM, Markdown, and Preview tabs above to view raw markdown or see what your work will look like when rendered as a web page.
 
+[image src="https://traven.dev/img/vignette.png" align="center" size="medium" caption="- Life is good..."]
+
 ## Focus on Writing
 
 To maintain a clean screen, use the manual toolbar toggle button (located at the top right next to "Copy Markdown") to show or hide the floating toolbar at any time.

@@ -387,7 +387,15 @@ To hide buttons or re-style them, override classes in your local stylesheets:
 
 ## Custom Shortcodes Architecture
 
-Traven is structured to allow easy parsing of custom shortcodes (e.g., `[gallery ids="1,2"]` or `[youtube id="xyz"]`. Note: examples from roadmap). Custom shortcode rendering utilizes the decoupled architecture:
+Traven supports custom shortcodes to extend the standard Markdown syntax. By default, it features native support for a custom `[image]` shortcode:
+
+### Custom `[image]` Shortcode
+Traven includes an advanced, optional `[image]` shortcode (e.g. `[image src="..." alt="..." align="center" size="medium" class="my-custom-class"]`) designed for modular, responsive layouts:
+* **Fully Backwards-Compatible**: The custom shortcode is completely optional. Traven remains fully backwards-compatible and non-breaking for standard legacy Markdown syntax (`![alt](src)`). Existing standard images continue to render and compile flawlessly.
+* **Toolbar Toggle**: The "Insert Image" toolbar modal contains a sliders-icon toggle to switch between Advanced mode (generating the custom `[image]` shortcode with support for captions, custom CSS classes, sizing, and alignment settings) and Legacy mode (producing standard `![alt](src)` Markdown).
+* **Decoupled Presentation Styling**: The fallback renderer compiles the shortcode to clean semantic HTML (an `<img>` tag with class attributes and no inline `style=""` declarations). Layout formatting (width, display, float, margin) is delegated entirely to the skin stylesheets (e.g. `assets/skins/skin-default.css`) via `.align-[alignment]` and `.size-[size]` selector classes.
+
+Developers can also extend Traven to support other custom shortcodes using its decoupled architecture:
 
 1.  **Scanner (`src/wysiwym.js`)**: Matches shortcode delimiters using regex scans.
 2.  **Replacement Widget (`src/index.js`)**: Injects a custom CodeMirror `WidgetType` returning custom interactive preview elements when the cursor is outside the shortcode range.
