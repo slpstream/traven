@@ -627,8 +627,21 @@ export function openImageModal(optionsOrEditor, triggerBtn = null) {
     
     if (docFrom !== null) {
       v.dispatch({
-        changes: { from: docFrom, to: docTo, insert: insertion },
-        selection: { anchor: docFrom + insertion.length }
+        changes: { from: docFrom, to: docTo, insert: insertion }
+      });
+      const pos = docFrom + insertion.length;
+      const docStr = v.state.doc.toString();
+      let targetAnchor = pos;
+      if (pos < docStr.length && docStr[pos] === "\n") {
+        targetAnchor = pos + 1;
+      } else {
+        v.dispatch({
+          changes: { from: pos, insert: "\n" }
+        });
+        targetAnchor = pos + 1;
+      }
+      v.dispatch({
+        selection: { anchor: targetAnchor }
       });
     } else {
       const range = v.state.selection.main;
