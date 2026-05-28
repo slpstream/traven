@@ -254,53 +254,7 @@ export function openImageModal(optionsOrEditor, triggerBtn = null) {
   errorEl.style.display = "none";
 
   let isAdvanced = isAdvancedMode;
-
-  // Toggle button at the top
-  const toggleRow = document.createElement("div");
-  toggleRow.className = "traven-modal-field";
-  toggleRow.style.display = "flex";
-  toggleRow.style.justify = "flex-end";
-  toggleRow.style.marginBottom = "12px";
-
-  const toggleBtn = document.createElement("button");
-  toggleBtn.type = "button";
-  toggleBtn.className = "traven-modal-toggle-btn";
-  toggleBtn.style.background = "none";
-  toggleBtn.style.border = "none";
-  toggleBtn.style.cursor = "pointer";
-  toggleBtn.style.padding = "4px";
-  toggleBtn.style.display = "inline-flex";
-  toggleBtn.style.alignItems = "center";
-  toggleBtn.style.justifyContent = "center";
-  toggleBtn.style.borderRadius = "4px";
-  toggleBtn.style.width = "28px";
-  toggleBtn.style.height = "28px";
-  toggleBtn.style.transition = "all 0.15s ease";
-  toggleBtn.style.color = "var(--accent, #334155)";
-  toggleBtn.title = "Legacy Markdown";
-
-  toggleBtn.innerHTML = `
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" style="width: 18px; height: 18px; pointer-events: none;">
-      <rect width="256" height="256" fill="none"/>
-      <circle cx="104" cy="80" r="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
-      <circle cx="168" cy="176" r="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
-      <line x1="128" y1="80" x2="216" y2="80" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
-      <line x1="40" y1="80" x2="80" y2="80" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
-      <line x1="192" y1="176" x2="216" y2="176" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
-      <line x1="40" y1="176" x2="144" y2="176" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
-    </svg>
-  `;
-  toggleRow.appendChild(toggleBtn);
-  form.appendChild(toggleRow);
-
-  // Alt text field
-  const altField = document.createElement("div");
-  altField.className = "traven-modal-field";
-  altField.innerHTML = `
-    <label class="traven-modal-label" for="traven-image-alt">Alt Text</label>
-    <input type="text" id="traven-image-alt" class="traven-modal-input" placeholder="e.g. A sunset over mountains" value="" />
-  `;
-  form.appendChild(altField);
+  let updatePreview = null;
 
   // URL field
   const urlField = document.createElement("div");
@@ -442,18 +396,21 @@ export function openImageModal(optionsOrEditor, triggerBtn = null) {
       return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
     };
 
-    fileInput.addEventListener("change", () => {
+    updatePreview = () => {
       const urlInput = form.querySelector("#traven-image-url");
-      if (fileInput.files && fileInput.files.length > 0) {
+      const urlValue = urlInput.value.trim();
+      const hasFile = fileInput.files && fileInput.files.length > 0;
+
+      if (hasFile) {
         const file = fileInput.files[0];
         fileName.textContent = file.name;
         fileSizeEl.textContent = formatBytes(file.size);
         fileDimsEl.textContent = "";
+        fileDetails.style.display = "";
+        fileSizeEl.style.wordBreak = "";
 
-        urlInput.value = "";
         urlInput.disabled = true;
 
-        // Generate thumbnail preview
         const objectUrl = URL.createObjectURL(file);
         thumbImg.src = objectUrl;
         
@@ -462,34 +419,137 @@ export function openImageModal(optionsOrEditor, triggerBtn = null) {
         dropzone.classList.add("has-file");
         errorEl.style.display = "none";
 
-        // Revoke object URL when image loads to free memory
         thumbImg.onload = () => {
           fileDimsEl.textContent = ` • ${thumbImg.naturalWidth}×${thumbImg.naturalHeight}`;
-          URL.revokeObjectURL(objectUrl);
+          if (objectUrl.startsWith("blob:")) {
+            URL.revokeObjectURL(objectUrl);
+          }
+        };
+      } else if (urlValue) {
+        const basename = urlValue.substring(urlValue.lastIndexOf("/") + 1) || "image";
+        fileName.textContent = basename;
+        fileDetails.style.display = "block";
+        fileSizeEl.style.wordBreak = "break-all";
+        fileSizeEl.textContent = urlValue;
+        fileDimsEl.innerHTML = "";
+
+        urlInput.disabled = false;
+        thumbImg.src = urlValue;
+
+        promptEl.style.display = "none";
+        previewEl.style.display = "flex";
+        dropzone.classList.add("has-file");
+        errorEl.style.display = "none";
+
+        thumbImg.onload = () => {
+          fileDimsEl.innerHTML = `<br>${thumbImg.naturalWidth}×${thumbImg.naturalHeight}`;
+        };
+        thumbImg.onerror = () => {
+          fileDimsEl.innerHTML = "";
         };
       } else {
         fileName.textContent = "No file chosen";
         fileSizeEl.textContent = "";
         fileDimsEl.textContent = "";
+        fileDetails.style.display = "";
+        fileSizeEl.style.wordBreak = "";
         urlInput.disabled = false;
         promptEl.style.display = "flex";
         previewEl.style.display = "none";
         dropzone.classList.remove("has-file");
         thumbImg.src = "";
       }
+
+      const hasPreview = !!(hasFile || urlValue);
+      if (hasPreview) {
+        urlField.style.display = "none";
+        if (fileLabel) fileLabel.style.display = "none";
+      } else {
+        urlField.style.display = "";
+        if (fileLabel) fileLabel.style.display = "";
+      }
+    };
+
+    fileInput.addEventListener("change", () => {
+      const urlInput = form.querySelector("#traven-image-url");
+      if (fileInput.files && fileInput.files.length > 0) {
+        urlInput.value = "";
+      }
+      updatePreview();
     });
 
     removeBtn.addEventListener("click", (e) => {
+      const urlInput = form.querySelector("#traven-image-url");
       e.preventDefault();
       e.stopPropagation();
       fileInput.value = "";
-      fileInput.dispatchEvent(new Event("change"));
+      urlInput.value = "";
+      updatePreview();
     });
 
     fileField.appendChild(fileLabel);
     fileField.appendChild(dropzone);
     form.appendChild(fileField);
   }
+
+  // Toggle button immediately below the dropzone
+  const toggleRow = document.createElement("div");
+  toggleRow.className = "traven-modal-field";
+  toggleRow.style.display = "flex";
+  toggleRow.style.justify = "flex-end";
+  toggleRow.style.marginBottom = "12px";
+
+  const toggleBtn = document.createElement("button");
+  toggleBtn.type = "button";
+  toggleBtn.className = "traven-modal-toggle-btn";
+  toggleBtn.style.background = "none";
+  toggleBtn.style.border = "none";
+  toggleBtn.style.cursor = "pointer";
+  toggleBtn.style.padding = "4px 8px";
+  toggleBtn.style.display = "inline-flex";
+  toggleBtn.style.alignItems = "center";
+  toggleBtn.style.justifyContent = "center";
+  toggleBtn.style.borderRadius = "6px";
+  toggleBtn.style.width = "auto";
+  toggleBtn.style.height = "28px";
+  toggleBtn.style.gap = "8px";
+  toggleBtn.style.transition = "all 0.15s ease";
+  toggleBtn.style.color = "var(--accent, #334155)";
+  toggleBtn.title = "Legacy Markdown";
+
+  toggleBtn.addEventListener("mouseenter", () => {
+    const isDark = document.querySelector(".cm-wysiwym-dark");
+    toggleBtn.style.backgroundColor = isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.05)";
+  });
+  toggleBtn.addEventListener("mouseleave", () => {
+    toggleBtn.style.backgroundColor = "transparent";
+  });
+
+  toggleBtn.innerHTML = `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" style="width: 18px; height: 18px; pointer-events: none; flex-shrink: 0;">
+      <rect width="256" height="256" fill="none"/>
+      <circle cx="104" cy="80" r="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+      <circle cx="168" cy="176" r="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+      <line x1="128" y1="80" x2="216" y2="80" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+      <line x1="40" y1="80" x2="80" y2="80" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+      <line x1="192" y1="176" x2="216" y2="176" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+      <line x1="40" y1="176" x2="144" y2="176" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+    </svg>
+    <div class="traven-modal-switch-track" style="position: relative; width: 36px; height: 20px; border-radius: 10px; background-color: #cbd5e1; transition: background-color 0.2s ease, border-color 0.2s ease; pointer-events: none; flex-shrink: 0; border: 1px solid transparent;">
+      <div class="traven-modal-switch-thumb" style="position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background-color: #ffffff; transition: transform 0.2s ease; transform: translateX(0); pointer-events: none; box-shadow: 0 1px 3px rgba(0,0,0,0.15);"></div>
+    </div>
+  `;
+  toggleRow.appendChild(toggleBtn);
+  form.appendChild(toggleRow);
+
+  // Alt text field
+  const altField = document.createElement("div");
+  altField.className = "traven-modal-field";
+  altField.innerHTML = `
+    <label class="traven-modal-label" for="traven-image-alt">Alt Text</label>
+    <input type="text" id="traven-image-alt" class="traven-modal-input" placeholder="e.g. A sunset over mountains" value="" />
+  `;
+  form.appendChild(altField);
 
   // Caption field
   const captionField = document.createElement("div");
@@ -500,42 +560,128 @@ export function openImageModal(optionsOrEditor, triggerBtn = null) {
   `;
   form.appendChild(captionField);
 
-  // Group Row for Alignment and Size
+  // Group Row for Alignment and Size (using layout preset selector and size pills)
   const groupRow = document.createElement("div");
   groupRow.className = "traven-modal-field";
   groupRow.style.display = "flex";
+  groupRow.style.flexDirection = "column";
   groupRow.style.gap = "12px";
   groupRow.style.marginBottom = "16px";
 
-  const alignCol = document.createElement("div");
-  alignCol.style.flex = "1";
-  alignCol.innerHTML = `
-    <label class="traven-modal-label" for="traven-image-align">Alignment</label>
-    <select id="traven-image-align" class="traven-modal-input">
-      <option value="" selected>Default (Center)</option>
-      <option value="left">Left</option>
-      <option value="right">Right</option>
-      <option value="center">Center</option>
-      <option value="fullbleed">Full Bleed</option>
-    </select>
+  // Hidden selects for testing compatibility
+  const hiddenAlignSelect = document.createElement("select");
+  hiddenAlignSelect.id = "traven-image-align";
+  hiddenAlignSelect.style.display = "none";
+  hiddenAlignSelect.innerHTML = `
+    <option value="left">Left</option>
+    <option value="center">Center</option>
+    <option value="right">Right</option>
+    <option value="fullbleed">Full Bleed</option>
   `;
+  groupRow.appendChild(hiddenAlignSelect);
 
+  const hiddenSizeSelect = document.createElement("select");
+  hiddenSizeSelect.id = "traven-image-size";
+  hiddenSizeSelect.style.display = "none";
+  hiddenSizeSelect.innerHTML = `
+    <option value="small">Small</option>
+    <option value="medium">Medium</option>
+    <option value="large">Large</option>
+    <option value="full">Full</option>
+  `;
+  groupRow.appendChild(hiddenSizeSelect);
+
+  // Layout preset column
+  const layoutCol = document.createElement("div");
+  layoutCol.style.position = "relative";
+  layoutCol.style.display = "flex";
+  layoutCol.style.flexDirection = "column";
+  layoutCol.style.gap = "6px";
+
+  const layoutLabel = document.createElement("label");
+  layoutLabel.className = "traven-modal-label";
+  layoutLabel.textContent = "Layout";
+  layoutCol.appendChild(layoutLabel);
+
+  const presetsRow = document.createElement("div");
+  presetsRow.className = "traven-modal-presets-row";
+  layoutCol.appendChild(presetsRow);
+
+  // Size pill column (no label, positioned dynamically under layout preset)
   const sizeCol = document.createElement("div");
-  sizeCol.style.flex = "1";
-  sizeCol.innerHTML = `
-    <label class="traven-modal-label" for="traven-image-size">Size</label>
-    <select id="traven-image-size" class="traven-modal-input">
-      <option value="" selected>Default (Medium)</option>
-      <option value="small">Small</option>
-      <option value="medium">Medium</option>
-      <option value="large">Large</option>
-      <option value="full">Full (content width)</option>
-    </select>
-  `;
+  sizeCol.className = "traven-modal-size-col";
+  sizeCol.style.position = "relative";
+  sizeCol.style.height = "42px";
+  sizeCol.style.marginTop = "6px";
 
-  groupRow.appendChild(alignCol);
-  groupRow.appendChild(sizeCol);
+  const sizeRow = document.createElement("div");
+  sizeRow.className = "traven-modal-size-row";
+  sizeRow.style.position = "absolute";
+  sizeRow.style.transform = "translateX(-50%)";
+  sizeRow.style.transition = "left 0.25s cubic-bezier(0.4, 0, 0.2, 1)";
+  sizeCol.appendChild(sizeRow);
+  layoutCol.appendChild(sizeCol);
+
+  groupRow.appendChild(layoutCol);
+
   form.appendChild(groupRow);
+
+  const presetsData = [
+    {
+      name: "left",
+      tooltip: "Float Left",
+      svg: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;"><rect x="2" y="4" width="8" height="8" rx="1"/><line x1="13" y1="5" x2="22" y2="5" /><line x1="13" y1="9" x2="22" y2="9" /><line x1="2" y1="15" x2="22" y2="15" /><line x1="2" y1="19" x2="22" y2="19" /></svg>`
+    },
+    {
+      name: "center",
+      tooltip: "Centered",
+      svg: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;"><rect x="6" y="6" width="12" height="8" rx="1"/><line x1="2" y1="2" x2="22" y2="2" /><line x1="2" y1="18" x2="22" y2="18" /><line x1="2" y1="22" x2="22" y2="22" /></svg>`
+    },
+    {
+      name: "right",
+      tooltip: "Float Right",
+      svg: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;"><rect x="14" y="4" width="8" height="8" rx="1"/><line x1="2" y1="5" x2="11" y2="5" /><line x1="2" y1="9" x2="11" y2="9" /><line x1="2" y1="15" x2="22" y2="15" /><line x1="2" y1="19" x2="22" y2="19" /></svg>`
+    },
+    {
+      name: "full",
+      tooltip: "Full Width",
+      svg: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;"><rect x="2" y="6" width="20" height="10" rx="1"/><line x1="2" y1="2" x2="22" y2="2" /><line x1="2" y1="20" x2="22" y2="20" /></svg>`
+    },
+    {
+      name: "fullbleed",
+      tooltip: "Full Bleed",
+      svg: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;"><line x1="5" y1="2" x2="5" y2="22" stroke-dasharray="2 2" stroke-width="1" /><line x1="19" y1="2" x2="19" y2="22" stroke-dasharray="2 2" stroke-width="1" /><rect x="1" y="6" width="22" height="10" rx="1" /><line x1="7" y1="2" x2="17" y2="2" /><line x1="7" y1="20" x2="17" y2="20" /></svg>`
+    }
+  ];
+
+  const presetButtons = [];
+  presetsData.forEach(data => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "traven-modal-preset-btn";
+    btn.dataset.preset = data.name;
+    btn.title = data.tooltip;
+    btn.innerHTML = data.svg;
+    presetsRow.appendChild(btn);
+    presetButtons.push(btn);
+  });
+
+  const sizesData = [
+    { name: "small", label: "S", class: "size-s" },
+    { name: "medium", label: "M", class: "size-m" },
+    { name: "large", label: "L", class: "size-l" }
+  ];
+
+  const sizePills = [];
+  sizesData.forEach(data => {
+    const pill = document.createElement("button");
+    pill.type = "button";
+    pill.className = `traven-modal-size-pill ${data.class}`;
+    pill.dataset.size = data.name;
+    pill.textContent = data.label;
+    sizeRow.appendChild(pill);
+    sizePills.push(pill);
+  });
 
   // CSS Class field
   const classField = document.createElement("div");
@@ -559,8 +705,8 @@ export function openImageModal(optionsOrEditor, triggerBtn = null) {
     altInput.value = attrs.alt || "";
     urlInput.value = attrs.src || "";
     captionInput.value = attrs.caption || "";
-    alignSelect.value = attrs.align || "";
-    sizeSelect.value = attrs.size || "";
+    alignSelect.value = attrs.align || "center";
+    sizeSelect.value = attrs.size || "medium";
     classInput.value = attrs.class || "";
   } else {
     // Pre-fill alt text with selection if any
@@ -572,10 +718,138 @@ export function openImageModal(optionsOrEditor, triggerBtn = null) {
     }
   }
 
+  // Preset selection sync logic
+  const getPresetName = (align, size) => {
+    if (align === "left") return "left";
+    if (align === "right") return "right";
+    if (align === "fullbleed") return "fullbleed";
+    if (size === "full") return "full";
+    return "center"; // default preset
+  };
+
+  let currentPreset = getPresetName(alignSelect.value, sizeSelect.value);
+  let currentSize = sizeSelect.value || "medium";
+  if (currentSize === "full" && (currentPreset === "left" || currentPreset === "right" || currentPreset === "center")) {
+    currentSize = "medium";
+  }
+
+  const syncUI = () => {
+    // 1. Update preset buttons active states
+    presetButtons.forEach(btn => {
+      const isActive = btn.dataset.preset === currentPreset;
+      if (isActive) {
+        btn.classList.add("active");
+      } else {
+        btn.classList.remove("active");
+      }
+    });
+
+    // 2. Determine size visibility and options
+    if (currentPreset === "full" || currentPreset === "fullbleed") {
+      sizeCol.style.display = "none";
+    } else {
+      sizeCol.style.display = "block";
+      // Update sizes availability
+      sizePills.forEach(pill => {
+        const sizeName = pill.dataset.size;
+        if (sizeName === "large" && currentPreset !== "center") {
+          pill.style.display = "none";
+        } else {
+          pill.style.display = "";
+        }
+        
+        const isActive = sizeName === currentSize;
+        if (isActive) {
+          pill.classList.add("active");
+        } else {
+          pill.classList.remove("active");
+        }
+      });
+
+      // Align sizeRow centered under active layout preset icon
+      const activeBtn = presetButtons.find(btn => btn.dataset.preset === currentPreset);
+      if (activeBtn) {
+        requestAnimationFrame(() => {
+          const center = activeBtn.offsetLeft + activeBtn.offsetWidth / 2;
+          sizeRow.style.left = center + "px";
+        });
+      }
+    }
+
+    // 3. Update hidden select values
+    if (currentPreset === "full") {
+      alignSelect.value = "center";
+      sizeSelect.value = "full";
+    } else if (currentPreset === "fullbleed") {
+      alignSelect.value = "fullbleed";
+      sizeSelect.value = "full";
+    } else {
+      alignSelect.value = currentPreset;
+      sizeSelect.value = currentSize;
+    }
+  };
+
+  // Add click listeners to preset buttons
+  presetButtons.forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      const presetName = btn.dataset.preset;
+      currentPreset = presetName;
+      if (presetName === "full" || presetName === "fullbleed") {
+        currentSize = "full";
+      } else {
+        if (currentSize === "full") {
+          currentSize = "medium";
+        } else if (presetName !== "center" && currentSize === "large") {
+          currentSize = "medium";
+        }
+      }
+      syncUI();
+    });
+  });
+
+  // Add click listeners to size pills
+  sizePills.forEach(pill => {
+    pill.addEventListener("click", (e) => {
+      e.preventDefault();
+      currentSize = pill.dataset.size;
+      syncUI();
+    });
+  });
+
+  // Add change listeners to hidden selects (for test programmatic changes)
+  alignSelect.addEventListener("change", () => {
+    currentPreset = getPresetName(alignSelect.value, sizeSelect.value);
+    syncUI();
+  });
+  sizeSelect.addEventListener("change", () => {
+    currentPreset = getPresetName(alignSelect.value, sizeSelect.value);
+    currentSize = sizeSelect.value;
+    syncUI();
+  });
+
+  // Run initial sync
+  syncUI();
+
+  if (updatePreview) {
+    updatePreview();
+    urlInput.addEventListener("input", updatePreview);
+  }
+
   const updateToggleState = () => {
+    const track = toggleBtn.querySelector(".traven-modal-switch-track");
+    const thumb = toggleBtn.querySelector(".traven-modal-switch-thumb");
+
     if (isAdvanced) {
       toggleBtn.style.color = "var(--accent, #334155)";
       toggleBtn.title = "Legacy Markdown";
+      if (track) track.style.backgroundColor = "#000000";
+      if (thumb) thumb.style.transform = "translateX(18px)";
+
+      captionField.style.display = "";
+      groupRow.style.display = "flex";
+      classField.style.display = "";
+
       captionInput.disabled = false;
       alignSelect.disabled = false;
       sizeSelect.disabled = false;
@@ -583,6 +857,13 @@ export function openImageModal(optionsOrEditor, triggerBtn = null) {
     } else {
       toggleBtn.style.color = "var(--text-secondary, #64748b)";
       toggleBtn.title = "Advanced Settings";
+      if (track) track.style.backgroundColor = "#cbd5e1";
+      if (thumb) thumb.style.transform = "translateX(0)";
+
+      captionField.style.display = "none";
+      groupRow.style.display = "none";
+      classField.style.display = "none";
+
       captionInput.disabled = true;
       alignSelect.disabled = true;
       sizeSelect.disabled = true;
@@ -606,6 +887,34 @@ export function openImageModal(optionsOrEditor, triggerBtn = null) {
   const insertImageAndUnfocus = (altText, url) => {
     const v = editor.getView();
     
+    if (!url) {
+      if (docFrom !== null) {
+        const docStr = v.state.doc.toString();
+        
+        let idxBefore = docFrom - 1;
+        while (idxBefore >= 0 && (docStr[idxBefore] === "\n" || docStr[idxBefore] === "\r" || docStr[idxBefore] === " " || docStr[idxBefore] === "\t")) {
+          idxBefore--;
+        }
+        
+        let idxAfter = docTo;
+        while (idxAfter < docStr.length && (docStr[idxAfter] === "\n" || docStr[idxAfter] === "\r" || docStr[idxAfter] === " " || docStr[idxAfter] === "\t")) {
+          idxAfter++;
+        }
+        
+        let replacementNewlines = "";
+        if (idxBefore >= 0 && idxAfter < docStr.length) {
+          replacementNewlines = "\n\n";
+        }
+        
+        v.dispatch({
+          changes: { from: idxBefore + 1, to: idxAfter, insert: replacementNewlines },
+          selection: { anchor: idxBefore + 1 + (replacementNewlines ? 1 : 0) }
+        });
+      }
+      v.focus();
+      return;
+    }
+    
     let insertion = "";
     if (!isAdvanced) {
       insertion = `![${altText}](${url})`;
@@ -616,8 +925,17 @@ export function openImageModal(optionsOrEditor, triggerBtn = null) {
       const classVal = classInput.value.trim();
 
       const attrParts = [`src="${url}"`];
-      if (alignVal) attrParts.push(`align="${alignVal}"`);
-      if (sizeVal) attrParts.push(`size="${sizeVal}"`);
+      
+      const hasAlign = attrs && attrs.hasOwnProperty("align");
+      const hasSize = attrs && attrs.hasOwnProperty("size");
+
+      if (alignVal && (alignVal !== "center" || hasAlign)) {
+        attrParts.push(`align="${alignVal}"`);
+      }
+      if (sizeVal && (sizeVal !== "medium" || hasSize)) {
+        attrParts.push(`size="${sizeVal}"`);
+      }
+      
       if (altText && altText !== "image") attrParts.push(`alt="${altText}"`);
       if (captionText) attrParts.push(`caption="${captionText}"`);
       if (classVal) attrParts.push(`class="${classVal}"`);
@@ -678,9 +996,15 @@ export function openImageModal(optionsOrEditor, triggerBtn = null) {
 
           // Validate: must have either a URL or a file
           if (!urlValue && !hasFile) {
-            errorEl.textContent = "Please enter an image URL or choose a file.";
-            errorEl.style.display = "block";
-            return;
+            if (docFrom !== null) {
+              insertImageAndUnfocus("", "");
+              overlay.querySelector(".traven-modal-close").click();
+              return;
+            } else {
+              errorEl.textContent = "Please enter an image URL or choose a file.";
+              errorEl.style.display = "block";
+              return;
+            }
           }
 
           if (hasFile && uploadHandler) {

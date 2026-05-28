@@ -611,6 +611,116 @@ describe('ImageShortcode', () => {
     expect(editor.getValue()).toBe('[image src="https://example.com/pic.jpg" align="left" alt="New Alt Text"]\nSome text');
   });
 
+  it('populated URL renders thumbnail preview, hides prompt, and clicking remove clears it', async () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '![Alt Text](https://example.com/pic.jpg)\nSome text',
+      onUploadImage: async (file) => 'https://example.com/' + file.name,
+    });
+    editor.setSelection(editor.getValue().length, editor.getValue().length);
+
+    const widgetEl = container.querySelector('.cm-wysiwym-image-widget-container');
+    expect(widgetEl).not.toBeNull();
+
+    widgetEl.dispatchEvent(new window.MouseEvent('mousedown', { bubbles: true, cancelable: true }));
+
+    const modal = document.querySelector('.traven-modal-overlay');
+    expect(modal).not.toBeNull();
+
+    const urlInput = modal.querySelector('#traven-image-url');
+    const dropzone = modal.querySelector('.traven-modal-dropzone');
+    const promptEl = modal.querySelector('.traven-modal-dropzone-prompt');
+    const previewEl = modal.querySelector('.traven-modal-dropzone-preview');
+    const thumbImg = modal.querySelector('.traven-modal-thumb');
+    const removeBtn = modal.querySelector('.traven-modal-remove-btn');
+
+    expect(urlInput.value).toBe('https://example.com/pic.jpg');
+    expect(promptEl.style.display).toBe('none');
+    expect(previewEl.style.display).toBe('flex');
+    expect(dropzone.classList.contains('has-file')).toBe(true);
+    expect(thumbImg.src).toBe('https://example.com/pic.jpg');
+
+    const fileSizeEl = modal.querySelector('.traven-modal-file-size');
+    expect(fileSizeEl.textContent).toBe('https://example.com/pic.jpg');
+
+    const urlField = urlInput.closest('.traven-modal-field');
+    expect(urlField.style.display).toBe('none');
+
+    const fileLabel = Array.from(modal.querySelectorAll('.traven-modal-label')).find(el => el.textContent === 'Or Upload a File');
+    expect(fileLabel).not.toBeNull();
+    expect(fileLabel.style.display).toBe('none');
+
+    removeBtn.click();
+
+    expect(urlInput.value).toBe('');
+    expect(promptEl.style.display).toBe('flex');
+    expect(previewEl.style.display).toBe('none');
+    expect(dropzone.classList.contains('has-file')).toBe(false);
+    expect(thumbImg.getAttribute('src') || '').toBe('');
+
+    expect(urlField.style.display).toBe('');
+    expect(fileLabel.style.display).toBe('');
+
+    urlInput.value = 'https://example.com/new.png';
+    urlInput.dispatchEvent(new window.Event('input'));
+
+    expect(promptEl.style.display).toBe('none');
+    expect(previewEl.style.display).toBe('flex');
+    expect(dropzone.classList.contains('has-file')).toBe(true);
+    expect(thumbImg.src).toBe('https://example.com/new.png');
+    expect(fileSizeEl.textContent).toBe('https://example.com/new.png');
+
+    expect(urlField.style.display).toBe('none');
+    expect(fileLabel.style.display).toBe('none');
+
+    modal.querySelector('.traven-modal-close').click();
+  });
+
+  it('saving modal with empty Image URL field deletes the image Markdown line with newline collapsing', async () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: 'Hello\n\n![Alt Text](https://example.com/pic.jpg)\n\nWorld',
+      onUploadImage: async (file) => 'https://example.com/' + file.name,
+    });
+    editor.setSelection(editor.getValue().length, editor.getValue().length);
+
+    const widgetEl = container.querySelector('.cm-wysiwym-image-widget-container');
+    expect(widgetEl).not.toBeNull();
+
+    widgetEl.dispatchEvent(new window.MouseEvent('mousedown', { bubbles: true, cancelable: true }));
+
+    const modal = document.querySelector('.traven-modal-overlay');
+    const urlInput = modal.querySelector('#traven-image-url');
+    const saveBtn = modal.querySelector('.traven-modal-btn.btn-primary');
+
+    urlInput.value = '';
+    urlInput.dispatchEvent(new window.Event('input'));
+
+    saveBtn.click();
+
+    expect(editor.getValue()).toBe('Hello\n\nWorld');
+  });
+
+  it('saving modal with empty Image URL at the start or end of document collapses surrounding newlines completely', async () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '![Alt Text](https://example.com/pic.jpg)\n\nWorld',
+      onUploadImage: async (file) => 'https://example.com/' + file.name,
+    });
+    editor.setSelection(editor.getValue().length, editor.getValue().length);
+
+    const widgetEl = container.querySelector('.cm-wysiwym-image-widget-container');
+    widgetEl.dispatchEvent(new window.MouseEvent('mousedown', { bubbles: true, cancelable: true }));
+
+    const modal = document.querySelector('.traven-modal-overlay');
+    const urlInput = modal.querySelector('#traven-image-url');
+    urlInput.value = '';
+    urlInput.dispatchEvent(new window.Event('input'));
+    modal.querySelector('.traven-modal-btn.btn-primary').click();
+
+    expect(editor.getValue()).toBe('World');
+  });
+
   it('collapses delimiters on first line when unfocused, and reveals them when focused', async () => {
     const editor = new TravenEditor({
       element: container,
