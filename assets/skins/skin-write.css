@@ -315,9 +315,16 @@
   padding: 6px;
 }
 
-.cm-wysiwym-image-shortcode-container.align-left img,
+.cm-wysiwym-image-shortcode-container.align-left img {
+  max-height: 100px;
+  margin-left: 0;
+  margin-right: auto;
+}
+
 .cm-wysiwym-image-shortcode-container.align-right img {
   max-height: 100px;
+  margin-right: 0;
+  margin-left: auto;
 }
 
 /* Image Shortcode Styling Adjustments */
