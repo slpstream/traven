@@ -2,14 +2,17 @@ import { EditorView, WidgetType, Decoration } from "@codemirror/view";
 import { RangeSetBuilder, StateField } from "@codemirror/state";
 import { syntaxTree } from "@codemirror/language";
 import { focusField, setFocusEffect } from "./wysiwym.js";
+import { viewToEditor } from "./bridge.js";
+import { openImageModal } from "./toolbar/modal.js";
 
 // --- Image Preview Widget ---
 class ImageWidget extends WidgetType {
-  constructor(url, alt, nodeFrom) {
+  constructor(url, alt, nodeFrom, nodeTo) {
     super();
     this.url = url;
     this.alt = alt;
     this.nodeFrom = nodeFrom;
+    this.nodeTo = nodeTo;
   }
 
   toDOM(view) {
@@ -30,19 +33,28 @@ class ImageWidget extends WidgetType {
     container.appendChild(img);
     container.appendChild(caption);
 
-    // Click handler: place cursor inside the image node so WYSIWYM reveals the markdown
+    // Click handler: open the Image Editor Modal
     container.addEventListener("mousedown", (e) => {
       e.preventDefault();
       e.stopPropagation();
-      view.dispatch({ selection: { anchor: this.nodeFrom } });
-      view.focus();
+      const editor = viewToEditor.get(view);
+      if (editor) {
+        openImageModal({
+          editor,
+          triggerElement: container,
+          docFrom: this.nodeFrom,
+          docTo: this.nodeTo,
+          attrs: { src: this.url, alt: this.alt },
+          isAdvancedMode: false
+        });
+      }
     });
 
     return container;
   }
 
   eq(other) {
-    return other instanceof ImageWidget && other.url === this.url && other.alt === this.alt && other.nodeFrom === this.nodeFrom;
+    return other instanceof ImageWidget && other.url === this.url && other.alt === this.alt && other.nodeFrom === this.nodeFrom && other.nodeTo === this.nodeTo;
   }
 
   ignoreEvent() { return false; }
@@ -113,7 +125,7 @@ function buildImageDecorations(state) {
                 collected.push({
                   from: node.from,
                   to: node.to,
-                  deco: Decoration.replace({ widget: new ImageWidget(url, alt, node.from), block: true })
+                  deco: Decoration.replace({ widget: new ImageWidget(url, alt, node.from, node.to), block: true })
                 });
               }
             }

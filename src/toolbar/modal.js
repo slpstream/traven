@@ -128,12 +128,21 @@ export function openModal({ title, body, buttons = [], triggerElement = null, cl
 
   const closeModal = () => {
     overlay.classList.remove("is-active");
-    overlay.addEventListener("transitionend", () => {
+    const style = window.getComputedStyle(overlay);
+    const duration = parseFloat(style.transitionDuration) || 0;
+    if (duration === 0) {
       overlay.remove();
       if (triggerElement && typeof triggerElement.focus === "function") {
         triggerElement.focus();
       }
-    });
+    } else {
+      overlay.addEventListener("transitionend", () => {
+        overlay.remove();
+        if (triggerElement && typeof triggerElement.focus === "function") {
+          triggerElement.focus();
+        }
+      }, { once: true });
+    }
     document.removeEventListener("keydown", handleKeyDown);
   };
 
@@ -213,7 +222,26 @@ export function openLinkModal(editor, triggerBtn) {
  * @param {Object} editor - The TravenEditor instance.
  * @param {HTMLElement} triggerBtn - The button that triggered the modal.
  */
-export function openImageModal(editor, triggerBtn) {
+export function openImageModal(optionsOrEditor, triggerBtn = null) {
+  let editor;
+  let triggerElement = null;
+  let docFrom = null;
+  let docTo = null;
+  let attrs = {};
+  let isAdvancedMode = true;
+
+  if (optionsOrEditor && optionsOrEditor.editor) {
+    editor = optionsOrEditor.editor;
+    triggerElement = optionsOrEditor.triggerElement || null;
+    docFrom = optionsOrEditor.docFrom !== undefined ? optionsOrEditor.docFrom : null;
+    docTo = optionsOrEditor.docTo !== undefined ? optionsOrEditor.docTo : null;
+    attrs = optionsOrEditor.attrs || {};
+    isAdvancedMode = optionsOrEditor.isAdvancedMode !== undefined ? optionsOrEditor.isAdvancedMode : true;
+  } else {
+    editor = optionsOrEditor;
+    triggerElement = triggerBtn;
+  }
+
   const uploadHandler = typeof editor.getUploadHandler === "function"
     ? editor.getUploadHandler()
     : null;
@@ -225,7 +253,7 @@ export function openImageModal(editor, triggerBtn) {
   errorEl.className = "traven-modal-error";
   errorEl.style.display = "none";
 
-  let isAdvanced = true;
+  let isAdvanced = isAdvancedMode;
 
   // Toggle button at the top
   const toggleRow = document.createElement("div");
@@ -520,18 +548,29 @@ export function openImageModal(editor, triggerBtn) {
 
   form.appendChild(errorEl);
 
-  // Pre-fill alt text with selection if any
-  const view = editor.getView();
-  const { from, to } = view.state.selection.main;
-  const selectionText = from !== to ? view.state.sliceDoc(from, to) : "";
-  if (selectionText) {
-    form.querySelector("#traven-image-alt").value = selectionText;
-  }
-
+  const altInput = form.querySelector("#traven-image-alt");
+  const urlInput = form.querySelector("#traven-image-url");
   const captionInput = form.querySelector("#traven-image-caption");
   const alignSelect = form.querySelector("#traven-image-align");
   const sizeSelect = form.querySelector("#traven-image-size");
   const classInput = form.querySelector("#traven-image-class");
+
+  if (docFrom !== null) {
+    altInput.value = attrs.alt || "";
+    urlInput.value = attrs.src || "";
+    captionInput.value = attrs.caption || "";
+    alignSelect.value = attrs.align || "";
+    sizeSelect.value = attrs.size || "";
+    classInput.value = attrs.class || "";
+  } else {
+    // Pre-fill alt text with selection if any
+    const view = editor.getView();
+    const { from, to } = view.state.selection.main;
+    const selectionText = from !== to ? view.state.sliceDoc(from, to) : "";
+    if (selectionText) {
+      altInput.value = selectionText;
+    }
+  }
 
   const updateToggleState = () => {
     if (isAdvanced) {
@@ -566,7 +605,6 @@ export function openImageModal(editor, triggerBtn) {
    */
   const insertImageAndUnfocus = (altText, url) => {
     const v = editor.getView();
-    const range = v.state.selection.main;
     
     let insertion = "";
     if (!isAdvanced) {
@@ -587,19 +625,26 @@ export function openImageModal(editor, triggerBtn) {
       insertion = `[image ${attrParts.join(" ")}]`;
     }
     
-    const insertionText = insertion + "\n";
-
-    v.dispatch({
-      changes: { from: range.from, to: range.to, insert: insertionText },
-      selection: { anchor: range.from + insertionText.length }
-    });
+    if (docFrom !== null) {
+      v.dispatch({
+        changes: { from: docFrom, to: docTo, insert: insertion },
+        selection: { anchor: docFrom + insertion.length }
+      });
+    } else {
+      const range = v.state.selection.main;
+      const insertionText = insertion + "\n";
+      v.dispatch({
+        changes: { from: range.from, to: range.to, insert: insertionText },
+        selection: { anchor: range.from + insertionText.length }
+      });
+    }
     v.focus();
   };
 
   openModal({
-    title: "Insert Image",
+    title: docFrom !== null ? "Edit Image" : "Insert Image",
     body: form,
-    triggerElement: triggerBtn,
+    triggerElement: triggerElement,
     buttons: [
       {
         text: "Cancel",
@@ -609,7 +654,7 @@ export function openImageModal(editor, triggerBtn) {
         }
       },
       {
-        text: "Insert",
+        text: docFrom !== null ? "Save" : "Insert",
         type: "primary",
         onClick: async (e, overlay) => {
           const altInput = overlay.querySelector("#traven-image-alt");

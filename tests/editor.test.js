@@ -514,6 +514,103 @@ describe('ImageShortcode', () => {
     expect(uploadingWidget.textContent).toContain('Uploading photo.jpg...');
   });
 
+  it('opens editing modal when clicking ImageShortcodeWidget, and saving updates document', async () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '[image src="https://example.com/pic.jpg" align="right" size="medium" caption="My caption"]\nSome text',
+    });
+    // Set cursor outside the image so the widget renders
+    editor.setSelection(editor.getValue().length, editor.getValue().length);
+
+    const widgetEl = container.querySelector('.cm-wysiwym-image-shortcode-container');
+    expect(widgetEl).not.toBeNull();
+
+    // Dispatch mousedown on widget
+    const event = new window.MouseEvent('mousedown', { bubbles: true, cancelable: true });
+    widgetEl.dispatchEvent(event);
+
+    // Verify modal has opened
+    const modal = document.querySelector('.traven-modal-overlay');
+    expect(modal).not.toBeNull();
+    expect(modal.querySelector('.traven-modal-title').textContent).toBe('Edit Image');
+
+    // Verify fields are pre-filled
+    const altInput = modal.querySelector('#traven-image-alt');
+    const urlInput = modal.querySelector('#traven-image-url');
+    const alignSelect = modal.querySelector('#traven-image-align');
+    const sizeSelect = modal.querySelector('#traven-image-size');
+    const captionInput = modal.querySelector('#traven-image-caption');
+
+    expect(urlInput.value).toBe('https://example.com/pic.jpg');
+    expect(alignSelect.value).toBe('right');
+    expect(sizeSelect.value).toBe('medium');
+    expect(captionInput.value).toBe('My caption');
+
+    // Change something in the modal
+    altInput.value = 'New Alt';
+    alignSelect.value = 'left';
+
+    // Click "Save"
+    const saveBtn = modal.querySelector('.traven-modal-btn.btn-primary');
+    expect(saveBtn.textContent).toBe('Save');
+    saveBtn.click();
+
+    // Verify modal is closed
+    expect(document.querySelector('.traven-modal-overlay')).toBeNull();
+
+    // Verify value is updated in editor
+    expect(editor.getValue()).toBe('[image src="https://example.com/pic.jpg" align="left" size="medium" alt="New Alt" caption="My caption"]\nSome text');
+
+    // Verify focus is restored to editor
+    expect(document.activeElement).toBe(editor.getView().contentDOM);
+  });
+
+  it('opens editing modal when clicking standard ImageWidget, and saving updates document', async () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '![Alt Text](https://example.com/pic.jpg)\nSome text',
+    });
+    // Set cursor outside the image so the widget renders
+    editor.setSelection(editor.getValue().length, editor.getValue().length);
+
+    const widgetEl = container.querySelector('.cm-wysiwym-image-widget-container');
+    expect(widgetEl).not.toBeNull();
+
+    // Dispatch mousedown on widget
+    const event = new window.MouseEvent('mousedown', { bubbles: true, cancelable: true });
+    widgetEl.dispatchEvent(event);
+
+    // Verify modal has opened
+    const modal = document.querySelector('.traven-modal-overlay');
+    expect(modal).not.toBeNull();
+    expect(modal.querySelector('.traven-modal-title').textContent).toBe('Edit Image');
+
+    // Verify fields are pre-filled
+    const altInput = modal.querySelector('#traven-image-alt');
+    const urlInput = modal.querySelector('#traven-image-url');
+
+    expect(urlInput.value).toBe('https://example.com/pic.jpg');
+    expect(altInput.value).toBe('Alt Text');
+
+    // Change Alt Text and toggle to advanced settings
+    altInput.value = 'New Alt Text';
+    
+    // Toggle advanced mode by clicking toggle button
+    const toggleBtn = modal.querySelector('.traven-modal-toggle-btn');
+    expect(toggleBtn).not.toBeNull();
+    toggleBtn.click(); // clicks to enable advanced mode
+
+    const alignSelect = modal.querySelector('#traven-image-align');
+    alignSelect.value = 'left';
+
+    // Click "Save"
+    const saveBtn = modal.querySelector('.traven-modal-btn.btn-primary');
+    saveBtn.click();
+
+    // Verify value is updated in editor to advanced shortcode format since we toggled it
+    expect(editor.getValue()).toBe('[image src="https://example.com/pic.jpg" align="left" alt="New Alt Text"]\nSome text');
+  });
+
   it('collapses delimiters on first line when unfocused, and reveals them when focused', async () => {
     const editor = new TravenEditor({
       element: container,
