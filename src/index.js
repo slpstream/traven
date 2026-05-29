@@ -29,6 +29,7 @@ import { markdown } from "@codemirror/lang-markdown";
 import { Strikethrough, TaskList, Table, Autolink } from "@lezer/markdown";
 import { Highlight } from "./highlight-parser.js";
 import { Shortcode } from "./shortcode-parser.js";
+import { ComponentShortcode } from "./component-parser.js";
 import { MathExtension, ensureKatex, configureKatex } from "./math-parser.js";
 import { yamlFrontmatter } from "@codemirror/lang-yaml";
 import { undo, redo } from "@codemirror/commands";
@@ -179,7 +180,7 @@ export class TravenEditor {
       }),
       ...(wrapLines ? [EditorView.lineWrapping] : []),
       readOnlyCompartment.of(EditorState.readOnly.of(!!options.readOnly)),
-      yamlFrontmatter({ content: markdown({ extensions: [Strikethrough, TaskList, Table, Autolink, Highlight, Shortcode, MathExtension, { remove: ["SetextHeading"] }] }) }),
+      yamlFrontmatter({ content: markdown({ extensions: [Strikethrough, TaskList, Table, Autolink, Highlight, Shortcode, ComponentShortcode, MathExtension, { remove: ["SetextHeading"] }] }) }),
       wysiwymPlugin(),
       delimiterSkipKeymap(),
       imageDecorationPlugin(),
@@ -1141,6 +1142,70 @@ export class TravenEditor {
   #fallbackRender(md) {
     // 1. Strip YAML frontmatter if present
     let content = this.#stripFrontmatter(md);
+
+    // Extract component shortcodes to protect them and compile recursively
+    const componentPlaceholders = [];
+    const componentRegex = /\[(component|quote|pullquote|blockquote)((?:\s+[^\]]*|=\s*(?:"[^"]*"|'[^']*'|[^\s\]]+)(?:\s+[^\]]*)?)?)\]([\s\S]*?)\[\/\1\]/g;
+    let prevContent;
+    do {
+      prevContent = content;
+      content = content.replace(componentRegex, (match, tagName, attrsStr, body) => {
+        const index = componentPlaceholders.length;
+        
+        const attrs = {};
+        if (tagName === "component" && attrsStr.startsWith("=")) {
+          const valMatch = attrsStr.match(/^=\s*(?:"([^"]*)"|'([^']*)'|([^\s\]]+))/);
+          if (valMatch) {
+            attrs.name = valMatch[1] !== undefined ? valMatch[1] : (valMatch[2] !== undefined ? valMatch[2] : valMatch[3]);
+          }
+        }
+        const attrRegex = /([a-zA-Z0-9_-]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=]+))/g;
+        let m;
+        while ((m = attrRegex.exec(attrsStr)) !== null) {
+          attrs[m[1]] = m[2] !== undefined ? m[2] : (m[3] !== undefined ? m[3] : (m[4] || ""));
+        }
+        
+        let compName = attrs.name || "";
+        if (!compName) {
+          if (tagName === "quote" || tagName === "blockquote") {
+            compName = "blockquote";
+          } else if (tagName === "pullquote") {
+            compName = "pullquote";
+          } else {
+            compName = tagName;
+          }
+        }
+        if (compName === "quote") {
+          compName = "blockquote";
+        }
+        
+        const compiledBody = this.#fallbackRender(body);
+        
+        let rendered = "";
+        if (compName === "blockquote") {
+          const author = attrs.author || "";
+          const source = attrs.source || "";
+          let citeHtml = "";
+          if (author || source) {
+            let citeText = "— ";
+            if (author && source) {
+              citeText += `${author}, ${source}`;
+            } else {
+              citeText += author || source;
+            }
+            citeHtml = `<footer><cite>${citeText}</cite></footer>`;
+          }
+          rendered = `<blockquote class="traven-component-blockquote">${compiledBody}${citeHtml}</blockquote>`;
+        } else if (compName === "pullquote") {
+          rendered = `<blockquote class="traven-component-pullquote">${compiledBody}</blockquote>`;
+        } else {
+          rendered = `<div class="traven-component traven-component-${compName}">${compiledBody}</div>`;
+        }
+        
+        componentPlaceholders.push(rendered);
+        return `\n\nCOMPONENT-PLACEHOLDER-INDEX-${index}\n\n`;
+      });
+    } while (content !== prevContent);
     
     // Extract fenced code blocks to avoid splitting them on empty lines or parsing inline elements inside
     const codeBlocks = [];
@@ -1486,6 +1551,11 @@ export class TravenEditor {
           return trimmed;
         }
       }
+
+      // If it's a component placeholder, don't wrap in <p>
+      if (trimmed.startsWith("COMPONENT-PLACEHOLDER-INDEX-")) {
+        return trimmed;
+      }
       
       // If it's already an HTML block tag, image, or hr, don't wrap in <p>
       if (/^<(h[1-6]|blockquote|ul|ol|li|img|hr|table|pre|figure)/i.test(trimmed)) {
@@ -1505,6 +1575,16 @@ export class TravenEditor {
     for (let i = 0; i < codeBlocks.length; i++) {
       content = content.replace(`CODEBLOCKPLACEHOLDER${i}`, () => codeBlocks[i]);
     }
+
+    // Restore component placeholders
+    let restored;
+    do {
+      restored = false;
+      content = content.replace(/COMPONENT-PLACEHOLDER-INDEX-(\d+)/g, (match, index) => {
+        restored = true;
+        return componentPlaceholders[parseInt(index)];
+      });
+    } while (restored);
 
     return content;
   }

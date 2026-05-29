@@ -230,6 +230,37 @@ function findSkipTarget(state, cursor, direction) {
           }
         }
       }
+      // 10. ComponentShortcode delimiters: skip over [component ...] and [/component]
+      if (node.name === "ComponentShortcode") {
+        let openEnd = null;
+        let closeStart = null;
+        
+        const c = node.node.cursor();
+        if (c.firstChild()) {
+          do {
+            if (c.name === "ComponentShortcodeOpen") openEnd = c.to;
+            if (c.name === "ComponentShortcodeClose") closeStart = c.from;
+          } while (c.nextSibling());
+        }
+
+        if (openEnd !== null && closeStart !== null) {
+          if (direction === "right") {
+            if (cursor >= node.from && cursor < openEnd) {
+              best = { target: openEnd, suppressRange: null };
+            }
+            if (cursor >= closeStart && cursor < node.to) {
+              best = { target: node.to, suppressRange: null };
+            }
+          } else {
+            if (cursor > closeStart && cursor <= node.to) {
+              best = { target: closeStart, suppressRange: null };
+            }
+            if (cursor > node.from && cursor <= openEnd) {
+              best = { target: node.from, suppressRange: null };
+            }
+          }
+        }
+      }
     }
   });
 

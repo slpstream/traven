@@ -1022,4 +1022,100 @@ describe('fallback rendering LaTeX math', () => {
   });
 });
 
+describe('ComponentShortcode', () => {
+  let container;
+
+  beforeEach(() => {
+    container = document.createElement('div');
+    document.body.appendChild(container);
+  });
+
+  it('compiles quote alias to blockquote HTML in fallback renderer', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '[quote]Hello **world**[/quote]',
+    });
+    const html = editor.getContentHtml();
+    expect(html).toContain('<blockquote class="traven-component-blockquote">');
+    expect(html).toContain('<strong>world</strong>');
+    expect(html).toContain('</blockquote>');
+  });
+
+  it('compiles blockquote with author and source to HTML in fallback renderer', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '[component="blockquote" author="John" source="Book"]Quote body[/component]',
+    });
+    const html = editor.getContentHtml();
+    expect(html).toContain('<blockquote class="traven-component-blockquote"><p>Quote body</p><footer><cite>— John, Book</cite></footer></blockquote>');
+  });
+
+  it('compiles pullquote to blockquote with traven-component-pullquote class in fallback renderer', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '[pullquote]Special quote[/pullquote]',
+    });
+    const html = editor.getContentHtml();
+    expect(html).toContain('<blockquote class="traven-component-pullquote"><p>Special quote</p></blockquote>');
+  });
+
+  it('compiles unknown component name to a generic div container in fallback renderer', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '[component="card" foo="bar"]Card body[/component]',
+    });
+    const html = editor.getContentHtml();
+    expect(html).toContain('<div class="traven-component traven-component-card"><p>Card body</p></div>');
+  });
+
+  it('renders ComponentShortcodeWidget inside WYSIWYM editor when cursor is outside', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '[quote author="Alice"]Widget quote[/quote]\nSome text here',
+    });
+    // Set selection cursor to the very end of the document, outside the shortcode
+    editor.setSelection(editor.getValue().length, editor.getValue().length);
+    
+    // Check if the shortcode container widget is rendered
+    const widgetEl = container.querySelector('.cm-wysiwym-component-shortcode');
+    expect(widgetEl).not.toBeNull();
+    expect(widgetEl.classList.contains('component-blockquote')).toBe(true);
+    
+    const badge = widgetEl.querySelector('.component-header-badge');
+    expect(badge).not.toBeNull();
+    expect(badge.textContent).toBe('blockquote');
+    
+    const cite = widgetEl.querySelector('cite');
+    expect(cite).not.toBeNull();
+    expect(cite.textContent).toBe('— Alice');
+    
+    const bodyEl = widgetEl.querySelector('.component-body');
+    expect(bodyEl).not.toBeNull();
+    expect(bodyEl.textContent).toBe('Widget quote');
+  });
+
+  it('moves cursor inside raw content on click of ComponentShortcodeWidget edit icon', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '[quote]Click me[/quote]\nText',
+    });
+    editor.focus();
+    // Put cursor outside
+    editor.setSelection(editor.getValue().length, editor.getValue().length);
+
+    const editIcon = container.querySelector('.cm-wysiwym-component-shortcode .image-edit-icon');
+    expect(editIcon).not.toBeNull();
+
+    // Trigger click on the edit icon
+    editIcon.click();
+
+    // Check that cursor is inside the shortcode raw text
+    const selection = editor.getView().state.selection.main;
+    const value = editor.getValue();
+    const contentInside = value.substring(selection.from, selection.to);
+    expect(contentInside).toBe('Click me');
+  });
+});
+
+
 

@@ -293,3 +293,16 @@
   border-radius: 3px;
 }
 
+/* Component container overrides for dark mode */
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-component-shortcode {
+  border-color: #334155 !important;
+  background-color: #0f172a !important;
+  color: #cbd5e1 !important;
+}
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-component-shortcode cite {
+  color: #64748b !important;
+}
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-component-shortcode .component-header-badge {
+  background-color: #1e293b !important;
+  color: #94a3b8 !important;
+}

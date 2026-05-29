@@ -346,6 +346,144 @@ class ImageShortcodeWidget extends WidgetType {
   ignoreEvent() { return false; }
 }
 
+class ComponentShortcodeWidget extends WidgetType {
+  constructor(attrs, nodeFrom, bodyText, rawText) {
+    super();
+    this.attrs = attrs;
+    this.nodeFrom = nodeFrom;
+    this.bodyText = bodyText;
+    this.rawText = rawText;
+  }
+
+  toDOM(view) {
+    const container = document.createElement("div");
+    container.className = "cm-wysiwym-component-shortcode";
+    
+    if (this.rawText) {
+      container.title = this.rawText;
+    }
+
+    let compName = this.attrs.name || "";
+    if (!compName) {
+      if (this.attrs._tagName === "quote" || this.attrs._tagName === "blockquote") {
+        compName = "blockquote";
+      } else if (this.attrs._tagName === "pullquote") {
+        compName = "pullquote";
+      } else {
+        compName = this.attrs._tagName || "blockquote";
+      }
+    }
+    if (compName === "quote") {
+      compName = "blockquote";
+    }
+
+    container.classList.add(`component-${compName}`);
+
+    const editIcon = document.createElement("div");
+    editIcon.className = "image-edit-icon";
+    editIcon.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`;
+    container.appendChild(editIcon);
+
+    editIcon.addEventListener("mousedown", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const openTagLength = this.rawText.indexOf("]") + 1;
+      const start = this.nodeFrom + openTagLength;
+      const end = start + this.bodyText.length;
+      view.dispatch({ selection: { anchor: start, head: end } });
+      view.focus();
+    });
+    editIcon.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const openTagLength = this.rawText.indexOf("]") + 1;
+      const start = this.nodeFrom + openTagLength;
+      const end = start + this.bodyText.length;
+      view.dispatch({ selection: { anchor: start, head: end } });
+      view.focus();
+    });
+
+    container.addEventListener("mousedown", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      view.dispatch({ selection: { anchor: this.nodeFrom } });
+      view.focus();
+    });
+
+    const renderInlineMarkdown = (text) => {
+      if (!text) return "";
+      let html = text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+      html = html.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, src) => `<img src="${sanitizeUrl(src)}" alt="${alt}" style="max-width: 100%; height: auto; display: inline-block;">`);
+      html = html.replace(/\[(.*?)\]\((.*?)\)/g, (match, text, url) => `<a href="${sanitizeUrl(url)}" target="_blank">${text}</a>`);
+      html = html.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+      html = html.replace(/\*(.*?)\*/g, "<em>$1</em>");
+      html = html.replace(/__(.*?)__/g, "<strong>$1</strong>");
+      html = html.replace(/_(.*?)_/g, "<em>$1</em>");
+      html = html.replace(/==(.*?)==/g, '<span class="cm-wysiwym-highlight">$1</span>');
+      html = html.replace(/`(.*?)`/g, "<code>$1</code>");
+      return html;
+    };
+
+    const contentLines = this.bodyText.split(/\r?\n/).map(line => line.trim()).filter(line => line.length > 0);
+    const bodyContainer = document.createElement("div");
+    bodyContainer.className = "component-body";
+    contentLines.forEach(line => {
+      const p = document.createElement("p");
+      p.innerHTML = renderInlineMarkdown(line);
+      bodyContainer.appendChild(p);
+    });
+
+    const header = document.createElement("div");
+    header.className = "component-header-badge";
+    header.textContent = compName;
+    container.appendChild(header);
+
+    if (compName === "blockquote") {
+      const bq = document.createElement("blockquote");
+      bq.appendChild(bodyContainer);
+      
+      const author = this.attrs.author || "";
+      const source = this.attrs.source || "";
+      if (author || source) {
+        const cite = document.createElement("cite");
+        let citeText = "— ";
+        if (author && source) {
+          citeText += `${author}, ${source}`;
+        } else {
+          citeText += author || source;
+        }
+        cite.textContent = citeText;
+        bq.appendChild(cite);
+      }
+      container.appendChild(bq);
+    } else if (compName === "pullquote") {
+      const bq = document.createElement("blockquote");
+      bq.className = "pullquote-content";
+      bq.appendChild(bodyContainer);
+      container.appendChild(bq);
+    } else {
+      container.appendChild(bodyContainer);
+    }
+
+    return container;
+  }
+
+  eq(other) {
+    return (
+      other instanceof ComponentShortcodeWidget &&
+      this.nodeFrom === other.nodeFrom &&
+      this.bodyText === other.bodyText &&
+      this.rawText === other.rawText &&
+      JSON.stringify(this.attrs) === JSON.stringify(other.attrs)
+    );
+  }
+
+  ignoreEvent() { return false; }
+}
+
 // --- Decoration Tokens ---
 
 const collapseDeco = Decoration.replace({});
@@ -653,6 +791,65 @@ function buildWysiwymDecorations(state) {
 
             const rawText = state.sliceDoc(node.from, node.to);
             const widget = new ImageShortcodeWidget(attrs, node.from, rawText);
+            collected.push({
+              from: node.from,
+              to: node.to,
+              deco: Decoration.replace({ widget, block: true })
+            });
+            return false;
+          }
+        }
+        // 3.8. Custom ComponentShortcode [component name="..." ...]
+        if (node.name === "ComponentShortcode") {
+          const isCursorInside = cursorHead >= node.from && cursorHead <= node.to;
+
+          if (!isCursorInside) {
+            const attrs = {};
+            let bodyText = "";
+            let tagName = "";
+
+            const c = node.node.cursor();
+            if (c.firstChild()) {
+              do {
+                if (c.name === "ComponentShortcodeOpen") {
+                  const cc = c.node.cursor();
+                  if (cc.firstChild()) {
+                    do {
+                      if (cc.name === "ComponentShortcodeTagName") {
+                        tagName = state.sliceDoc(cc.from, cc.to);
+                      }
+                      if (cc.name === "ComponentShortcodeAttribute") {
+                        const ccc = cc.node.cursor();
+                        let name = "";
+                        let val = "";
+                        if (ccc.firstChild()) {
+                          do {
+                            if (ccc.name === "ComponentShortcodeAttributeName") {
+                              name = state.sliceDoc(ccc.from, ccc.to) || "name";
+                            }
+                            if (ccc.name === "ComponentShortcodeAttributeValue") {
+                              val = state.sliceDoc(ccc.from, ccc.to);
+                              val = val.replace(/^["']|["']$/g, "");
+                            }
+                          } while (ccc.nextSibling());
+                        }
+                        if (name) {
+                          attrs[name] = val;
+                        }
+                      }
+                    } while (cc.nextSibling());
+                  }
+                }
+                if (c.name === "ComponentShortcodeBody") {
+                  bodyText = state.sliceDoc(c.from, c.to);
+                }
+              } while (c.nextSibling());
+            }
+
+            attrs._tagName = tagName;
+
+            const rawText = state.sliceDoc(node.from, node.to);
+            const widget = new ComponentShortcodeWidget(attrs, node.from, bodyText, rawText);
             collected.push({
               from: node.from,
               to: node.to,
