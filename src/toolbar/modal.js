@@ -1618,7 +1618,7 @@ export function openComponentModal(optionsOrEditor, triggerBtn = null) {
 
   const { from, to } = view.state.selection.main;
   const selectionText = from !== to ? view.state.sliceDoc(from, to) : "";
-  let initialSlot = bodyText || selectionText || "";
+  let initialSlot = (bodyText || selectionText || "").replace(/^\r?\n|\r?\n$/g, "");
 
   const form = document.createElement("div");
 
@@ -1722,7 +1722,7 @@ export function openComponentModal(optionsOrEditor, triggerBtn = null) {
           }
 
           const extraAttrs = attrsInput.value.trim();
-          const slotContent = slotInput.value;
+          const slotContent = slotInput.value.replace(/^\r?\n|\r?\n$/g, "");
 
           // Build opening tag
           let openTag = `[component name="${name}"`;
