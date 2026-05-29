@@ -833,6 +833,10 @@ button.btn-heading {
   display: none !important;
 }
 
+/* .btn-component — Insert Component shortcode button.
+   No custom rules needed; .toolbar-btn defaults apply.
+   To hide this button, use: .toolbar-btn.btn-component { display: none; } */
+
 /* Layout Preset and Size selectors */
 .traven-modal-presets-row {
   display: flex;

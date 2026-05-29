@@ -67,6 +67,7 @@ export const DEFAULT_TOOLBAR = [
   "blockquote",
   "hr",
   "table",
+  "component",
   "|",
   "datetime",
   "search",

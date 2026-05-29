@@ -1566,3 +1566,161 @@ export function openTableModal({ editor, tableData = null, docFrom = null, docTo
     className: "traven-modal-table"
   });
 }
+
+/**
+ * Renders the Insert Component Modal dialog.
+ * Inserts a [component name="…"]…[/component] shortcode block at the cursor.
+ *
+ * @param {Object} editor - The TravenEditor instance.
+ * @param {HTMLElement} triggerBtn - The button that triggered the modal.
+ */
+export function openComponentModal(editor, triggerBtn) {
+  const view = editor.getView();
+  const { from, to } = view.state.selection.main;
+  const selectionText = from !== to ? view.state.sliceDoc(from, to) : "";
+
+  const form = document.createElement("div");
+
+  // --- Component name field ---
+  const nameField = document.createElement("div");
+  nameField.className = "traven-modal-field";
+  nameField.innerHTML = `
+    <label class="traven-modal-label" for="traven-component-name">Component Name</label>
+    <input
+      type="text"
+      id="traven-component-name"
+      class="traven-modal-input"
+      placeholder="e.g. pullquote, blockquote, callout"
+      value="pullquote"
+    />
+  `;
+  form.appendChild(nameField);
+
+  // --- Extra attributes field ---
+  const attrsField = document.createElement("div");
+  attrsField.className = "traven-modal-field";
+  attrsField.innerHTML = `
+    <label class="traven-modal-label" for="traven-component-attrs">Extra Attributes <span style="font-weight:400;opacity:0.6;">(optional)</span></label>
+    <input
+      type="text"
+      id="traven-component-attrs"
+      class="traven-modal-input"
+      placeholder='e.g. author="James Baldwin" source="The Fire Next Time"'
+      value=""
+    />
+  `;
+  form.appendChild(attrsField);
+
+  // --- Slot content textarea (auto-resize) ---
+  const slotField = document.createElement("div");
+  slotField.className = "traven-modal-field";
+
+  const slotLabel = document.createElement("label");
+  slotLabel.className = "traven-modal-label";
+  slotLabel.setAttribute("for", "traven-component-slot");
+  slotLabel.textContent = "Slot Content";
+  slotField.appendChild(slotLabel);
+
+  const slotTextarea = document.createElement("textarea");
+  slotTextarea.id = "traven-component-slot";
+  slotTextarea.className = "traven-modal-input";
+  slotTextarea.placeholder = "The content that goes inside the component…";
+  slotTextarea.rows = 3;
+  slotTextarea.style.resize = "none";
+  slotTextarea.style.overflow = "hidden";
+  slotTextarea.style.lineHeight = "1.5";
+  slotTextarea.style.fontFamily = "inherit";
+  slotTextarea.style.minHeight = "72px";
+  slotTextarea.style.boxSizing = "border-box";
+
+  // Pre-fill with selection if any
+  if (selectionText) {
+    slotTextarea.value = selectionText;
+  }
+
+  // Auto-resize on input
+  const autoResize = () => {
+    slotTextarea.style.height = "auto";
+    slotTextarea.style.height = slotTextarea.scrollHeight + "px";
+  };
+  slotTextarea.addEventListener("input", autoResize);
+
+  slotField.appendChild(slotTextarea);
+  form.appendChild(slotField);
+
+  // --- Inline validation error ---
+  const errorEl = document.createElement("div");
+  errorEl.className = "traven-modal-error";
+  errorEl.style.display = "none";
+  form.appendChild(errorEl);
+
+  openModal({
+    title: "Insert Component",
+    body: form,
+    triggerElement: triggerBtn,
+    buttons: [
+      {
+        text: "Cancel",
+        type: "secondary",
+        onClick: (e, overlay) => {
+          overlay.querySelector(".traven-modal-close").click();
+        }
+      },
+      {
+        text: "Insert",
+        type: "primary",
+        onClick: (e, overlay) => {
+          const nameInput = overlay.querySelector("#traven-component-name");
+          const attrsInput = overlay.querySelector("#traven-component-attrs");
+          const slotInput = overlay.querySelector("#traven-component-slot");
+
+          const name = nameInput.value.trim();
+          if (!name) {
+            errorEl.textContent = "Component name is required.";
+            errorEl.style.display = "block";
+            nameInput.focus();
+            return;
+          }
+
+          const extraAttrs = attrsInput.value.trim();
+          const slotContent = slotInput.value;
+
+          // Build opening tag
+          let openTag = `[component name="${name}"`;
+          if (extraAttrs) {
+            openTag += ` ${extraAttrs}`;
+          }
+          openTag += "]";
+
+          const tagName = "component";
+          const closeTag = `[/${tagName}]`;
+
+          // Ensure slot content is surrounded by newlines for block formatting
+          const inner = slotContent
+            ? `\n${slotContent}\n`
+            : "\n\n";
+
+          const snippet = `${openTag}${inner}${closeTag}`;
+
+          // Insert: replace selection or insert at cursor
+          const state = view.state;
+          const insertFrom = selectionText ? from : state.selection.main.from;
+          const insertTo = selectionText ? to : state.selection.main.to;
+
+          view.dispatch({
+            changes: { from: insertFrom, to: insertTo, insert: snippet },
+            selection: { anchor: insertFrom + snippet.length }
+          });
+          view.focus();
+
+          overlay.querySelector(".traven-modal-close").click();
+        }
+      }
+    ]
+  });
+
+  // Trigger initial auto-resize after modal is in the DOM
+  requestAnimationFrame(() => {
+    autoResize();
+  });
+}
