@@ -864,8 +864,8 @@
 /* WYSIWYM Component Shortcodes */
 .cm-wysiwym-component-shortcode {
   position: relative;
-  margin: 16px 0;
-  padding: 12px 16px;
+  margin: 0 !important;
+  padding: 28px 16px !important;
   border-left: 4px solid #cbd5e1;
   background-color: #fafafa;
   color: #1a1a1a;
@@ -892,24 +892,12 @@
   border-left: none;
   border-top: 2px solid #cbd5e1;
   border-bottom: 2px solid #cbd5e1;
-  padding: 16px 24px;
-  margin: 24px 0;
+  padding: 40px 24px !important;
+  margin: 0 !important;
   font-size: 1.15em;
   font-weight: bold;
   text-align: center;
   color: #111111;
-}
-.cm-wysiwym-component-shortcode .component-header-badge {
-  display: inline-block;
-  background-color: #f1f5f9;
-  color: #475569;
-  font-family: 'Victor Mono', Courier, monospace;
-  font-size: 0.70em;
-  font-weight: 600;
-  padding: 2px 6px;
-  border-radius: 4px;
-  margin-bottom: 8px;
-  text-transform: uppercase;
 }
 
 /* Edit icon on hover for Component Shortcodes */
@@ -982,10 +970,7 @@
 .cm-editor.cm-wysiwym-dark .cm-wysiwym-component-shortcode cite {
   color: #94a3b8 !important;
 }
-.cm-editor.cm-wysiwym-dark .cm-wysiwym-component-shortcode .component-header-badge {
-  background-color: #334155 !important;
-  color: #cbd5e1 !important;
-}
+
 .cm-editor.cm-wysiwym-dark .cm-wysiwym-component-shortcode .image-edit-icon {
   background-color: rgba(30, 41, 59, 0.9) !important;
   border-color: #475569 !important;

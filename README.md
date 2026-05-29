@@ -3,7 +3,9 @@
 </p>
 
 <p align="center">
-  <strong>A standalone, lightweight, framework-agnostic WYSIWYM Markdown Editor built on CodeMirror 6.</strong>
+  <strong>A standalone, lightweight, framework-agnostic WYSIWYM Markdown Editor</strong>
+  LaTeX, table editor, image modal, shortcode system, custom Lezer extensions, 
+  four skins, five demos, six toolbars, full documentation
 </p>
 
 <p align="center">
@@ -14,7 +16,7 @@
 
 ---
 
-## What is Traven?
+## The Typora-like Markdown editor you can embed anywhere
 
 **Traven Editor** is a non-brittle WYSIWYM (What You See Is What You Mean) Markdown editor for embedding directly into custom CMS systems, administrative dashboards, web forms and apps. Built on the **CodeMirror 6** editing engine, Traven delivers a high-fidelity editing experience while outputting clean, raw Markdown.
 

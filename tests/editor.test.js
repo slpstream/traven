@@ -1081,10 +1081,6 @@ describe('ComponentShortcode', () => {
     expect(widgetEl).not.toBeNull();
     expect(widgetEl.classList.contains('component-blockquote')).toBe(true);
     
-    const badge = widgetEl.querySelector('.component-header-badge');
-    expect(badge).not.toBeNull();
-    expect(badge.textContent).toBe('blockquote');
-    
     const cite = widgetEl.querySelector('cite');
     expect(cite).not.toBeNull();
     expect(cite.textContent).toBe('— Alice');

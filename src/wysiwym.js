@@ -436,11 +436,6 @@ class ComponentShortcodeWidget extends WidgetType {
       bodyContainer.appendChild(p);
     });
 
-    const header = document.createElement("div");
-    header.className = "component-header-badge";
-    header.textContent = compName;
-    container.appendChild(header);
-
     if (compName === "blockquote") {
       const bq = document.createElement("blockquote");
       bq.appendChild(bodyContainer);
