@@ -1742,16 +1742,42 @@ export function openComponentModal(optionsOrEditor, triggerBtn = null) {
 
           if (isEditing) {
             view.dispatch({
-              changes: { from: docFrom, to: docTo, insert: snippet },
-              selection: { anchor: docFrom + snippet.length }
+              changes: { from: docFrom, to: docTo, insert: snippet }
+            });
+            const pos = docFrom + snippet.length;
+            const docStr = view.state.doc.toString();
+            let targetAnchor = pos;
+            if (pos < docStr.length && docStr[pos] === "\n") {
+              targetAnchor = pos + 1;
+            } else {
+              view.dispatch({
+                changes: { from: pos, insert: "\n" }
+              });
+              targetAnchor = pos + 1;
+            }
+            view.dispatch({
+              selection: { anchor: targetAnchor }
             });
           } else {
             const insertFrom = selectionText ? from : view.state.selection.main.from;
             const insertTo = selectionText ? to : view.state.selection.main.to;
 
             view.dispatch({
-              changes: { from: insertFrom, to: insertTo, insert: snippet },
-              selection: { anchor: insertFrom + snippet.length }
+              changes: { from: insertFrom, to: insertTo, insert: snippet }
+            });
+            const pos = insertFrom + snippet.length;
+            const docStr = view.state.doc.toString();
+            let targetAnchor = pos;
+            if (pos < docStr.length && docStr[pos] === "\n") {
+              targetAnchor = pos + 1;
+            } else {
+              view.dispatch({
+                changes: { from: pos, insert: "\n" }
+              });
+              targetAnchor = pos + 1;
+            }
+            view.dispatch({
+              selection: { anchor: targetAnchor }
             });
           }
           view.focus();
