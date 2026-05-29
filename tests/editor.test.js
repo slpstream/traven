@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { TravenEditor } from '../src/index.js';
 import { parseMarkdownTable, serializeTableToMarkdown, openComponentModal } from '../src/toolbar/modal.js';
 
@@ -1444,6 +1444,71 @@ describe('ComponentShortcode', () => {
 
       expect(editor.getValue()).toBe('[component name="simple-comp" custom="mutated-value"]\n\n[/component]\n');
     });
+  });
+});
+
+describe('BlockquoteDropdown', () => {
+  let container;
+
+  beforeEach(() => {
+    container = document.createElement('div');
+    document.body.appendChild(container);
+  });
+
+  afterEach(() => {
+    container.remove();
+    // Clean up any remaining modal overlays
+    document.querySelectorAll('.traven-modal-overlay').forEach(el => el.remove());
+  });
+
+  it('renders blockquote dropdown and triggers child actions', async () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: 'Hello',
+      toolbar: ['blockquote']
+    });
+
+    const toolbarContainer = container.querySelector('.traven-toolbar-container');
+    expect(toolbarContainer).not.toBeNull();
+
+    const blockquoteDropdown = toolbarContainer.querySelector('#traven-blockquote-dropdown');
+    expect(blockquoteDropdown).not.toBeNull();
+
+    const trigger = blockquoteDropdown.querySelector('button.btn-blockquote');
+    expect(trigger).not.toBeNull();
+
+    // The dropdown should have 3 menu items: Simple, Blockquote, Pullquote
+    const menuItems = blockquoteDropdown.querySelectorAll('.toolbar-dropdown-item');
+    expect(menuItems.length).toBe(3);
+
+    expect(menuItems[0].getAttribute('aria-label')).toBe('Simple');
+    expect(menuItems[1].getAttribute('aria-label')).toBe('Blockquote');
+    expect(menuItems[2].getAttribute('aria-label')).toBe('Pullquote');
+
+    // 1. Click Simple -> inserts/toggles legacy blockquote
+    menuItems[0].click();
+    expect(editor.getValue()).toBe('> Hello');
+
+    // Reset value
+    editor.setValue('Hello');
+
+    // 2. Click Blockquote -> opens modal with blockquote selected
+    menuItems[1].click();
+    let modal = document.querySelector('.traven-modal-overlay');
+    expect(modal).not.toBeNull();
+    expect(modal.querySelector('#traven-component-name').value).toBe('blockquote');
+    // Close modal
+    modal.querySelector('.traven-modal-close').click();
+    expect(document.querySelector('.traven-modal-overlay')).toBeNull();
+
+    // 3. Click Pullquote -> opens modal with pullquote selected
+    menuItems[2].click();
+    modal = document.querySelector('.traven-modal-overlay');
+    expect(modal).not.toBeNull();
+    expect(modal.querySelector('#traven-component-name').value).toBe('pullquote');
+    // Close modal
+    modal.querySelector('.traven-modal-close').click();
+    expect(document.querySelector('.traven-modal-overlay')).toBeNull();
   });
 });
 

@@ -83,7 +83,9 @@ button.toolbar-btn,
 }
 
 button.btn-heading,
-.form-demo button.btn-heading {
+button.btn-blockquote,
+.form-demo button.btn-heading,
+.form-demo button.btn-blockquote {
   width: auto !important;
   padding: 0 8px !important;
 }

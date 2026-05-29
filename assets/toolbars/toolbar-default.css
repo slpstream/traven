@@ -110,13 +110,15 @@ button.toolbar-btn {
 }
 
 /* Wider trigger button for heading with caret */
-button.btn-heading {
+button.btn-heading,
+button.btn-blockquote {
   width: auto;
   padding: 0 4px;
   gap: 4px;
 }
 
-.form-demo button.btn-heading {
+.form-demo button.btn-heading,
+.form-demo button.btn-blockquote {
   width: auto;
   padding: 0 4px;
   gap: 4px;
