@@ -1090,26 +1090,51 @@ describe('ComponentShortcode', () => {
     expect(bodyEl.textContent).toBe('Widget quote');
   });
 
-  it('moves cursor inside raw content on click of ComponentShortcodeWidget edit icon', () => {
+  it('opens editing modal when clicking ComponentShortcodeWidget, and saving updates document', async () => {
     const editor = new TravenEditor({
       element: container,
-      initialValue: '[quote]Click me[/quote]\nText',
+      initialValue: '[quote author="John"]Click me[/quote]\nText',
     });
     editor.focus();
     // Put cursor outside
     editor.setSelection(editor.getValue().length, editor.getValue().length);
 
-    const editIcon = container.querySelector('.cm-wysiwym-component-shortcode .image-edit-icon');
-    expect(editIcon).not.toBeNull();
+    const widgetEl = container.querySelector('.cm-wysiwym-component-shortcode');
+    expect(widgetEl).not.toBeNull();
 
-    // Trigger click on the edit icon
-    editIcon.click();
+    // Dispatch mousedown on widget
+    const event = new window.MouseEvent('mousedown', { bubbles: true, cancelable: true });
+    widgetEl.dispatchEvent(event);
 
-    // Check that cursor is inside the shortcode raw text
-    const selection = editor.getView().state.selection.main;
-    const value = editor.getValue();
-    const contentInside = value.substring(selection.from, selection.to);
-    expect(contentInside).toBe('Click me');
+    // Verify modal has opened
+    const modal = document.querySelector('.traven-modal-overlay');
+    expect(modal).not.toBeNull();
+    expect(modal.querySelector('.traven-modal-title').textContent).toBe('Edit Component');
+
+    // Verify fields are pre-filled
+    const nameInput = modal.querySelector('#traven-component-name');
+    const attrsInput = modal.querySelector('#traven-component-attrs');
+    const slotInput = modal.querySelector('#traven-component-slot');
+
+    expect(nameInput.value).toBe('blockquote');
+    expect(attrsInput.value).toBe('author="John"');
+    expect(slotInput.value).toBe('Click me');
+
+    // Edit fields
+    nameInput.value = 'pullquote';
+    attrsInput.value = 'author="Jane"';
+    slotInput.value = 'New content';
+
+    // Save
+    const saveBtn = modal.querySelector('.traven-modal-btn.btn-primary');
+    expect(saveBtn.textContent).toBe('Save');
+    saveBtn.click();
+
+    // Verify modal is closed
+    expect(document.querySelector('.traven-modal-overlay')).toBeNull();
+
+    // Verify value in editor is updated
+    expect(editor.getValue()).toBe('[component name="pullquote" author="Jane"]\nNew content\n[/component]\nText');
   });
 });
 

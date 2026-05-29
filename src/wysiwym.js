@@ -8,7 +8,7 @@ import {
   WidgetType
 } from "@codemirror/view";
 import { viewToEditor } from "./bridge.js";
-import { parseMarkdownTable, openTableModal, openImageModal } from "./toolbar/modal.js";
+import { parseMarkdownTable, openTableModal, openImageModal, openComponentModal } from "./toolbar/modal.js";
 import { sanitizeUrl } from "./security.js";
 import { ensureKatex } from "./math-parser.js";
 
@@ -384,31 +384,25 @@ class ComponentShortcodeWidget extends WidgetType {
     editIcon.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`;
     container.appendChild(editIcon);
 
-    editIcon.addEventListener("mousedown", (e) => {
+    const openEditModal = (e) => {
       e.preventDefault();
       e.stopPropagation();
-      const openTagLength = this.rawText.indexOf("]") + 1;
-      const start = this.nodeFrom + openTagLength;
-      const end = start + this.bodyText.length;
-      view.dispatch({ selection: { anchor: start, head: end } });
-      view.focus();
-    });
-    editIcon.addEventListener("click", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      const openTagLength = this.rawText.indexOf("]") + 1;
-      const start = this.nodeFrom + openTagLength;
-      const end = start + this.bodyText.length;
-      view.dispatch({ selection: { anchor: start, head: end } });
-      view.focus();
-    });
+      const editor = viewToEditor.get(view);
+      if (editor) {
+        openComponentModal({
+          editor,
+          triggerElement: container,
+          docFrom: this.nodeFrom,
+          docTo: this.nodeFrom + this.rawText.length,
+          attrs: this.attrs,
+          bodyText: this.bodyText
+        });
+      }
+    };
 
-    container.addEventListener("mousedown", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      view.dispatch({ selection: { anchor: this.nodeFrom } });
-      view.focus();
-    });
+    editIcon.addEventListener("mousedown", openEditModal);
+    editIcon.addEventListener("click", openEditModal);
+    container.addEventListener("mousedown", openEditModal);
 
     const renderInlineMarkdown = (text) => {
       if (!text) return "";

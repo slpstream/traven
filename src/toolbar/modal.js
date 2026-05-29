@@ -1574,10 +1574,51 @@ export function openTableModal({ editor, tableData = null, docFrom = null, docTo
  * @param {Object} editor - The TravenEditor instance.
  * @param {HTMLElement} triggerBtn - The button that triggered the modal.
  */
-export function openComponentModal(editor, triggerBtn) {
+export function openComponentModal(optionsOrEditor, triggerBtn = null) {
+  let editor;
+  let triggerElement = null;
+  let docFrom = null;
+  let docTo = null;
+  let attrs = {};
+  let bodyText = "";
+
+  if (optionsOrEditor && optionsOrEditor.editor) {
+    editor = optionsOrEditor.editor;
+    triggerElement = optionsOrEditor.triggerElement || null;
+    docFrom = optionsOrEditor.docFrom !== undefined ? optionsOrEditor.docFrom : null;
+    docTo = optionsOrEditor.docTo !== undefined ? optionsOrEditor.docTo : null;
+    attrs = optionsOrEditor.attrs || {};
+    bodyText = optionsOrEditor.bodyText || "";
+  } else {
+    editor = optionsOrEditor;
+    triggerElement = triggerBtn;
+  }
+
   const view = editor.getView();
+  const isEditing = docFrom !== null && docTo !== null;
+
+  let initialName = "pullquote";
+  if (attrs.name) {
+    initialName = attrs.name;
+  } else if (attrs._tagName) {
+    initialName = attrs._tagName === "quote" ? "blockquote" : attrs._tagName;
+  }
+
+  // Reconstruct extra attributes string
+  let initialAttrs = "";
+  const extraAttrsList = [];
+  for (const [key, val] of Object.entries(attrs)) {
+    if (key !== "name" && key !== "_tagName") {
+      extraAttrsList.push(`${key}="${val}"`);
+    }
+  }
+  if (extraAttrsList.length > 0) {
+    initialAttrs = extraAttrsList.join(" ");
+  }
+
   const { from, to } = view.state.selection.main;
   const selectionText = from !== to ? view.state.sliceDoc(from, to) : "";
+  let initialSlot = bodyText || selectionText || "";
 
   const form = document.createElement("div");
 
@@ -1591,9 +1632,10 @@ export function openComponentModal(editor, triggerBtn) {
       id="traven-component-name"
       class="traven-modal-input"
       placeholder="e.g. pullquote, blockquote, callout"
-      value="pullquote"
+      value=""
     />
   `;
+  nameField.querySelector("#traven-component-name").value = initialName;
   form.appendChild(nameField);
 
   // --- Extra attributes field ---
@@ -1609,6 +1651,7 @@ export function openComponentModal(editor, triggerBtn) {
       value=""
     />
   `;
+  attrsField.querySelector("#traven-component-attrs").value = initialAttrs;
   form.appendChild(attrsField);
 
   // --- Slot content textarea (auto-resize) ---
@@ -1632,11 +1675,7 @@ export function openComponentModal(editor, triggerBtn) {
   slotTextarea.style.fontFamily = "inherit";
   slotTextarea.style.minHeight = "72px";
   slotTextarea.style.boxSizing = "border-box";
-
-  // Pre-fill with selection if any
-  if (selectionText) {
-    slotTextarea.value = selectionText;
-  }
+  slotTextarea.value = initialSlot;
 
   // Auto-resize on input
   const autoResize = () => {
@@ -1655,9 +1694,9 @@ export function openComponentModal(editor, triggerBtn) {
   form.appendChild(errorEl);
 
   openModal({
-    title: "Insert Component",
+    title: isEditing ? "Edit Component" : "Insert Component",
     body: form,
-    triggerElement: triggerBtn,
+    triggerElement: triggerElement,
     buttons: [
       {
         text: "Cancel",
@@ -1667,7 +1706,7 @@ export function openComponentModal(editor, triggerBtn) {
         }
       },
       {
-        text: "Insert",
+        text: isEditing ? "Save" : "Insert",
         type: "primary",
         onClick: (e, overlay) => {
           const nameInput = overlay.querySelector("#traven-component-name");
@@ -1692,8 +1731,7 @@ export function openComponentModal(editor, triggerBtn) {
           }
           openTag += "]";
 
-          const tagName = "component";
-          const closeTag = `[/${tagName}]`;
+          const closeTag = `[/component]`;
 
           // Ensure slot content is surrounded by newlines for block formatting
           const inner = slotContent
@@ -1702,15 +1740,20 @@ export function openComponentModal(editor, triggerBtn) {
 
           const snippet = `${openTag}${inner}${closeTag}`;
 
-          // Insert: replace selection or insert at cursor
-          const state = view.state;
-          const insertFrom = selectionText ? from : state.selection.main.from;
-          const insertTo = selectionText ? to : state.selection.main.to;
+          if (isEditing) {
+            view.dispatch({
+              changes: { from: docFrom, to: docTo, insert: snippet },
+              selection: { anchor: docFrom + snippet.length }
+            });
+          } else {
+            const insertFrom = selectionText ? from : view.state.selection.main.from;
+            const insertTo = selectionText ? to : view.state.selection.main.to;
 
-          view.dispatch({
-            changes: { from: insertFrom, to: insertTo, insert: snippet },
-            selection: { anchor: insertFrom + snippet.length }
-          });
+            view.dispatch({
+              changes: { from: insertFrom, to: insertTo, insert: snippet },
+              selection: { anchor: insertFrom + snippet.length }
+            });
+          }
           view.focus();
 
           overlay.querySelector(".traven-modal-close").click();
