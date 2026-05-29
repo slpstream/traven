@@ -1,6 +1,18 @@
 [
-  "blockquote",
+  {
+    "name": "blockquote",
+    "attributes": [
+      { "name": "author", "type": "text", "label": "Author Name", "placeholder": "e.g. James Baldwin" },
+      { "name": "source", "type": "text", "label": "Source Citation", "placeholder": "e.g. The Fire Next Time" }
+    ]
+  },
   "pullquote",
-  "info",
+  {
+    "name": "info",
+    "attributes": [
+      { "name": "title", "type": "text", "label": "Notice Title", "placeholder": "e.g. Note" },
+      { "name": "collapsible", "type": "boolean", "label": "Collapsible?" }
+    ]
+  },
   "warning"
 ]

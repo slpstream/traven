@@ -1225,6 +1225,25 @@ describe('ComponentShortcode', () => {
       originalFetch = globalThis.fetch;
     });
 
+    const defaultPresets = [
+      {
+        name: "blockquote",
+        attributes: [
+          { name: "author", type: "text", label: "Author Name", placeholder: "e.g. James Baldwin" },
+          { name: "source", type: "text", label: "Source Citation", placeholder: "e.g. The Fire Next Time" }
+        ]
+      },
+      "pullquote",
+      {
+        name: "info",
+        attributes: [
+          { name: "title", type: "text", label: "Notice Title", placeholder: "e.g. Note" },
+          { name: "collapsible", type: "boolean", label: "Collapsible?" }
+        ]
+      },
+      "warning"
+    ];
+
     it('falls back to default presets on fetch network/status error', async () => {
       globalThis.fetch = () => Promise.resolve({
         ok: false,
@@ -1235,7 +1254,7 @@ describe('ComponentShortcode', () => {
       // Wait for fetch promise chain to complete
       await new Promise(resolve => setTimeout(resolve, 50));
 
-      expect(editor.getComponents()).toEqual(['blockquote', 'pullquote', 'info', 'warning']);
+      expect(editor.getComponents()).toEqual(defaultPresets);
       globalThis.fetch = originalFetch;
     });
 
@@ -1248,7 +1267,7 @@ describe('ComponentShortcode', () => {
       const editor = new TravenEditor({ element: container });
       await new Promise(resolve => setTimeout(resolve, 50));
 
-      expect(editor.getComponents()).toEqual(['blockquote', 'pullquote', 'info', 'warning']);
+      expect(editor.getComponents()).toEqual(defaultPresets);
       globalThis.fetch = originalFetch;
     });
 
@@ -1261,7 +1280,7 @@ describe('ComponentShortcode', () => {
       const editor = new TravenEditor({ element: container });
       await new Promise(resolve => setTimeout(resolve, 50));
 
-      expect(editor.getComponents()).toEqual(['blockquote', 'pullquote', 'info', 'warning']);
+      expect(editor.getComponents()).toEqual(defaultPresets);
       globalThis.fetch = originalFetch;
     });
 
@@ -1276,6 +1295,154 @@ describe('ComponentShortcode', () => {
 
       expect(editor.getComponents()).toEqual(['info', 'tip']);
       globalThis.fetch = originalFetch;
+    });
+  });
+
+  describe('Structured attributes Option A and Option B', () => {
+    it('switches between Option A (builder) and Option B (schema-driven) based on schema structure', () => {
+      const editor = new TravenEditor({
+        element: container,
+        components: [
+          {
+            name: 'custom-card',
+            attributes: [
+              { name: 'theme', type: 'text', label: 'Theme Style' },
+              { name: 'dark', type: 'boolean', label: 'Dark Mode' }
+            ]
+          },
+          'generic-quote'
+        ]
+      });
+
+      openComponentModal(editor);
+      const modal = document.querySelector('.traven-modal-overlay');
+      expect(modal).not.toBeNull();
+
+      const nameSelect = modal.querySelector('#traven-component-name');
+      const dynamicWrapper = modal.querySelector('.traven-attrs-dynamic-wrapper');
+
+      // Since custom-card has attributes defined, it should render Option B (schema)
+      nameSelect.value = 'custom-card';
+      nameSelect.dispatchEvent(new window.Event('change'));
+      expect(dynamicWrapper.dataset.activeOption).toBe('schema');
+
+      // Verify schema inputs
+      const schemaInputs = dynamicWrapper.querySelectorAll('.attr-schema-input');
+      expect(schemaInputs.length).toBe(2);
+      expect(schemaInputs[0].dataset.name).toBe('theme');
+      expect(schemaInputs[0].type).toBe('text');
+      expect(schemaInputs[1].dataset.name).toBe('dark');
+      expect(schemaInputs[1].type).toBe('checkbox');
+
+      // Now change selection to generic-quote (simple string, Option A builder)
+      nameSelect.value = 'generic-quote';
+      nameSelect.dispatchEvent(new window.Event('change'));
+      expect(dynamicWrapper.dataset.activeOption).toBe('builder');
+
+      // Verify builder is rendered
+      const addBtn = dynamicWrapper.querySelector('.traven-table-toolbar-btn');
+      expect(addBtn.textContent).toBe('+ Add Attribute');
+
+      // Clean up
+      modal.querySelector('.traven-modal-close').click();
+    });
+
+    it('Option B: fills inputs, toggles checkbox, and saves attributes correctly', () => {
+      const editor = new TravenEditor({
+        element: container,
+        components: [
+          {
+            name: 'card',
+            attributes: [
+              { name: 'theme', type: 'text' },
+              { name: 'dark', type: 'boolean' }
+            ]
+          }
+        ]
+      });
+
+      openComponentModal(editor);
+      const modal = document.querySelector('.traven-modal-overlay');
+      const dynamicWrapper = modal.querySelector('.traven-attrs-dynamic-wrapper');
+
+      // Assert label is initially optional
+      const titleLabel = dynamicWrapper.querySelector('.traven-modal-label');
+      expect(titleLabel.innerHTML).toContain('(optional)');
+
+      const themeInput = dynamicWrapper.querySelector('[data-name="theme"]');
+      const darkCheckbox = dynamicWrapper.querySelector('[data-name="dark"]');
+
+      // Fill in theme - should update label to non-optional
+      themeInput.value = 'ocean';
+      themeInput.dispatchEvent(new window.Event('input'));
+      expect(titleLabel.textContent).toBe('Attributes');
+
+      // Clear theme - should revert label to optional
+      themeInput.value = '';
+      themeInput.dispatchEvent(new window.Event('input'));
+      expect(titleLabel.innerHTML).toContain('(optional)');
+
+      // Re-fill to save
+      themeInput.value = 'ocean';
+      themeInput.dispatchEvent(new window.Event('input'));
+      darkCheckbox.checked = true;
+      darkCheckbox.dispatchEvent(new window.Event('change'));
+
+      // Click save
+      modal.querySelector('.traven-modal-btn.btn-primary').click();
+
+      // Verify generated component markup in editor
+      expect(editor.getValue()).toBe('[component name="card" theme="ocean" dark="true"]\n\n[/component]\n');
+    });
+
+    it('Option A: dynamically adds key-value rows and saves attributes correctly', () => {
+      const editor = new TravenEditor({
+        element: container,
+        components: ['simple-comp']
+      });
+
+      openComponentModal(editor);
+      const modal = document.querySelector('.traven-modal-overlay');
+      const dynamicWrapper = modal.querySelector('.traven-attrs-dynamic-wrapper');
+
+      // Initially no rows
+      let rows = dynamicWrapper.querySelectorAll('.traven-attr-row');
+      expect(rows.length).toBe(0);
+
+      // Add a row
+      const addBtn = dynamicWrapper.querySelector('.traven-table-toolbar-btn');
+      addBtn.click();
+
+      rows = dynamicWrapper.querySelectorAll('.traven-attr-row');
+      expect(rows.length).toBe(1);
+
+      // Fill in the row
+      rows[0].querySelector('.attr-key-input').value = 'class';
+      rows[0].querySelector('.attr-val-input').value = 'my-style';
+
+      // Click save
+      modal.querySelector('.traven-modal-btn.btn-primary').click();
+
+      expect(editor.getValue()).toBe('[component name="simple-comp" class="my-style"]\n\n[/component]\n');
+    });
+
+    it('Test Compatibility: respects direct modification of hidden #traven-component-attrs input', () => {
+      const editor = new TravenEditor({
+        element: container,
+        components: ['simple-comp']
+      });
+
+      openComponentModal(editor);
+      const modal = document.querySelector('.traven-modal-overlay');
+      const hiddenInput = modal.querySelector('#traven-component-attrs');
+
+      // Direct simulation of a test script modifying value
+      hiddenInput.value = 'custom="mutated-value"';
+
+      // Click save
+      modal.querySelector('.traven-modal-btn.btn-primary').click();
+
+      expect(editor.getValue()).toBe('[component name="simple-comp" custom="mutated-value"]\n\n[/component]\n');
     });
   });
 });
