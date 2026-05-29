@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { TravenEditor } from '../src/index.js';
-import { parseMarkdownTable, serializeTableToMarkdown } from '../src/toolbar/modal.js';
+import { parseMarkdownTable, serializeTableToMarkdown, openComponentModal } from '../src/toolbar/modal.js';
 
 // Polyfill Range.prototype.getClientRects and getBoundingClientRect for JSDOM / CodeMirror 6 compatibility
 if (typeof window !== 'undefined') {
@@ -1135,6 +1135,148 @@ describe('ComponentShortcode', () => {
 
     // Verify value in editor is updated
     expect(editor.getValue()).toBe('[component name="pullquote" author="Jane"]\nNew content\n[/component]\nText');
+  });
+
+  it('opens component modal and populates dropdown options from default schema', () => {
+    const editor = new TravenEditor({ element: container });
+    openComponentModal(editor);
+
+    const modal = document.querySelector('.traven-modal-overlay');
+    expect(modal).not.toBeNull();
+
+    const nameSelect = modal.querySelector('#traven-component-name');
+    expect(nameSelect.tagName.toLowerCase()).toBe('select');
+    
+    // Check options
+    const options = Array.from(nameSelect.options).map(opt => opt.value);
+    expect(options).toEqual(['blockquote', 'pullquote', 'info', 'warning']);
+    
+    // Default selection should be pullquote
+    expect(nameSelect.value).toBe('pullquote');
+
+    // Clean up
+    modal.querySelector('.traven-modal-close').click();
+  });
+
+  it('populates dropdown options from custom components array option', () => {
+    const editor = new TravenEditor({
+      element: container,
+      components: ['info', 'warning', 'tip']
+    });
+    openComponentModal(editor);
+
+    const modal = document.querySelector('.traven-modal-overlay');
+    expect(modal).not.toBeNull();
+
+    const nameSelect = modal.querySelector('#traven-component-name');
+    const options = Array.from(nameSelect.options).map(opt => opt.value);
+    expect(options).toEqual(['info', 'warning', 'tip']);
+
+    // Default selection: since pullquote is missing, it should default to the first one ('info')
+    expect(nameSelect.value).toBe('info');
+
+    // Clean up
+    modal.querySelector('.traven-modal-close').click();
+  });
+
+  it('defaults to pullquote if present in custom components list, even if not the first option', () => {
+    const editor = new TravenEditor({
+      element: container,
+      components: ['info', 'pullquote', 'warning']
+    });
+    openComponentModal(editor);
+
+    const modal = document.querySelector('.traven-modal-overlay');
+    const nameSelect = modal.querySelector('#traven-component-name');
+    expect(nameSelect.value).toBe('pullquote');
+
+    // Clean up
+    modal.querySelector('.traven-modal-close').click();
+  });
+
+  it('appends the current component tag name to the dropdown options if editing a tag not in the schema', () => {
+    const editor = new TravenEditor({
+      element: container,
+      components: ['blockquote', 'pullquote']
+    });
+    // Simulate editing a component named "custom-card"
+    openComponentModal({
+      editor,
+      attrs: { name: 'custom-card' },
+      docFrom: 0,
+      docTo: 10
+    });
+
+    const modal = document.querySelector('.traven-modal-overlay');
+    const nameSelect = modal.querySelector('#traven-component-name');
+    const options = Array.from(nameSelect.options).map(opt => opt.value);
+    
+    // "custom-card" should be dynamically appended to the options
+    expect(options).toEqual(['blockquote', 'pullquote', 'custom-card']);
+    expect(nameSelect.value).toBe('custom-card');
+
+    // Clean up
+    modal.querySelector('.traven-modal-close').click();
+  });
+
+  describe('Component schema fetch fallbacks', () => {
+    let originalFetch;
+    beforeEach(() => {
+      originalFetch = globalThis.fetch;
+    });
+
+    it('falls back to default presets on fetch network/status error', async () => {
+      globalThis.fetch = () => Promise.resolve({
+        ok: false,
+        status: 404
+      });
+
+      const editor = new TravenEditor({ element: container });
+      // Wait for fetch promise chain to complete
+      await new Promise(resolve => setTimeout(resolve, 50));
+
+      expect(editor.getComponents()).toEqual(['blockquote', 'pullquote', 'info', 'warning']);
+      globalThis.fetch = originalFetch;
+    });
+
+    it('falls back to default presets on invalid JSON response', async () => {
+      globalThis.fetch = () => Promise.resolve({
+        ok: true,
+        json: () => Promise.reject(new SyntaxError('Invalid JSON'))
+      });
+
+      const editor = new TravenEditor({ element: container });
+      await new Promise(resolve => setTimeout(resolve, 50));
+
+      expect(editor.getComponents()).toEqual(['blockquote', 'pullquote', 'info', 'warning']);
+      globalThis.fetch = originalFetch;
+    });
+
+    it('falls back to default presets on empty array response', async () => {
+      globalThis.fetch = () => Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve([])
+      });
+
+      const editor = new TravenEditor({ element: container });
+      await new Promise(resolve => setTimeout(resolve, 50));
+
+      expect(editor.getComponents()).toEqual(['blockquote', 'pullquote', 'info', 'warning']);
+      globalThis.fetch = originalFetch;
+    });
+
+    it('successfully overrides defaults when fetch returns a valid schema', async () => {
+      globalThis.fetch = () => Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve(['info', 'tip'])
+      });
+
+      const editor = new TravenEditor({ element: container });
+      await new Promise(resolve => setTimeout(resolve, 50));
+
+      expect(editor.getComponents()).toEqual(['info', 'tip']);
+      globalThis.fetch = originalFetch;
+    });
   });
 });
 

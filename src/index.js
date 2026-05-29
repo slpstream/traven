@@ -42,6 +42,7 @@ import { imageDecorationPlugin, imageHandlerExtension } from "./images.js";
 import { vim } from "@replit/codemirror-vim";
 import { viewToEditor } from "./bridge.js";
 import { sanitizeUrl } from "./security.js";
+import DEFAULT_COMPONENTS from "./components-default.json";
 import "./style.css";
 
 const syncAnnotation = Annotation.define();
@@ -134,6 +135,8 @@ function buildBaseSetup(options = {}) {
  * @property {"light" | "dark"} [theme] - Visual style theme.
  * @property {string} [caretColor] - Configurable caret color override.
  * @property {Array<string>|boolean} [toolbar=false] - Toolbar configuration array or false.
+ * @property {string[]} [components] - Pre-defined custom components options array.
+ * @property {string|boolean} [componentsUrl="assets/components.json"] - URL/path to load components schema, or false.
  */
 
 
@@ -148,6 +151,8 @@ export class TravenEditor {
   #options;
   /** @type {Function|null} */
   #customRenderer = null;
+  /** @type {string[]} */
+  #components;
 
   /**
    * @param {TravenOptions} options
@@ -157,6 +162,31 @@ export class TravenEditor {
       throw new Error("TravenEditor requires a parent element option.");
     }
     this.#options = options;
+
+    // Initialize component name schema options with fallbacks
+    this.#components = DEFAULT_COMPONENTS;
+    if (options.components && Array.isArray(options.components) && options.components.length > 0) {
+      this.#components = options.components;
+    } else if (options.componentsUrl !== false) {
+      const url = options.componentsUrl || "assets/components.json";
+      fetch(url)
+        .then(res => {
+          if (!res.ok) {
+            throw new Error(`Failed to load component schema: status ${res.status}`);
+          }
+          return res.json();
+        })
+        .then(data => {
+          if (Array.isArray(data) && data.length > 0) {
+            this.#components = data;
+          } else {
+            console.warn(`Component schema from ${url} is empty or invalid. Falling back to default presets.`);
+          }
+        })
+        .catch(err => {
+          console.warn(`Failed to fetch component schema from ${url}. Falling back to default presets:`, err);
+        });
+    }
     
     // Configure KaTeX loading (e.g. from CDN if options.katex is set)
     configureKatex(options.katex);
@@ -1054,6 +1084,14 @@ export class TravenEditor {
    */
   getUploadHandler() {
     return this.#options.onUploadImage || null;
+  }
+
+  /**
+   * Returns the list of component names.
+   * @returns {string[]}
+   */
+  getComponents() {
+    return this.#components;
   }
 
   /**

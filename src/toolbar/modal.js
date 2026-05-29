@@ -1597,11 +1597,29 @@ export function openComponentModal(optionsOrEditor, triggerBtn = null) {
   const view = editor.getView();
   const isEditing = docFrom !== null && docTo !== null;
 
+  const componentOptions = (editor && typeof editor.getComponents === "function")
+    ? [...editor.getComponents()]
+    : ["blockquote", "pullquote", "info", "warning"];
+
   let initialName = "pullquote";
-  if (attrs.name) {
-    initialName = attrs.name;
-  } else if (attrs._tagName) {
-    initialName = attrs._tagName === "quote" ? "blockquote" : attrs._tagName;
+  const isEditingName = !!(attrs.name || attrs._tagName);
+  if (isEditingName) {
+    if (attrs.name) {
+      initialName = attrs.name;
+    } else if (attrs._tagName) {
+      initialName = attrs._tagName === "quote" ? "blockquote" : attrs._tagName;
+    }
+    // Append the legacy/editing name if not already in the options list to prevent data loss
+    if (!componentOptions.includes(initialName)) {
+      componentOptions.push(initialName);
+    }
+  } else {
+    // If not editing, default to "pullquote" if in schema; otherwise use the first option
+    if (componentOptions.includes("pullquote")) {
+      initialName = "pullquote";
+    } else if (componentOptions.length > 0) {
+      initialName = componentOptions[0];
+    }
   }
 
   // Reconstruct extra attributes string
@@ -1625,15 +1643,18 @@ export function openComponentModal(optionsOrEditor, triggerBtn = null) {
   // --- Component name field ---
   const nameField = document.createElement("div");
   nameField.className = "traven-modal-field";
+  const selectOptionsHtml = componentOptions.map(name => {
+    return `<option value="${name}">${name}</option>`;
+  }).join("\n");
+
   nameField.innerHTML = `
     <label class="traven-modal-label" for="traven-component-name">Component Name</label>
-    <input
-      type="text"
+    <select
       id="traven-component-name"
       class="traven-modal-input"
-      placeholder="e.g. pullquote, blockquote, callout"
-      value=""
-    />
+    >
+      ${selectOptionsHtml}
+    </select>
   `;
   nameField.querySelector("#traven-component-name").value = initialName;
   form.appendChild(nameField);
