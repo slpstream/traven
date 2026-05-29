@@ -716,6 +716,8 @@ export function openImageModal(optionsOrEditor, triggerBtn = null) {
     if (selectionText) {
       altInput.value = selectionText;
     }
+    alignSelect.value = "center";
+    sizeSelect.value = "medium";
   }
 
   // Preset selection sync logic

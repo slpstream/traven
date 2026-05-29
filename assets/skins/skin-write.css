@@ -302,9 +302,26 @@
 .cm-wysiwym-image-shortcode-container.size-large {
   width: 600px;
 }
-.cm-wysiwym-image-shortcode-container.size-full {
-  width: 100% !important;
+/* Legacy Plain Markdown Image Widget Styling */
+.cm-editor .cm-wysiwym-image-widget-container {
+  width: 300px !important;
+  margin: 0 auto !important;
+  background-color: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
 }
+
+.cm-editor .cm-wysiwym-image-widget-container:hover {
+  box-shadow: none !important;
+}
+
+.cm-editor .cm-wysiwym-image-widget-container .cm-wysiwym-image-caption {
+  border-top: none !important;
+  background-color: transparent !important;
+  text-align: center !important;
+}
+
 .cm-wysiwym-image-shortcode-container img {
   display: block;
   max-width: 100%;
@@ -398,7 +415,36 @@
   text-align: center;
 }
 
+.cm-wysiwym-image-shortcode-container.align-fullbleed img {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  padding: 0 !important;
+}
 
+
+
+/* Optimistic uploading panel */
+.cm-wysiwym-image-uploading {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #f0fdf4;
+  border: 1px dashed #22c55e;
+  color: #15803d;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-family: 'Victor Mono', Courier, monospace !important;
+  font-size: 0.8em !important;
+  font-weight: 500;
+  margin: 0 !important;
+  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.05);
+}
+
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-image-uploading {
+  background-color: rgba(21, 128, 61, 0.15);
+  color: #4ade80;
+}
 
 /* Links */
 .cm-wysiwym-link-anchor {
@@ -739,11 +785,15 @@
 }
 
 .traven-preview img.traven-image-shortcode.align-fullbleed {
-  width: 100vw;
-  max-width: 100vw;
-  margin-left: calc(-50vw + 50%);
-  margin-right: calc(-50vw + 50%);
-  border-radius: 0;
+  width: 100vw !important;
+  max-width: 100vw !important;
+  margin-left: calc(-50vw + 50%) !important;
+  margin-right: calc(-50vw + 50%) !important;
+  border-radius: 0 !important;
+  display: block !important;
+  float: none !important;
+  clear: both !important;
+  height: auto !important;
 }
 
 .traven-preview img.traven-image-shortcode.size-small {

@@ -442,6 +442,17 @@ describe('ImageShortcode', () => {
     expect(html).toContain('class="traven-image-shortcode align-right size-medium"');
   });
 
+  it('compiles standard Markdown image to HTML styled like shortcode in fallback renderer', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '![Alt Text](https://example.com/pic.jpg)',
+    });
+    const html = editor.getContentHtml();
+    expect(html).toContain('<img src="https://example.com/pic.jpg"');
+    expect(html).toContain('alt="Alt Text"');
+    expect(html).toContain('class="traven-image-shortcode align-center size-medium"');
+  });
+
   it('handles single quoted and unquoted attributes correctly', () => {
     const editor = new TravenEditor({
       element: container,

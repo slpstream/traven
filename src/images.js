@@ -26,12 +26,15 @@ class ImageWidget extends WidgetType {
     img.className = "cm-wysiwym-image-preview";
     img.draggable = false;
 
-    const caption = document.createElement("div");
-    caption.className = "cm-wysiwym-image-caption";
-    caption.textContent = this.alt || "Image Preview";
-
     container.appendChild(img);
-    container.appendChild(caption);
+    
+    const captionText = this.alt && this.alt.toLowerCase() !== "image" ? this.alt : "";
+    if (captionText) {
+      const caption = document.createElement("div");
+      caption.className = "cm-wysiwym-image-caption";
+      caption.textContent = captionText;
+      container.appendChild(caption);
+    }
 
     // Click handler: open the Image Editor Modal
     container.addEventListener("mousedown", (e) => {

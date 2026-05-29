@@ -332,9 +332,26 @@
 .cm-wysiwym-image-shortcode-container.size-large {
   width: 600px;
 }
-.cm-wysiwym-image-shortcode-container.size-full {
-  width: 100% !important;
+/* Legacy Plain Markdown Image Widget Styling */
+.cm-editor .cm-wysiwym-image-widget-container {
+  width: 300px !important;
+  margin: 0 auto !important;
+  background-color: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
 }
+
+.cm-editor .cm-wysiwym-image-widget-container:hover {
+  box-shadow: none !important;
+}
+
+.cm-editor .cm-wysiwym-image-widget-container .cm-wysiwym-image-caption {
+  border-top: none !important;
+  background-color: transparent !important;
+  text-align: center !important;
+}
+
 .cm-wysiwym-image-shortcode-container img {
   display: block;
   max-width: 100%;
@@ -426,6 +443,13 @@
 .cm-wysiwym-image-shortcode-container.align-fullbleed .meta-caption {
   width: 100%;
   text-align: center;
+}
+
+.cm-wysiwym-image-shortcode-container.align-fullbleed img {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  padding: 0 !important;
 }
 
 
@@ -1028,11 +1052,15 @@
 }
 
 .traven-preview img.traven-image-shortcode.align-fullbleed {
-  width: 100vw;
-  max-width: 100vw;
-  margin-left: calc(-50vw + 50%);
-  margin-right: calc(-50vw + 50%);
-  border-radius: 0;
+  width: 100vw !important;
+  max-width: 100vw !important;
+  margin-left: calc(-50vw + 50%) !important;
+  margin-right: calc(-50vw + 50%) !important;
+  border-radius: 0 !important;
+  display: block !important;
+  float: none !important;
+  clear: both !important;
+  height: auto !important;
 }
 
 .traven-preview img.traven-image-shortcode.size-small {

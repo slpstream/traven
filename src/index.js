@@ -1454,7 +1454,7 @@ export class TravenEditor {
 
       return `<img src="${src}" alt="${alt}" class="traven-image-shortcode align-${align} size-${size}${customClass}">`;
     });
-    content = content.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, src) => `<img src="${sanitizeUrl(src)}" alt="${alt}" style="max-width: 100%; height: auto; display: block; margin: 12px 0; border-radius: 6px;">`);
+    content = content.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, src) => `<img src="${sanitizeUrl(src)}" alt="${alt}" class="traven-image-shortcode align-center size-medium">`);
     content = content.replace(/\[(.*?)\]\((.*?)\)/g, (match, text, url) => `<a href="${sanitizeUrl(url)}" target="_blank">${text}</a>`);
     content = content.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
     content = content.replace(/__(.*?)__/g, "<strong>$1</strong>");
