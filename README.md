@@ -8,7 +8,7 @@
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License"></a>
-  <img src="https://img.shields.io/badge/version-0.1.5-orange.svg" alt="Version 0.1.5">
+  <img src="https://img.shields.io/badge/version-0.1.6-orange.svg" alt="Version 0.1.6">
   <img src="https://img.shields.io/badge/dependency-CodeMirror_6-6aa00.svg" alt="CodeMirror 6">
 </p>
 

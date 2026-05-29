@@ -437,9 +437,9 @@ describe('ImageShortcode', () => {
       initialValue: '[image src="https://example.com/pic.jpg" align="right" size="medium" caption="My caption"]',
     });
     const html = editor.getContentHtml();
-    expect(html).toContain('<img src="https://example.com/pic.jpg"');
-    expect(html).toContain('alt="My caption"');
-    expect(html).toContain('class="traven-image-shortcode align-right size-medium"');
+    expect(html).toContain('<figure class="traven-image-figure align-right size-medium">');
+    expect(html).toContain('<img src="https://example.com/pic.jpg" alt="My caption" class="traven-image-shortcode">');
+    expect(html).toContain('<figcaption class="traven-image-caption">My caption</figcaption>');
   });
 
   it('compiles standard Markdown image to HTML styled like shortcode in fallback renderer', () => {
@@ -459,9 +459,19 @@ describe('ImageShortcode', () => {
       initialValue: "[image src='https://example.com/pic.jpg' align=left size='small' caption='Single quotes']",
     });
     const html = editor.getContentHtml();
-    expect(html).toContain('<img src="https://example.com/pic.jpg"');
-    expect(html).toContain('alt="Single quotes"');
-    expect(html).toContain('class="traven-image-shortcode align-left size-small"');
+    expect(html).toContain('<figure class="traven-image-figure align-left size-small">');
+    expect(html).toContain('<img src="https://example.com/pic.jpg" alt="Single quotes" class="traven-image-shortcode">');
+    expect(html).toContain('<figcaption class="traven-image-caption">Single quotes</figcaption>');
+  });
+
+  it('compiles shortcode without caption to HTML without figure wrapper in fallback renderer', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '[image src="https://example.com/pic.jpg" align="right" size="medium"]',
+    });
+    const html = editor.getContentHtml();
+    expect(html).not.toContain('<figure');
+    expect(html).toContain('<img src="https://example.com/pic.jpg" alt="" class="traven-image-shortcode align-right size-medium">');
   });
 
   it('renders ImageShortcodeWidget inside WYSIWYM editor when cursor is outside', () => {

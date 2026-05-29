@@ -1452,7 +1452,11 @@ export class TravenEditor {
       const size = attrs.size || "medium";
       const customClass = attrs.class ? ` ${attrs.class}` : "";
 
-      return `<img src="${src}" alt="${alt}" class="traven-image-shortcode align-${align} size-${size}${customClass}">`;
+      if (caption) {
+        return `<figure class="traven-image-figure align-${align} size-${size}${customClass}"><img src="${src}" alt="${alt}" class="traven-image-shortcode"><figcaption class="traven-image-caption">${caption}</figcaption></figure>`;
+      } else {
+        return `<img src="${src}" alt="${alt}" class="traven-image-shortcode align-${align} size-${size}${customClass}">`;
+      }
     });
     content = content.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, src) => `<img src="${sanitizeUrl(src)}" alt="${alt}" class="traven-image-shortcode align-center size-medium">`);
     content = content.replace(/\[(.*?)\]\((.*?)\)/g, (match, text, url) => `<a href="${sanitizeUrl(url)}" target="_blank">${text}</a>`);
@@ -1484,7 +1488,7 @@ export class TravenEditor {
       }
       
       // If it's already an HTML block tag, image, or hr, don't wrap in <p>
-      if (/^<(h[1-6]|blockquote|ul|ol|li|img|hr|table|pre)/i.test(trimmed)) {
+      if (/^<(h[1-6]|blockquote|ul|ol|li|img|hr|table|pre|figure)/i.test(trimmed)) {
         return trimmed;
       }
       return `<p>${trimmed.replace(/\n/g, "<br>")}</p>`;
