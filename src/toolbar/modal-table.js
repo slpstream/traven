@@ -236,7 +236,8 @@ export function openTableModal({ editor, tableData = null, docFrom = null, docTo
 
   // Track focused cell
   tableEl.addEventListener("focusin", (e) => {
-    const cell = e.target.closest("th, td");
+    const target = /** @type {Element} */ (e.target);
+    const cell = /** @type {HTMLElement|null} */ (target.closest("th, td"));
     if (cell && cell.dataset.row !== undefined) {
       focusedCell = {
         row: parseInt(cell.dataset.row),
@@ -247,7 +248,8 @@ export function openTableModal({ editor, tableData = null, docFrom = null, docTo
 
   // Keyboard navigation within the table
   tableEl.addEventListener("keydown", (e) => {
-    const cell = e.target.closest("th, td");
+    const target = /** @type {Element} */ (e.target);
+    const cell = /** @type {HTMLElement|null} */ (target.closest("th, td"));
     if (!cell) return;
 
     const row = parseInt(cell.dataset.row);
@@ -271,7 +273,7 @@ export function openTableModal({ editor, tableData = null, docFrom = null, docTo
         }
         if (nextRow < 0) {
           // Wrap: move focus to table toolbar (last button)
-          const toolBtns = toolbar.querySelectorAll(".traven-table-toolbar-btn:not(:disabled)");
+          const toolBtns = /** @type {NodeListOf<HTMLElement>} */ (toolbar.querySelectorAll(".traven-table-toolbar-btn:not(:disabled)"));
           if (toolBtns.length > 0) {
             toolBtns[toolBtns.length - 1].focus();
           }
@@ -288,7 +290,7 @@ export function openTableModal({ editor, tableData = null, docFrom = null, docTo
           // Past last cell: move focus to the footer buttons
           const modalEl = tableEl.closest(".traven-modal");
           if (modalEl) {
-            const footerBtn = modalEl.querySelector(".traven-modal-footer .traven-modal-btn");
+            const footerBtn = /** @type {HTMLElement|null} */ (modalEl.querySelector(".traven-modal-footer .traven-modal-btn"));
             if (footerBtn) footerBtn.focus();
           }
           return;
@@ -313,7 +315,7 @@ export function openTableModal({ editor, tableData = null, docFrom = null, docTo
     const selector = row === 0
       ? `th[data-col="${col}"]`
       : `td[data-row="${row}"][data-col="${col}"]`;
-    const target = tableEl.querySelector(selector);
+    const target = /** @type {HTMLElement|null} */ (tableEl.querySelector(selector));
     if (target) {
       target.focus();
       // Place cursor at end of cell content
@@ -471,6 +473,12 @@ export function openTableModal({ editor, tableData = null, docFrom = null, docTo
     body,
     buttons,
     triggerElement,
+    onClose: () => {
+      const view = editor.getView();
+      if (view && typeof view.requestMeasure === "function") {
+        view.requestMeasure();
+      }
+    },
     className: "traven-modal-table"
   });
 }

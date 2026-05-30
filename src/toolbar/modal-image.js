@@ -7,8 +7,8 @@ import { openModal } from "./modal-base.js";
  *   1. Direct URL input — constructs ![alt](url) markdown.
  *   2. File upload via onUploadImage callback — uploads first, then inserts.
  *
- * @param {Object} editor - The TravenEditor instance.
- * @param {HTMLElement} triggerBtn - The button that triggered the modal.
+ * @param {Object|any} optionsOrEditor - The TravenEditor instance, or options object.
+ * @param {HTMLElement|null} [triggerBtn] - The button that triggered the modal.
  */
 export function openImageModal(optionsOrEditor, triggerBtn = null) {
   let editor;
@@ -139,7 +139,8 @@ export function openImageModal(optionsOrEditor, triggerBtn = null) {
 
     // Click on dropzone triggers file dialog, unless clicking the remove button
     dropzone.addEventListener("click", (e) => {
-      if (e.target.closest(".traven-modal-remove-btn")) {
+      const target = /** @type {Element} */ (e.target);
+      if (target.closest(".traven-modal-remove-btn")) {
         return;
       }
       fileInput.click();
@@ -185,7 +186,7 @@ export function openImageModal(optionsOrEditor, triggerBtn = null) {
     };
 
     updatePreview = () => {
-      const urlInput = form.querySelector("#traven-image-url");
+      const urlInput = /** @type {HTMLInputElement} */ (form.querySelector("#traven-image-url"));
       const urlValue = urlInput.value.trim();
       const hasFile = fileInput.files && fileInput.files.length > 0;
 
@@ -259,7 +260,7 @@ export function openImageModal(optionsOrEditor, triggerBtn = null) {
     };
 
     fileInput.addEventListener("change", () => {
-      const urlInput = form.querySelector("#traven-image-url");
+      const urlInput = /** @type {HTMLInputElement} */ (form.querySelector("#traven-image-url"));
       if (fileInput.files && fileInput.files.length > 0) {
         urlInput.value = "";
       }
@@ -267,7 +268,7 @@ export function openImageModal(optionsOrEditor, triggerBtn = null) {
     });
 
     removeBtn.addEventListener("click", (e) => {
-      const urlInput = form.querySelector("#traven-image-url");
+      const urlInput = /** @type {HTMLInputElement} */ (form.querySelector("#traven-image-url"));
       e.preventDefault();
       e.stopPropagation();
       fileInput.value = "";
@@ -284,7 +285,7 @@ export function openImageModal(optionsOrEditor, triggerBtn = null) {
   const toggleRow = document.createElement("div");
   toggleRow.className = "traven-modal-field";
   toggleRow.style.display = "flex";
-  toggleRow.style.justify = "flex-end";
+  toggleRow.style.justifyContent = "flex-end";
   toggleRow.style.marginBottom = "12px";
 
   const toggleBtn = document.createElement("button");
@@ -481,12 +482,12 @@ export function openImageModal(optionsOrEditor, triggerBtn = null) {
 
   form.appendChild(errorEl);
 
-  const altInput = form.querySelector("#traven-image-alt");
-  const urlInput = form.querySelector("#traven-image-url");
-  const captionInput = form.querySelector("#traven-image-caption");
-  const alignSelect = form.querySelector("#traven-image-align");
-  const sizeSelect = form.querySelector("#traven-image-size");
-  const classInput = form.querySelector("#traven-image-class");
+  const altInput = /** @type {HTMLInputElement} */ (form.querySelector("#traven-image-alt"));
+  const urlInput = /** @type {HTMLInputElement} */ (form.querySelector("#traven-image-url"));
+  const captionInput = /** @type {HTMLInputElement} */ (form.querySelector("#traven-image-caption"));
+  const alignSelect = /** @type {HTMLSelectElement} */ (form.querySelector("#traven-image-align"));
+  const sizeSelect = /** @type {HTMLSelectElement} */ (form.querySelector("#traven-image-size"));
+  const classInput = /** @type {HTMLInputElement} */ (form.querySelector("#traven-image-class"));
 
   if (docFrom !== null) {
     altInput.value = attrs.alt || "";
@@ -626,8 +627,8 @@ export function openImageModal(optionsOrEditor, triggerBtn = null) {
   }
 
   const updateToggleState = () => {
-    const track = toggleBtn.querySelector(".traven-modal-switch-track");
-    const thumb = toggleBtn.querySelector(".traven-modal-switch-thumb");
+    const track = /** @type {HTMLElement|null} */ (toggleBtn.querySelector(".traven-modal-switch-track"));
+    const thumb = /** @type {HTMLElement|null} */ (toggleBtn.querySelector(".traven-modal-switch-thumb"));
 
     if (isAdvanced) {
       toggleBtn.style.color = "var(--accent, #334155)";
@@ -765,6 +766,12 @@ export function openImageModal(optionsOrEditor, triggerBtn = null) {
     title: docFrom !== null ? "Edit Image" : "Insert Image",
     body: form,
     triggerElement: triggerElement,
+    onClose: () => {
+      const view = editor.getView();
+      if (view && typeof view.requestMeasure === "function") {
+        view.requestMeasure();
+      }
+    },
     buttons: [
       {
         text: "Cancel",
@@ -777,8 +784,8 @@ export function openImageModal(optionsOrEditor, triggerBtn = null) {
         text: docFrom !== null ? "Save" : "Insert",
         type: "primary",
         onClick: async (e, overlay) => {
-          const altInput = overlay.querySelector("#traven-image-alt");
-          const urlInput = overlay.querySelector("#traven-image-url");
+          const altInput = /** @type {HTMLInputElement} */ (overlay.querySelector("#traven-image-alt"));
+          const urlInput = /** @type {HTMLInputElement} */ (overlay.querySelector("#traven-image-url"));
           const altText = altInput.value.trim() || "image";
           const urlValue = urlInput.value.trim();
           const hasFile = fileInput && fileInput.files && fileInput.files.length > 0;

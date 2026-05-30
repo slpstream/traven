@@ -107,7 +107,8 @@ export function openComponentModal(optionsOrEditor, triggerBtn = null) {
       ${selectOptionsHtml}
     </select>
   `;
-  nameField.querySelector("#traven-component-name").value = initialName;
+  const nameSelectEl = /** @type {HTMLSelectElement} */ (nameField.querySelector("#traven-component-name"));
+  nameSelectEl.value = initialName;
   form.appendChild(nameField);
 
   // --- Slot content textarea (auto-resize) ---
@@ -176,7 +177,7 @@ export function openComponentModal(optionsOrEditor, triggerBtn = null) {
       visualAttrsContainer.appendChild(titleLabel);
 
       const updateTitle = () => {
-        const inputs = visualAttrsContainer.querySelectorAll(".attr-schema-input");
+        const inputs = /** @type {NodeListOf<HTMLInputElement>} */ (visualAttrsContainer.querySelectorAll(".attr-schema-input"));
         let hasValue = false;
         inputs.forEach(input => {
           if (input.type === "checkbox") {
@@ -326,9 +327,10 @@ export function openComponentModal(optionsOrEditor, triggerBtn = null) {
   };
 
   // Wire up the name select listener
-  const nameSelect = nameField.querySelector("#traven-component-name");
+  const nameSelect = /** @type {HTMLSelectElement} */ (nameField.querySelector("#traven-component-name"));
   nameSelect.addEventListener("change", (e) => {
-    renderAttributes(e.target.value, false);
+    const target = /** @type {HTMLSelectElement} */ (e.target);
+    renderAttributes(target.value, false);
   });
 
   // Initial render
@@ -368,6 +370,11 @@ export function openComponentModal(optionsOrEditor, triggerBtn = null) {
     title: isEditing ? "Edit Component" : "Insert Component",
     body: form,
     triggerElement: triggerElement,
+    onClose: () => {
+      if (view && typeof view.requestMeasure === "function") {
+        view.requestMeasure();
+      }
+    },
     buttons: [
       {
         text: "Cancel",
@@ -380,9 +387,9 @@ export function openComponentModal(optionsOrEditor, triggerBtn = null) {
         text: isEditing ? "Save" : "Insert",
         type: "primary",
         onClick: (e, overlay) => {
-          const nameInput = overlay.querySelector("#traven-component-name");
-          const attrsInput = overlay.querySelector("#traven-component-attrs");
-          const slotInput = overlay.querySelector("#traven-component-slot");
+          const nameInput = /** @type {HTMLSelectElement} */ (overlay.querySelector("#traven-component-name"));
+          const attrsInput = /** @type {HTMLInputElement} */ (overlay.querySelector("#traven-component-attrs"));
+          const slotInput = /** @type {HTMLTextAreaElement} */ (overlay.querySelector("#traven-component-slot"));
 
           const name = nameInput.value.trim();
           if (!name) {
@@ -398,7 +405,7 @@ export function openComponentModal(optionsOrEditor, triggerBtn = null) {
           if (dynamicWrapper) {
             const activeOption = dynamicWrapper.dataset.activeOption;
             if (activeOption === "schema") {
-              const schemaInputs = dynamicWrapper.querySelectorAll(".attr-schema-input");
+              const schemaInputs = /** @type {NodeListOf<HTMLInputElement>} */ (dynamicWrapper.querySelectorAll(".attr-schema-input"));
               const parts = [];
               schemaInputs.forEach(input => {
                 const attrName = input.dataset.name;
@@ -419,8 +426,10 @@ export function openComponentModal(optionsOrEditor, triggerBtn = null) {
               const rows = dynamicWrapper.querySelectorAll(".traven-attr-row");
               const parts = [];
               rows.forEach(row => {
-                const key = row.querySelector(".attr-key-input").value.trim();
-                const val = row.querySelector(".attr-val-input").value.trim();
+                const keyInput = /** @type {HTMLInputElement} */ (row.querySelector(".attr-key-input"));
+                const valInput = /** @type {HTMLInputElement} */ (row.querySelector(".attr-val-input"));
+                const key = keyInput.value.trim();
+                const val = valInput.value.trim();
                 if (key) {
                   parts.push(`${key}="${val}"`);
                 }

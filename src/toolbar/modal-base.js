@@ -9,8 +9,9 @@
  * @param {Array<Object>} [options.buttons] - Array of { text, type, onClick } button configs.
  * @param {HTMLElement} [options.triggerElement] - The button element that triggered the modal.
  * @param {string|null} [options.className] - Optional extra class on the dialog element.
+ * @param {Function|null} [options.onClose] - Callback when modal is closed.
  */
-export function openModal({ title, body, buttons = [], triggerElement = null, className = null }) {
+export function openModal({ title, body, buttons = [], triggerElement = null, className = null, onClose = null }) {
   const overlay = document.createElement("div");
   overlay.className = "traven-modal-overlay";
   if (document.querySelector(".cm-wysiwym-dark")) {
@@ -84,13 +85,17 @@ export function openModal({ title, body, buttons = [], triggerElement = null, cl
     overlay.classList.add("is-active");
   });
 
-  // Focus Trapping Logic
+  /**
+   * @returns {HTMLElement[]}
+   */
   const getFocusableElements = () => {
-    return Array.from(
-      dialog.querySelectorAll(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"]), [contenteditable]'
-      )
-    ).filter((el) => !el.hasAttribute("disabled") && el.getAttribute("tabindex") !== "-1");
+    return /** @type {HTMLElement[]} */ (
+      Array.from(
+        dialog.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"]), [contenteditable]'
+        )
+      ).filter((el) => !el.hasAttribute("disabled") && el.getAttribute("tabindex") !== "-1")
+    );
   };
 
   const focusable = getFocusableElements();
@@ -131,18 +136,19 @@ export function openModal({ title, body, buttons = [], triggerElement = null, cl
     overlay.classList.remove("is-active");
     const style = window.getComputedStyle(overlay);
     const duration = parseFloat(style.transitionDuration) || 0;
-    if (duration === 0) {
+    const finish = () => {
       overlay.remove();
       if (triggerElement && typeof triggerElement.focus === "function") {
         triggerElement.focus();
       }
+      if (typeof onClose === "function") {
+        onClose();
+      }
+    };
+    if (duration === 0) {
+      finish();
     } else {
-      overlay.addEventListener("transitionend", () => {
-        overlay.remove();
-        if (triggerElement && typeof triggerElement.focus === "function") {
-          triggerElement.focus();
-        }
-      }, { once: true });
+      overlay.addEventListener("transitionend", finish, { once: true });
     }
     document.removeEventListener("keydown", handleKeyDown);
   };

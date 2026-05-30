@@ -36,6 +36,12 @@ export function openHelpModal(editor, triggerBtn) {
     title: "Traven Editor Shortcuts & Cheat Sheet",
     body: helpContent,
     triggerElement: triggerBtn,
+    onClose: () => {
+      const view = editor.getView();
+      if (view && typeof view.requestMeasure === "function") {
+        view.requestMeasure();
+      }
+    },
     buttons: [
       {
         text: "Close",

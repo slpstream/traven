@@ -3,7 +3,10 @@
 </p>
 
 <p align="center">
-  <strong>A standalone, lightweight, framework-agnostic WYSIWYM Markdown Editor</strong><br>
+  <strong>A standalone, lightweight, framework-agnostic WYSIWYM Markdown Editor</strong>
+</p>
+<p align="center">
+  Add Traven editor to any website:
   LaTeX, table editor, image modal, shortcode system, custom Lezer extensions, 
   four skins, five demos, six toolbars, full documentation
 </p>

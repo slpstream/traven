@@ -25,13 +25,20 @@ export function openLinkModal(editor, triggerBtn) {
   const { from, to } = view.state.selection.main;
   const selectionText = from !== to ? view.state.sliceDoc(from, to) : "";
   if (selectionText) {
-    form.querySelector("#traven-link-text").value = selectionText;
+    const textInputEl = /** @type {HTMLInputElement} */ (form.querySelector("#traven-link-text"));
+    if (textInputEl) textInputEl.value = selectionText;
   }
 
   openModal({
     title: "Insert Link",
     body: form,
     triggerElement: triggerBtn,
+    onClose: () => {
+      const view = editor.getView();
+      if (view && typeof view.requestMeasure === "function") {
+        view.requestMeasure();
+      }
+    },
     buttons: [
       {
         text: "Cancel",
@@ -44,8 +51,8 @@ export function openLinkModal(editor, triggerBtn) {
         text: "Insert",
         type: "primary",
         onClick: (e, overlay) => {
-          const textInput = overlay.querySelector("#traven-link-text");
-          const urlInput = overlay.querySelector("#traven-link-url");
+          const textInput = /** @type {HTMLInputElement} */ (overlay.querySelector("#traven-link-text"));
+          const urlInput = /** @type {HTMLInputElement} */ (overlay.querySelector("#traven-link-url"));
           const text = textInput.value.trim() || "link";
           const url = urlInput.value.trim() || "#";
 
