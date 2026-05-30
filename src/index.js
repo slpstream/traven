@@ -122,6 +122,20 @@ function buildBaseSetup(options = {}) {
 }
 
 /**
+ * @typedef {Object} ComponentAttribute
+ * @property {string} name - Attribute name
+ * @property {string} type - Attribute type (e.g., "text", "boolean")
+ * @property {string} [label] - UI label
+ * @property {string} [placeholder] - Placeholder text
+ *
+ * @typedef {Object} ComponentSchema
+ * @property {string} name - Component name
+ * @property {ComponentAttribute[]} [attributes] - Defined attribute schemas
+ *
+ * @typedef {string | ComponentSchema} ComponentOption
+ */
+
+/**
  * @typedef {Object} TravenOptions
  * @property {HTMLElement} element - The DOM container to mount the editor in.
  * @property {HTMLElement} [sourceElement] - Optional container to mount the raw source editor in.
@@ -136,8 +150,13 @@ function buildBaseSetup(options = {}) {
  * @property {"light" | "dark"} [theme] - Visual style theme.
  * @property {string} [caretColor] - Configurable caret color override.
  * @property {Array<string>|boolean} [toolbar=false] - Toolbar configuration array or false.
- * @property {string[]} [components] - Pre-defined custom components options array.
+ * @property {ComponentOption[]} [components] - Pre-defined custom components options array.
  * @property {string|boolean} [componentsUrl="assets/components.json"] - URL/path to load components schema, or false.
+ * @property {any} [katex] - Configure/enable KaTeX math formatting option.
+ * @property {Object.<string, string>} [keybindings] - Custom keybindings map.
+ * @property {boolean} [readOnly] - Set editor to read-only mode.
+ * @property {boolean} [vimMode] - Enable Vim mode.
+ * @property {function({words: number, characters: number, readTime: number}): void} [onStatsUpdate] - Callback when stats are updated.
  */
 
 
@@ -152,7 +171,7 @@ export class TravenEditor {
   #options;
   /** @type {Function|null} */
   #customRenderer = null;
-  /** @type {string[]} */
+  /** @type {ComponentOption[]} */
   #components;
 
   /**
@@ -169,7 +188,7 @@ export class TravenEditor {
     if (options.components && Array.isArray(options.components) && options.components.length > 0) {
       this.#components = options.components;
     } else if (options.componentsUrl !== false) {
-      const url = options.componentsUrl || "assets/components.json";
+      const url = typeof options.componentsUrl === "string" ? options.componentsUrl : "assets/components.json";
       fetch(url)
         .then(res => {
           if (!res.ok) {
@@ -191,7 +210,7 @@ export class TravenEditor {
           }
         });
     }
-    
+
     // Configure KaTeX loading (e.g. from CDN if options.katex is set)
     configureKatex(options.katex);
     // Asynchronously ensure KaTeX resources are loaded
@@ -219,7 +238,7 @@ export class TravenEditor {
       wysiwymPlugin(),
       delimiterSkipKeymap(),
       imageDecorationPlugin(),
-      
+
       // Update listener to track doc changes and sync to raw editor
       EditorView.updateListener.of((update) => {
         if (update.docChanged) {
@@ -544,10 +563,10 @@ export class TravenEditor {
     const range = this.#view.state.selection.main;
     const hadSelection = !range.empty;
     let selectedText = this.#view.state.sliceDoc(range.from, range.to);
-    
+
     let lead = "";
     let tail = "";
-    
+
     if (hadSelection) {
       const matchLead = selectedText.match(/^(\s+)/);
       if (matchLead) {
@@ -560,7 +579,7 @@ export class TravenEditor {
         selectedText = selectedText.slice(0, selectedText.length - tail.length);
       }
     }
-    
+
     if (!selectedText && placeholder) {
       selectedText = placeholder;
     }
@@ -662,7 +681,7 @@ export class TravenEditor {
 
     for (let l = startLineNum; l <= endLineNum; l++) {
       const line = state.doc.line(l);
-      
+
       const lineSelStart = Math.max(line.from, range.from);
       const lineSelEnd = Math.min(line.to, range.to);
       let lineText = state.sliceDoc(lineSelStart, lineSelEnd);
@@ -719,7 +738,7 @@ export class TravenEditor {
    */
   toggleFullscreen() {
     const container = this.#view.dom.closest('.editor-wrapper')
-                   || this.#view.dom.parentElement;
+      || this.#view.dom.parentElement;
     container.classList.toggle('is-fullscreen');
     // Reflow CM's coordinate measurements after layout change
     this.#view.requestMeasure();
@@ -842,7 +861,7 @@ export class TravenEditor {
     const state = view.state;
     const { from, to } = state.selection.main;
 
-    const insertion = 
+    const insertion =
       `| Header 1 | Header 2 | Header 3 |\n` +
       `|----------|----------|----------|\n` +
       `| Cell 1   | Cell 2   | Cell 3   |\n` +
@@ -883,10 +902,10 @@ export class TravenEditor {
    * @param {number} level - Heading level (1 to 6).
    */
   setHeading(level) {
-    const view  = this.#view;
+    const view = this.#view;
     const state = view.state;
-    const pos   = state.selection.main.head;
-    const line  = state.doc.lineAt(pos);
+    const pos = state.selection.main.head;
+    const line = state.doc.lineAt(pos);
     const existingPrefix = line.text.match(/^(#{1,6}\s*)/)?.[0] || '';
 
     const prefix = level > 0 ? '#'.repeat(level) + ' ' : '';
@@ -1092,7 +1111,7 @@ export class TravenEditor {
 
   /**
    * Returns the list of component names.
-   * @returns {string[]}
+   * @returns {ComponentOption[]}
    */
   getComponents() {
     return this.#components;
@@ -1194,7 +1213,7 @@ export class TravenEditor {
       prevContent = content;
       content = content.replace(componentRegex, (match, tagName, attrsStr, body) => {
         const index = componentPlaceholders.length;
-        
+
         const attrs = {};
         if (tagName === "component" && attrsStr.startsWith("=")) {
           const valMatch = attrsStr.match(/^=\s*(?:"([^"]*)"|'([^']*)'|([^\s\]]+))/);
@@ -1207,7 +1226,7 @@ export class TravenEditor {
         while ((m = attrRegex.exec(attrsStr)) !== null) {
           attrs[m[1]] = m[2] !== undefined ? m[2] : (m[3] !== undefined ? m[3] : (m[4] || ""));
         }
-        
+
         let compName = attrs.name || "";
         if (!compName) {
           if (tagName === "quote" || tagName === "blockquote") {
@@ -1221,9 +1240,9 @@ export class TravenEditor {
         if (compName === "quote") {
           compName = "blockquote";
         }
-        
+
         const compiledBody = this.#fallbackRender(body);
-        
+
         let rendered = "";
         if (compName === "blockquote") {
           const author = attrs.author || "";
@@ -1244,12 +1263,12 @@ export class TravenEditor {
         } else {
           rendered = `<div class="traven-component traven-component-${compName}">${compiledBody}</div>`;
         }
-        
+
         componentPlaceholders.push(rendered);
         return `\n\nCOMPONENT-PLACEHOLDER-INDEX-${index}\n\n`;
       });
     } while (content !== prevContent);
-    
+
     // Extract fenced code blocks to avoid splitting them on empty lines or parsing inline elements inside
     const codeBlocks = [];
     content = content.replace(/^```\s*([a-zA-Z0-9_\-]*)([^\r\n]*)\r?\n([\s\S]*?)\r?\n```\s*$/gm, (match, lang, meta, code) => {
@@ -1269,8 +1288,8 @@ export class TravenEditor {
     content = content.replace(/(?<!\\)\$\$([\s\S]*?)(?<!\\)\$\$/g, (match, math) => {
       const index = mathBlocks.length;
       let rendered = "";
-      if (typeof window !== "undefined" && window.katex) {
-        rendered = window.katex.renderToString(math, { displayMode: true, throwOnError: false });
+      if (typeof window !== "undefined" && window["katex"]) {
+        rendered = window["katex"].renderToString(math, { displayMode: true, throwOnError: false });
       } else {
         rendered = `<div class="katex-display-fallback">$$${math}$$</div>`;
       }
@@ -1282,8 +1301,8 @@ export class TravenEditor {
     content = content.replace(/(?<!\\)\$((?!\s)[^\$\n\r]+?(?<!\s)(?<!\\))\$/g, (match, math) => {
       const index = mathBlocks.length;
       let rendered = "";
-      if (typeof window !== "undefined" && window.katex) {
-        rendered = window.katex.renderToString(math, { displayMode: false, throwOnError: false });
+      if (typeof window !== "undefined" && window["katex"]) {
+        rendered = window["katex"].renderToString(math, { displayMode: false, throwOnError: false });
       } else {
         rendered = `<span class="katex-inline-fallback">$${math}$</span>`;
       }
@@ -1365,7 +1384,7 @@ export class TravenEditor {
     content = content.replace(/^##### (.*?)$/gm, "<h5>$1</h5>");
     content = content.replace(/^###### (.*?)$/gm, "<h6>$1</h6>");
     content = content.replace(/^(\-\-\-|\*\*\*|\_\_\_)$/gm, "<hr>");
-    
+
     // 4. Convert blockquotes (restore escaped gt)
     content = content.replace(/^&gt; (.*?)$/gm, "<blockquote>$1</blockquote>");
 
@@ -1450,10 +1469,10 @@ export class TravenEditor {
     // 5. Convert lists using an HTML5-compliant state-machine parser
     const listStack = [];
     const getIndentLength = (str) => str.replace(/\t/g, "    ").length;
-    
+
     const lines = content.split("\n");
     const processedLines = [];
-    
+
     for (const line of lines) {
       const listMatch = line.match(/^(\s*)(?:([-*+])|(\d+)\.)\s+(.*)$/);
       if (listMatch) {
@@ -1462,7 +1481,7 @@ export class TravenEditor {
         const isOrdered = !!listMatch[3];
         const type = isOrdered ? "ol" : "ul";
         const rest = listMatch[4];
-        
+
         // Parse checkboxes/task lists
         let checkboxHtml = "";
         let itemContent = rest;
@@ -1472,7 +1491,7 @@ export class TravenEditor {
           checkboxHtml = `<input type="checkbox" disabled${checked ? " checked" : ""}> `;
           itemContent = taskMatch[2];
         }
-        
+
         if (listStack.length === 0) {
           // Open new outer list
           listStack.push({ type, indent, hasOpenItem: true });
@@ -1494,7 +1513,7 @@ export class TravenEditor {
               }
               processedLines.push(`</${popped.type}>`);
             }
-            
+
             if (listStack.length === 0) {
               listStack.push({ type, indent, hasOpenItem: true });
               processedLines.push(`<${type}>`);
@@ -1534,7 +1553,7 @@ export class TravenEditor {
         processedLines.push(line);
       }
     }
-    
+
     // Close any remaining list tags at end of content
     while (listStack.length > 0) {
       const popped = listStack.pop();
@@ -1581,12 +1600,12 @@ export class TravenEditor {
     const htmlBlocks = blocks.map(block => {
       const trimmed = block.trim();
       if (!trimmed) return "";
-      
+
       // If it's a code block placeholder, don't wrap in <p>
       if (trimmed.startsWith("CODEBLOCKPLACEHOLDER")) {
         return trimmed;
       }
-      
+
       // If it's a display math placeholder, don't wrap in <p>
       if (trimmed.startsWith("MATHBLOCKPLACEHOLDER")) {
         const idx = parseInt(trimmed.substring("MATHBLOCKPLACEHOLDER".length));
@@ -1599,7 +1618,7 @@ export class TravenEditor {
       if (trimmed.startsWith("COMPONENT-PLACEHOLDER-INDEX-")) {
         return trimmed;
       }
-      
+
       // If it's already an HTML block tag, image, or hr, don't wrap in <p>
       if (/^<(h[1-6]|blockquote|ul|ol|li|img|hr|table|pre|figure)/i.test(trimmed)) {
         return trimmed;

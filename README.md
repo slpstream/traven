@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <strong>A standalone, lightweight, framework-agnostic WYSIWYM Markdown Editor</strong>
+  <strong>A standalone, lightweight, framework-agnostic WYSIWYM Markdown Editor</strong><br>
   LaTeX, table editor, image modal, shortcode system, custom Lezer extensions, 
   four skins, five demos, six toolbars, full documentation
 </p>
