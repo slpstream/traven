@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * Sanitizes a URL to prevent javascript: or other dangerous protocol injections.
  * Allows safe protocols (http, https, mailto, tel), relative paths, hash anchors, and blog slugs.

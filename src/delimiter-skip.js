@@ -1,3 +1,4 @@
+// @ts-check
 import { keymap, EditorView } from "@codemirror/view";
 import { syntaxTree } from "@codemirror/language";
 import { setSuppression, clearSuppression } from "./wysiwym.js";

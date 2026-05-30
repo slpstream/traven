@@ -1,3 +1,4 @@
+// @ts-check
 export { openModal } from "./modal-base.js";
 export { openLinkModal } from "./modal-link.js";
 export { openImageModal } from "./modal-image.js";

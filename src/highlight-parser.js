@@ -1,3 +1,4 @@
+// @ts-check
 import { tags } from "@lezer/highlight";
 
 // Punctuation regex (not exported by @lezer/markdown, so we inline it)

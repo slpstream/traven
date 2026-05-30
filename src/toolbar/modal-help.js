@@ -1,3 +1,4 @@
+// @ts-check
 import { openModal } from "./modal-base.js";
 
 /**

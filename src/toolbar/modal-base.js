@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * Traven generic, accessible modal system.
  * Handles overlay creation, focus trapping, Escape key listener, and focus restoration.

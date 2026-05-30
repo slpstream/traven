@@ -1,3 +1,4 @@
+// @ts-check
 import { openModal } from "./modal-base.js";
 
 // Small SVG icons for the table toolbar buttons

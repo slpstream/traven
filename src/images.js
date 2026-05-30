@@ -1,3 +1,4 @@
+// @ts-check
 import { EditorView, WidgetType, Decoration } from "@codemirror/view";
 import { RangeSetBuilder, StateField } from "@codemirror/state";
 import { syntaxTree } from "@codemirror/language";

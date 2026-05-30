@@ -1,3 +1,4 @@
+// @ts-check
 import { syntaxTree } from "@codemirror/language";
 import { RangeSetBuilder, StateField, StateEffect } from "@codemirror/state";
 import {

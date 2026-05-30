@@ -1,3 +1,4 @@
+// @ts-check
 import { openLinkModal, openImageModal, openHelpModal, openTableModal, openComponentModal } from "./modal.js";
 
 export const TOOL_REGISTRY = {

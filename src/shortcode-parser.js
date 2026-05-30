@@ -1,3 +1,4 @@
+// @ts-check
 import { tags } from "@lezer/highlight";
 
 export const Shortcode = {

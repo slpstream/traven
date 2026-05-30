@@ -1,3 +1,4 @@
+// @ts-check
 import { EditorState, Annotation, Prec, Compartment } from "@codemirror/state";
 import {
   EditorView,
@@ -184,7 +185,10 @@ export class TravenEditor {
           }
         })
         .catch(err => {
-          console.warn(`Failed to fetch component schema from ${url}. Falling back to default presets:`, err);
+          const isDefaultUrlParseError = !options.componentsUrl && (err instanceof TypeError || (err && err.name === 'TypeError'));
+          if (!isDefaultUrlParseError) {
+            console.warn(`Failed to fetch component schema from ${url}. Falling back to default presets:`, err);
+          }
         });
     }
     
