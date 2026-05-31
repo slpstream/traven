@@ -187,17 +187,46 @@
   margin: 0;
 }
 
-/* Blockquotes - indented with a discreet gray vertical side marker pipe */
+/* Blockquotes - indented with a rust vertical side marker pipe */
 .cm-editor .cm-wysiwym-blockquote {
-  border-left: 3px solid #cbd5e1;
-  padding-left: 16px;
-  margin: 4px 0;
+  border-left: 3px solid #cc4a0a;
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
+  padding-left: 16px !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  position: relative;
+}
+
+/* First line of a blockquote block gets padding-top */
+.cm-editor .cm-wysiwym-blockquote {
+  padding-top: 10px !important;
+}
+
+/* Subsequent lines of a blockquote block should not have top padding */
+.cm-editor .cm-wysiwym-blockquote + .cm-wysiwym-blockquote {
+  padding-top: 2px !important;
+}
+
+/* Last line of a blockquote block gets padding-bottom */
+.cm-editor .cm-wysiwym-blockquote:not(:has(+ .cm-wysiwym-blockquote)) {
+  padding-bottom: 10px !important;
 }
 
 .cm-editor .cm-wysiwym-blockquote,
 .cm-editor .cm-wysiwym-blockquote * {
   font-style: italic;
-  color: #475569;
+  color: #cc4a0a;
+  line-height: 1.5 !important;
+}
+
+/* Reduce blank line spacing immediately before and after blockquotes */
+.cm-editor .cm-wysiwym-blockquote:not(:has(+ .cm-wysiwym-blockquote)) + .cm-line:has(br:only-child),
+.cm-editor .cm-line:has(br:only-child):has(+ .cm-wysiwym-blockquote) {
+  height: 0.6em !important;
+  min-height: 0.6em !important;
 }
 
 /* YAML Frontmatter blocks styled as elegant rails with monospace text */
@@ -885,12 +914,60 @@
   margin-bottom: 16px;
   line-height: 1.75;
 }
-.traven-preview blockquote {
-  border-left: 3px solid #cbd5e1;
-  padding-left: 14px;
-  margin: 16px 0;
+.traven-preview blockquote:not(.traven-component-pullquote) {
+  border-left: 3px solid #cc4a0a;
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  position: relative;
+}
+
+/* First line of a blockquote block gets padding-top */
+.traven-preview blockquote:not(.traven-component-pullquote) {
+  padding-top: 10px !important;
+}
+
+/* Subsequent consecutive blockquotes should not have top padding */
+.traven-preview blockquote:not(.traven-component-pullquote) + blockquote:not(.traven-component-pullquote) {
+  padding-top: 2px !important;
+}
+
+/* Last line of a blockquote block gets padding-bottom */
+.traven-preview blockquote:not(.traven-component-pullquote):not(:has(+ blockquote:not(.traven-component-pullquote))) {
+  padding-bottom: 10px !important;
+}
+
+.traven-preview blockquote:not(.traven-component-pullquote),
+.traven-preview blockquote:not(.traven-component-pullquote) * {
   font-style: italic;
-  color: #475569;
+  color: #cc4a0a;
+  line-height: 1.5 !important;
+}
+
+.traven-preview blockquote:not(.traven-component-pullquote) p:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* Reduce spacing around blockquotes in HTML Preview to match editor */
+.traven-preview p:has(+ blockquote:not(.traven-component-pullquote)),
+.traven-preview ul:has(+ blockquote:not(.traven-component-pullquote)),
+.traven-preview ol:has(+ blockquote:not(.traven-component-pullquote)),
+.traven-preview pre:has(+ blockquote:not(.traven-component-pullquote)),
+.traven-preview table:has(+ blockquote:not(.traven-component-pullquote)) {
+  margin-bottom: 0.6em !important;
+}
+
+.traven-preview blockquote:not(.traven-component-pullquote) + p,
+.traven-preview blockquote:not(.traven-component-pullquote) + ul,
+.traven-preview blockquote:not(.traven-component-pullquote) + ol,
+.traven-preview blockquote:not(.traven-component-pullquote) + pre,
+.traven-preview blockquote:not(.traven-component-pullquote) + table {
+  margin-top: 0.6em !important;
 }
 .traven-preview ul, 
 .traven-preview ol {
@@ -1134,16 +1211,104 @@
   font-style: italic;
   color: #cc4a0a;
 }
+
 .cm-wysiwym-component-shortcode.component-pullquote {
-  border-left: none;
-  border-top: 2px solid #cc4a0a;
-  border-bottom: 2px solid #cc4a0a;
-  padding: 40px 24px !important;
+  border-left: none !important;
+  border-top: 2px solid #cc4a0a !important;
+  border-bottom: 2px solid #cc4a0a !important;
+  padding: 24px 16px !important;
   margin: 0 !important;
-  font-size: 1.15em;
-  font-weight: 500;
+  font-size: 1.2em !important;
+  font-weight: bold;
   text-align: center;
   color: #cc4a0a;
+  background-color: transparent !important;
+  line-height: 1.5 !important;
+}
+.cm-wysiwym-component-shortcode.component-pullquote,
+.cm-wysiwym-component-shortcode.component-pullquote * {
+  line-height: 1.5 !important;
+}
+.cm-wysiwym-component-shortcode.component-pullquote blockquote {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.cm-wysiwym-component-shortcode.component-blockquote {
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+.cm-wysiwym-component-shortcode.component-blockquote blockquote {
+  border-left: 3px solid #cc4a0a !important;
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  position: relative;
+  font-style: italic;
+  color: #cc4a0a;
+}
+.cm-wysiwym-component-shortcode.component-blockquote blockquote,
+.cm-wysiwym-component-shortcode.component-blockquote blockquote * {
+  line-height: 1.5 !important;
+}
+.cm-wysiwym-component-shortcode.component-blockquote cite {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.85em;
+  color: #cc4a0a;
+  font-style: normal;
+  text-align: right;
+}
+
+/* Reduce blank line spacing immediately before and after blockquote components */
+.cm-editor .cm-wysiwym-component-shortcode.component-blockquote + .cm-line:has(br:only-child),
+.cm-editor .cm-line:has(br:only-child):has(+ .cm-wysiwym-component-shortcode.component-blockquote) {
+  height: 0.6em !important;
+  min-height: 0.6em !important;
+}
+
+.cm-wysiwym-component-shortcode.component-info {
+  border: 1px solid #e0f2fe !important;
+  border-left: 4px solid #0ea5e9 !important;
+  border-radius: 8px !important;
+  background-color: #f0f9ff !important;
+  color: #1e293b !important;
+  padding: 16px !important;
+  margin: 0 !important;
+}
+.cm-wysiwym-component-shortcode.component-info .component-body p {
+  font-size: 16px !important;
+  line-height: 1.5 !important;
+  margin: 0 !important;
+}
+.cm-wysiwym-component-shortcode.component-info .component-body p:not(:last-child) {
+  margin-bottom: 8px !important;
+}
+
+.cm-wysiwym-component-shortcode.component-warning {
+  border: 1px solid #ffedd5 !important;
+  border-left: 4px solid #f97316 !important;
+  border-radius: 8px !important;
+  background-color: #fff7ed !important;
+  color: #1e293b !important;
+  padding: 16px !important;
+  margin: 0 !important;
+}
+.cm-wysiwym-component-shortcode.component-warning .component-body p {
+  font-size: 16px !important;
+  line-height: 1.5 !important;
+  font-weight: bold !important;
+  margin: 0 !important;
+}
+.cm-wysiwym-component-shortcode.component-warning .component-body p:not(:last-child) {
+  margin-bottom: 8px !important;
 }
 
 /* Edit icon on hover for Component Shortcodes */
@@ -1171,35 +1336,122 @@
 
 /* Fallback Preview Block Component Styles */
 .traven-preview .traven-component-blockquote {
-  border-left: 4px solid #cbd5e1;
-  padding-left: 16px;
-  margin: 16px 0;
-  color: #475569;
-  font-style: normal;
+  border-left: 3px solid #cc4a0a !important;
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  position: relative;
+  font-style: italic;
+  color: #cc4a0a;
+}
+.traven-preview .traven-component-blockquote,
+.traven-preview .traven-component-blockquote * {
+  line-height: 1.5 !important;
+}
+.traven-preview .traven-component-blockquote p {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+.traven-preview .traven-component-blockquote p:not(:last-of-type) {
+  margin-bottom: 8px !important;
 }
 .traven-preview .traven-component-blockquote footer {
-  margin-top: 8px;
+  margin-top: 4px;
+  text-align: right;
 }
 .traven-preview .traven-component-blockquote cite {
-  font-style: italic;
-  font-size: 0.9em;
-  color: #64748b;
+  display: block;
+  font-size: 0.85em;
+  color: #cc4a0a;
+  font-style: normal;
 }
+
+/* Reduce spacing around blockquote components in HTML Preview to match editor */
+.traven-preview p:has(+ .traven-component-blockquote),
+.traven-preview ul:has(+ .traven-component-blockquote),
+.traven-preview ol:has(+ .traven-component-blockquote),
+.traven-preview pre:has(+ .traven-component-blockquote),
+.traven-preview table:has(+ .traven-component-blockquote) {
+  margin-bottom: 0.6em !important;
+}
+.traven-preview .traven-component-blockquote + p,
+.traven-preview .traven-component-blockquote + ul,
+.traven-preview .traven-component-blockquote + ol,
+.traven-preview .traven-component-blockquote + pre,
+.traven-preview .traven-component-blockquote + table {
+  margin-top: 0.6em !important;
+}
+
 .traven-preview .traven-component-pullquote {
-  border-top: 2px solid #cbd5e1;
-  border-bottom: 2px solid #cbd5e1;
-  padding: 16px 0;
-  margin: 24px 0;
-  font-size: 1.15em;
+  border-top: 2px solid #cc4a0a !important;
+  border-bottom: 2px solid #cc4a0a !important;
+  padding: 24px 0 !important;
+  margin: 24px 0 !important;
+  font-size: 1.2em !important;
+  font-weight: bold !important;
+  font-style: normal !important;
   text-align: center;
-  color: #0f172a;
+  color: #cc4a0a;
+  background-color: transparent !important;
+  line-height: 1.5 !important;
 }
+.traven-preview .traven-component-pullquote,
+.traven-preview .traven-component-pullquote * {
+  line-height: 1.5 !important;
+  font-style: normal !important;
+  font-weight: bold !important;
+}
+.traven-preview .traven-component-pullquote p {
+  margin: 0 !important;
+}
+
 .traven-preview .traven-component {
   border: 1px solid #e2e8f0;
   background-color: #f8fafc;
   padding: 16px;
   border-radius: 8px;
   margin: 16px 0;
+}
+.traven-preview .traven-component-info {
+  border: 1px solid #e0f2fe !important;
+  border-left: 4px solid #0ea5e9 !important;
+  border-radius: 8px !important;
+  background-color: #f0f9ff !important;
+  color: #1e293b !important;
+  padding: 16px !important;
+  margin: 16px 0 !important;
+}
+.traven-preview .traven-component-info p {
+  font-size: 16px !important;
+  line-height: 1.5 !important;
+  margin: 0 !important;
+}
+.traven-preview .traven-component-info p:not(:last-child) {
+  margin-bottom: 8px !important;
+}
+
+.traven-preview .traven-component-warning {
+  border: 1px solid #ffedd5 !important;
+  border-left: 4px solid #f97316 !important;
+  border-radius: 8px !important;
+  background-color: #fff7ed !important;
+  color: #1e293b !important;
+  padding: 16px !important;
+  margin: 16px 0 !important;
+}
+.traven-preview .traven-component-warning p {
+  font-size: 16px !important;
+  line-height: 1.5 !important;
+  font-weight: bold !important;
+  margin: 0 !important;
+}
+.traven-preview .traven-component-warning p:not(:last-child) {
+  margin-bottom: 8px !important;
 }
 
 /* Dark Mode overrides for WYSIWYM Component Shortcodes */
@@ -1208,15 +1460,33 @@
   background-color: #27272a !important;
   color: #e4e4e7 !important;
 }
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-component-shortcode.component-blockquote blockquote {
+  border-left-color: #4f46e5 !important;
+  color: #e4e4e7 !important;
+}
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-component-shortcode.component-blockquote cite {
+  color: #a1a1aa !important;
+}
 .cm-editor.cm-wysiwym-dark .cm-wysiwym-component-shortcode.component-pullquote {
   border-top-color: #4f46e5 !important;
   border-bottom-color: #4f46e5 !important;
   color: #fafafa !important;
 }
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-component-shortcode.component-info {
+  border-color: #3730a3 !important;
+  background-color: rgba(99, 102, 241, 0.1) !important;
+  border-left-color: #6366f1 !important;
+  color: #e4e4e7 !important;
+}
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-component-shortcode.component-warning {
+  border-color: #7c2d12 !important;
+  background-color: rgba(249, 115, 22, 0.1) !important;
+  border-left-color: #f97316 !important;
+  color: #e4e4e7 !important;
+}
 .cm-editor.cm-wysiwym-dark .cm-wysiwym-component-shortcode cite {
   color: #a1a1aa !important;
 }
-
 .cm-editor.cm-wysiwym-dark .cm-wysiwym-component-shortcode .image-edit-icon {
   background-color: rgba(39, 39, 42, 0.9) !important;
   border-color: #3f3f46 !important;
@@ -1226,15 +1496,27 @@
 /* Dark Mode overrides for Preview Component Shortcodes */
 .traven-preview.cm-wysiwym-dark .traven-component-blockquote {
   border-left-color: #4f46e5 !important;
-  color: #a1a1aa !important;
+  color: #e4e4e7 !important;
 }
 .traven-preview.cm-wysiwym-dark .traven-component-blockquote cite {
-  color: #8c7f70 !important;
+  color: #a1a1aa !important;
 }
 .traven-preview.cm-wysiwym-dark .traven-component-pullquote {
   border-top-color: #4f46e5 !important;
   border-bottom-color: #4f46e5 !important;
   color: #fafafa !important;
+}
+.traven-preview.cm-wysiwym-dark .traven-component-info {
+  border-color: #3730a3 !important;
+  background-color: rgba(99, 102, 241, 0.1) !important;
+  color: #e4e4e7 !important;
+  border-left-color: #6366f1 !important;
+}
+.traven-preview.cm-wysiwym-dark .traven-component-warning {
+  border-color: #7c2d12 !important;
+  background-color: rgba(249, 115, 22, 0.1) !important;
+  color: #e4e4e7 !important;
+  border-left-color: #f97316 !important;
 }
 .traven-preview.cm-wysiwym-dark .traven-component {
   border-color: #3f3f46 !important;
