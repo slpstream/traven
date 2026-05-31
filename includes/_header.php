@@ -11,7 +11,7 @@
 
 <header>
   <div class="brand-section">
-    <a href="https://traven.dev/" style="display: flex; align-items: center; text-decoration: none;">
+    <a href="index.php" style="display: flex; align-items: center; text-decoration: none;">
       <div class="logo-container">
         <?php readfile('assets/images/traven-wordmark.svg'); ?>
       </div>

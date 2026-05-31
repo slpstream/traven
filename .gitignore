@@ -12,8 +12,8 @@ Thumbs.db
 # Local playground / Scratch files
 scratch/
 
-# Marketing landing page (kept out of repository)
-index.php
+# Marketing website (kept out of repository)
+website/
 assets/images/traven_og.jpg
 
 # Ignored private documents

@@ -260,7 +260,7 @@
   </div>
 
   <!-- Return to traven.dev wordmark -->
-  <a href="https://traven.dev" class="write-brand" title="Return to Traven homepage">
+  <a href="index.php" class="write-brand" title="Return to Traven homepage">
     <img src="assets/images/traven.png" alt="Traven logo">
   </a>
 
