@@ -138,10 +138,10 @@ export function serializeTableToMarkdown(headers, rows, alignments) {
  *
  * @param {Object} options
  * @param {Object} options.editor - The TravenEditor instance.
- * @param {{ headers: string[], alignments: (string|null)[], rows: string[][] } | null} options.tableData
+ * @param {{ headers: string[], alignments: (string|null)[], rows: string[][] } | null} [options.tableData]
  *   Parsed table data. If null, a default 3×2 empty table is created.
- * @param {number|null} options.docFrom - Document start position of the existing table (null for new).
- * @param {number|null} options.docTo - Document end position of the existing table (null for new).
+ * @param {number|null} [options.docFrom] - Document start position of the existing table (null for new).
+ * @param {number|null} [options.docTo] - Document end position of the existing table (null for new).
  * @param {HTMLElement} [options.triggerElement] - The button that triggered the modal.
  */
 export function openTableModal({ editor, tableData = null, docFrom = null, docTo = null, triggerElement = null }) {

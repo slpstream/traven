@@ -1,5 +1,6 @@
 // @ts-check
 import { keymap, EditorView } from "@codemirror/view";
+import { EditorState } from "@codemirror/state";
 import { syntaxTree } from "@codemirror/language";
 import { setSuppression, clearSuppression } from "./wysiwym.js";
 
@@ -231,6 +232,27 @@ function findSkipTarget(state, cursor, direction) {
           }
         }
       }
+      // 9b. VideoShortcode delimiters [video ...]
+      if (node.name === "VideoShortcode") {
+        const openEnd = node.from + 7; // after "[video "
+        const closeStart = node.to - 1; // before "]"
+
+        if (direction === "right") {
+          if (cursor >= node.from && cursor < openEnd) {
+            best = { target: Math.min(node.to, openEnd), suppressRange: null };
+          }
+          if (cursor >= closeStart && cursor < node.to) {
+            best = { target: node.to, suppressRange: null };
+          }
+        } else {
+          if (cursor > closeStart && cursor <= node.to) {
+            best = { target: Math.max(node.from, closeStart), suppressRange: null };
+          }
+          if (cursor > node.from && cursor <= openEnd) {
+            best = { target: node.from, suppressRange: null };
+          }
+        }
+      }
       // 10. ComponentShortcode delimiters: skip over [component ...] and [/component]
       if (node.name === "ComponentShortcode") {
         let openEnd = null;
@@ -273,7 +295,7 @@ function findSkipTarget(state, cursor, direction) {
  * delimiter boundaries in a single arrow keypress (handles nested syntax
  * like **_text_**, ~~**text**~~, etc.)
  */
-function skipDelimiter(view, direction) {
+export function skipDelimiter(view, direction) {
   const { state } = view;
   const originalCursor = state.selection.main.head;
   let cursor = originalCursor;

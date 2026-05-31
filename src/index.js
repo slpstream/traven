@@ -30,6 +30,7 @@ import { markdown } from "@codemirror/lang-markdown";
 import { Strikethrough, TaskList, Table, Autolink } from "@lezer/markdown";
 import { Highlight } from "./highlight-parser.js";
 import { Shortcode } from "./shortcode-parser.js";
+import { VideoShortcode } from "./video-parser.js";
 import { ComponentShortcode } from "./component-parser.js";
 import { MathExtension, ensureKatex, configureKatex } from "./math-parser.js";
 import { yamlFrontmatter } from "@codemirror/lang-yaml";
@@ -42,7 +43,7 @@ import { delimiterSkipKeymap } from "./delimiter-skip.js";
 import { imageDecorationPlugin, imageHandlerExtension } from "./images.js";
 import { vim } from "@replit/codemirror-vim";
 import { viewToEditor } from "./bridge.js";
-import { sanitizeUrl } from "./security.js";
+import { sanitizeUrl, parseVideoUrl } from "./security.js";
 import DEFAULT_COMPONENTS from "./components-default.json";
 import "./style.css";
 
@@ -75,6 +76,7 @@ export const DEFAULT_TOOLBAR = [
   "search",
   "link",
   "image",
+  "video",
   "fullscreen",
   "clear",
   "uppercase",
@@ -234,7 +236,7 @@ export class TravenEditor {
       }),
       ...(wrapLines ? [EditorView.lineWrapping] : []),
       readOnlyCompartment.of(EditorState.readOnly.of(!!options.readOnly)),
-      yamlFrontmatter({ content: markdown({ extensions: [Strikethrough, TaskList, Table, Autolink, Highlight, Shortcode, ComponentShortcode, MathExtension, { remove: ["SetextHeading"] }] }) }),
+      yamlFrontmatter({ content: markdown({ extensions: [Strikethrough, TaskList, Table, Autolink, Highlight, Shortcode, VideoShortcode, ComponentShortcode, MathExtension, { remove: ["SetextHeading"] }] }) }),
       wysiwymPlugin(),
       delimiterSkipKeymap(),
       imageDecorationPlugin(),
@@ -1328,6 +1330,12 @@ export class TravenEditor {
       return `__IMAGE_SHORTCODE_PLACEHOLDER_${index}__`;
     });
 
+    content = content.replace(/(\[video\s+[^\]]+\])/g, (match) => {
+      const index = shortcodePlaceholders.length;
+      shortcodePlaceholders.push(match);
+      return `__VIDEO_SHORTCODE_PLACEHOLDER_${index}__`;
+    });
+
     const linkPlaceholders = [];
     content = content.replace(/(!?\[[^\]]*\]\([^)]+\))/g, (match) => {
       const index = linkPlaceholders.length;
@@ -1364,6 +1372,9 @@ export class TravenEditor {
       return linkPlaceholders[parseInt(index)];
     });
     content = content.replace(/__IMAGE_SHORTCODE_PLACEHOLDER_(\d+)__/g, (match, index) => {
+      return shortcodePlaceholders[parseInt(index)];
+    });
+    content = content.replace(/__VIDEO_SHORTCODE_PLACEHOLDER_(\d+)__/g, (match, index) => {
       return shortcodePlaceholders[parseInt(index)];
     });
     content = content.replace(/__INLINE_CODE_PLACEHOLDER_(\d+)__/g, (match, index) => {
@@ -1583,6 +1594,36 @@ export class TravenEditor {
         return `<figure class="traven-image-figure align-${align} size-${size}${customClass}"><img src="${src}" alt="${alt}" class="traven-image-shortcode"><figcaption class="traven-image-caption">${caption}</figcaption></figure>`;
       } else {
         return `<img src="${src}" alt="${alt}" class="traven-image-shortcode align-${align} size-${size}${customClass}">`;
+      }
+    });
+
+    content = content.replace(/\[video\s+([^\]]+)\]/g, (match, attrsStr) => {
+      const attrs = {};
+      const attrRegex = /([a-zA-Z0-9_-]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=]+))/g;
+      let m;
+      while ((m = attrRegex.exec(attrsStr)) !== null) {
+        attrs[m[1]] = m[2] !== undefined ? m[2] : (m[3] !== undefined ? m[3] : (m[4] || ""));
+      }
+      const src = sanitizeUrl(attrs.src || "");
+      const caption = attrs.caption || "";
+      const align = attrs.align || "center";
+      const size = attrs.size || "medium";
+      const customClass = attrs.class ? ` ${attrs.class}` : "";
+
+      const parsed = parseVideoUrl(src);
+      let videoHtml = "";
+      if (parsed.platform === "youtube") {
+        videoHtml = `<iframe src="https://www.youtube.com/embed/${parsed.id}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+      } else if (parsed.platform === "vimeo") {
+        videoHtml = `<iframe src="https://player.vimeo.com/video/${parsed.id}" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
+      } else {
+        videoHtml = `<video src="${src}" controls></video>`;
+      }
+
+      if (caption) {
+        return `<figure class="traven-video-figure align-${align} size-${size}${customClass}"><div class="traven-video-container">${videoHtml}</div><figcaption class="traven-video-caption">${caption}</figcaption></figure>`;
+      } else {
+        return `<div class="traven-video-container align-${align} size-${size}${customClass}">${videoHtml}</div>`;
       }
     });
     content = content.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, src) => `<img src="${sanitizeUrl(src)}" alt="${alt}" class="traven-image-shortcode align-center size-medium">`);

@@ -9,8 +9,8 @@ import {
   WidgetType
 } from "@codemirror/view";
 import { viewToEditor } from "./bridge.js";
-import { parseMarkdownTable, openTableModal, openImageModal, openComponentModal } from "./toolbar/modal.js";
-import { sanitizeUrl } from "./security.js";
+import { parseMarkdownTable, openTableModal, openImageModal, openComponentModal, openVideoModal } from "./toolbar/modal.js";
+import { sanitizeUrl, parseVideoUrl } from "./security.js";
 import { ensureKatex } from "./math-parser.js";
 
 // --- Custom Widget Types ---
@@ -42,7 +42,7 @@ class MathWidget extends WidgetType {
       }
     });
 
-    if (!window.katex) {
+    if (!window["katex"]) {
       wrapper.textContent = (this.isBlock ? "$$" : "$") + this.math + (this.isBlock ? "$$" : "$");
       ensureKatex().then(() => {
         if (view && !view.destroyed) {
@@ -195,7 +195,8 @@ class TableWidget extends WidgetType {
     const tableText = this.tableText;
     container.addEventListener("mousedown", (e) => {
       // If user clicked a link, let the browser open it
-      if (e.target.closest("a")) {
+      const target = /** @type {Element} */ (e.target);
+      if (target.closest("a")) {
         return;
       }
       e.preventDefault();
@@ -339,13 +340,126 @@ class ImageShortcodeWidget extends WidgetType {
       this.attrs.caption === other.attrs.caption &&
       this.attrs.align === other.attrs.align &&
       this.attrs.size === other.attrs.size &&
-      this.attrs.alt === other.attrs.alt &&
       this.attrs.class === other.attrs.class
     );
   }
 
   ignoreEvent() { return false; }
 }
+
+class VideoShortcodeWidget extends WidgetType {
+  constructor(attrs, nodeFrom, rawText) {
+    super();
+    this.attrs = attrs;
+    this.nodeFrom = nodeFrom;
+    this.rawText = rawText;
+  }
+
+  toDOM(view) {
+    const container = document.createElement("div");
+    container.className = "cm-wysiwym-video-shortcode-container";
+
+    if (this.rawText) {
+      container.title = this.rawText;
+    }
+
+    const src = this.attrs.src || "";
+    const caption = this.attrs.caption || "";
+    const align = this.attrs.align || "center";
+    const size = this.attrs.size || "medium";
+    const customClass = this.attrs.class || "";
+
+    container.classList.add(`align-${align}`);
+    container.classList.add(`size-${size}`);
+    if (customClass) {
+      customClass.split(/\s+/).forEach(c => {
+        if (c) container.classList.add(c);
+      });
+    }
+
+    // Platform Badge & Placeholder Card
+    const placeholderCard = document.createElement("div");
+    placeholderCard.className = "video-placeholder";
+
+    const parsed = parseVideoUrl(src);
+    let platformLabel = "Video";
+    let iconSvg = `<svg class="play-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>`;
+    
+    if (parsed.platform === "youtube") {
+      platformLabel = "YouTube";
+    } else if (parsed.platform === "vimeo") {
+      platformLabel = "Vimeo";
+    } else if (parsed.platform === "native") {
+      platformLabel = "Video File";
+    }
+
+    placeholderCard.innerHTML = `
+      <div class="video-placeholder-icon-wrap">
+        ${iconSvg}
+      </div>
+      <div class="video-placeholder-details">
+        <span class="video-placeholder-platform">${platformLabel}</span>
+        <span class="video-placeholder-url">${src || "No source URL"}</span>
+      </div>
+    `;
+
+    container.appendChild(placeholderCard);
+
+    const metaRow = document.createElement("div");
+    metaRow.className = "shortcode-meta";
+
+    if (caption) {
+      const captionText = document.createElement("span");
+      captionText.className = "meta-caption";
+      captionText.textContent = caption;
+      metaRow.appendChild(captionText);
+    }
+
+    if (metaRow.childNodes.length > 0) {
+      container.appendChild(metaRow);
+    }
+
+    const editIcon = document.createElement("div");
+    editIcon.className = "video-edit-icon";
+    editIcon.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`;
+    container.appendChild(editIcon);
+
+    // Mousedown listener to open Video Modal for editing
+    container.addEventListener("mousedown", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const editor = viewToEditor.get(view);
+      if (editor) {
+        openVideoModal({
+          editor,
+          triggerElement: container,
+          docFrom: this.nodeFrom,
+          docTo: this.nodeFrom + this.rawText.length,
+          attrs: this.attrs,
+          isAdvancedMode: true
+        });
+      }
+    });
+
+    return container;
+  }
+
+  eq(other) {
+    return (
+      other instanceof VideoShortcodeWidget &&
+      this.nodeFrom === other.nodeFrom &&
+      this.rawText === other.rawText &&
+      this.attrs.src === other.attrs.src &&
+      this.attrs.caption === other.attrs.caption &&
+      this.attrs.align === other.attrs.align &&
+      this.attrs.size === other.attrs.size &&
+      this.attrs.class === other.attrs.class
+    );
+  }
+
+  ignoreEvent() { return false; }
+}
+
 
 class ComponentShortcodeWidget extends WidgetType {
   constructor(attrs, nodeFrom, bodyText, rawText) {
@@ -515,7 +629,9 @@ const collapsedFenceLineDeco = Decoration.line({ class: "cm-wysiwym-collapsed-fe
 
 
 // --- Suppression StateField ---
+/** @type {import("@codemirror/state").StateEffectType<any>} */
 export const setSuppression = StateEffect.define();
+/** @type {import("@codemirror/state").StateEffectType<any>} */
 export const clearSuppression = StateEffect.define();
 
 export const suppressionField = StateField.define({
@@ -525,18 +641,20 @@ export const suppressionField = StateField.define({
   update(value, tr) {
     if (tr.docChanged) return null;
     for (const effect of tr.effects) {
-      if (effect.is(setSuppression)) {
+      const eff = /** @type {any} */ (effect);
+      if (eff.is(setSuppression)) {
         // Normalize to array for backwards compatibility
-        const val = effect.value;
+        const val = eff.value;
         return Array.isArray(val) ? val : [val];
       }
-      if (effect.is(clearSuppression)) return null;
+      if (eff.is(clearSuppression)) return null;
     }
     return value;
   }
 });
 
 // --- Focus StateField ---
+/** @type {import("@codemirror/state").StateEffectType<boolean>} */
 export const setFocusEffect = StateEffect.define();
 
 export const focusField = StateField.define({
@@ -565,7 +683,11 @@ function getHeadingDeco(level) {
   }
 }
 
-// --- Decoration Builder ---
+/**
+ * --- Decoration Builder ---
+ * @param {import("@codemirror/state").EditorState} state
+ * @returns {import("@codemirror/view").DecorationSet}
+ */
 function buildWysiwymDecorations(state) {
   const collected = [];
   const hasFocus = state.field(focusField, false);
@@ -781,6 +903,47 @@ function buildWysiwymDecorations(state) {
 
             const rawText = state.sliceDoc(node.from, node.to);
             const widget = new ImageShortcodeWidget(attrs, node.from, rawText);
+            collected.push({
+              from: node.from,
+              to: node.to,
+              deco: Decoration.replace({ widget, block: true })
+            });
+            return false;
+          }
+        }
+        // Custom VideoShortcode [video src="..." ...]
+        if (node.name === "VideoShortcode") {
+          const isCursorInside = cursorHead >= node.from && cursorHead <= node.to;
+
+          if (!isCursorInside) {
+            const attrs = {};
+            const c = node.node.cursor();
+            if (c.firstChild()) {
+              do {
+                if (c.name === "VideoShortcodeAttribute") {
+                  const cc = c.node.cursor();
+                  let name = "";
+                  let val = "";
+                  if (cc.firstChild()) {
+                    do {
+                      if (cc.name === "VideoShortcodeAttributeName") {
+                        name = state.sliceDoc(cc.from, cc.to);
+                      }
+                      if (cc.name === "VideoShortcodeAttributeValue") {
+                        val = state.sliceDoc(cc.from, cc.to);
+                        val = val.replace(/^["']|["']$/g, "");
+                      }
+                    } while (cc.nextSibling());
+                  }
+                  if (name) {
+                    attrs[name] = val;
+                  }
+                }
+              } while (c.nextSibling());
+            }
+
+            const rawText = state.sliceDoc(node.from, node.to);
+            const widget = new VideoShortcodeWidget(attrs, node.from, rawText);
             collected.push({
               from: node.from,
               to: node.to,
@@ -1111,7 +1274,7 @@ function buildWysiwymDecorations(state) {
     builder.add(from, to, deco);
   }
 
-  return builder.finish();
+  return /** @type {any} */ (builder.finish());
 }
 
 export const wysiwymField = StateField.define({

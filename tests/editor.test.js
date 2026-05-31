@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { TravenEditor } from '../src/index.js';
 import { parseMarkdownTable, serializeTableToMarkdown, openComponentModal } from '../src/toolbar/modal.js';
+import { skipDelimiter } from '../src/delimiter-skip.js';
 
 // Polyfill Range.prototype.getClientRects and getBoundingClientRect for JSDOM / CodeMirror 6 compatibility
 if (typeof window !== 'undefined') {
@@ -869,6 +870,168 @@ describe('ImageShortcode', () => {
     });
   });
 });
+
+describe('VideoShortcode', () => {
+  let container;
+
+  beforeEach(() => {
+    container = document.createElement('div');
+    document.body.appendChild(container);
+  });
+
+  afterEach(() => {
+    document.body.removeChild(container);
+  });
+
+  it('compiles youtube video shortcode to proper iframe in fallback renderer', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '[video src="https://www.youtube.com/watch?v=dQw4w9WgXcQ" align="right" size="medium" caption="Never Gonna Give You Up"]',
+    });
+    const html = editor.getContentHtml();
+    expect(html).toContain('<figure class="traven-video-figure align-right size-medium">');
+    expect(html).toContain('<iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ"');
+    expect(html).toContain('<figcaption class="traven-video-caption">Never Gonna Give You Up</figcaption>');
+  });
+
+  it('compiles vimeo video shortcode to proper iframe in fallback renderer', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '[video src="https://vimeo.com/12345678" align="left" size="small" caption="Vimeo video"]',
+    });
+    const html = editor.getContentHtml();
+    expect(html).toContain('<figure class="traven-video-figure align-left size-small">');
+    expect(html).toContain('<iframe src="https://player.vimeo.com/video/12345678"');
+  });
+
+  it('compiles direct video shortcode to video tag in fallback renderer', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '[video src="https://example.com/movie.mp4" align="center" size="large" caption="Direct Video"]',
+    });
+    const html = editor.getContentHtml();
+    expect(html).toContain('<figure class="traven-video-figure align-center size-large">');
+    expect(html).toContain('<video src="https://example.com/movie.mp4" controls></video>');
+  });
+
+  it('compiles video shortcode without caption to HTML without figure wrapper in fallback renderer', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '[video src="https://example.com/movie.mp4" align="center" size="large"]',
+    });
+    const html = editor.getContentHtml();
+    expect(html).not.toContain('<figure');
+    expect(html).toContain('<div class="traven-video-container align-center size-large"><video src="https://example.com/movie.mp4" controls></video></div>');
+  });
+
+  it('handles single quoted and unquoted attributes correctly for video', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: "[video src='https://example.com/movie.mp4' align=left size='small' caption='Single quotes']",
+    });
+    const html = editor.getContentHtml();
+    expect(html).toContain('<figure class="traven-video-figure align-left size-small">');
+    expect(html).toContain('<video src="https://example.com/movie.mp4" controls></video>');
+    expect(html).toContain('<figcaption class="traven-video-caption">Single quotes</figcaption>');
+  });
+
+  it('renders VideoShortcodeWidget inside WYSIWYM editor when cursor is outside', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '[video src="https://www.youtube.com/watch?v=dQw4w9WgXcQ" align="center" size="large" caption="Video check"]\nSome text here',
+    });
+    editor.setSelection(editor.getValue().length, editor.getValue().length);
+    
+    const widgetEl = container.querySelector('.cm-wysiwym-video-shortcode-container');
+    expect(widgetEl).not.toBeNull();
+    expect(widgetEl.classList.contains('align-center')).toBe(true);
+    expect(widgetEl.classList.contains('size-large')).toBe(true);
+    
+    expect(widgetEl.title).toBe('[video src="https://www.youtube.com/watch?v=dQw4w9WgXcQ" align="center" size="large" caption="Video check"]');
+    
+    const platformEl = widgetEl.querySelector('.video-placeholder-platform');
+    expect(platformEl).not.toBeNull();
+    expect(platformEl.textContent).toBe('YouTube');
+
+    const urlEl = widgetEl.querySelector('.video-placeholder-url');
+    expect(urlEl).not.toBeNull();
+    expect(urlEl.textContent).toBe('https://www.youtube.com/watch?v=dQw4w9WgXcQ');
+
+    const metaEl = widgetEl.querySelector('.shortcode-meta');
+    expect(metaEl).not.toBeNull();
+    expect(metaEl.textContent).toContain('Video check');
+  });
+
+  it('handles cursor delimiter skipping for video shortcode', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '[video src="https://example.com/movie.mp4"]',
+    });
+    editor.focus();
+    
+    editor.setSelection(0, 0);
+    
+    const skipped1 = skipDelimiter(editor.getView(), 'right');
+    expect(skipped1).toBe(true);
+    expect(editor.getView().state.selection.main.head).toBe(7);
+
+    const value = editor.getValue();
+    const closePos = value.indexOf(']');
+    editor.setSelection(closePos, closePos);
+
+    const skipped2 = skipDelimiter(editor.getView(), 'right');
+    expect(skipped2).toBe(true);
+    expect(editor.getView().state.selection.main.head).toBe(closePos + 1);
+  });
+
+  it('opens editing modal when clicking VideoShortcodeWidget, and saving updates document', async () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '[video src="https://example.com/movie.mp4" align="right" size="medium" caption="My movie"]\nSome text',
+    });
+    editor.setSelection(editor.getValue().length, editor.getValue().length);
+
+    const widgetEl = container.querySelector('.cm-wysiwym-video-shortcode-container');
+    expect(widgetEl).not.toBeNull();
+
+    widgetEl.dispatchEvent(new window.MouseEvent('mousedown', { bubbles: true, cancelable: true }));
+
+    const modal = document.querySelector('.traven-modal-overlay');
+    expect(modal).not.toBeNull();
+    expect(modal.querySelector('.traven-modal-title').textContent).toBe('Edit Video');
+
+    const urlInput = modal.querySelector('#traven-video-url');
+    const alignSelect = modal.querySelector('#traven-video-align');
+    const sizeSelect = modal.querySelector('#traven-video-size');
+    const captionInput = modal.querySelector('#traven-video-caption');
+
+    expect(urlInput.value).toBe('https://example.com/movie.mp4');
+    expect(alignSelect.value).toBe('right');
+    expect(sizeSelect.value).toBe('medium');
+    expect(captionInput.value).toBe('My movie');
+
+    alignSelect.value = 'left';
+    captionInput.value = 'Updated movie';
+
+    const saveBtn = modal.querySelector('.traven-modal-btn.btn-primary');
+    saveBtn.click();
+
+    expect(document.querySelector('.traven-modal-overlay')).toBeNull();
+
+    expect(editor.getValue()).toBe('[video src="https://example.com/movie.mp4" align="left" caption="Updated movie"]\nSome text');
+  });
+
+  it('neutralizes dangerous protocols like javascript: in video shortcode', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '[video src="javascript:alert(1)" caption="Video XSS"]',
+    });
+    const html = editor.getContentHtml();
+    expect(html).toContain('src="about:blank"');
+    expect(html).not.toContain('src="javascript:');
+  });
+});
+
 
 describe('fallback rendering inline formats', () => {
   let container;
