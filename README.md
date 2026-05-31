@@ -13,8 +13,9 @@
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License"></a>
-  <img src="https://img.shields.io/badge/version-0.1.7-orange.svg" alt="Version 0.1.6">
-  <img src="https://img.shields.io/badge/dependency-CodeMirror_6-6aa00.svg" alt="CodeMirror 6">
+  <img src="https://img.shields.io/badge/version-0.1.8-orange.svg" alt="Version 0.1.8">
+  <img src="https://img.shields.io/badge/engine-CodeMirror_6-6aa00.svg" alt="CodeMirror 6 Engine">
+  <img src="https://img.shields.io/badge/peer_dependencies-none-blue.svg" alt="Zero Peer Dependencies">
 </p>
 
 ---
@@ -392,7 +393,7 @@ To hide buttons or re-style them, override classes in your local stylesheets:
 
 ## Custom Shortcodes Architecture
 
-Traven supports custom shortcodes to extend the standard Markdown syntax. By default, it features native support for a custom `[image]` shortcode:
+Traven supports custom shortcodes to extend the standard Markdown syntax. By default, it features native support for a custom `[image]` shortcode and a block-level `[component]` shortcode with quote/pullquote aliases:
 
 ### Custom `[image]` Shortcode
 Traven includes an advanced, optional `[image]` shortcode (e.g. `[image src="..." alt="..." align="center" size="medium" class="my-custom-class"]`) designed for modular, responsive layouts:
@@ -400,11 +401,25 @@ Traven includes an advanced, optional `[image]` shortcode (e.g. `[image src="...
 * **Toolbar Toggle**: The "Insert Image" toolbar modal contains a sliders-icon toggle to switch between Advanced mode (generating the custom `[image]` shortcode with support for captions, custom CSS classes, sizing, and alignment settings) and Legacy mode (producing standard `![alt](src)` Markdown).
 * **Decoupled Presentation Styling**: The fallback renderer compiles the shortcode to clean semantic HTML (an `<img>` tag with class attributes and no inline `style=""` declarations). Layout formatting (width, display, float, margin) is delegated entirely to the skin stylesheets (e.g. `assets/skins/skin-default.css`) via `.align-[alignment]` and `.size-[size]` selector classes.
 
+### Custom `[component]` & Blockquote Aliases Shortcode
+Traven includes native support for a pair-tag `[component]...[/component]` shortcode system, designed to handle structural block-level content:
+* **Flexible Syntax**: Supported formats:
+  - Canonical: `[component name="blockquote" author="James Baldwin" source="The Fire Next Time"]Not everything that is faced can be changed...[/component]`
+  - Short Attribute Fallback: `[component="blockquote" author="..." source="..."]...[/component]`
+* **Shorthand Aliases**: For writing convenience, Traven translates shorthand tags under the hood:
+  - Blockquote Alias: `[quote author="..." source="..."]...[/quote]` or `[blockquote author="..." source="..."]...[/blockquote]`
+  - Pullquote Alias: `[pullquote]...[/pullquote]`
+* **WYSIWYM Widget Folding**: In the editor, when the cursor is outside the tag range, the tag delimiters collapse, rendering a styled preview block of the component with an edit/modal trigger icon. Clicking the widget or edit icon launches the interactive Custom Component editor modal.
+* **Clean Fallback HTML Output**: The fallback compiler renders these shortcodes into standard HTML structure with **zero inline styles**:
+  - **Blockquotes**: `<blockquote class="traven-component-blockquote">...<footer><cite>— Author, Source</cite></footer></blockquote>`
+  - **Pullquotes**: `<blockquote class="traven-component-pullquote">...</blockquote>`
+  - **Generic/Unknown Blocks (e.g. `[component="info"]` / `[component="warning"]`)**: Compiles to a standard wrapper `<div class="traven-component traven-component-[name]">...</div>`, allowing theme authors to style them independently.
+
 Developers can also extend Traven to support other custom shortcodes using its decoupled architecture:
 
-1.  **Scanner (`src/wysiwym.js`)**: Matches shortcode delimiters using regex scans.
-2.  **Replacement Widget (`src/index.js`)**: Injects a custom CodeMirror `WidgetType` returning custom interactive preview elements when the cursor is outside the shortcode range.
-3.  **Themes (`assets/skins/*.css`)**: Defines visual tokens (e.g. background margins, border styles) for classes like `.cm-wysiwym-shortcode-widget`.
+1.  **Grammar & Parser (`src/component-parser.js`)**: Extends the Lezer Markdown parser to detect tag pairs, attributes, and values.
+2.  **Replacement Widget (`src/wysiwym.js`)**: Injects a custom CodeMirror `WidgetType` returning custom interactive preview elements when the cursor is outside the shortcode range.
+3.  **Themes (`assets/skins/*.css`)**: Defines visual tokens (e.g. background colors, border styles, hand-drawn styles) for classes like `.cm-wysiwym-component-shortcode`.
 
 ---
 
