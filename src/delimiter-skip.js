@@ -253,6 +253,27 @@ function findSkipTarget(state, cursor, direction) {
           }
         }
       }
+      // 9c. AudioShortcode delimiters [audio ...]
+      if (node.name === "AudioShortcode") {
+        const openEnd = node.from + 7; // after "[audio "
+        const closeStart = node.to - 1; // before "]"
+
+        if (direction === "right") {
+          if (cursor >= node.from && cursor < openEnd) {
+            best = { target: Math.min(node.to, openEnd), suppressRange: null };
+          }
+          if (cursor >= closeStart && cursor < node.to) {
+            best = { target: node.to, suppressRange: null };
+          }
+        } else {
+          if (cursor > closeStart && cursor <= node.to) {
+            best = { target: Math.max(node.from, closeStart), suppressRange: null };
+          }
+          if (cursor > node.from && cursor <= openEnd) {
+            best = { target: node.from, suppressRange: null };
+          }
+        }
+      }
       // 10. ComponentShortcode delimiters: skip over [component ...] and [/component]
       if (node.name === "ComponentShortcode") {
         let openEnd = null;

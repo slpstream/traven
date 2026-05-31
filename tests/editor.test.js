@@ -1032,6 +1032,147 @@ describe('VideoShortcode', () => {
   });
 });
 
+describe('AudioShortcode', () => {
+  let container;
+
+  beforeEach(() => {
+    container = document.createElement('div');
+    document.body.appendChild(container);
+  });
+
+  afterEach(() => {
+    container.remove();
+  });
+
+  it('compiles direct audio shortcode to audio tag in fallback renderer', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '[audio src="https://example.com/song.mp3" align="center" size="large" caption="Direct Audio"]',
+    });
+    const html = editor.getContentHtml();
+    expect(html).toContain('<figure class="traven-audio-figure align-center size-large">');
+    expect(html).toContain('<audio src="https://example.com/song.mp3" controls></audio>');
+    expect(html).toContain('<figcaption class="traven-audio-caption">Direct Audio</figcaption>');
+  });
+
+  it('compiles audio shortcode without caption to HTML without figure wrapper in fallback renderer', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '[audio src="https://example.com/song.mp3" align="center" size="large"]',
+    });
+    const html = editor.getContentHtml();
+    expect(html).not.toContain('<figure');
+    expect(html).toContain('<div class="traven-audio-container align-center size-large"><audio src="https://example.com/song.mp3" controls></audio></div>');
+  });
+
+  it('handles single quoted and unquoted attributes correctly for audio', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: "[audio src='https://example.com/song.mp3' align=left size='small' caption='Single quotes']",
+    });
+    const html = editor.getContentHtml();
+    expect(html).toContain('<figure class="traven-audio-figure align-left size-small">');
+    expect(html).toContain('<audio src="https://example.com/song.mp3" controls></audio>');
+    expect(html).toContain('<figcaption class="traven-audio-caption">Single quotes</figcaption>');
+  });
+
+  it('renders AudioShortcodeWidget inside WYSIWYM editor when cursor is outside', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '[audio src="https://example.com/song.mp3" align="center" size="large" caption="Audio check"]\nSome text here',
+    });
+    editor.setSelection(editor.getValue().length, editor.getValue().length);
+    
+    const widgetEl = container.querySelector('.cm-wysiwym-audio-shortcode-container');
+    expect(widgetEl).not.toBeNull();
+    expect(widgetEl.classList.contains('align-center')).toBe(true);
+    expect(widgetEl.classList.contains('size-large')).toBe(true);
+    
+    expect(widgetEl.title).toBe('[audio src="https://example.com/song.mp3" align="center" size="large" caption="Audio check"]');
+    
+    const platformEl = widgetEl.querySelector('.audio-placeholder-platform');
+    expect(platformEl).not.toBeNull();
+    expect(platformEl.textContent).toBe('Audio File');
+
+    const urlEl = widgetEl.querySelector('.audio-placeholder-url');
+    expect(urlEl).not.toBeNull();
+    expect(urlEl.textContent).toBe('https://example.com/song.mp3');
+
+    const metaEl = widgetEl.querySelector('.shortcode-meta');
+    expect(metaEl).not.toBeNull();
+    expect(metaEl.textContent).toContain('Audio check');
+  });
+
+  it('handles cursor delimiter skipping for audio shortcode', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '[audio src="https://example.com/song.mp3"]',
+    });
+    editor.focus();
+    
+    editor.setSelection(0, 0);
+    
+    const skipped1 = skipDelimiter(editor.getView(), 'right');
+    expect(skipped1).toBe(true);
+    expect(editor.getView().state.selection.main.head).toBe(7);
+
+    const value = editor.getValue();
+    const closePos = value.indexOf(']');
+    editor.setSelection(closePos, closePos);
+
+    const skipped2 = skipDelimiter(editor.getView(), 'right');
+    expect(skipped2).toBe(true);
+    expect(editor.getView().state.selection.main.head).toBe(closePos + 1);
+  });
+
+  it('opens editing modal when clicking AudioShortcodeWidget, and saving updates document', async () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '[audio src="https://example.com/song.mp3" align="right" size="medium" caption="My song"]\nSome text',
+    });
+    editor.setSelection(editor.getValue().length, editor.getValue().length);
+
+    const widgetEl = container.querySelector('.cm-wysiwym-audio-shortcode-container');
+    expect(widgetEl).not.toBeNull();
+
+    widgetEl.dispatchEvent(new window.MouseEvent('mousedown', { bubbles: true, cancelable: true }));
+
+    const modal = document.querySelector('.traven-modal-overlay');
+    expect(modal).not.toBeNull();
+    expect(modal.querySelector('.traven-modal-title').textContent).toBe('Edit Audio');
+
+    const urlInput = modal.querySelector('#traven-audio-url');
+    const alignSelect = modal.querySelector('#traven-audio-align');
+    const sizeSelect = modal.querySelector('#traven-audio-size');
+    const captionInput = modal.querySelector('#traven-audio-caption');
+
+    expect(urlInput.value).toBe('https://example.com/song.mp3');
+    expect(alignSelect.value).toBe('right');
+    expect(sizeSelect.value).toBe('medium');
+    expect(captionInput.value).toBe('My song');
+
+    alignSelect.value = 'left';
+    captionInput.value = 'Updated song';
+
+    const saveBtn = modal.querySelector('.traven-modal-btn.btn-primary');
+    saveBtn.click();
+
+    expect(document.querySelector('.traven-modal-overlay')).toBeNull();
+
+    expect(editor.getValue()).toBe('[audio src="https://example.com/song.mp3" align="left" caption="Updated song"]\nSome text');
+  });
+
+  it('neutralizes dangerous protocols like javascript: in audio shortcode', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '[audio src="javascript:alert(1)" caption="Audio XSS"]',
+    });
+    const html = editor.getContentHtml();
+    expect(html).toContain('src="about:blank"');
+    expect(html).not.toContain('src="javascript:');
+  });
+});
+
 
 describe('fallback rendering inline formats', () => {
   let container;

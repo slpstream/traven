@@ -170,6 +170,41 @@
   color: #94a3b8 !important;
 }
 
+/* Audio container dark overrides */
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-audio-shortcode-container {
+  border-color: #334155;
+  background-color: #0f172a;
+}
+
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-audio-shortcode-container .audio-placeholder {
+  background-color: #1e293b;
+  border-color: #334155;
+}
+
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-audio-shortcode-container .audio-placeholder:hover {
+  background-color: #334155;
+  border-color: #475569;
+}
+
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-audio-shortcode-container .audio-placeholder-icon-wrap {
+  background-color: #0f172a;
+  color: #94a3b8;
+}
+
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-audio-shortcode-container .audio-placeholder-platform {
+  color: #f8fafc;
+}
+
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-audio-shortcode-container .audio-placeholder-url {
+  color: #94a3b8;
+}
+
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-audio-shortcode-container .audio-edit-icon {
+  background-color: rgba(30, 41, 59, 0.9) !important;
+  border-color: #475569 !important;
+  color: #94a3b8 !important;
+}
+
 /* Links */
 .cm-editor.cm-wysiwym-dark .cm-wysiwym-link-anchor {
   color: #38bdf8;
