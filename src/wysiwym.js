@@ -380,12 +380,11 @@ class VideoShortcodeWidget extends WidgetType {
     // Platform Badge & Placeholder Card
     const placeholderCard = document.createElement("div");
     placeholderCard.className = "video-placeholder";
-
     const parsed = parseVideoUrl(src);
     let platformLabel = "Video";
     let iconSvg = `<svg class="play-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>`;
     
-    if (parsed.platform === "youtube") {
+    if (parsed.platform === "youtube" || this.attrs._tagName === "youtube") {
       platformLabel = "YouTube";
     } else if (parsed.platform === "vimeo") {
       platformLabel = "Vimeo";
@@ -1191,7 +1190,14 @@ function buildWysiwymDecorations(state) {
             }
 
             const rawText = state.sliceDoc(node.from, node.to);
+            let tagName = "video";
+            const tagNode = node.node.getChild("VideoShortcodeTagName");
+            if (tagNode) {
+              tagName = state.sliceDoc(tagNode.from, tagNode.to);
+            }
+            attrs._tagName = tagName;
             const widget = new VideoShortcodeWidget(attrs, node.from, rawText);
+
             collected.push({
               from: node.from,
               to: node.to,
@@ -1241,11 +1247,45 @@ function buildWysiwymDecorations(state) {
             return false;
           }
         }
-
         // 3.8. Custom ComponentShortcode [component name="..." ...]
         if (node.name === "ComponentShortcode") {
-          const isCursorInside = cursorHead >= node.from && cursorHead <= node.to;
+          let tagName = "";
+          let openEnd = null;
+          let closeStart = null;
+          const c = node.node.cursor();
+          if (c.firstChild()) {
+            do {
+              if (c.name === "ComponentShortcodeOpen") {
+                openEnd = c.to;
+                const cc = c.node.cursor();
+                if (cc.firstChild()) {
+                  do {
+                    if (cc.name === "ComponentShortcodeTagName") {
+                      tagName = state.sliceDoc(cc.from, cc.to);
+                    }
+                  } while (cc.nextSibling());
+                }
+              }
+              if (c.name === "ComponentShortcodeClose") {
+                closeStart = c.from;
+              }
+            } while (c.nextSibling());
+          }
 
+          if (tagName === "highlight") {
+            const isCursorInside = cursorHead >= node.from && cursorHead <= node.to;
+            const isSuppressed = suppressed && suppressed.some(s => s.from === node.from && s.to === node.to);
+            if (!isCursorInside || isSuppressed) {
+              if (openEnd !== null && closeStart !== null) {
+                collected.push({ from: node.from, to: openEnd, deco: collapseDeco });
+                collected.push({ from: closeStart, to: node.to, deco: collapseDeco });
+                collected.push({ from: openEnd, to: closeStart, deco: highlightDeco });
+              }
+            }
+            return false;
+          }
+
+          const isCursorInside = cursorHead >= node.from && cursorHead <= node.to;
           if (!isCursorInside) {
             const attrs = {};
             let bodyText = "";

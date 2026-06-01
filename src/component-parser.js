@@ -25,6 +25,9 @@ export const ComponentShortcode = {
       else if (slice.startsWith("quote")) tagName = "quote";
       else if (slice.startsWith("pullquote")) tagName = "pullquote";
       else if (slice.startsWith("blockquote")) tagName = "blockquote";
+      else if (slice.startsWith("info")) tagName = "info";
+      else if (slice.startsWith("warning")) tagName = "warning";
+      else if (slice.startsWith("highlight")) tagName = "highlight";
       else return -1;
 
       const nextChar = cx.char(pos + 1 + tagName.length);

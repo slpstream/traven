@@ -1213,7 +1213,7 @@ export class TravenEditor {
 
     // Extract component shortcodes to protect them and compile recursively
     const componentPlaceholders = [];
-    const componentRegex = /\[(component|quote|pullquote|blockquote)((?:\s+[^\]]*|=\s*(?:"[^"]*"|'[^']*'|[^\s\]]+)(?:\s+[^\]]*)?)?)\]([\s\S]*?)\[\/\1\]/g;
+    const componentRegex = /\[(component|quote|pullquote|blockquote|info|warning|highlight)((?:\s+[^\]]*|=\s*(?:"[^"]*"|'[^']*'|[^\s\]]+)(?:\s+[^\]]*)?)?)\]([\s\S]*?)\[\/\1\]/g;
     const figureRegex = /\[(figure)((?:\s+[^\]]*|=\s*(?:"[^"]*"|'[^']*'|[^\s\]]+)(?:\s+[^\]]*)?)?)\]([\s\S]*?)\[\/figure\]/g;
     let prevContent;
     do {
@@ -1267,11 +1267,20 @@ export class TravenEditor {
           rendered = `<blockquote class="traven-component-blockquote">${compiledBody}${citeHtml}</blockquote>`;
         } else if (compName === "pullquote") {
           rendered = `<blockquote class="traven-component-pullquote">${compiledBody}</blockquote>`;
+        } else if (compName === "highlight") {
+          let inner = compiledBody;
+          if (inner.startsWith("<p>") && inner.endsWith("</p>")) {
+            inner = inner.substring(3, inner.length - 4);
+          }
+          rendered = `<mark>${inner}</mark>`;
         } else {
           rendered = `<div class="traven-component traven-component-${compName}">${compiledBody}</div>`;
         }
 
         componentPlaceholders.push(rendered);
+        if (compName === "highlight") {
+          return `INLINE-PLACEHOLDER-INDEX-${index}`;
+        }
         return `\n\nCOMPONENT-PLACEHOLDER-INDEX-${index}\n\n`;
       });
 
@@ -1357,7 +1366,7 @@ export class TravenEditor {
       return `__IMAGE_SHORTCODE_PLACEHOLDER_${index}__`;
     });
 
-    content = content.replace(/(\[video\s+[^\]]+\])/g, (match) => {
+    content = content.replace(/(\[(?:video|youtube)\s+[^\]]+\])/g, (match) => {
       const index = shortcodePlaceholders.length;
       shortcodePlaceholders.push(match);
       return `__VIDEO_SHORTCODE_PLACEHOLDER_${index}__`;
@@ -1655,7 +1664,7 @@ export class TravenEditor {
       }
     });
 
-    content = content.replace(/\[video\s+([^\]]+)\]/g, (match, attrsStr) => {
+    content = content.replace(/\[(video|youtube)\s+([^\]]+)\]/g, (match, tagName, attrsStr) => {
       const attrs = {};
       const attrRegex = /([a-zA-Z0-9_-]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=]+))/g;
       let m;
@@ -1668,7 +1677,11 @@ export class TravenEditor {
       const size = attrs.size || "medium";
       const customClass = attrs.class ? ` ${attrs.class}` : "";
 
-      const parsed = parseVideoUrl(src);
+      let parsed = parseVideoUrl(src);
+      if (parsed.platform === "unknown" && tagName === "youtube") {
+        parsed = { platform: "youtube", id: src };
+      }
+
       let videoHtml = "";
       if (parsed.platform === "youtube") {
         videoHtml = `<iframe src="https://www.youtube.com/embed/${parsed.id}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
@@ -1741,7 +1754,7 @@ export class TravenEditor {
     let restored;
     do {
       restored = false;
-      content = content.replace(/COMPONENT-PLACEHOLDER-INDEX-(\d+)/g, (match, index) => {
+      content = content.replace(/(?:COMPONENT|INLINE)-PLACEHOLDER-INDEX-(\d+)/g, (match, index) => {
         restored = true;
         return componentPlaceholders[parseInt(index)];
       });

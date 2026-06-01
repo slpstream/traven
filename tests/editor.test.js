@@ -935,6 +935,34 @@ describe('VideoShortcode', () => {
     expect(html).toContain('<figcaption class="traven-video-caption">Single quotes</figcaption>');
   });
 
+  it('compiles youtube shortcode alias with full URL or ID to youtube iframe in fallback renderer', () => {
+    const editorUrl = new TravenEditor({
+      element: container,
+      initialValue: '[youtube src="https://www.youtube.com/watch?v=dQw4w9WgXcQ" align="center" size="large" caption="YouTube link"]',
+    });
+    const htmlUrl = editorUrl.getContentHtml();
+    expect(htmlUrl).toContain('<iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ"');
+
+    const editorId = new TravenEditor({
+      element: container,
+      initialValue: '[youtube src="dQw4w9WgXcQ" align="center" size="large" caption="YouTube ID"]',
+    });
+    const htmlId = editorId.getContentHtml();
+    expect(htmlId).toContain('<iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ"');
+  });
+
+  it('renders youtube shortcode alias widget platform as YouTube', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '[youtube src="dQw4w9WgXcQ"]\nText',
+    });
+    editor.setSelection(editor.getValue().length, editor.getValue().length);
+    const widgetEl = container.querySelector('.cm-wysiwym-video-shortcode-container');
+    expect(widgetEl).not.toBeNull();
+    const platformEl = widgetEl.querySelector('.video-placeholder-platform');
+    expect(platformEl.textContent).toBe('YouTube');
+  });
+
   it('renders VideoShortcodeWidget inside WYSIWYM editor when cursor is outside', () => {
     const editor = new TravenEditor({
       element: container,
@@ -1370,6 +1398,28 @@ describe('ComponentShortcode', () => {
     });
     const html = editor.getContentHtml();
     expect(html).toContain('<blockquote class="traven-component-pullquote"><p>Special quote</p></blockquote>');
+  });
+
+  it('compiles info and warning component aliases to generic div with proper CSS classes in fallback renderer', () => {
+    const editorInfo = new TravenEditor({
+      element: container,
+      initialValue: '[info]Info notice text[/info]',
+    });
+    expect(editorInfo.getContentHtml()).toContain('<div class="traven-component traven-component-info"><p>Info notice text</p></div>');
+
+    const editorWarning = new TravenEditor({
+      element: container,
+      initialValue: '[warning]Warning notice text[/warning]',
+    });
+    expect(editorWarning.getContentHtml()).toContain('<div class="traven-component traven-component-warning"><p>Warning notice text</p></div>');
+  });
+
+  it('compiles highlight alias to mark element in fallback renderer', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: 'Important [highlight]highlighted[/highlight] text.',
+    });
+    expect(editor.getContentHtml()).toContain('<p>Important <mark>highlighted</mark> text.</p>');
   });
 
   it('compiles unknown component name to a generic div container in fallback renderer', () => {

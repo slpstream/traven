@@ -16,23 +16,18 @@ export const VideoShortcode = {
     parse(cx, next, pos) {
       if (next !== 91 /* '[' */) return -1;
       
-      // Check if it matches "[video"
-      if (
-        cx.char(pos + 1) !== 118 || // 'v'
-        cx.char(pos + 2) !== 105 || // 'i'
-        cx.char(pos + 3) !== 100 || // 'd'
-        cx.char(pos + 4) !== 101 || // 'e'
-        cx.char(pos + 5) !== 111    // 'o'
-      ) {
-        return -1;
-      }
+      const slice = cx.slice(pos + 1, pos + 10);
+      let tagName = "";
+      if (slice.startsWith("video")) tagName = "video";
+      else if (slice.startsWith("youtube")) tagName = "youtube";
+      else return -1;
 
       // Next character must be space or ']'
-      const nextChar = cx.char(pos + 6);
+      const nextChar = cx.char(pos + 1 + tagName.length);
       if (nextChar !== 32 && nextChar !== 93) return -1;
 
       // Find the closing ']' on the same line
-      let scan = pos + 6;
+      let scan = pos + 1 + tagName.length;
       let endPos = -1;
       while (scan < cx.end) {
         const ch = cx.char(scan);
@@ -50,11 +45,11 @@ export const VideoShortcode = {
       // 1. Opening bracket '['
       children.push(cx.elt("VideoShortcodeMark", pos, pos + 1));
 
-      // 2. Tag name "video"
-      children.push(cx.elt("VideoShortcodeTagName", pos + 1, pos + 6));
+      // 2. Tag name "video" or "youtube"
+      children.push(cx.elt("VideoShortcodeTagName", pos + 1, pos + 1 + tagName.length));
 
-      // 3. Parse attributes between pos + 6 and endPos - 1
-      const attrStart = pos + 6;
+      // 3. Parse attributes between pos + 1 + tagName.length and endPos - 1
+      const attrStart = pos + 1 + tagName.length;
       const attrEnd = endPos - 1;
       const attrStr = cx.slice(attrStart, attrEnd);
 

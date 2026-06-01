@@ -45,7 +45,7 @@ Mix and match different combinations of toolbar buttons, skins, and editor layou
 *   **WYSIWYM Collapsing**: Formatting syntax markers (like `**` for bold and `*` for italic) display dynamically only when the cursor is inside the formatted text. When the cursor leaves, they transition smoothly into clean, styled blocks.
 *   **Optimistic Media Uploads**: Drag and drop or paste image files directly into the editor. The view immediately embeds an optimistic spinner loader and replaces it with the final URL once your upload handler resolves.
 *   **Decoupled Styling (Skins)**: Theme aesthetics (colors, padding, borders) are decoupled from the JavaScript logic. Swap between the neutral **Default Skin** and optional skins such as a **Dark Skin** and a contemporary **Colorful Skin** by changing a single `<link>` stylesheet, with no rebuilding required.
-*   **Custom Shortcode System**: Built-in support for modular `[image]`, `[video]`, `[audio]`, `[figure]`, and nested block `[component]` shortcodes (with blockquote/pullquote aliases). These automatically fold into WYSIWYM interactive widgets inside the editor while compiling into clean semantic HTML structure.
+*   **Custom Shortcode System**: Built-in support for modular `[image]`, `[video]`, `[audio]`, `[figure]`, and nested block `[component]` shortcodes (with blockquote, pullquote, info, warning, highlight, and youtube aliases). These automatically fold into WYSIWYM interactive widgets inside the editor while compiling into clean semantic HTML structure.
 *   **Bidirectional Raw Sync**: Easily bind a secondary raw Markdown viewer/editor in split-screen layouts. Changes flow incrementally between editors, maintaining cursor positions and separate histories without circular synchronization loops.
 *   **Smart Keyboard Utilities**: Includes keyboard helpers that prevent cursors from getting trapped inside collapsed markdown delimiters during arrow navigation.
 *   **Vim Emulation Mode**: Toggleable Vim normal/visual/insert mode keybindings dynamically at runtime.
@@ -411,6 +411,7 @@ Traven includes an advanced, optional `[image]` shortcode (e.g. `[image src="...
 ### Custom `[video]` Shortcode
 Traven includes native, optional support for a custom `[video src="..." align="center" size="medium" caption="My Video" class="custom-video"]` shortcode for embedding video media:
 * **Multiple Platforms Supported**: Detects and compiles YouTube and Vimeo URLs into responsive embedded `<iframe>` elements. Direct links to video files (e.g. `.mp4`, `.webm`, `.ogg`) are compiled into native `<video controls>` HTML tags.
+* **YouTube Shorthand Alias**: For authoring ease, `[youtube src="..."]` can be used as a shorthand alias for the video shortcode, automatically defaulting to YouTube embedding (supporting both full YouTube URLs and raw YouTube IDs directly).
 * **WYSIWYM Widget folding**: When the cursor is outside the shortcode, the text folds into an interactive preview card displaying the detected platform logo/name, source URL, and caption. Clicking the edit icon on the card opens the Video Modal.
 * **Decoupled Styling**: Compiles into semantic HTML containers (`<figure>` or `<div>`) and tags with no inline styles. Alignment and sizing layouts (e.g. `.align-right`, `.size-large`, `.traven-video-figure`) are controlled entirely via CSS skins.
 
@@ -426,7 +427,7 @@ Traven includes native support for an optional block-level `[figure align="cente
 * **WYSIWYM Widget Folding**: When the cursor is outside, the opening/closing shortcode tags collapse, displaying a styled preview panel with the caption at the bottom and an edit/modal trigger icon.
 * **Decoupled Styling**: Compiles into standard semantic HTML `<figure>` containers (with classes like `.traven-figure`, `.align-[alignment]`, and `.size-[size]`) and `<figcaption class="traven-figure-caption">` with zero inline styles.
 
-### Custom `[component]` & Blockquote Aliases Shortcode
+### Custom `[component]` & Blockquote/Notice/Highlight Aliases
 Traven includes native support for a pair-tag `[component]...[/component]` shortcode system, designed to handle structural block-level content:
 * **Flexible Syntax**: Supported formats:
   - Canonical: `[component name="blockquote" author="James Baldwin" source="The Fire Next Time"]Not everything that is faced can be changed...[/component]`
@@ -434,11 +435,15 @@ Traven includes native support for a pair-tag `[component]...[/component]` short
 * **Shorthand Aliases**: For writing convenience, Traven translates shorthand tags under the hood:
   - Blockquote Alias: `[quote author="..." source="..."]...[/quote]` or `[blockquote author="..." source="..."]...[/blockquote]`
   - Pullquote Alias: `[pullquote]...[/pullquote]`
-* **WYSIWYM Widget Folding**: In the editor, when the cursor is outside the tag range, the tag delimiters collapse, rendering a styled preview block of the component with an edit/modal trigger icon. Clicking the widget or edit icon launches the interactive Custom Component editor modal.
+  - Notice Block Aliases: `[info]...[/info]` and `[warning]...[/warning]`
+  - Inline Highlight Alias: `[highlight]...[/highlight]` (an alias for `==highlight==` that compiles to `<mark>...</mark>`)
+* **WYSIWYM Widget Folding**: In the editor, when the cursor is outside the tag range, the tag delimiters collapse. For block components, it renders a styled preview block with an edit/modal trigger. For the inline `[highlight]` tag, it applies smooth inline background color markers.
 * **Clean Fallback HTML Output**: The fallback compiler renders these shortcodes into standard HTML structure with **zero inline styles**:
   - **Blockquotes**: `<blockquote class="traven-component-blockquote">...<footer><cite>— Author, Source</cite></footer></blockquote>`
   - **Pullquotes**: `<blockquote class="traven-component-pullquote">...</blockquote>`
-  - **Generic/Unknown Blocks (e.g. `[component="info"]` / `[component="warning"]`)**: Compiles to a standard wrapper `<div class="traven-component traven-component-[name]">...</div>`, allowing theme authors to style them independently.
+  - **Notice Blocks**: `<div class="traven-component traven-component-info">...</div>` / `<div class="traven-component traven-component-warning">...</div>`
+  - **Highlights**: `<mark>...</mark>`
+  - **Generic/Unknown Blocks (e.g. `[component="card"]`)**: Compiles to a standard wrapper `<div class="traven-component traven-component-[name]">...</div>`, allowing theme authors to style them independently.
 
 Developers can also extend Traven to support other custom shortcodes using its decoupled architecture:
 

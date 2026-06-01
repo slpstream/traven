@@ -232,9 +232,12 @@ function findSkipTarget(state, cursor, direction) {
           }
         }
       }
-      // 9b. VideoShortcode delimiters [video ...]
+      // 9b. VideoShortcode delimiters [video ...] / [youtube ...]
       if (node.name === "VideoShortcode") {
-        const openEnd = node.from + 7; // after "[video "
+        const text = state.sliceDoc(node.from, node.to);
+        const tagMatch = text.match(/^\[([a-zA-Z0-9_-]+)/);
+        const tagLength = tagMatch ? tagMatch[1].length : 5;
+        const openEnd = node.from + 2 + tagLength; // after "[video " or "[youtube "
         const closeStart = node.to - 1; // before "]"
 
         if (direction === "right") {
