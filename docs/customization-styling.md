@@ -17,6 +17,9 @@ Simply swap the styling link in your HTML document:
 
 <!-- For a premium slate dark theme feel: -->
 <link rel="stylesheet" href="assets/skins/skin-dark.css">
+
+<!-- For a modern, high-contrast layout -->
+<link rel="stylesheet" href="assets/skins/skin-modern.css">
 ```
 
 ---

@@ -91,10 +91,10 @@ export function openVideoModal(optionsOrEditor, triggerBtn = null) {
     const parsed = parseVideoUrl(src);
     if (parsed.platform === "youtube") {
       urlFeedback.textContent = "✓ YouTube video detected";
-      urlFeedback.style.color = "#ef4444"; // YouTube Red
+      urlFeedback.style.color = "#10b981"; // Green
     } else if (parsed.platform === "vimeo") {
       urlFeedback.textContent = "✓ Vimeo video detected";
-      urlFeedback.style.color = "#06b6d4"; // Vimeo Cyan
+      urlFeedback.style.color = "#10b981"; // Green
     } else if (parsed.platform === "native") {
       urlFeedback.textContent = "✓ Direct video file detected";
       urlFeedback.style.color = "#10b981"; // Green

@@ -293,13 +293,13 @@
   <script type="module">
     import { TravenEditor, DEFAULT_TOOLBAR } from "./dist/traven.js";
 
-    const initialText = `# Your Corner for Writing
+    const initialText = `# A Quiet Place
 
 This might look like a web page, but there's a bit more to it than that: It is also a fully live editor. Type anywhere, like *just right here, for instance.* Traven's Editorial theme uses the display font **Macondo** for headings and  **Goudy Bookletter 1911** as its body typeface, along with a fixed, top-centered floating toolbar. Switch between WYSIWYM, Markdown, and Preview tabs above to view raw markdown or see what your work will look like when rendered as a static page.
 
 [image src="https://traven.dev/img/vignette.png" align="center" size="medium" alt="Drawing of a girl and her cat under a tree" caption="- Life is good..."]
 
-## The Editorial Workspace
+## The Corner for Writing
 
 To maintain a clean screen, use the manual toolbar toggle button (located at the top right next to "Copy Markdown") to show or hide the floating toolbar at any time.
 

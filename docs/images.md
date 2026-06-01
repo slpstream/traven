@@ -190,5 +190,5 @@ When parsing `[image]` shortcodes, the fallback HTML renderer generates clean se
 ```html
 <img src="photo.jpg" alt="Description" class="traven-image-shortcode align-right size-medium custom-class">
 ```
-All layout styles (display type, margin, floats, width) are delegated entirely to the skin stylesheets (e.g., `skin-default.css`, `skin-dark.css`, `skin-colorful.css`, `skin-write.css`) via these CSS selector classes.
+All layout styles (display type, margin, floats, width) are delegated entirely to the skin stylesheets (e.g., `skin-default.css`, `skin-dark.css`, `skin-colorful.css`, `skin-modern.css`) via these CSS selector classes.
 

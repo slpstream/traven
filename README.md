@@ -8,7 +8,7 @@
 <p align="center">
   Add Traven Editor to any website:
   LaTeX, table editor, image drag-n-drop, shortcode system, audio, video, custom Lezer extensions, 
-  five skins, six demos, seven toolbars, full documentation
+  five skins, five demos, seven toolbars, full documentation
 </p>
 
 <p align="center">
@@ -64,7 +64,7 @@ Architectural details, examples, and splitting/recombination helper functions ar
 ### Customization & Styling
 
 Editor themes and toolbar behaviors are fully customizable. Swap stylesheet skins to match your website theme, select from multiple toolbar presets (default, compact, reduced, or expandable), or override button selectors using custom CSS.
-To learn more about CSS class listings, custom skin configurations, and toolbar styling options, consult the **[Customization & Styling Guide](docs/customization-styling.md)**.
+To learn more about CSS class listings, custom skin configurations, and toolbar styling options, consult the **[Customization & Styling Guide](docs/customization-styling.md)**. For instructions on how to build a new theme from scratch or extend an existing skin, follow the **[Theme Development Guide](docs/theme-development.md)**.
 
 ### Custom Shortcodes Architecture
 
