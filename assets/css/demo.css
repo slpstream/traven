@@ -503,6 +503,29 @@ header {
   min-height: 400px;
 }
 
+@media (min-width: 1025px) {
+  body.hybrid-demo {
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .hybrid-demo main {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .hybrid-demo .bottom-row {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .hybrid-demo .editor-card,
+  .hybrid-demo .raw-editor-card {
+    height: 100%;
+    min-height: 0;
+  }
+}
+
 /* Ensure editor mounts grow to fill their cards */
 .hybrid-demo .editor-mount,
 .hybrid-demo .raw-editor-mount {
