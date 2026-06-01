@@ -1,5 +1,6 @@
 // @ts-check
 import { openModal } from "./modal-base.js";
+import { createLayoutPicker } from "./layout-picker.js";
 
 /**
  * Renders the Audio Insertion Modal dialog.
@@ -50,32 +51,16 @@ export function openAudioModal(optionsOrEditor, triggerBtn = null) {
   `;
   form.appendChild(captionField);
 
-  // Layout Align Dropdown
-  const alignField = document.createElement("div");
-  alignField.className = "traven-modal-field";
-  alignField.innerHTML = `
-    <label class="traven-modal-label" for="traven-audio-align">Alignment</label>
-    <select id="traven-audio-align" class="traven-modal-select">
-      <option value="left">Left</option>
-      <option value="center" selected>Center</option>
-      <option value="right">Right</option>
-    </select>
-  `;
-  form.appendChild(alignField);
+  const initialAlign = attrs.align || "center";
+  const initialSize = attrs.size || "medium";
 
-  // Layout Size Dropdown
-  const sizeField = document.createElement("div");
-  sizeField.className = "traven-modal-field";
-  sizeField.innerHTML = `
-    <label class="traven-modal-label" for="traven-audio-size">Size</label>
-    <select id="traven-audio-size" class="traven-modal-select">
-      <option value="small">Small</option>
-      <option value="medium" selected>Medium</option>
-      <option value="large">Large</option>
-      <option value="full">Full Width</option>
-    </select>
-  `;
-  form.appendChild(sizeField);
+  const layoutPicker = createLayoutPicker({
+    alignId: "traven-audio-align",
+    sizeId: "traven-audio-size",
+    initialAlign,
+    initialSize
+  });
+  form.appendChild(layoutPicker.element);
 
   // Class Field
   const classField = document.createElement("div");
@@ -91,8 +76,8 @@ export function openAudioModal(optionsOrEditor, triggerBtn = null) {
   const urlInput = /** @type {HTMLInputElement} */ (form.querySelector("#traven-audio-url"));
   const urlFeedback = /** @type {HTMLElement} */ (form.querySelector("#traven-audio-url-feedback"));
   const captionInput = /** @type {HTMLInputElement} */ (form.querySelector("#traven-audio-caption"));
-  const alignSelect = /** @type {HTMLSelectElement} */ (form.querySelector("#traven-audio-align"));
-  const sizeSelect = /** @type {HTMLSelectElement} */ (form.querySelector("#traven-audio-size"));
+  const alignSelect = layoutPicker.alignSelect;
+  const sizeSelect = layoutPicker.sizeSelect;
   const classInput = /** @type {HTMLInputElement} */ (form.querySelector("#traven-audio-class"));
 
   // Real-time feedback for URL input
@@ -116,8 +101,6 @@ export function openAudioModal(optionsOrEditor, triggerBtn = null) {
   if (docFrom !== null) {
     urlInput.value = attrs.src || "";
     captionInput.value = attrs.caption || "";
-    alignSelect.value = attrs.align || "center";
-    sizeSelect.value = attrs.size || "medium";
     classInput.value = attrs.class || "";
     urlInput.dispatchEvent(new Event("input"));
   } else {

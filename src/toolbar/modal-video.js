@@ -1,6 +1,7 @@
 // @ts-check
 import { openModal } from "./modal-base.js";
 import { parseVideoUrl } from "../security.js";
+import { createLayoutPicker } from "./layout-picker.js";
 
 /**
  * Renders the Video Insertion Modal dialog.
@@ -51,32 +52,16 @@ export function openVideoModal(optionsOrEditor, triggerBtn = null) {
   `;
   form.appendChild(captionField);
 
-  // Layout Align Dropdown
-  const alignField = document.createElement("div");
-  alignField.className = "traven-modal-field";
-  alignField.innerHTML = `
-    <label class="traven-modal-label" for="traven-video-align">Alignment</label>
-    <select id="traven-video-align" class="traven-modal-select">
-      <option value="left">Left</option>
-      <option value="center" selected>Center</option>
-      <option value="right">Right</option>
-    </select>
-  `;
-  form.appendChild(alignField);
+  const initialAlign = attrs.align || "center";
+  const initialSize = attrs.size || "medium";
 
-  // Layout Size Dropdown
-  const sizeField = document.createElement("div");
-  sizeField.className = "traven-modal-field";
-  sizeField.innerHTML = `
-    <label class="traven-modal-label" for="traven-video-size">Size</label>
-    <select id="traven-video-size" class="traven-modal-select">
-      <option value="small">Small</option>
-      <option value="medium" selected>Medium</option>
-      <option value="large">Large</option>
-      <option value="full">Full Width</option>
-    </select>
-  `;
-  form.appendChild(sizeField);
+  const layoutPicker = createLayoutPicker({
+    alignId: "traven-video-align",
+    sizeId: "traven-video-size",
+    initialAlign,
+    initialSize
+  });
+  form.appendChild(layoutPicker.element);
 
   // Class Field
   const classField = document.createElement("div");
@@ -92,8 +77,8 @@ export function openVideoModal(optionsOrEditor, triggerBtn = null) {
   const urlInput = /** @type {HTMLInputElement} */ (form.querySelector("#traven-video-url"));
   const urlFeedback = /** @type {HTMLElement} */ (form.querySelector("#traven-video-url-feedback"));
   const captionInput = /** @type {HTMLInputElement} */ (form.querySelector("#traven-video-caption"));
-  const alignSelect = /** @type {HTMLSelectElement} */ (form.querySelector("#traven-video-align"));
-  const sizeSelect = /** @type {HTMLSelectElement} */ (form.querySelector("#traven-video-size"));
+  const alignSelect = layoutPicker.alignSelect;
+  const sizeSelect = layoutPicker.sizeSelect;
   const classInput = /** @type {HTMLInputElement} */ (form.querySelector("#traven-video-class"));
 
   // Real-time feedback for URL input
@@ -123,8 +108,6 @@ export function openVideoModal(optionsOrEditor, triggerBtn = null) {
   if (docFrom !== null) {
     urlInput.value = attrs.src || "";
     captionInput.value = attrs.caption || "";
-    alignSelect.value = attrs.align || "center";
-    sizeSelect.value = attrs.size || "medium";
     classInput.value = attrs.class || "";
     urlInput.dispatchEvent(new Event("input"));
   } else {

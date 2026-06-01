@@ -48,8 +48,8 @@
 }
 
 .traven-toolbar-container.is-expanded {
-  width: 100% !important;
-  max-width: 1024px !important;
+  width: max-content !important;
+  max-width: 100% !important;
 }
 
 /* Base rail button reset */

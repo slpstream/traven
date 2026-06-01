@@ -45,7 +45,7 @@ Mix and match different combinations of toolbar buttons, skins, and editor layou
 *   **WYSIWYM Collapsing**: Formatting syntax markers (like `**` for bold and `*` for italic) display dynamically only when the cursor is inside the formatted text. When the cursor leaves, they transition smoothly into clean, styled blocks.
 *   **Optimistic Media Uploads**: Drag and drop or paste image files directly into the editor. The view immediately embeds an optimistic spinner loader and replaces it with the final URL once your upload handler resolves.
 *   **Decoupled Styling (Skins)**: Theme aesthetics (colors, padding, borders) are decoupled from the JavaScript logic. Swap between the neutral **Default Skin** and optional skins such as a **Dark Skin** and a contemporary **Colorful Skin** by changing a single `<link>` stylesheet, with no rebuilding required.
-*   **Custom Shortcode System**: Built-in support for modular `[image]`, `[video]`, `[audio]`, and nested block `[component]` shortcodes (with blockquote/pullquote aliases). These automatically fold into WYSIWYM interactive widgets inside the editor while compiling into clean semantic HTML structure.
+*   **Custom Shortcode System**: Built-in support for modular `[image]`, `[video]`, `[audio]`, `[figure]`, and nested block `[component]` shortcodes (with blockquote/pullquote aliases). These automatically fold into WYSIWYM interactive widgets inside the editor while compiling into clean semantic HTML structure.
 *   **Bidirectional Raw Sync**: Easily bind a secondary raw Markdown viewer/editor in split-screen layouts. Changes flow incrementally between editors, maintaining cursor positions and separate histories without circular synchronization loops.
 *   **Smart Keyboard Utilities**: Includes keyboard helpers that prevent cursors from getting trapped inside collapsed markdown delimiters during arrow navigation.
 *   **Vim Emulation Mode**: Toggleable Vim normal/visual/insert mode keybindings dynamically at runtime.
@@ -383,6 +383,7 @@ Each button generated in the toolbar is assigned a generic `.toolbar-btn` class,
 | `video` | `.btn-video` | Insert video shortcode via modal | - |
 | `audio` | `.btn-audio` | Insert audio shortcode via modal | - |
 | `component` | `.btn-component` | Insert `[component]` shortcode block via modal | - |
+| `figure` | `.btn-figure` | Insert `[figure]` shortcode block via modal | - |
 | `help` | `.btn-help` | Open keyboard shortcuts help modal | `Ctrl+/` (`Cmd+/` on Mac) |
 
 #### Hiding Buttons via CSS
@@ -399,7 +400,7 @@ To hide buttons or re-style them, override classes in your local stylesheets:
 
 ## Custom Shortcodes Architecture
 
-Traven supports custom shortcodes to extend the standard Markdown syntax. By default, it features native support for a custom `[image]` shortcode and a block-level `[component]` shortcode with quote/pullquote aliases:
+Traven supports custom shortcodes to extend the standard Markdown syntax. By default, it features native support for custom `[image]`, `[video]`, `[audio]`, and `[figure]` shortcodes, as well as a block-level `[component]` shortcode with blockquote/pullquote aliases:
 
 ### Custom `[image]` Shortcode
 Traven includes an advanced, optional `[image]` shortcode (e.g. `[image src="..." alt="..." align="center" size="medium" class="my-custom-class"]`) designed for modular, responsive layouts:
@@ -418,6 +419,12 @@ Traven includes native, optional support for a custom `[audio src="..." align="c
 * **Native Audio Elements**: Compiles audio files (e.g. `.mp3`, `.wav`, `.ogg`) into standard `<audio controls>` HTML tags.
 * **WYSIWYM Widget folding**: When the cursor is outside, folds into an interactive preview card displaying the audio icon, source URL, and caption.
 * **Decoupled Styling**: Renders inside layout-safe container classes (`.traven-audio-container`, `.traven-audio-figure`) with zero inline styles.
+
+### Custom `[figure]` Shortcode
+Traven includes native support for an optional block-level `[figure align="center" size="medium" caption="My Figure Caption" class="custom-figure"]...[/figure]` shortcode system:
+* **Nested Block-Level Content**: Designed as a pair-tag shortcode that can wrap any block elements (such as images, tables, code blocks, or custom markdown content) inside a captioned block.
+* **WYSIWYM Widget Folding**: When the cursor is outside, the opening/closing shortcode tags collapse, displaying a styled preview panel with the caption at the bottom and an edit/modal trigger icon.
+* **Decoupled Styling**: Compiles into standard semantic HTML `<figure>` containers (with classes like `.traven-figure`, `.align-[alignment]`, and `.size-[size]`) and `<figcaption class="traven-figure-caption">` with zero inline styles.
 
 ### Custom `[component]` & Blockquote Aliases Shortcode
 Traven includes native support for a pair-tag `[component]...[/component]` shortcode system, designed to handle structural block-level content:

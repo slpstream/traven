@@ -1825,5 +1825,100 @@ describe('BlockquoteDropdown', () => {
   });
 });
 
+describe('FigureShortcode', () => {
+  let container;
+
+  beforeEach(() => {
+    container = document.createElement('div');
+    document.body.appendChild(container);
+  });
+
+  afterEach(() => {
+    container.remove();
+  });
+
+  it('compiles figure shortcode with inner content to HTML in fallback renderer', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '[figure caption="Diagram 1" align="right" size="large" class="custom-fig"]\n![Diagram](flow.svg)\n[/figure]',
+    });
+    const html = editor.getContentHtml();
+    expect(html).toContain('<figure class="traven-figure align-right size-large custom-fig">');
+    expect(html).toContain('<img src="flow.svg" alt="Diagram"');
+    expect(html).toContain('<figcaption class="traven-figure-caption">Diagram 1</figcaption>');
+  });
+
+  it('renders FigureShortcodeWidget inside WYSIWYM editor when cursor is outside', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '[figure caption="Code block figure"]\n```js\nconst a = 1;\n```\n[/figure]\nSome text here',
+    });
+    editor.setSelection(editor.getValue().length, editor.getValue().length);
+
+    const widgetEl = container.querySelector('.cm-wysiwym-figure-shortcode');
+    expect(widgetEl).not.toBeNull();
+    expect(widgetEl.classList.contains('align-center')).toBe(true);
+    expect(widgetEl.classList.contains('size-medium')).toBe(true);
+
+    expect(widgetEl.title).toBe('[figure caption="Code block figure"]\n```js\nconst a = 1;\n```\n[/figure]');
+
+    const captionEl = widgetEl.querySelector('.figure-caption');
+    expect(captionEl).not.toBeNull();
+    expect(captionEl.textContent).toBe('Code block figure');
+  });
+
+  it('opens editing modal when clicking FigureShortcodeWidget, and saving updates document', async () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '[figure caption="Initial Caption" align="left"]\nSome inner content\n[/figure]\nSome text',
+    });
+    // Set cursor outside the figure so the widget renders
+    editor.setSelection(editor.getValue().length, editor.getValue().length);
+
+    const widgetEl = container.querySelector('.cm-wysiwym-figure-shortcode');
+    expect(widgetEl).not.toBeNull();
+
+    // Dispatch mousedown on widget
+    const event = new window.MouseEvent('mousedown', { bubbles: true, cancelable: true });
+    widgetEl.dispatchEvent(event);
+
+    // Verify modal has opened
+    const modal = document.querySelector('.traven-modal-overlay');
+    expect(modal).not.toBeNull();
+    expect(modal.querySelector('.traven-modal-title').textContent).toBe('Edit Figure');
+
+    // Verify fields are pre-filled
+    const bodyInput = modal.querySelector('#traven-figure-body');
+    const captionInput = modal.querySelector('#traven-figure-caption');
+    const alignSelect = modal.querySelector('#traven-figure-align');
+    const sizeSelect = modal.querySelector('#traven-figure-size');
+
+    expect(bodyInput.value).toBe('Some inner content');
+    expect(captionInput.value).toBe('Initial Caption');
+    expect(alignSelect.value).toBe('left');
+    expect(sizeSelect.value).toBe('medium');
+
+    // Change fields
+    bodyInput.value = 'Updated inner content';
+    captionInput.value = 'Updated Caption';
+    alignSelect.value = 'right';
+
+    // Click "Save"
+    const saveBtn = modal.querySelector('.traven-modal-btn.btn-primary');
+    expect(saveBtn.textContent).toBe('Save');
+    saveBtn.click();
+
+    // Verify modal is closed
+    expect(document.querySelector('.traven-modal-overlay')).toBeNull();
+
+    // Verify value is updated in editor
+    expect(editor.getValue()).toBe('[figure caption="Updated Caption" align="right"]\nUpdated inner content\n[/figure]\nSome text');
+
+    // Verify focus is restored to editor
+    expect(document.activeElement).toBe(editor.getView().contentDOM);
+  });
+});
+
+
 
 

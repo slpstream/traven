@@ -9,7 +9,7 @@ import {
   WidgetType
 } from "@codemirror/view";
 import { viewToEditor } from "./bridge.js";
-import { parseMarkdownTable, openTableModal, openImageModal, openComponentModal, openVideoModal, openAudioModal } from "./toolbar/modal.js";
+import { parseMarkdownTable, openTableModal, openImageModal, openComponentModal, openVideoModal, openAudioModal, openFigureModal } from "./toolbar/modal.js";
 import { sanitizeUrl, parseVideoUrl } from "./security.js";
 import { ensureKatex } from "./math-parser.js";
 
@@ -692,6 +692,112 @@ class ComponentShortcodeWidget extends WidgetType {
   ignoreEvent() { return false; }
 }
 
+class FigureShortcodeWidget extends WidgetType {
+  constructor(attrs, nodeFrom, bodyText, rawText) {
+    super();
+    this.attrs = attrs;
+    this.nodeFrom = nodeFrom;
+    this.bodyText = bodyText;
+    this.rawText = rawText;
+  }
+
+  toDOM(view) {
+    const container = document.createElement("div");
+    container.className = "cm-wysiwym-figure-shortcode";
+
+    if (this.rawText) {
+      container.title = this.rawText;
+    }
+
+    const caption = this.attrs.caption || "";
+    const align = this.attrs.align || "center";
+    const size = this.attrs.size || "medium";
+    const customClass = this.attrs.class || "";
+
+    container.classList.add(`align-${align}`);
+    container.classList.add(`size-${size}`);
+    if (customClass) {
+      customClass.split(/\s+/).forEach(c => {
+        if (c) container.classList.add(c);
+      });
+    }
+
+    const renderInlineMarkdown = (text) => {
+      if (!text) return "";
+      let html = text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+      html = html.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, src) => `<img src="${sanitizeUrl(src)}" alt="${alt}" style="max-width: 100%; height: auto; display: inline-block;">`);
+      html = html.replace(/\[(.*?)\]\((.*?)\)/g, (match, text, url) => `<a href="${sanitizeUrl(url)}" target="_blank">${text}</a>`);
+      html = html.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+      html = html.replace(/\*(.*?)\*/g, "<em>$1</em>");
+      html = html.replace(/__(.*?)__/g, "<strong>$1</strong>");
+      html = html.replace(/_(.*?)_/g, "<em>$1</em>");
+      html = html.replace(/==(.*?)==/g, '<span class="cm-wysiwym-highlight">$1</span>');
+      html = html.replace(/`(.*?)`/g, "<code>$1</code>");
+      return html;
+    };
+
+    const contentLines = this.bodyText.split(/\r?\n/).map(line => line.trim()).filter(line => line.length > 0);
+    const bodyContainer = document.createElement("div");
+    bodyContainer.className = "component-body";
+    contentLines.forEach(line => {
+      const p = document.createElement("p");
+      p.innerHTML = renderInlineMarkdown(line);
+      bodyContainer.appendChild(p);
+    });
+    container.appendChild(bodyContainer);
+
+    if (caption) {
+      const figcaption = document.createElement("div");
+      figcaption.className = "figure-caption";
+      figcaption.textContent = caption;
+      container.appendChild(figcaption);
+    }
+
+    const editIcon = document.createElement("div");
+    editIcon.className = "figure-edit-icon";
+    editIcon.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`;
+    container.appendChild(editIcon);
+
+    const openEditModal = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const editor = viewToEditor.get(view);
+      if (editor) {
+        openFigureModal({
+          editor,
+          triggerElement: container,
+          docFrom: this.nodeFrom,
+          docTo: this.nodeFrom + this.rawText.length,
+          attrs: this.attrs,
+          bodyText: this.bodyText
+        });
+      }
+    };
+
+    editIcon.addEventListener("mousedown", openEditModal);
+    editIcon.addEventListener("click", openEditModal);
+    container.addEventListener("mousedown", openEditModal);
+
+    return container;
+  }
+
+  eq(other) {
+    return (
+      other instanceof FigureShortcodeWidget &&
+      this.nodeFrom === other.nodeFrom &&
+      this.bodyText === other.bodyText &&
+      this.rawText === other.rawText &&
+      JSON.stringify(this.attrs) === JSON.stringify(other.attrs)
+    );
+  }
+
+  ignoreEvent() { return false; }
+}
+
+
 // --- Decoration Tokens ---
 
 const collapseDeco = Decoration.replace({});
@@ -802,10 +908,48 @@ function buildWysiwymDecorations(state) {
   // Track lines that already have line decorations applied to avoid duplicate line class definitions
   const decoratedLines = new Set();
 
+  // Scan document text for [figure ...] ... [/figure] to support block-level content (like code blocks) across multiple lines
+  const activeFigureRanges = [];
+  const docText = state.doc.toString();
+  const figureRegex = /\[figure((?:\s+[^\]]*|=\s*(?:"[^"]*"|'[^']*'|[^\s\]]+)(?:\s+[^\]]*)?)?)\]([\s\S]*?)\[\/figure\]/g;
+  let match;
+  while ((match = figureRegex.exec(docText)) !== null) {
+    const from = match.index;
+    const to = from + match[0].length;
+    const attrsStr = match[1] || "";
+    const bodyText = match[2] || "";
+
+    const isCursorInside = cursorHead >= from && cursorHead <= to;
+    if (!isCursorInside) {
+      const attrs = {};
+      const attrRegex = /\s*([a-zA-Z0-9_-]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=]+))/g;
+      let attrMatch;
+      while ((attrMatch = attrRegex.exec(attrsStr)) !== null) {
+        const name = attrMatch[1];
+        const val = attrMatch[2] !== undefined ? attrMatch[2] : (attrMatch[3] !== undefined ? attrMatch[3] : (attrMatch[4] || ""));
+        attrs[name] = val;
+      }
+      
+      const rawText = match[0];
+      const widget = new FigureShortcodeWidget(attrs, from, bodyText, rawText);
+      collected.push({
+        from,
+        to,
+        deco: Decoration.replace({ widget, block: true })
+      });
+      activeFigureRanges.push({ from, to });
+    }
+  }
+
   syntaxTree(state).iterate({
     from: 0,
     to: state.doc.length,
       enter(node) {
+        // Skip processing any AST nodes inside replaced figures
+        if (activeFigureRanges.some(r => node.from >= r.from && node.to <= r.to)) {
+          return false;
+        }
+
         // 1. Bold (StrongEmphasis)
         if (node.name === "StrongEmphasis") {
           const isCursorInside = cursorHead >= node.from && cursorHead <= node.to;
@@ -1097,6 +1241,7 @@ function buildWysiwymDecorations(state) {
             return false;
           }
         }
+
         // 3.8. Custom ComponentShortcode [component name="..." ...]
         if (node.name === "ComponentShortcode") {
           const isCursorInside = cursorHead >= node.from && cursorHead <= node.to;

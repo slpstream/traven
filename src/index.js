@@ -32,6 +32,7 @@ import { Highlight } from "./highlight-parser.js";
 import { Shortcode } from "./shortcode-parser.js";
 import { VideoShortcode } from "./video-parser.js";
 import { AudioShortcode } from "./audio-parser.js";
+import { FigureShortcode } from "./figure-parser.js";
 import { ComponentShortcode } from "./component-parser.js";
 import { MathExtension, ensureKatex, configureKatex } from "./math-parser.js";
 import { yamlFrontmatter } from "@codemirror/lang-yaml";
@@ -72,6 +73,7 @@ export const DEFAULT_TOOLBAR = [
   "hr",
   "table",
   "component",
+  "figure",
   "|",
   "datetime",
   "search",
@@ -238,7 +240,7 @@ export class TravenEditor {
       }),
       ...(wrapLines ? [EditorView.lineWrapping] : []),
       readOnlyCompartment.of(EditorState.readOnly.of(!!options.readOnly)),
-      yamlFrontmatter({ content: markdown({ extensions: [Strikethrough, TaskList, Table, Autolink, Highlight, Shortcode, VideoShortcode, AudioShortcode, ComponentShortcode, MathExtension, { remove: ["SetextHeading"] }] }) }),
+      yamlFrontmatter({ content: markdown({ extensions: [Strikethrough, TaskList, Table, Autolink, Highlight, Shortcode, VideoShortcode, AudioShortcode, FigureShortcode, ComponentShortcode, MathExtension, { remove: ["SetextHeading"] }] }) }),
       wysiwymPlugin(),
       delimiterSkipKeymap(),
       imageDecorationPlugin(),
@@ -1212,6 +1214,7 @@ export class TravenEditor {
     // Extract component shortcodes to protect them and compile recursively
     const componentPlaceholders = [];
     const componentRegex = /\[(component|quote|pullquote|blockquote)((?:\s+[^\]]*|=\s*(?:"[^"]*"|'[^']*'|[^\s\]]+)(?:\s+[^\]]*)?)?)\]([\s\S]*?)\[\/\1\]/g;
+    const figureRegex = /\[(figure)((?:\s+[^\]]*|=\s*(?:"[^"]*"|'[^']*'|[^\s\]]+)(?:\s+[^\]]*)?)?)\]([\s\S]*?)\[\/figure\]/g;
     let prevContent;
     do {
       prevContent = content;
@@ -1267,6 +1270,28 @@ export class TravenEditor {
         } else {
           rendered = `<div class="traven-component traven-component-${compName}">${compiledBody}</div>`;
         }
+
+        componentPlaceholders.push(rendered);
+        return `\n\nCOMPONENT-PLACEHOLDER-INDEX-${index}\n\n`;
+      });
+
+      content = content.replace(figureRegex, (match, tagName, attrsStr, body) => {
+        const index = componentPlaceholders.length;
+
+        const attrs = {};
+        const attrRegex = /([a-zA-Z0-9_-]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=]+))/g;
+        let m;
+        while ((m = attrRegex.exec(attrsStr)) !== null) {
+          attrs[m[1]] = m[2] !== undefined ? m[2] : (m[3] !== undefined ? m[3] : (m[4] || ""));
+        }
+
+        const caption = attrs.caption || "";
+        const align = attrs.align || "center";
+        const size = attrs.size || "medium";
+        const customClass = attrs.class ? ` ${attrs.class}` : "";
+
+        const compiledBody = this.#fallbackRender(body);
+        const rendered = `<figure class="traven-figure align-${align} size-${size}${customClass}">${compiledBody}${caption ? `<figcaption class="traven-figure-caption">${caption}</figcaption>` : ""}</figure>`;
 
         componentPlaceholders.push(rendered);
         return `\n\nCOMPONENT-PLACEHOLDER-INDEX-${index}\n\n`;
