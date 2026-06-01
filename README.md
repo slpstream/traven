@@ -38,38 +38,33 @@ Mix and match different combinations of toolbar buttons, skins, and editor layou
 
 Traven Editor offers a modern WYSIWYM editing experience with support for collapsible markdown syntax delimiters, optimistic image uploads, a custom shortcode system, bidirectional raw sync, Vim emulation, math rendering via LaTeX, and more. 
 
-Find the complete list and detailed explanation of all that Traven can do in **[Key Features Documentation](docs/key-features.md)**.
+For a complete list and detailed explanation of all that Traven can do, see **[Key Features Documentation](docs/key-features.md)**.
 
 ---
 
 ### Installation & Setup
 
 Traven is a framework-agnostic editor with zero peer dependencies. It can be easily integrated by including the built JS bundle and styling sheet directly in your HTML and deferred-initializing the editor.
-
 Check out integration code recipes, templates, and setup options in the **[Installation & Setup Guide](docs/installation-setup.md)**.
 
 ### API Reference
 
 The Traven API exposes a constructor with a comprehensive set of configuration options, instance methods, and built-in text formatting helpers for controlling the editor state and interacting with the document.
-
 For the full list of options, public methods, keyboard shortcuts, formatting helper recipes, and event listeners, please refer to the **[API Reference Documentation](docs/api-reference.md)**.
 
 ### Integration Patterns
 
 Traven supports two primary patterns for managing document metadata and frontmatter: inline freeform editing directly inside the editor, or structured form field integration (Split-Before / Join-After) which is recommended for corporate CMS databases.
-
 Architectural details, examples, and splitting/recombination helper functions are detailed in the **[Integration Patterns Guide](docs/integration-patterns.md)**.
 
 ### Customization & Styling
 
 Editor themes and toolbar behaviors are fully customizable. Swap stylesheet skins to match your website theme, select from multiple toolbar presets (default, compact, reduced, or expandable), or override button selectors using custom CSS.
-
 To learn more about CSS class listings, custom skin configurations, and toolbar styling options, consult the **[Customization & Styling Guide](docs/customization-styling.md)**.
 
 ### Custom Shortcodes Architecture
 
 Traven supports extending standard Markdown with custom shortcodes. By default, it comes with rich, interactive WYSIWYM widgets and semantic HTML compilers for `[image]`, `[video]`, `[audio]`, `[figure]`, and `[component]` layouts.
-
 The technical blueprint, widget rendering lifecycles, and syntax extension details are covered in the **[Custom Shortcodes Architecture Guide](docs/shortcodes-architecture.md)**.
 
 ### Development
