@@ -1,0 +1,183 @@
+# API Reference
+
+This document provides a detailed reference of the options, methods, formatting helpers, and events available on the `TravenEditor` instance.
+
+---
+
+## `new TravenEditor(options)`
+
+Initializes a new editor instance.
+
+### Options
+
+| Option | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `element` | `HTMLElement` | *(Required)* | The DOM element inside which the WYSIWYM editor will mount. |
+| `sourceElement` | `HTMLElement` | `null` | Optional DOM element to mount the secondary raw editor for live sync. |
+| `initialValue` | `string` | `""` | The starting Markdown document string. |
+| `lineNumbers` | `boolean` | `false` | Show line numbers and folding gutters in the primary editor. |
+| `sourceLineNumbers`| `boolean` | `false` | Show line numbers and gutters in the raw sync editor. |
+| `lineWrapping` | `boolean` | `true` | Enable soft line wrapping in the primary editor. |
+| `sourceLineWrapping`| `boolean` | `true` | Enable soft line wrapping in the raw sync editor. |
+| `onChange` | `function` | `null` | Callback fired on change: `(value: string) => void`. |
+| `onSave` | `function` | `null` | Callback fired on Save command (Cmd+S / Ctrl+S): `(value: string) => void`. |
+| `onUploadImage` | `function` | `null` | Callback returning a promise of the uploaded image's URL: `(file: File) => Promise<string>`. |
+| `onStatsUpdate` | `function` | `null` | Callback fired when document stats change: `(stats: { words: number, characters: number, readTime: number }) => void`. |
+| `theme` | `"light" \| "dark"`| `"light"` | Configures baseline cursor theme variables and dark mode class triggers. |
+| `caretColor` | `string` | `""` | Custom hex color for the editor caret overrides. |
+| `toolbar` | `Array<string> \| boolean`| `false` | A list of tool key strings defining the toolbar buttons layout, or `false` to disable the toolbar. |
+| `vimMode` | `boolean` | `false` | Enables Vim keybindings and normal mode emulation in both editing panes. |
+| `readOnly` | `boolean` | `false` | Enables read-only mode for both primary and secondary editor panes. |
+| `keybindings` | `object` | `{}` | Key-value pairs overriding default tool keybindings (e.g. `{ bold: "Ctrl-Shift-b" }`). |
+| `katex` | `boolean \| string \| object` | `false` | Configures KaTeX loading. If `false` (default), only uses local preloaded `window.katex`. If `true`, loads from JSDelivr CDN. If a string or object, defines custom self-hosted paths (e.g. `{ js: "path/to/katex.js", css: "path/to/katex.css" }`). |
+
+---
+
+## Public Methods
+
+### `getValue()`
+Returns the complete document content as a Markdown string.
+*   **Returns:** `string`
+
+### `setValue(value)`
+Replaces the entire document content with a new Markdown string.
+*   **Parameters:** `value` (`string`)
+
+### `focus()`
+Programmatically focuses the primary editor view.
+
+### `setReadOnly(readOnly)`
+Sets the editor to read-only or read-write mode dynamically.
+*   **Parameters:** `readOnly` (`boolean`): Whether the editor should be read-only.
+
+### `isReadOnly()`
+Returns whether the editor is currently in read-only mode.
+*   **Returns:** `boolean`
+
+### `getSelection()`
+Returns the currently selected text in the primary editor.
+*   **Returns:** `string`
+
+### `setSelection(anchor, head)`
+Sets the selection range in the editor and focuses it.
+*   **Parameters:**
+    *   `anchor` (`number`): The starting character index of the selection.
+    *   `head` (`number`, optional): The ending character index of the selection. Defaults to `anchor`.
+
+
+### `insertSnippet(before, after, placeholder)`
+Wraps the current text selection with markdown characters. If no text is selected, inserts a formatted placeholder string.
+*   **Parameters:**
+    *   `before` (`string`): Prefix tags (e.g. `**`).
+    *   `after` (`string`): Suffix tags (e.g. `**`).
+    *   `placeholder` (`string`): Text displayed inside tags if selection is empty.
+
+### `undo()`
+Triggers history undo on the currently focused editor (WYSIWYM or raw).
+
+### `redo()`
+Triggers history redo on the currently focused editor (WYSIWYM or raw).
+
+### `setTheme(theme)`
+Dynamically toggles light or dark mode styling across the editors.
+*   **Parameters:** `theme` (`"light" | "dark"`)
+
+### `setVimMode(enabled)`
+Dynamically toggles Vim mode emulation at runtime.
+*   **Parameters:** `enabled` (`boolean`)
+
+### `getCharacterCount()`
+Returns the total character length of the active document.
+*   **Returns:** `number`
+
+### `getWordCount()`
+Returns the total word count of the active document.
+*   **Returns:** `number`
+
+### `getReadTime()`
+Returns the estimated reading time of the active document in minutes.
+*   **Returns:** `number`
+
+### `registerRenderer(renderFn)`
+Registers a custom Markdown compilation function to render custom HTML previews.
+*   **Parameters:** `renderFn` (`(markdown: string) => string`)
+
+### `getContentHtml()`
+Returns the compiled HTML representation of the document, using the registered custom renderer or the built-in fallback parser.
+*   **Returns:** `string`
+
+### `getView()`
+Exposes the primary CodeMirror `EditorView` instance.
+*   **Returns:** `EditorView`
+
+### `triggerSave()`
+Programmatically invokes the registered save callback with current values.
+
+### `on(event, callback)`
+Registers an event listener callback.
+*   **Parameters:**
+    *   `event` (`"change" | "save" | "statsUpdate"`): The event name.
+    *   `callback` (`function`): The callback function:
+        *   For `"change"` / `"save"`: receives `(value: string)` (the updated Markdown document).
+        *   For `"statsUpdate"`: receives a stats object: `{ words: number, characters: number, readTime: number }`.
+
+**Example:**
+```javascript
+editor.on("statsUpdate", (stats) => {
+  console.log(`Words: ${stats.words}, Characters: ${stats.characters}, Read Time: ${stats.readTime} min`);
+});
+```
+
+### `destroy()`
+Cleans up event listeners and destroys CodeMirror instances.
+
+---
+
+## Editing & Formatting Helpers
+
+Traven exposes several built-in commands to manipulate text selections programmatically:
+
+### `clear()`
+Wipes the entire document content and focuses the primary editor.
+
+### `toUpperCase()`
+Converts the active selection to uppercase, preserving the selected text boundary.
+
+### `toLowerCase()`
+Converts the active selection to lowercase, preserving the selected text boundary.
+
+### `capitalizeWords()`
+Capitalizes the first letter of every word in the active selection.
+
+### `removeFormatting()`
+Strips all inline styles (bold, italic, code backticks, strikethrough, highlights) and block formatting (lists, taskboxes, headings, blockquotes, horizontal rules) from the selection.
+
+### `toggleFullscreen()`
+Toggles fullscreen class `.is-fullscreen` on the editor's parent container and recalculates layout coordinates.
+
+### `openSearch()`
+Opens the built-in CodeMirror find-and-replace search panel.
+
+### `goToLine(lineNumber)`
+Navigates the cursor to the specified 1-indexed line number and scrolls it into view.
+*   **Parameters:** `lineNumber` (`number`)
+
+### `insertCodeBlock()`
+Wraps the selection in a fenced code block (`` ``` ``) with appropriate line spacing.
+
+### `insertHR()`
+Inserts a standalone markdown horizontal rule line (`---`) at the cursor.
+
+### `insertTable()`
+Inserts a pre-formatted 3x3 Markdown table template at the cursor, and selects the first header text.
+
+### `setHeading(level)`
+Toggles or applies a heading level (`1` to `6`) prefix to the active line. Pass `0` to strip headings.
+*   **Parameters:** `level` (`number`)
+
+### `insertBlockquote()`
+Converts the active selection or line into a markdown blockquote block (`> `).
+
+### `insertList(type)`
+Converts the active selection or line into a list of the specified type.
+*   **Parameters:** `type` (`"ul" | "ol" | "task"`)
