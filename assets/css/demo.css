@@ -614,6 +614,31 @@ header {
   resize: vertical;
 }
 
+@media (min-width: 1025px) {
+  body.unified-demo {
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .unified-demo main {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .unified-demo .bottom-row {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .unified-demo .editor-card {
+    height: 100%;
+    min-height: 0;
+    resize: none;
+  }
+}
+
 .unified-demo .editor-wrapper {
   flex: 1;
   display: flex;
