@@ -117,7 +117,7 @@ status: Published
 ---
 # Form-Managed Metadata Demo
 
-This demo illustrates **Approach B (Split-Before / Join-After)** which is the recommended pattern for CMS integrations.
+This demo illustrates **Split-Before / Join-After** which is the recommended pattern for CMS integrations.
 
 Notice that:
 1. The editor container **only shows the Markdown body**. The YAML metadata is completely hidden and protected from writing accidents.

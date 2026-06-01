@@ -189,6 +189,29 @@ header {
   height: 600px;
 }
 
+@media (min-width: 1025px) {
+  body.inline-demo {
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .inline-demo main {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .inline-demo .sandbox-grid {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .inline-demo .sandbox-card {
+    height: 100%;
+    min-height: 0;
+    resize: none;
+  }
+}
+
 
 .raw-editor-mount {
   background-color: #ffffff;
