@@ -26,11 +26,13 @@
 
 Traven is highly modular and straightforward to customize or extend. If you need a powerful, flexible and mostly unopinionated Markdown editor that adapts to the layout, theme, and behavior of an existing project, its theming and configuration options and decoupled styling make integration fast and easy.
 
+![Traven Editor Workspace](assets/images/traven-workspace.png)
+
 ### Live Demos
 
-Go to **[Traven.dev](https://traven.dev)** to try the Traven framework-agnostic WYSIWYM editor with live previews in different demo sandboxes. 
+Try Traven in your browser with **[Live Previews](https://traven.dev)**—a collection of demo sandboxes that showcase the editor in different layouts, skins, and toolbar configurations. 
 
-Mix and match different combinations of toolbar buttons, skins, and editor layouts to see the flexibility of how Traven can be themed and configured to fit any setting where JavaScript works.
+Mix and match options, tweak settings, and explore how Traven adapts to any web environment without breaking a sweat. All demos use the same core codebase, so what you see is exactly what you get when you integrate Traven into your own project.
 
 ---
 
