@@ -7,8 +7,8 @@
 </p>
 <p align="center">
   Add Traven Editor to any website:
-  LaTeX, table editor, image modal, shortcode system, audio, video, custom Lezer extensions, 
-  four skins, five demos, six toolbars, full documentation
+  LaTeX, table editor, image drag-n-drop, shortcode system, audio, video, custom Lezer extensions, 
+  five skins, six demos, seven toolbars, full documentation
 </p>
 
 <p align="center">
