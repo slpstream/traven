@@ -404,7 +404,7 @@ Match the editor's `.cm-wysiwym-codeblock-line` colors and the preview's `.trave
 
 ## 6. Shortcode markup reference (cheat sheet)
 
-The fallback renderer emits **zero inline styles**; every visual decision is delegated to your theme. This section is a copy of the canonical markup in `docs-gitignore/shortcodestyles.css`, condensed for theme authors. Use the comment blocks in that file as your authoritative reference.
+The fallback renderer emits **zero inline styles**; every visual decision is delegated to your theme. This section is a copy of the canonical markup in `docs/shortcodestyles.css`, condensed for theme authors. Use the comment blocks in that file as your authoritative reference.
 
 ### 6.1 `[image ...]`
 
@@ -584,7 +584,7 @@ Define light values at the top of the stylesheet and re-declare the same selecto
 This is verbose but explicit, and every rule is right next to its light counterpart — easy to diff.
 
 ### 7.2 The CSS-variables approach (recommended for new themes)
-Define a small palette of variables at `:root` and re-declare them under the dark class. Every other rule references the variables. The cheat-sheet at `docs-gitignore/shortcodestyles.css` demonstrates this pattern with a `--traven-color-*` family:
+Define a small palette of variables at `:root` and re-declare them under the dark class. Every other rule references the variables. The cheat-sheet at `docs/shortcodestyles.css` demonstrates this pattern with a `--traven-color-*` family:
 
 ```css
 :root {
@@ -967,5 +967,5 @@ When you build a new theme, picking a "donor" from this table gets you 80% of th
 * `docs/shortcodes.md` — technical blueprint for adding custom shortcode support, including the regex/scanner pattern used in `wysiwym.js`.
 * `docs/installation-setup.md` — how to wire the editor into a host page.
 * `docs/api-reference.md` — full constructor options and instance methods (notably `setTheme()`, `setVimMode()`, `getUploadHandler()`).
-* `docs-gitignore/shortcodestyles.css` — the canonical copy-paste cheat sheet for every shortcode's HTML output and CSS variables, kept in sync with the cheat sheet summary in [§6](#6-shortcode-markup-reference-cheat-sheet).
-* `docs-gitignore/knowledgebase.md` §2 and §6 — the engineering rules behind this guide (CodeMirror 6 pitfalls, dark-mode parity tips, list-parsing constraints). Read this if you plan to extend the editor itself.
+* `docs/shortcodestyles.css` — the canonical copy-paste cheat sheet for every shortcode's HTML output and CSS variables, kept in sync with the cheat sheet summary in [§6](#6-shortcode-markup-reference-cheat-sheet).
+* `docs/knowledgebase.md` §2 and §6 — the engineering rules behind this guide (CodeMirror 6 pitfalls, dark-mode parity tips, list-parsing constraints). Read this if you plan to extend the editor itself.
