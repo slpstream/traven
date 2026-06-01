@@ -6,14 +6,14 @@
   <strong>A standalone, lightweight, framework-agnostic WYSIWYM Markdown Editor</strong>
 </p>
 <p align="center">
-  Add Traven editor to any website:
-  LaTeX, table editor, image modal, shortcode system, custom Lezer extensions, 
+  Add Traven Editor to any website:
+  LaTeX, table editor, image modal, shortcode system, audio, video, custom Lezer extensions, 
   four skins, five demos, six toolbars, full documentation
 </p>
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License"></a>
-  <img src="https://img.shields.io/badge/version-0.1.8-orange.svg" alt="Version 0.1.8">
+  <img src="https://img.shields.io/badge/version-0.1.9-orange.svg" alt="Version 0.1.9">
   <img src="https://img.shields.io/badge/engine-CodeMirror_6-6aa00.svg" alt="CodeMirror 6 Engine">
   <img src="https://img.shields.io/badge/peer_dependencies-none-blue.svg" alt="Zero Peer Dependencies">
 </p>
@@ -45,6 +45,7 @@ Mix and match different combinations of toolbar buttons, skins, and editor layou
 *   **WYSIWYM Collapsing**: Formatting syntax markers (like `**` for bold and `*` for italic) display dynamically only when the cursor is inside the formatted text. When the cursor leaves, they transition smoothly into clean, styled blocks.
 *   **Optimistic Media Uploads**: Drag and drop or paste image files directly into the editor. The view immediately embeds an optimistic spinner loader and replaces it with the final URL once your upload handler resolves.
 *   **Decoupled Styling (Skins)**: Theme aesthetics (colors, padding, borders) are decoupled from the JavaScript logic. Swap between the neutral **Default Skin** and optional skins such as a **Dark Skin** and a contemporary **Colorful Skin** by changing a single `<link>` stylesheet, with no rebuilding required.
+*   **Custom Shortcode System**: Built-in support for modular `[image]`, `[video]`, `[audio]`, and nested block `[component]` shortcodes (with blockquote/pullquote aliases). These automatically fold into WYSIWYM interactive widgets inside the editor while compiling into clean semantic HTML structure.
 *   **Bidirectional Raw Sync**: Easily bind a secondary raw Markdown viewer/editor in split-screen layouts. Changes flow incrementally between editors, maintaining cursor positions and separate histories without circular synchronization loops.
 *   **Smart Keyboard Utilities**: Includes keyboard helpers that prevent cursors from getting trapped inside collapsed markdown delimiters during arrow navigation.
 *   **Vim Emulation Mode**: Toggleable Vim normal/visual/insert mode keybindings dynamically at runtime.
@@ -358,14 +359,15 @@ Each button generated in the toolbar is assigned a generic `.toolbar-btn` class,
 | `bold` | `.btn-bold` | Bold text (`**bold text**`) | `Ctrl+B` (`Cmd+B` on Mac) |
 | `italic` | `.btn-italic` | Italic text (`*italic text*`) | `Ctrl+I` (`Cmd+I` on Mac) |
 | `strikethrough` | `.btn-strikethrough` | Strikethrough text (`~~strikethrough~~`) | `Ctrl+Shift+S` (`Cmd+Shift+S` on Mac) |
+| `highlight` | `.btn-highlight` | Highlight text (`==highlight==`) | - |
 | `code` | `.btn-code` | Inline code backticks (`` `code` ``) | - |
-| `codeblock` | `.btn-codeblock` | Wrap selection in fenced code block (`` ``` ``) | - |
 | `heading` | `.btn-heading` | Dropdown selector for Heading 1 to Heading 6 | - |
 | `bulletlist` | `.btn-bulletlist` | Format line or selection as unordered list (`- `) | - |
 | `numberedlist` | `.btn-numberedlist` | Format line or selection as ordered list (`1. `) | - |
 | `tasklist` | `.btn-tasklist` | Format line or selection as checklist (`- [ ] `) | `Ctrl+Shift+C` (`Cmd+Shift+C` on Mac) |
 | `blockquote` | `.btn-blockquote` | Format line or selection as blockquote (`> `) | - |
 | `hr` | `.btn-hr` | Insert horizontal rule line (`---`) | - |
+| `codeblock` | `.btn-codeblock` | Wrap selection in fenced code block (`` ``` ``) | - |
 | `table` | `.btn-table` | Insert standard 3x3 table template | - |
 | `datetime` | `.btn-datetime` | Insert current Date & Time (YYYY-MM-DD HH:MM) | - |
 | `search` | `.btn-search` | Open CodeMirror search panel | `Ctrl+F` (`Cmd+F` on Mac) |
@@ -377,6 +379,10 @@ Each button generated in the toolbar is assigned a generic `.toolbar-btn` class,
 | `removeformatting` | `.btn-removeformatting` | Remove Markdown styling from selection | - |
 | `gotoline` | `.btn-gotoline` | Prompt for line number and navigate | `Ctrl+G` (`Cmd+G` on Mac) |
 | `link` | `.btn-link` | Insert link using link modal dialog | `Ctrl+K` (`Cmd+K` on Mac) |
+| `image` | `.btn-image` | Insert image via URL or file upload modal | - |
+| `video` | `.btn-video` | Insert video shortcode via modal | - |
+| `audio` | `.btn-audio` | Insert audio shortcode via modal | - |
+| `component` | `.btn-component` | Insert `[component]` shortcode block via modal | - |
 | `help` | `.btn-help` | Open keyboard shortcuts help modal | `Ctrl+/` (`Cmd+/` on Mac) |
 
 #### Hiding Buttons via CSS
@@ -400,6 +406,18 @@ Traven includes an advanced, optional `[image]` shortcode (e.g. `[image src="...
 * **Fully Backwards-Compatible**: The custom shortcode is completely optional. Traven remains fully backwards-compatible and non-breaking for standard legacy Markdown syntax (`![alt](src)`). Existing standard images continue to render and compile flawlessly.
 * **Toolbar Toggle**: The "Insert Image" toolbar modal contains a sliders-icon toggle to switch between Advanced mode (generating the custom `[image]` shortcode with support for captions, custom CSS classes, sizing, and alignment settings) and Legacy mode (producing standard `![alt](src)` Markdown).
 * **Decoupled Presentation Styling**: The fallback renderer compiles the shortcode to clean semantic HTML (an `<img>` tag with class attributes and no inline `style=""` declarations). Layout formatting (width, display, float, margin) is delegated entirely to the skin stylesheets (e.g. `assets/skins/skin-default.css`) via `.align-[alignment]` and `.size-[size]` selector classes.
+
+### Custom `[video]` Shortcode
+Traven includes native, optional support for a custom `[video src="..." align="center" size="medium" caption="My Video" class="custom-video"]` shortcode for embedding video media:
+* **Multiple Platforms Supported**: Detects and compiles YouTube and Vimeo URLs into responsive embedded `<iframe>` elements. Direct links to video files (e.g. `.mp4`, `.webm`, `.ogg`) are compiled into native `<video controls>` HTML tags.
+* **WYSIWYM Widget folding**: When the cursor is outside the shortcode, the text folds into an interactive preview card displaying the detected platform logo/name, source URL, and caption. Clicking the edit icon on the card opens the Video Modal.
+* **Decoupled Styling**: Compiles into semantic HTML containers (`<figure>` or `<div>`) and tags with no inline styles. Alignment and sizing layouts (e.g. `.align-right`, `.size-large`, `.traven-video-figure`) are controlled entirely via CSS skins.
+
+### Custom `[audio]` Shortcode
+Traven includes native, optional support for a custom `[audio src="..." align="center" size="medium" caption="My Audio" class="custom-audio"]` shortcode for embedding audio media:
+* **Native Audio Elements**: Compiles audio files (e.g. `.mp3`, `.wav`, `.ogg`) into standard `<audio controls>` HTML tags.
+* **WYSIWYM Widget folding**: When the cursor is outside, folds into an interactive preview card displaying the audio icon, source URL, and caption.
+* **Decoupled Styling**: Renders inside layout-safe container classes (`.traven-audio-container`, `.traven-audio-figure`) with zero inline styles.
 
 ### Custom `[component]` & Blockquote Aliases Shortcode
 Traven includes native support for a pair-tag `[component]...[/component]` shortcode system, designed to handle structural block-level content:

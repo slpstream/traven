@@ -1218,6 +1218,15 @@ describe('fallback rendering inline formats', () => {
     const html = editor.getContentHtml();
     expect(html).toContain('<pre><code class="language-js">console.log(42);</code></pre>');
   });
+
+  it('preserves first line of content in fenced code block without language', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: "```\nVictor Mono handles the code styling\nconst message = \"A clean canvas for your thoughts\";\nconsole.log(message);\n```",
+    });
+    const html = editor.getContentHtml();
+    expect(html).toContain('<pre><code>Victor Mono handles the code styling\nconst message = "A clean canvas for your thoughts";\nconsole.log(message);</code></pre>');
+  });
 });
 
 describe('fallback rendering list formats', () => {

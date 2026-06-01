@@ -1275,7 +1275,7 @@ export class TravenEditor {
 
     // Extract fenced code blocks to avoid splitting them on empty lines or parsing inline elements inside
     const codeBlocks = [];
-    content = content.replace(/^```\s*([a-zA-Z0-9_\-]*)([^\r\n]*)\r?\n([\s\S]*?)\r?\n```\s*$/gm, (match, lang, meta, code) => {
+    content = content.replace(/^```[ \t]*([a-zA-Z0-9_\-]*)([^\r\n]*)\r?\n([\s\S]*?)\r?\n```\s*$/gm, (match, lang, meta, code) => {
       const index = codeBlocks.length;
       const classAttr = lang ? ` class="language-${lang}"` : "";
       const escapedCode = code

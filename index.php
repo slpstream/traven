@@ -625,6 +625,29 @@
           </svg>
         </div>
       </a>
+
+      <!-- Card 6: Editorial Demo -->
+      <a href="demo-editorial.php" class="demo-card">
+        <div class="card-top">
+          <div class="card-meta">
+            <div class="card-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="card-title">Editorial Demo</div>
+          <div class="card-desc">An elegant typographic layout featuring Macondo for headings H1-H3, Goudy Bookletter 1911 for body text, and a floating toolbar.</div>
+        </div>
+        <div class="card-cta">
+          Launch Demo
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </div>
+      </a>
     </div>
 
     

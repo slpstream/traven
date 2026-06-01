@@ -393,7 +393,7 @@ mark	line	col
 
 COMPONENT-PLACEHOLDER-INDEX-${j}
 
-`});while(t!==s);let o=[];t=t.replace(/^```\s*([a-zA-Z0-9_\-]*)([^\r\n]*)\r?\n([\s\S]*?)\r?\n```\s*$/gm,(A,Z,_,F)=>{let j=o.length,z=Z?` class="language-${Z}"`:"",V=F.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");return o.push(`<pre><code${z}>${V}</code></pre>`),`
+`});while(t!==s);let o=[];t=t.replace(/^```[ \t]*([a-zA-Z0-9_\-]*)([^\r\n]*)\r?\n([\s\S]*?)\r?\n```\s*$/gm,(A,Z,_,F)=>{let j=o.length,z=Z?` class="language-${Z}"`:"",V=F.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");return o.push(`<pre><code${z}>${V}</code></pre>`),`
 
 CODEBLOCKPLACEHOLDER${j}
 

@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Traven Editor — Write Demo</title>
+  <title>Traven Editor — Editorial Demo</title>
 
   <!-- Google Fonts CDN -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Goudy+Bookletter+1911&family=Victor+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Goudy+Bookletter+1911&family=Macondo&family=Victor+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="assets/skins/skin-write.css" id="editor-skin-link">
+  <link rel="stylesheet" href="assets/skins/skin-editorial.css" id="editor-skin-link">
   <link rel="stylesheet" href="assets/toolbars/toolbar-expandable.css?v=1.0.1" id="editor-toolbar-link">
 
   <style>
@@ -293,13 +293,13 @@
   <script type="module">
     import { TravenEditor, DEFAULT_TOOLBAR } from "./dist/traven.js";
 
-    const initialText = `# A Quiet Space
+    const initialText = `# Your Corner for Writing
 
-This might look like a web page, but there's a bit more to it than that: It is also a fully live editor. Type anywhere, like *just right here, for instance.* Traven's distraction-free writing layout features Goudy Bookletter 1911 as the primary typeface and a fixed, top-centered floating toolbar. Switch between WYSIWYM, Markdown, and Preview tabs above to view raw markdown or see what your work will look like when rendered as a static page.
+This might look like a web page, but there's a bit more to it than that: It is also a fully live editor. Type anywhere, like *just right here, for instance.* Traven's Editorial theme uses the display font **Macondo** for headings and  **Goudy Bookletter 1911** as its body typeface, along with a fixed, top-centered floating toolbar. Switch between WYSIWYM, Markdown, and Preview tabs above to view raw markdown or see what your work will look like when rendered as a static page.
 
 [image src="https://traven.dev/img/vignette.png" align="center" size="medium" alt="Drawing of a girl and her cat under a tree" caption="- Life is good..."]
 
-## Focus on Writing
+## The Editorial Workspace
 
 To maintain a clean screen, use the manual toolbar toggle button (located at the top right next to "Copy Markdown") to show or hide the floating toolbar at any time.
 

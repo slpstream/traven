@@ -47,6 +47,11 @@
   border-bottom: none !important;
 }
 
+.traven-toolbar-container.is-expanded {
+  width: 100% !important;
+  max-width: 1024px !important;
+}
+
 /* Base rail button reset */
 .toolbar-btn,
 .form-demo .toolbar-btn {
