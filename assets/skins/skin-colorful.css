@@ -369,6 +369,11 @@
   border: none !important;
   border-radius: 0 !important;
   box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.cm-editor .cm-wysiwym-image-widget-container .cm-wysiwym-image-preview {
+  padding: 0 !important;
 }
 
 .cm-editor .cm-wysiwym-image-widget-container:hover {
@@ -455,6 +460,7 @@
   border: none !important;
   border-radius: 0 !important;
   box-shadow: none !important;
+  padding: 0 !important;
 }
 
 .cm-wysiwym-image-shortcode-container.align-center:hover,
@@ -474,6 +480,7 @@
   text-align: center;
 }
 
+.cm-wysiwym-image-shortcode-container.align-center img,
 .cm-wysiwym-image-shortcode-container.align-fullbleed img {
   width: 100% !important;
   max-width: 100% !important;
