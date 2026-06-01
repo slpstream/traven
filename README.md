@@ -26,9 +26,7 @@
 
 Traven is highly modular and straightforward to customize or extend. If you need a powerful, flexible and mostly unopinionated Markdown editor that adapts to the layout, theme, and behavior of an existing project, its theming and configuration options and decoupled styling make integration fast and easy.
 
----
-
-## Live Demos
+### Live Demos
 
 Go to **[Traven.dev](https://traven.dev)** to try the Traven framework-agnostic WYSIWYM editor with live previews in different demo sandboxes. 
 
@@ -44,58 +42,48 @@ Find the complete list and detailed explanation of all that Traven can do in **[
 
 ---
 
-## Installation & Setup
+### Installation & Setup
 
 Traven is a framework-agnostic editor with zero peer dependencies. It can be easily integrated by including the built JS bundle and styling sheet directly in your HTML and deferred-initializing the editor.
 
 Check out integration code recipes, templates, and setup options in the **[Installation & Setup Guide](docs/installation-setup.md)**.
 
----
-
-## API Reference
+### API Reference
 
 The Traven API exposes a constructor with a comprehensive set of configuration options, instance methods, and built-in text formatting helpers for controlling the editor state and interacting with the document.
 
 For the full list of options, public methods, keyboard shortcuts, formatting helper recipes, and event listeners, please refer to the **[API Reference Documentation](docs/api-reference.md)**.
 
----
-
-## Integration Patterns
+### Integration Patterns
 
 Traven supports two primary patterns for managing document metadata and frontmatter: inline freeform editing directly inside the editor, or structured form field integration (Split-Before / Join-After) which is recommended for corporate CMS databases.
 
 Architectural details, examples, and splitting/recombination helper functions are detailed in the **[Integration Patterns Guide](docs/integration-patterns.md)**.
 
----
-
-## Customization & Styling
+### Customization & Styling
 
 Editor themes and toolbar behaviors are fully customizable. Swap stylesheet skins to match your website theme, select from multiple toolbar presets (default, compact, reduced, or expandable), or override button selectors using custom CSS.
 
 To learn more about CSS class listings, custom skin configurations, and toolbar styling options, consult the **[Customization & Styling Guide](docs/customization-styling.md)**.
 
----
-
-## Custom Shortcodes Architecture
+### Custom Shortcodes Architecture
 
 Traven supports extending standard Markdown with custom shortcodes. By default, it comes with rich, interactive WYSIWYM widgets and semantic HTML compilers for `[image]`, `[video]`, `[audio]`, `[figure]`, and `[component]` layouts.
 
 The technical blueprint, widget rendering lifecycles, and syntax extension details are covered in the **[Custom Shortcodes Architecture Guide](docs/shortcodes-architecture.md)**.
 
----
-
-## Development
+### Development
 
 If you want to develop on Traven, start with the **[Development Guide](docs/development.md)** which contains instructions for setting up the developer workspace, installing bundler dependencies, building local assets with esbuild, running the unit test suite, and serving the PHP integration demos locally.
 
 ---
 
-## Naming & Philosophy
+### Naming & Philosophy
 
 **"B. Traven"** was the self-chosen nym of the privacy-first author behind *The Treasure of the Sierra Madre*, who spent his career proving that the work outlasts its author, communicating with publishers pseudonymously and letting his writing speak for itself. For a framework-agnostic, open-source editor meant to be embedded, customized, and stay quietly out of the limelight, the name fits.
 
 ---
 
-## License
+### License
 
 Traven is open-source software licensed under the [MIT License](LICENSE).
