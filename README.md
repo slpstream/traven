@@ -40,7 +40,14 @@ Mix and match options, tweak settings, and explore how Traven adapts to any web 
 
 ## Key Features
 
-Traven Editor offers a modern WYSIWYM editing experience with support for collapsible markdown syntax delimiters, dynamic floating/hybrid/static toolbar layouts (including format bubbles and gutter insert menus), optimistic image uploads, a custom shortcode system, bidirectional raw sync, Vim emulation, math rendering via LaTeX, and more. 
+Traven Editor offers a modern WYSIWYM editing experience with support for:
+* Collapsible Markdown syntax delimiters
+* Dynamic floating/hybrid/static toolbar layouts (including format bubbles and gutter insert menus)
+* Optimistic image uploads
+* Extendible custom shortcode system
+* Bidirectional raw sync
+* Vim emulation
+* Math rendering via LaTeX, and more. 
 
 For a complete list and detailed explanation of all that Traven can do, see **[Key Features Documentation](docs/key-features.md)**.
 
