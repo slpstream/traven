@@ -451,6 +451,33 @@ Traven features native LaTeX math rendering via custom parsing, dynamic editor w
   - `katex: true`: Dynamically injects script and style tags to load the latest KaTeX package from a public CDN.
   - `katex: { js: "...", css: "..." }` or `katex: "..."`: Dynamically loads assets from local, self-hosted paths to keep the system fully offline and telemetry-free.
 
+---
+
+## 9. Floating & Hybrid Toolbar Architecture
+
+Traven supports three toolbar layout modes: `"static"` (traditional fixed toolbar), `"floating"` (clean canvas with contextual menus), and `"hybrid"` (fixed toolbar with inline format bubble and gutter inserter helper menus).
+
+### A. Viewport-Based Fallback
+To ensure accessibility on mobile, the layout mode is resolved dynamically:
+* **`isTouchPhone()`**: Scans viewports using CSS media query listeners (`pointer: coarse`, `hover: none`, and width `<= 768px`) to identify mobile touch devices.
+* **Enforced Static Mode**: On touch-based mobile viewports, the editor automatically forces `toolbarMode: "static"`, ensuring user access to all formatting options without relying on precise mouse cursor selections.
+
+### B. Dynamic Stylesheet Injection
+* **`loadStyles()`**: To eliminate manual `<link>` management on host pages, `src/toolbar/load-styles.js` dynamically scans the DOM's stylesheets. If `.traven-slim-rail` is not already styled (meaning `dist/traven.css` has not been loaded), it appends a `<link>` pointing to the local `assets/toolbars/toolbar-floating.css`.
+
+### C. Slim Control Rail & Roving Tabindex
+* **Rail Element**: In `"floating"` mode, the static toolbar is replaced by a horizontal rail containing global document-level actions (Undo, Redo, Save, Vim, Help, Clear, and Fullscreen) and the statistics widget.
+* **Roving Tabindex**: Keyboard navigation in the rail follows the WAI-ARIA pattern: arrow keys navigate horizontally between buttons, updating the `tabindex` dynamically so pressing `Tab` returns the user back to the editor canvas smoothly.
+
+### D. Selection Bubble Formatting
+* **Format Bubble Menu**: Mounts formatting options directly near the cursor using CodeMirror 6 `showTooltip`.
+* **Keyboard Trapping**: Pressing `Escape` while formatting dismisses the bubble and redirects focus directly back to the editor view.
+* **Tablet Override**: On touch tablets, the bubble converts into a sticky bottom action bar, preventing soft-keyboard overlaps.
+
+### E. Gutter Insertion Menu
+* **Contextual Inserter**: Hovering or positioning the cursor on an empty line reveals a gutter `+` button, opening a block-insertion popup.
+* **Hotkey Trigger**: Pressing `Mod-Shift-Enter` triggers the insert menu at the current cursor line.
+
 
 
 

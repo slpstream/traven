@@ -7,8 +7,8 @@
 </p>
 <p align="center">
   Add Traven Editor to any website:
-  LaTeX, table editor, image drag-n-drop, shortcode system, audio, video, custom Lezer extensions, 
-  five skins, five demos, seven toolbars, full documentation
+  LaTeX, table editor, image drag-n-drop, shortcode system, floating and hybrid toolbars, audio, video, custom Lezer extensions, 
+  five skins, five demos, full documentation
 </p>
 
 <p align="center">
@@ -40,7 +40,7 @@ Mix and match options, tweak settings, and explore how Traven adapts to any web 
 
 ## Key Features
 
-Traven Editor offers a modern WYSIWYM editing experience with support for collapsible markdown syntax delimiters, optimistic image uploads, a custom shortcode system, bidirectional raw sync, Vim emulation, math rendering via LaTeX, and more. 
+Traven Editor offers a modern WYSIWYM editing experience with support for collapsible markdown syntax delimiters, dynamic floating/hybrid/static toolbar layouts (including format bubbles and gutter insert menus), optimistic image uploads, a custom shortcode system, bidirectional raw sync, Vim emulation, math rendering via LaTeX, and more. 
 
 For a complete list and detailed explanation of all that Traven can do, see **[Key Features Documentation](docs/key-features.md)**.
 
@@ -63,7 +63,7 @@ Architectural details, examples, and splitting/recombination helper functions ar
 
 ### Customization & Styling
 
-Editor themes and toolbar behaviors are fully customizable. Swap stylesheet skins to match your website theme, select from multiple toolbar presets (default, compact, reduced, or expandable), or override button selectors using custom CSS.
+Editor themes, layouts, and toolbar behaviors are fully customizable. Choose between `"static"` (fixed top), `"floating"` (clean canvas with formatting bubble and gutter menus), or `"hybrid"` modes, swap stylesheet skins to match your website, or override selectors using custom CSS.
 To learn more about CSS class listings, custom skin configurations, and toolbar styling options, consult the **[Customization & Styling Guide](docs/customization-styling.md)**. For instructions on how to build a new theme from scratch or extend an existing skin, follow the **[Theme Development Guide](docs/theme-development.md)**.
 
 ### Custom Shortcodes Architecture
