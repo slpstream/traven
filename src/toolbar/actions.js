@@ -17,10 +17,9 @@ export const BUBBLE_ACTIONS = [
  * inside the Gutter `+` popover.
  */
 export const GUTTER_ACTIONS = [
-  // Category 2
-  "heading", "blockquote", "bulletlist", "numberedlist", "tasklist", "codeblock",
-  // Category 3
-  "hr", "table", "image", "video", "audio", "figure", "component", "datetime",
+  "heading", "hr", "table", "datetime", "codeblock",
+  "blockquote", "bulletlist", "numberedlist", "tasklist", "component",
+  "image", "video", "audio", "figure",
 ];
 
 /**

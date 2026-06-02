@@ -181,8 +181,15 @@ function openGutterMenu(editor, lineFrom, view) {
   const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
   const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
+  const gutterEl = view.dom.querySelector(".cm-gutters");
+  let menuLeft = coords.left;
+  if (gutterEl) {
+    const gutterRect = gutterEl.getBoundingClientRect();
+    menuLeft = gutterRect.left;
+  }
+
   menu.style.position = "absolute";
-  menu.style.left = `${coords.left + scrollLeft}px`;
+  menu.style.left = `${menuLeft + scrollLeft}px`;
   menu.style.top = `${coords.bottom + scrollTop + 4}px`;
   document.body.appendChild(menu);
 
@@ -193,7 +200,11 @@ function openGutterMenu(editor, lineFrom, view) {
   };
   
   const onDocClick = (e) => {
-    if (!menu.contains(/** @type {Node} */ (e.target))) {
+    const target = /** @type {HTMLElement} */ (e.target);
+    if (target && target.closest(".traven-gutter-plus-btn")) {
+      return;
+    }
+    if (!menu.contains(target)) {
       close();
     }
   };
@@ -241,11 +252,17 @@ export function gutterInserterExtension(editor, options = {}) {
       class: "cm-traven-gutter",
       markers: gutterMarkers,
       domEventHandlers: {
-        click(view, line, event) {
+        mousedown(view, line, event) {
           const target = /** @type {HTMLElement} */ (event.target);
           if (!target.classList.contains("traven-gutter-plus-btn")) return false;
           event.preventDefault();
           openGutterMenu(editor, line.from, view);
+          return true;
+        },
+        click(view, line, event) {
+          const target = /** @type {HTMLElement} */ (event.target);
+          if (!target.classList.contains("traven-gutter-plus-btn")) return false;
+          event.preventDefault();
           return true;
         }
       }

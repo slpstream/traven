@@ -345,4 +345,42 @@ describe('Floating Toolbar and Modes', () => {
     expect(statsEl.textContent).toContain('2 words');
     expect(statsEl.textContent).toContain('9 chars');
   });
+
+  // 16. Gutter plus button interaction opens the gutter menu and clicking outside closes it.
+  it('gutter plus button interaction opens and closes the menu correctly', async () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '\n',
+      toolbarMode: 'floating'
+    });
+    editor.focus();
+    await new Promise(resolve => setTimeout(resolve, 50));
+
+    const plusBtn = container.querySelector('.traven-gutter-plus-btn');
+    expect(plusBtn).not.toBeNull();
+
+    // Dispatch mousedown on the plus button
+    const mousedownEvent = new MouseEvent('mousedown', { bubbles: true, cancelable: true });
+    plusBtn.dispatchEvent(mousedownEvent);
+
+    // Dispatch click on the plus button (simulating full click sequence)
+    const clickEvent = new MouseEvent('click', { bubbles: true, cancelable: true });
+    plusBtn.dispatchEvent(clickEvent);
+
+    await new Promise(resolve => setTimeout(resolve, 50));
+    
+    // The menu should be open
+    let menu = document.querySelector('.traven-gutter-menu');
+    expect(menu).not.toBeNull();
+
+    // Click on the document body outside the menu
+    const docClickEvent = new MouseEvent('click', { bubbles: true, cancelable: true });
+    document.body.dispatchEvent(docClickEvent);
+
+    await new Promise(resolve => setTimeout(resolve, 50));
+
+    // The menu should be closed
+    menu = document.querySelector('.traven-gutter-menu');
+    expect(menu).toBeNull();
+  });
 });
