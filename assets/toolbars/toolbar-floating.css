@@ -106,35 +106,6 @@
   height: 26px;
 }
 
-/* Hybrid mode: hide Categories 1-3 in the static rail when not expanded. */
-.traven-hybrid-toolbar:not(.is-expanded) .btn-bold,
-.traven-hybrid-toolbar:not(.is-expanded) .btn-italic,
-.traven-hybrid-toolbar:not(.is-expanded) .btn-strikethrough,
-.traven-hybrid-toolbar:not(.is-expanded) .btn-highlight,
-.traven-hybrid-toolbar:not(.is-expanded) .btn-code,
-.traven-hybrid-toolbar:not(.is-expanded) .btn-codeblock,
-.traven-hybrid-toolbar:not(.is-expanded) .btn-heading,
-.traven-hybrid-toolbar:not(.is-expanded) .btn-blockquote,
-.traven-hybrid-toolbar:not(.is-expanded) .btn-bulletlist,
-.traven-hybrid-toolbar:not(.is-expanded) .btn-numberedlist,
-.traven-hybrid-toolbar:not(.is-expanded) .btn-tasklist,
-.traven-hybrid-toolbar:not(.is-expanded) .btn-hr,
-.traven-hybrid-toolbar:not(.is-expanded) .btn-table,
-.traven-hybrid-toolbar:not(.is-expanded) .btn-component,
-.traven-hybrid-toolbar:not(.is-expanded) .btn-figure,
-.traven-hybrid-toolbar:not(.is-expanded) .btn-datetime,
-.traven-hybrid-toolbar:not(.is-expanded) .btn-link,
-.traven-hybrid-toolbar:not(.is-expanded) .btn-image,
-.traven-hybrid-toolbar:not(.is-expanded) .btn-video,
-.traven-hybrid-toolbar:not(.is-expanded) .btn-audio,
-.traven-hybrid-toolbar:not(.is-expanded) .btn-uppercase,
-.traven-hybrid-toolbar:not(.is-expanded) .btn-lowercase,
-.traven-hybrid-toolbar:not(.is-expanded) .btn-capitalize,
-.traven-hybrid-toolbar:not(.is-expanded) .btn-removeformatting,
-.traven-hybrid-toolbar:not(.is-expanded) .toolbar-separator {
-  display: none !important;
-}
-
 /* Gutter `+` button */
 .cm-traven-gutter .traven-gutter-plus-btn {
   display: inline-block;

@@ -121,3 +121,8 @@
   background-color: #334155 !important;
   color: #ffffff !important;
 }
+
+/* Color for the stats widget in dark compact toolbar mode */
+.traven-toolbar-container .traven-toolbar-stats {
+  color: #94a3b8 !important; /* Soft Slate 400 */
+}

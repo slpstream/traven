@@ -45,6 +45,7 @@
   padding: 8px 12px !important;
   background-color: #ffffff !important;
   border-bottom: none !important;
+  box-sizing: border-box !important;
 }
 
 .traven-toolbar-container.is-expanded {
