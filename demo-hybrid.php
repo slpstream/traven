@@ -267,6 +267,7 @@ This demo illustrates a hybrid layout where:
         element: document.getElementById("editor"),
         sourceElement: document.getElementById("raw-editor"),
         initialValue: markdown,
+        toolbarMode: "hybrid",
         onChange: () => {
           updateCombinedPreview();
         },

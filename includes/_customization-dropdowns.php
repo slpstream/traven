@@ -72,6 +72,9 @@ if (is_dir($toolbars_dir)) {
     if ($files) {
         foreach ($files as $file) {
             $val = pathinfo($file, PATHINFO_FILENAME);
+            if ($val === "toolbar-floating") {
+                continue;
+            }
             $label = format_customization_name($file, "toolbar");
             $toolbars[$val] = $label;
         }

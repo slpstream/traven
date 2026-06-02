@@ -48,6 +48,13 @@ import { viewToEditor } from "./bridge.js";
 import { sanitizeUrl, parseVideoUrl } from "./security.js";
 import DEFAULT_COMPONENTS from "./components-default.json";
 import "./style.css";
+import { resolveToolbarMode } from "./toolbar/mode.js";
+import { loadStyles } from "./toolbar/load-styles.js";
+import { buildSlimRail, buildStatsWidget } from "./toolbar/slim-rail.js";
+import { selectionBubbleExtension, gutterInserterExtension } from "./toolbar/floating-toolbar.js";
+
+// Ensure styles are bundled
+loadStyles();
 
 const syncAnnotation = Annotation.define();
 const vimCompartment = new Compartment();
@@ -163,6 +170,9 @@ function buildBaseSetup(options = {}) {
  * @property {boolean} [readOnly] - Set editor to read-only mode.
  * @property {boolean} [vimMode] - Enable Vim mode.
  * @property {function({words: number, characters: number, readTime: number}): void} [onStatsUpdate] - Callback when stats are updated.
+ * @property {string} [toolbarMode] - Effective mode for toolbar layout ("static" | "floating" | "hybrid").
+ * @property {string} [bubbleHotkey] - Key binding to open selection bubble.
+ * @property {string} [gutterHotkey] - Key binding to open gutter plus menu.
  */
 
 
@@ -227,11 +237,7 @@ export class TravenEditor {
     const wrapLines = options.lineWrapping !== false;
     const wrapSourceLines = options.sourceLineWrapping !== false;
 
-    // Render and prepend toolbar if provided in constructor options
-    if (options.toolbar && Array.isArray(options.toolbar)) {
-      const toolbarEl = buildToolbar(this, options.toolbar, options.keybindings);
-      options.element.prepend(toolbarEl);
-    }
+    const mode = resolveToolbarMode(options);
 
     const extensions = [
       ...buildBaseSetup({
@@ -270,7 +276,13 @@ export class TravenEditor {
       imageHandlerExtension(options.onUploadImage),
 
       // Search panel (provides Ctrl+F keybinding and search UI)
-      search()
+      search(),
+
+      // Selection bubble and gutter block insertion extensions
+      ...(mode === "floating" || mode === "hybrid" ? [
+        selectionBubbleExtension(this, { hotkey: options.bubbleHotkey || "Mod-." }),
+        gutterInserterExtension(this, { hotkey: options.gutterHotkey || "Mod-Shift-Enter" })
+      ] : [])
     ];
 
     // Caret color configuration
@@ -337,6 +349,28 @@ export class TravenEditor {
     // so that widget classes (e.g. TableWidget) can resolve the
     // TravenEditor from an EditorView without circular imports.
     viewToEditor.set(this.#view, this);
+
+    // Render and prepend toolbar based on mode
+    if (mode === "static") {
+      if (options.toolbar && Array.isArray(options.toolbar)) {
+        const toolbarEl = buildToolbar(this, options.toolbar, options.keybindings);
+        options.element.prepend(toolbarEl);
+      }
+    } else if (mode === "hybrid") {
+      if (options.toolbar && Array.isArray(options.toolbar)) {
+        const toolbarEl = buildToolbar(this, options.toolbar, options.keybindings);
+        toolbarEl.classList.add("traven-hybrid-toolbar");
+        options.element.prepend(toolbarEl);
+
+        const statsEl = buildStatsWidget(this);
+        toolbarEl.appendChild(statsEl);
+      }
+    } else if (mode === "floating") {
+      if (options.toolbar !== false) {
+        const railEl = buildSlimRail(this, options.keybindings);
+        options.element.prepend(railEl);
+      }
+    }
 
     if (options.theme === "dark") {
       this.#view.dom.classList.add("cm-wysiwym-dark");
@@ -408,10 +442,10 @@ export class TravenEditor {
     }
   }
 
-  /**
-   * @returns {string} The full document content as a Markdown string.
-   */
   getValue() {
+    if (!this.#view) {
+      return this.#options ? (this.#options.initialValue || "") : "";
+    }
     return this.#view.state.doc.toString();
   }
 

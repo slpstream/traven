@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { TravenEditor } from '../src/index.js';
 import { parseMarkdownTable, serializeTableToMarkdown, openComponentModal } from '../src/toolbar/modal.js';
 import { skipDelimiter } from '../src/delimiter-skip.js';
@@ -1234,7 +1234,6 @@ describe('fallback rendering inline formats', () => {
       initialValue: "```js\nconsole.log(42);\n```",
     });
     const html = editor.getContentHtml();
-    console.log("CODE BLOCK HTML:", html);
     expect(html).toContain('<pre><code class="language-js">console.log(42);</code></pre>');
   });
 
@@ -1586,6 +1585,11 @@ describe('ComponentShortcode', () => {
     let originalFetch;
     beforeEach(() => {
       originalFetch = globalThis.fetch;
+      vi.spyOn(console, 'warn').mockImplementation(() => {});
+    });
+
+    afterEach(() => {
+      vi.restoreAllMocks();
     });
 
     const defaultPresets = [

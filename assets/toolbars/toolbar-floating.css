@@ -1,0 +1,181 @@
+/* Slim rail (floating mode) */
+.traven-slim-rail {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--accent, #475569);
+  background: var(--rail-bg, transparent);
+}
+
+.traven-rail-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: none;
+  border: 0;
+  border-radius: 4px;
+  color: var(--text-secondary, #475569);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.traven-rail-btn:hover {
+  background: var(--rail-btn-hover, rgba(0, 0, 0, 0.05));
+  color: var(--text-primary, #0f172a);
+}
+
+.traven-rail-btn svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+  display: block;
+}
+
+.traven-rail-btn svg rect:not([stroke]) {
+  stroke: none;
+}
+
+.cm-wysiwym-dark .traven-rail-btn {
+  color: var(--text-secondary-dark, #94a3b8);
+}
+
+.cm-wysiwym-dark .traven-rail-btn:hover {
+  background: var(--rail-btn-hover-dark, rgba(255, 255, 255, 0.08));
+  color: var(--text-primary-dark, #f8fafc);
+}
+
+/* Stats widget */
+.traven-toolbar-stats {
+  margin-left: auto;
+  font-size: 11px;
+  color: rgba(0, 0, 0, 0.5);
+  font-family: inherit;
+  white-space: nowrap;
+  padding: 0 8px;
+  align-self: center;
+}
+
+.cm-wysiwym-dark .traven-toolbar-stats {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Selection bubble */
+.traven-bubble-menu {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px;
+  background: var(--bubble-bg, #ffffff);
+  color: var(--bubble-fg, #1f2937);
+  border: 1px solid var(--bubble-border, rgba(0, 0, 0, 0.12));
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.cm-wysiwym-dark .traven-bubble-menu {
+  --bubble-bg: #1e293b;
+  --bubble-fg: #e2e8f0;
+  --bubble-border: rgba(255, 255, 255, 0.12);
+}
+
+/* Tablet Strategy: render selection bubble as a sticky bottom bar */
+.traven-bubble-menu.is-tablet-bottom-bar {
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  border-radius: 0 !important;
+  border-top: 1px solid var(--bubble-border, rgba(0, 0, 0, 0.12)) !important;
+  border-left: 0 !important;
+  border-right: 0 !important;
+  border-bottom: 0 !important;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1) !important;
+  z-index: 9999 !important;
+  justify-content: center !important;
+  padding: 8px 16px !important;
+  box-sizing: border-box !important;
+}
+
+.traven-bubble-menu .toolbar-btn {
+  width: 26px;
+  height: 26px;
+}
+
+/* Hybrid mode: hide Categories 1-3 in the static rail when not expanded. */
+.traven-hybrid-toolbar:not(.is-expanded) .btn-bold,
+.traven-hybrid-toolbar:not(.is-expanded) .btn-italic,
+.traven-hybrid-toolbar:not(.is-expanded) .btn-strikethrough,
+.traven-hybrid-toolbar:not(.is-expanded) .btn-highlight,
+.traven-hybrid-toolbar:not(.is-expanded) .btn-code,
+.traven-hybrid-toolbar:not(.is-expanded) .btn-codeblock,
+.traven-hybrid-toolbar:not(.is-expanded) .btn-heading,
+.traven-hybrid-toolbar:not(.is-expanded) .btn-blockquote,
+.traven-hybrid-toolbar:not(.is-expanded) .btn-bulletlist,
+.traven-hybrid-toolbar:not(.is-expanded) .btn-numberedlist,
+.traven-hybrid-toolbar:not(.is-expanded) .btn-tasklist,
+.traven-hybrid-toolbar:not(.is-expanded) .btn-hr,
+.traven-hybrid-toolbar:not(.is-expanded) .btn-table,
+.traven-hybrid-toolbar:not(.is-expanded) .btn-component,
+.traven-hybrid-toolbar:not(.is-expanded) .btn-figure,
+.traven-hybrid-toolbar:not(.is-expanded) .btn-datetime,
+.traven-hybrid-toolbar:not(.is-expanded) .btn-link,
+.traven-hybrid-toolbar:not(.is-expanded) .btn-image,
+.traven-hybrid-toolbar:not(.is-expanded) .btn-video,
+.traven-hybrid-toolbar:not(.is-expanded) .btn-audio,
+.traven-hybrid-toolbar:not(.is-expanded) .btn-uppercase,
+.traven-hybrid-toolbar:not(.is-expanded) .btn-lowercase,
+.traven-hybrid-toolbar:not(.is-expanded) .btn-capitalize,
+.traven-hybrid-toolbar:not(.is-expanded) .btn-removeformatting,
+.traven-hybrid-toolbar:not(.is-expanded) .toolbar-separator {
+  display: none !important;
+}
+
+/* Gutter `+` button */
+.cm-traven-gutter .traven-gutter-plus-btn {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  line-height: 16px;
+  text-align: center;
+  border-radius: 3px;
+  cursor: pointer;
+  opacity: 0.1;
+  transition: opacity 120ms ease;
+  color: var(--gutter-fg, inherit);
+  user-select: none;
+}
+
+.cm-traven-gutter .traven-gutter-plus-btn:hover,
+.cm-activeLineGutter ~ * .traven-gutter-plus-btn,
+.cm-activeLineGutter .traven-gutter-plus-btn {
+  opacity: 1;
+  background: var(--gutter-btn-hover, rgba(0, 0, 0, 0.05));
+}
+
+/* Gutter popover */
+.traven-gutter-menu {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(32px, 1fr));
+  gap: 2px;
+  padding: 4px;
+  background: var(--menu-bg, #ffffff);
+  color: var(--menu-fg, #1f2937);
+  border: 1px solid var(--menu-border, rgba(0, 0, 0, 0.12));
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  max-height: 60vh;
+  overflow-y: auto;
+  width: 140px;
+}
+
+.cm-wysiwym-dark .traven-gutter-menu {
+  --menu-bg: #1e293b;
+  --menu-fg: #e2e8f0;
+  --menu-border: rgba(255, 255, 255, 0.12);
+}

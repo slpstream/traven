@@ -6,6 +6,36 @@ Traven's skinning model is intentionally decoupled: themes are **plain CSS files
 
 This document is a comprehensive guide to styling Traven, detailing the side-by-side skin comparisons, the canonical selector reference, a "what every theme must include" QA checklist, and recipes for styling elements in both the editor and preview DOM scopes (including the raw Markdown pane, Vim's fat cursor, scrollbars, and LaTeX math widgets).
 
+## Quick Start: How to Build or Extend a Skin
+
+### Building a Skin from Scratch
+1.  **Duplicate a Base Theme**: Copy `assets/skins/skin-default.css` and rename it (e.g., `skin-forest.css`).
+2.  **Define Fonts and Variables**: Import your preferred typography (e.g., from Google Fonts, or locally loaded for better reader privacy and no telemetry) and update the main CSS color variables.
+3.  **Adjust Editor Typography**: Map heading styles and inline code elements. Make sure to apply `!important` to headings padding.
+4.  **Set Up Shortcode Styles**: Target the CodeMirror widget containers (`.cm-wysiwym-*`) and the HTML Preview equivalents (`.traven-preview *`) using the cheat sheet selectors.
+5.  **Test Dark Mode**: Ensure variables and overrides resolve correctly when `.cm-wysiwym-dark` is toggled.
+6.  **Load the Skin**: Link your stylesheet in the `<head>` of your host application:
+    ```html
+    <link rel="stylesheet" href="assets/skins/skin-forest.css">
+    ```
+
+### Extending an Existing Skin
+If you just want to tweak colors or minor settings on an existing skin without modifying its source file:
+1.  Create a custom override stylesheet (e.g., `theme-overrides.css`).
+2.  Import or load the main skin first:
+    ```html
+    <link rel="stylesheet" href="assets/skins/skin-editorial.css">
+    <link rel="stylesheet" href="theme-overrides.css">
+    ```
+3.  Apply specific overrides using CSS variables or classes:
+    ```css
+    /* Tweak Editorial theme default link colors */
+    .cm-wysiwym-link-anchor,
+    .traven-preview a {
+      color: #059669 !important; /* Emphatic emerald green */
+    }
+    ```
+
 ---
 
 ## 1. Mental model: two scopes, one CSS file
