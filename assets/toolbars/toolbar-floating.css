@@ -172,7 +172,7 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   z-index: 1000;
   max-height: 60vh;
-  overflow-y: auto;
+  overflow: visible;
   width: 192px;
   box-sizing: border-box;
 }

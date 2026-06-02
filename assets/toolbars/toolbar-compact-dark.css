@@ -16,17 +16,108 @@
 }
 
 /* Ensure dropdown menu elements adapt to the dark slate palette */
-.toolbar-dropdown-menu {
+.traven-toolbar-container .toolbar-dropdown-menu {
   background-color: #1e293b !important; /* Slate 800 */
   border-color: #334155 !important;     /* Slate 700 */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
 }
 
-.toolbar-dropdown-item {
+.traven-toolbar-container .toolbar-dropdown-item {
   color: #94a3b8 !important; /* Slate 400 */
 }
 
-.toolbar-dropdown-item:hover {
+.traven-toolbar-container .toolbar-dropdown-item:hover {
   background-color: #334155 !important; /* Slate 700 */
+  color: #ffffff !important;
+}
+
+/* --- Floating Menus Styling Overrides --- */
+
+/* Gutter Insertion Menu matching colors */
+.traven-gutter-menu {
+  background: rgba(30, 41, 59, 0.85) !important;
+  border-color: #334155 !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35) !important;
+}
+
+.traven-gutter-menu .toolbar-btn {
+  background-color: #1e293b !important;
+  color: #e2e8f0 !important;
+  border: 1px solid #334155 !important;
+  border-radius: 0px !important;
+  width: 32px !important;
+  height: 32px !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+
+.traven-gutter-menu .toolbar-btn:hover {
+  background-color: #334155 !important;
+  color: #ffffff !important;
+  border-color: #334155 !important;
+}
+
+/* Selection Bubble Menu matching colors */
+.traven-bubble-menu {
+  padding: 0 !important;
+  gap: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+  border-radius: 6px !important;
+}
+
+.traven-bubble-menu .toolbar-btn {
+  background-color: #1e293b !important;
+  color: #e2e8f0 !important;
+  border-top: 1px solid #334155 !important;
+  border-bottom: 1px solid #334155 !important;
+  border-right: 1px solid #334155 !important;
+  border-left: none !important;
+  border-radius: 0px !important;
+  margin: 0 !important;
+  width: 32px !important;
+  height: 32px !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+
+.traven-bubble-menu .toolbar-btn:hover {
+  background-color: #334155 !important;
+  color: #ffffff !important;
+  border-color: #334155 !important;
+}
+
+.traven-bubble-menu .toolbar-dropdown {
+  margin: 0 !important;
+  display: inline-flex !important;
+}
+
+.traven-bubble-menu > *:first-child,
+.traven-bubble-menu > *:first-child .toolbar-btn {
+  border-left: 1px solid #334155 !important;
+  border-top-left-radius: 6px !important;
+  border-bottom-left-radius: 6px !important;
+}
+
+.traven-bubble-menu > *:last-child,
+.traven-bubble-menu > *:last-child .toolbar-btn {
+  border-top-right-radius: 6px !important;
+  border-bottom-right-radius: 6px !important;
+}
+
+/* Dropdown Menu overrides inside Gutter Menu */
+.traven-gutter-menu .toolbar-dropdown-menu {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+}
+
+.traven-gutter-menu .toolbar-dropdown-item {
+  color: #94a3b8 !important;
+}
+
+.traven-gutter-menu .toolbar-dropdown-item:hover {
+  background-color: #334155 !important;
   color: #ffffff !important;
 }

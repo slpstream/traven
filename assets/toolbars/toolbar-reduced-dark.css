@@ -1,8 +1,7 @@
 @import "toolbar-reduced.css";
 
 /* Styling overrides for square, white-on-slate, smaller buttons */
-.toolbar-btn,
-.form-demo .toolbar-btn {
+.traven-toolbar-container .toolbar-btn {
   background-color: #475569 !important; /* Slate 600 */
   color: #ffffff !important;
   border-color: #334155 !important; /* Slate 700 */
@@ -10,51 +9,43 @@
   padding: 2px 4px !important; /* Even less padding */
 }
 
-button.toolbar-btn,
-.form-demo button.toolbar-btn {
+.traven-toolbar-container button.toolbar-btn {
   width: 26px !important;
   height: 26px !important;
   padding: 0 !important;
 }
 
-button.btn-heading,
-button.btn-blockquote,
-.form-demo button.btn-heading,
-.form-demo button.btn-blockquote {
+.traven-toolbar-container button.btn-heading,
+.traven-toolbar-container button.btn-blockquote {
   width: auto !important;
   padding: 0 4px !important;
 }
 
 /* Make SVG icons even larger */
-.toolbar-btn svg,
-.form-demo .toolbar-btn svg {
+.traven-toolbar-container .toolbar-btn svg {
   width: 18px !important;
   height: 18px !important;
 }
 
 /* Keep dropdown caret small */
-.toolbar-btn svg.dropdown-caret,
-.form-demo .toolbar-btn svg.dropdown-caret {
+.traven-toolbar-container .toolbar-btn svg.dropdown-caret {
   width: 8px !important;
   height: 8px !important;
 }
 
 
 /* Hover and active states */
-.toolbar-btn:hover,
-.form-demo .toolbar-btn:hover {
+.traven-toolbar-container .toolbar-btn:hover {
   background-color: #64748b !important; /* Slate 500 */
   border-color: #475569 !important;
 }
 
-.toolbar-btn:active,
-.form-demo .toolbar-btn:active {
+.traven-toolbar-container .toolbar-btn:active {
   background-color: #334155 !important; /* Slate 700 */
 }
 
 /* Dropdown Menu overrides for Reduced Dark */
-.toolbar-dropdown-menu,
-.form-demo .toolbar-dropdown-menu {
+.traven-toolbar-container .toolbar-dropdown-menu {
   background-color: #334155 !important; /* Slate 700 */
   border-color: #1e293b !important;     /* Slate 800 */
   border-radius: 0px !important;         /* Square corners */
@@ -64,8 +55,7 @@ button.btn-blockquote,
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
 }
 
-.toolbar-dropdown-item,
-.form-demo .toolbar-dropdown-item {
+.traven-toolbar-container .toolbar-dropdown-item {
   background-color: transparent !important;
   color: #ffffff !important;
   border-radius: 0px !important;         /* Square corners */
@@ -75,21 +65,105 @@ button.btn-blockquote,
 }
 
 /* Larger icons in dropdown items */
-.toolbar-dropdown-item svg,
-.form-demo .toolbar-dropdown-item svg {
+.traven-toolbar-container .toolbar-dropdown-item svg {
   width: 16px !important;                /* Larger icons */
   height: 16px !important;
 }
 
 /* Dropdown item states */
-.toolbar-dropdown-item:hover,
-.form-demo .toolbar-dropdown-item:hover {
+.traven-toolbar-container .toolbar-dropdown-item:hover {
   background-color: #475569 !important; /* Slate 600 (Hover) */
   color: #ffffff !important;
 }
 
-.toolbar-dropdown-item:active,
-.form-demo .toolbar-dropdown-item:active {
+.traven-toolbar-container .toolbar-dropdown-item:active {
   background-color: #1e293b !important; /* Slate 800 (Active) */
+}
+
+/* --- Floating Menus Styling Overrides --- */
+
+/* Gutter Insertion Menu matching colors for Reduced Dark */
+.traven-gutter-menu {
+  background: rgba(51, 65, 85, 0.85) !important; /* Semi-transparent Slate 700 */
+  border: 1px solid #1e293b !important;
+  border-radius: 0px !important; /* Completely square */
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
+}
+
+.traven-gutter-menu .toolbar-btn {
+  background-color: #475569 !important;
+  color: #ffffff !important;
+  border: 1px solid #334155 !important;
+  border-radius: 0px !important; /* Square corners */
+  width: 26px !important;
+  height: 26px !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+
+.traven-gutter-menu .toolbar-btn:hover {
+  background-color: #64748b !important;
+  border-color: #475569 !important;
+  color: #ffffff !important;
+}
+
+.traven-gutter-menu .toolbar-btn:active {
+  background-color: #334155 !important;
+}
+
+/* Selection Bubble Menu matching colors for Reduced Dark */
+.traven-bubble-menu {
+  --bubble-bg: #334155 !important;
+  --bubble-fg: #ffffff !important;
+  --bubble-border: #1e293b !important;
+  background: var(--bubble-bg) !important;
+  color: var(--bubble-fg) !important;
+  border: 1px solid var(--bubble-border) !important;
+  border-radius: 0px !important; /* Completely square */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4) !important;
+}
+
+.traven-bubble-menu .toolbar-btn {
+  background-color: #475569 !important;
+  color: #ffffff !important;
+  border: 1px solid #334155 !important;
+  border-radius: 0px !important; /* Square corners */
+  width: 26px !important;
+  height: 26px !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+
+.traven-bubble-menu .toolbar-btn:hover {
+  background-color: #64748b !important;
+  border-color: #475569 !important;
+  color: #ffffff !important;
+}
+
+.traven-bubble-menu .toolbar-btn:active {
+  background-color: #334155 !important;
+}
+
+/* Dropdown Menu overrides inside Gutter Menu for Reduced Dark */
+.traven-gutter-menu .toolbar-dropdown-menu {
+  background-color: #334155 !important;
+  border: 1px solid #1e293b !important;
+  border-radius: 0px !important; /* Completely square */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+}
+
+.traven-gutter-menu .toolbar-dropdown-item {
+  background-color: transparent !important;
+  color: #ffffff !important;
+  border-radius: 0px !important;
+}
+
+.traven-gutter-menu .toolbar-dropdown-item:hover {
+  background-color: #475569 !important;
+  color: #ffffff !important;
+}
+
+.traven-gutter-menu .toolbar-dropdown-item:active {
+  background-color: #1e293b !important;
 }
 

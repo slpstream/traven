@@ -1,15 +1,15 @@
 @import "toolbar-default.css";
 
 /* Exclude less commonly used buttons for the reduced toolbar layout */
-.btn-strikethrough,
-.btn-gotoline,
-.btn-search,
-.btn-help,
-.btn-clear,
-.btn-datetime,
-.btn-uppercase,
-.btn-lowercase,
-.btn-capitalize,
-.btn-removeformatting {
+.traven-toolbar-container .btn-strikethrough,
+.traven-toolbar-container .btn-gotoline,
+.traven-toolbar-container .btn-search,
+.traven-toolbar-container .btn-help,
+.traven-toolbar-container .btn-clear,
+.traven-toolbar-container .btn-datetime,
+.traven-toolbar-container .btn-uppercase,
+.traven-toolbar-container .btn-lowercase,
+.traven-toolbar-container .btn-capitalize,
+.traven-toolbar-container .btn-removeformatting {
   display: none !important;
 }
