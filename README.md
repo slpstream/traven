@@ -58,9 +58,9 @@ For a complete list and detailed explanation of all that Traven can do, see **[K
 Traven is a framework-agnostic editor with zero peer dependencies. It can be integrated by referencing assets directly from the jsDelivr CDN, or by copying the compiled assets from the `dist/` directory into your host project.
 
 > [!IMPORTANT]
-> **Understanding Toolbars vs. Skins (Themes):**
-> *   **Toolbar (Built-in & Optional):** Traven ships with a fully functional default toolbar (`toolbar-default.css`) baked directly into the core `traven.css` bundle. You do not need to load a separate stylesheet for the toolbar, though you can override it by loading any of the alternative layouts (like `toolbar-expandable.css`).
-> *   **Skin/Theme (Required & Decoupled):** Traven does *not* bundle a default skin. To remain an unopinionated embeddable component, the presentation layer (colors, fonts, line heights) is kept completely decoupled. Therefore, loading a skin stylesheet is **mandatory** for the editor viewport to render correctly. You must either include one of Traven's pre-built skins (like `skin-default.css`, `skin-dark.css`) or [develop your own skin](docs/theme-development.md).
+> **Make it your own: Customize how you want the editor to look:**
+> *   **Toolbar (Built-in & Optional):** Traven ships with a fully functional default toolbar (`toolbar-default.css`) baked directly into the core `traven.css` bundle. You do not need to load a separate toolbar, but if you want to customize it, the easiest way to do that is to just load any of the alternative layouts (like `toolbar-expandable.css`).
+> *   **Skin/Theme (Required & Decoupled):** When loading the editor, specify a theme. Setting a "skin"-stylesheet is **mandatory** for the editor's content to render correctly. You must either include one of Traven's pre-built skins (like `skin-default.css`, `skin-dark.css`, etc.) or [develop your own skin](docs/theme-development.md).
 
 #### CDN Integration (Quickest Setup)
 
@@ -85,7 +85,9 @@ Add the base styling sheet and load the editor module from the CDN:
 </script>
 ```
 
-Check out alternative layouts, custom skins, and detailed configuration options in the **[Installation & Setup Guide](docs/installation-setup.md)**.
+Check out alternative toolbar layouts, custom themes and skins, and detailed configuration options in the **[Installation & Setup Guide](docs/installation-setup.md)**.
+
+---
 
 ### API Reference
 
