@@ -672,7 +672,46 @@ class ComponentShortcodeWidget extends WidgetType {
       bq.appendChild(bodyContainer);
       container.appendChild(bq);
     } else {
-      container.appendChild(bodyContainer);
+      const title = this.attrs.title || "";
+      const collapsible = this.attrs.collapsible === "true";
+      const displayTitle = title || (collapsible ? (compName.charAt(0).toUpperCase() + compName.slice(1)) : "");
+
+      if (collapsible) {
+        const details = document.createElement("details");
+        details.setAttribute("open", "");
+        
+        const summary = document.createElement("summary");
+        summary.className = "component-header";
+        
+        const titleSpan = document.createElement("span");
+        titleSpan.className = "component-title";
+        titleSpan.textContent = displayTitle;
+        
+        summary.appendChild(titleSpan);
+        details.appendChild(summary);
+        details.appendChild(bodyContainer);
+        container.appendChild(details);
+        
+        summary.addEventListener("mousedown", (e) => {
+          e.stopPropagation();
+        });
+        summary.addEventListener("click", (e) => {
+          e.stopPropagation();
+        });
+      } else {
+        if (displayTitle) {
+          const header = document.createElement("div");
+          header.className = "component-header";
+          
+          const titleSpan = document.createElement("span");
+          titleSpan.className = "component-title";
+          titleSpan.textContent = displayTitle;
+          
+          header.appendChild(titleSpan);
+          container.appendChild(header);
+        }
+        container.appendChild(bodyContainer);
+      }
     }
 
     return container;

@@ -1313,7 +1313,25 @@ export class TravenEditor {
           }
           rendered = `<mark>${inner}</mark>`;
         } else {
-          rendered = `<div class="traven-component traven-component-${compName}">${compiledBody}</div>`;
+          const title = attrs.title || "";
+          const collapsible = attrs.collapsible === "true";
+          const displayTitle = title || (collapsible ? (compName.charAt(0).toUpperCase() + compName.slice(1)) : "");
+
+          if (collapsible) {
+            rendered = `<details class="traven-component traven-component-${compName}" open>`;
+            rendered += `<summary class="traven-component-header"><span class="traven-component-title">${displayTitle}</span></summary>`;
+            rendered += `<div class="traven-component-body">${compiledBody}</div>`;
+            rendered += `</details>`;
+          } else {
+            rendered = `<div class="traven-component traven-component-${compName}">`;
+            if (displayTitle) {
+              rendered += `<div class="traven-component-header"><span class="traven-component-title">${displayTitle}</span></div>`;
+              rendered += `<div class="traven-component-body">${compiledBody}</div>`;
+            } else {
+              rendered += compiledBody;
+            }
+            rendered += `</div>`;
+          }
         }
 
         componentPlaceholders.push(rendered);
