@@ -48,6 +48,7 @@ import { viewToEditor } from "./bridge.js";
 import { sanitizeUrl, parseVideoUrl } from "./security.js";
 import DEFAULT_COMPONENTS from "./components-default.json";
 import "./style.css";
+import "../assets/toolbars/toolbar-default.css";
 import { resolveToolbarMode } from "./toolbar/mode.js";
 import { loadStyles } from "./toolbar/load-styles.js";
 import { buildSlimRail, buildStatsWidget } from "./toolbar/slim-rail.js";

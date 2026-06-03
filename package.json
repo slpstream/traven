@@ -1,6 +1,6 @@
 {
   "name": "traven",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Embeddable MIT-licensed WYSIWYM Markdown Editor built on CodeMirror 6",
   "license": "MIT",
   "author": "SLPStream / Freedomware",
@@ -14,6 +14,12 @@
   "homepage": "https://github.com/slpstream/traven#readme",
   "type": "module",
   "main": "dist/traven.js",
+  "unpkg": "dist/traven.js",
+  "jsdelivr": "dist/traven.js",
+  "files": [
+    "dist",
+    "assets"
+  ],
   "scripts": {
     "build": "esbuild src/index.js --bundle --minify --format=esm --outfile=dist/traven.js --loader:.css=css",
     "watch": "esbuild src/index.js --bundle --format=esm --outfile=dist/traven.js --loader:.css=css --watch",
