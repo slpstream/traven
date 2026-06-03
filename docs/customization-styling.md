@@ -22,6 +22,15 @@ Simply swap the styling link in your HTML document:
 <link rel="stylesheet" href="assets/skins/skin-modern.css">
 ```
 
+### Loading Skins via CDN
+
+If using CDN integration, target the assets directly from the repository using jsDelivr:
+
+```html
+<!-- Example: Load skin-default.css via CDN -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/slpstream/traven@v0.2.2/assets/skins/skin-default.css">
+```
+
 ---
 
 ## Customizing the Toolbar

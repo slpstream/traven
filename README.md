@@ -13,7 +13,7 @@
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License"></a>
-  <img src="https://img.shields.io/badge/version-0.2.1-orange.svg" alt="Version 0.2.2">
+  <img src="https://img.shields.io/badge/version-0.2.2-orange.svg" alt="Version 0.2.2">
   <img src="https://img.shields.io/badge/engine-CodeMirror_6-6aa00.svg" alt="CodeMirror 6 Engine">
   <img src="https://img.shields.io/badge/peer_dependencies-none-blue.svg" alt="Zero Peer Dependencies">
 </p>
@@ -55,8 +55,32 @@ For a complete list and detailed explanation of all that Traven can do, see **[K
 
 ### Installation & Setup
 
-Traven is a framework-agnostic editor with zero peer dependencies. It can be easily integrated by including the built JS bundle and styling sheet directly in your HTML and deferred-initializing the editor.
-Check out integration code recipes, templates, and setup options in the **[Installation & Setup Guide](docs/installation-setup.md)**.
+Traven is a framework-agnostic editor with zero peer dependencies. It can be integrated by referencing assets directly from the jsDelivr CDN, or by copying the compiled assets from the `dist/` directory into your host project.
+
+#### CDN Integration (Quickest Setup)
+
+Add the base styling sheet and load the editor module from the CDN:
+```html
+<!-- Load Traven Styles (includes default toolbar) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/slpstream/traven@v0.2.2/dist/traven.css">
+<!-- Load default skin styling -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/slpstream/traven@v0.2.2/assets/skins/skin-default.css">
+
+<div id="editor"></div>
+
+<script type="module">
+  import { TravenEditor } from "https://cdn.jsdelivr.net/gh/slpstream/traven@v0.2.2/dist/traven.js";
+  
+  document.fonts.ready.then(() => {
+    new TravenEditor({
+      element: document.getElementById("editor"),
+      initialValue: "# Hello Traven via CDN"
+    });
+  });
+</script>
+```
+
+Check out alternative layouts, custom skins, and detailed configuration options in the **[Installation & Setup Guide](docs/installation-setup.md)**.
 
 ### API Reference
 
