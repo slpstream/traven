@@ -13,6 +13,13 @@ export const BUBBLE_ACTIONS = [
 ];
 
 /**
+ * Key for the insert-block shortcut button inside the Selection Bubble.
+ * Rendered last in the bubble, separated visually by CSS.
+ */
+export const BUBBLE_INSERT_KEY = "bubble-insert";
+
+
+/**
  * Category 2 (hybrid) + Category 3 (pure block insertion) actions rendered
  * inside the Gutter `+` popover.
  */

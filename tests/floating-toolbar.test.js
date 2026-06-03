@@ -615,4 +615,125 @@ describe('Floating Toolbar and Modes', () => {
     await new Promise(resolve => setTimeout(resolve, 50));
     expect(document.querySelector('.traven-bubble-menu')).toBeNull();
   });
+
+  // 25. Insert button and separator are present in the Selection Bubble
+  it('renders bubble-insert button and separator inside the selection bubble', async () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: 'Select me',
+      toolbarMode: 'floating'
+    });
+    editor.focus();
+    editor.setSelection(0, 6);
+
+    const view = editor.getView();
+    view.contentDOM.dispatchEvent(new window.PointerEvent('pointerup', {
+      bubbles: true, cancelable: true, button: 0, pointerType: 'mouse',
+    }));
+
+    await new Promise(resolve => setTimeout(resolve, 250));
+    
+    const bubble = document.querySelector('.traven-bubble-menu');
+    expect(bubble).not.toBeNull();
+
+    const insertBtn = bubble.querySelector('.btn-bubble-insert');
+    expect(insertBtn).not.toBeNull();
+
+    const separator = bubble.querySelector('.traven-bubble-sep');
+    expect(separator).not.toBeNull();
+  });
+
+  // 26. Clicking insert button closes the bubble and opens the gutter menu
+  it('closes bubble and opens gutter menu on bubble-insert button click', async () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: 'Hello world',
+      toolbarMode: 'floating'
+    });
+    editor.focus();
+    editor.setSelection(0, 5);
+
+    const view = editor.getView();
+    view.contentDOM.dispatchEvent(new window.PointerEvent('pointerup', {
+      bubbles: true, cancelable: true, button: 0, pointerType: 'mouse',
+    }));
+
+    await new Promise(resolve => setTimeout(resolve, 250));
+    expect(document.querySelector('.traven-bubble-menu')).not.toBeNull();
+
+    const insertBtn = document.querySelector('.btn-bubble-insert');
+    insertBtn.click();
+
+    // Wait a tick for dispatch and queueMicrotask/setTimeout
+    await new Promise(resolve => setTimeout(resolve, 50));
+
+    expect(document.querySelector('.traven-bubble-menu')).toBeNull();
+    expect(document.querySelector('.traven-gutter-menu')).not.toBeNull();
+    
+    // Clean up
+    const escEvent = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true });
+    document.querySelector('.traven-gutter-menu').dispatchEvent(escEvent);
+  });
+
+  // 27. Insert button opens gutter menu anchored after the selection's last line
+  it('opens gutter menu anchored after the selection last line', async () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: 'Line one\nLine two\nLine three',
+      toolbarMode: 'floating'
+    });
+    editor.focus();
+    editor.setSelection(0, 8); // Selects 'Line one'
+
+    const view = editor.getView();
+    view.contentDOM.dispatchEvent(new window.PointerEvent('pointerup', {
+      bubbles: true, cancelable: true, button: 0, pointerType: 'mouse',
+    }));
+
+    await new Promise(resolve => setTimeout(resolve, 250));
+    const insertBtn = document.querySelector('.btn-bubble-insert');
+    insertBtn.click();
+
+    await new Promise(resolve => setTimeout(resolve, 50));
+    const menu = document.querySelector('.traven-gutter-menu');
+    expect(menu).not.toBeNull();
+
+    // The cursor position should be moved to the blank line inside the newly created spacing area
+    expect(view.state.selection.main.anchor).toBe(10);
+
+    // Clean up
+    const escEvent = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true });
+    menu.dispatchEvent(escEvent);
+  });
+
+  // 28. Insert button computes correct number of newlines to avoid extra spacing
+  it('does not insert extra newlines if blank lines already exist', async () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: 'Line one\n\nLine three',
+      toolbarMode: 'floating'
+    });
+    editor.focus();
+    editor.setSelection(0, 8); // Selects 'Line one'
+
+    const view = editor.getView();
+    view.contentDOM.dispatchEvent(new window.PointerEvent('pointerup', {
+      bubbles: true, cancelable: true, button: 0, pointerType: 'mouse',
+    }));
+
+    await new Promise(resolve => setTimeout(resolve, 250));
+    const insertBtn = document.querySelector('.btn-bubble-insert');
+    insertBtn.click();
+
+    await new Promise(resolve => setTimeout(resolve, 50));
+    
+    // Original text has \n\n (2 newlines) after Line one. We need 4 - 2 = 2 newlines.
+    // Total newlines after insert should be exactly 4: 'Line one\n\n\n\nLine three'
+    expect(view.state.doc.toString()).toBe('Line one\n\n\n\nLine three');
+    expect(view.state.selection.main.anchor).toBe(10);
+
+    // Clean up
+    const escEvent = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true });
+    document.querySelector('.traven-gutter-menu').dispatchEvent(escEvent);
+  });
 });

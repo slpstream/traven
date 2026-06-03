@@ -1,7 +1,7 @@
 // @ts-check
 import { StateEffect, StateField, RangeSet, Prec } from "@codemirror/state";
 import { showTooltip, keymap, EditorView, GutterMarker, gutter, ViewPlugin, Decoration, highlightActiveLineGutter } from "@codemirror/view";
-import { BUBBLE_ACTIONS, GUTTER_ACTIONS } from "./actions.js";
+import { BUBBLE_ACTIONS, BUBBLE_INSERT_KEY, GUTTER_ACTIONS } from "./actions.js";
 import { buildToolButton } from "./dom-button.js";
 
 /* ---------- Selection Bubble ---------- */
@@ -37,20 +37,80 @@ function wireBubbleKeyboard(dom, editor) {
   });
 }
 
-function buildBubbleFragment(editor) {
+function buildBubbleFragment(editor, view, clearBubble) {
   const frag = document.createDocumentFragment();
   for (const key of BUBBLE_ACTIONS) {
     buildToolButton(frag, key, editor);
   }
+
+  // Visual separator
+  const sep = document.createElement("span");
+  sep.className = "traven-bubble-sep";
+  frag.appendChild(sep);
+
+  // Insert button
+  buildToolButton(frag, BUBBLE_INSERT_KEY, editor);
+  const lastChild = frag.lastChild;
+  if (lastChild) {
+    lastChild.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      _openGutterFromBubble(editor, view, clearBubble);
+    });
+  }
+
   return frag;
 }
 
-function makeBubbleTooltip(from, to, editor) {
+/**
+ * Dismisses the bubble, clears the selection, then opens the Gutter
+ * Insertion Menu anchored to the line immediately after the selection.
+ *
+ * @param {any} editor
+ * @param {EditorView} view
+ * @param {import("@codemirror/state").StateEffectType<void>} clearBubble
+ */
+function _openGutterFromBubble(editor, view, clearBubble) {
+  const sel = view.state.selection.main;
+  const anchorLine = view.state.doc.lineAt(sel.to);
+  const insertPos = anchorLine.to;
+
+  // Count how many newlines exist immediately after the selection's line
+  let existingNewlines = 0;
+  let pos = insertPos;
+  while (pos < view.state.doc.length && view.state.sliceDoc(pos, pos + 1) === "\n") {
+    existingNewlines++;
+    pos++;
+  }
+
+  // Ensure 4 newlines (or 3 if at the end of the document) to guarantee a blank line
+  // above and below the newly inserted block.
+  const isAtEnd = pos === view.state.doc.length;
+  const targetNewlines = isAtEnd ? 3 : 4;
+  const newlinesNeeded = Math.max(0, targetNewlines - existingNewlines);
+
+  const insertText = "\n".repeat(newlinesNeeded);
+  const finalCursorPos = insertPos + 2;
+
+  // Dismiss bubble + insert newlines + position cursor inside the spacing area
+  view.dispatch({
+    changes: { from: insertPos, to: insertPos, insert: insertText },
+    selection: { anchor: finalCursorPos },
+    effects: clearBubble.of(undefined)
+  });
+
+  // Open the gutter menu at the resolved position.
+  queueMicrotask(() => {
+    openGutterMenu(editor, finalCursorPos, view);
+  });
+}
+
+function makeBubbleTooltip(from, to, editor, clearBubble) {
   return {
     pos: from,
     end: to,
     above: true,
-    create: () => {
+    create: (view) => {
       const dom = document.createElement("div");
       dom.className = "traven-bubble-menu";
       const isTouch = typeof window !== "undefined" &&
@@ -60,7 +120,7 @@ function makeBubbleTooltip(from, to, editor) {
       }
       dom.setAttribute("role", "toolbar");
       dom.setAttribute("aria-label", "Text formatting");
-      const frag = buildBubbleFragment(editor);
+      const frag = buildBubbleFragment(editor, view, clearBubble);
       dom.appendChild(frag);
       wireBubbleKeyboard(dom, editor);
 
@@ -202,7 +262,7 @@ export function selectionBubbleExtension(editor, options = {}) {
       }
       return value;
     },
-    provide: (f) => showTooltip.from(f, (val) => (val == null ? null : makeBubbleTooltip(val.from, val.to, editor))),
+    provide: (f) => showTooltip.from(f, (val) => (val == null ? null : makeBubbleTooltip(val.from, val.to, editor, clearBubble))),
   });
 
   const pointerController = bubblePointerController({
