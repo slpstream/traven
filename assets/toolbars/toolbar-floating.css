@@ -118,17 +118,37 @@
   text-align: center;
   border-radius: 3px;
   cursor: pointer;
-  opacity: 0.1;
-  transition: opacity 120ms ease;
-  color: var(--gutter-fg, inherit);
+  opacity: 0;
+  transition: opacity 120ms ease, color 120ms ease, background-color 120ms ease;
+  color: #94a3b8; /* slate-400 (gray) */
   user-select: none;
 }
 
-.cm-traven-gutter .traven-gutter-plus-btn:hover,
-.cm-activeLineGutter~* .traven-gutter-plus-btn,
+/* Always display it when the cursor is on the line (active line gutter) */
 .cm-activeLineGutter .traven-gutter-plus-btn {
   opacity: 1;
+  color: #94a3b8;
+}
+
+/* Hover state: turn it to a darker slate or black */
+.cm-traven-gutter .traven-gutter-plus-btn:hover {
+  opacity: 1;
+  color: #0f172a; /* slate-900 (darker slate/black) */
   background: var(--gutter-btn-hover, rgba(0, 0, 0, 0.05));
+}
+
+/* Dark mode overrides */
+.cm-wysiwym-dark .cm-traven-gutter .traven-gutter-plus-btn {
+  color: #64748b; /* slate-500 (gray in dark mode) */
+}
+
+.cm-wysiwym-dark .cm-activeLineGutter .traven-gutter-plus-btn {
+  color: #64748b;
+}
+
+.cm-wysiwym-dark .cm-traven-gutter .traven-gutter-plus-btn:hover {
+  color: #f8fafc; /* slate-50 (light slate/white) */
+  background: var(--gutter-btn-hover-dark, rgba(255, 255, 255, 0.08));
 }
 
 /* Gutter popover */

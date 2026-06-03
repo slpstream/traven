@@ -1,6 +1,6 @@
 // @ts-check
 import { StateEffect, StateField, RangeSet, Prec } from "@codemirror/state";
-import { showTooltip, keymap, EditorView, GutterMarker, gutter, ViewPlugin, Decoration } from "@codemirror/view";
+import { showTooltip, keymap, EditorView, GutterMarker, gutter, ViewPlugin, Decoration, highlightActiveLineGutter } from "@codemirror/view";
 import { BUBBLE_ACTIONS, GUTTER_ACTIONS } from "./actions.js";
 import { buildToolButton } from "./dom-button.js";
 
@@ -363,6 +363,7 @@ function openGutterMenu(editor, lineFrom, view) {
 export function gutterInserterExtension(editor, options = {}) {
   const hotkey = options.hotkey || "Mod-Shift-Enter";
   return [
+    highlightActiveLineGutter(),
     gutter({
       class: "cm-traven-gutter",
       markers: gutterMarkers,
