@@ -1,0 +1,921 @@
+/*
+ * Traven Skin: Base
+ * A minimal, three-font foundation using system fonts only.
+ * No CDN imports, no Google Fonts, no remote requests.
+ *
+ * Typography (3 families):
+ *   • Display  — sans-serif  → H1–H6 (editor + preview headings)
+ *   • Body     — serif       → running paragraphs, lists, blockquotes,
+ *                              captions, table cells, component bodies
+ *   • Code     — monospace   → inline `code`, ```pre```, YAML frontmatter,
+ *                              the raw Markdown pane, line numbers
+ *
+ * Fidelity rules (per docs/theme-development.md §5):
+ *   • Editor (`.cm-editor`) and preview (`.traven-preview`) share the
+ *     same `font-family`, `font-size`, `line-height`, horizontal padding,
+ *     and heading metrics. Anything that uses `padding` in the editor
+ *     (line elements) corresponds to the same `margin` in the preview
+ *     and vice-versa.
+ *   • Editor headings use `padding` (never `margin`) with `!important`.
+ *   • Blockquote first / mid / last line uses the `:has()` trick (§4.2).
+ *   • No `float` and no vertical `margin` on `.cm-wysiwym-*-container`
+ *     widgets inside the editor (§4.4); alignment uses auto-margins.
+ *   • `.cm-wysiwym-collapsed-fence` is squashed to zero height (§4.5).
+ *
+ * No `@import` rules. Self-contained.
+ */
+
+/* ─── 1. Design tokens ─────────────────────────────────────────────────── */
+:root {
+    /* Palette — warm stone, single accent */
+    --bb-bg: #fafaf9;
+    --bb-fg: #1c1917;
+    --bb-fg-muted: #57534e;
+    --bb-fg-subtle: #a8a29e;
+    --bb-border: #e7e5e4;
+    --bb-border-soft: #f5f5f4;
+    --bb-accent: #0f172a;
+    --bb-accent-soft: rgba(15, 23, 42, 0.06);
+    --bb-info: #2563eb;
+    --bb-info-soft: rgba(37, 99, 235, 0.06);
+    --bb-warn: #b45309;
+    --bb-warn-soft: rgba(180, 83, 9, 0.07);
+    --bb-rule: 1px;
+    --bb-radius: 6px;
+
+    /* Display — sans-serif for headings */
+    --bb-font-display:
+        ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Inter",
+        "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+    /* Body — serif for running text */
+    --bb-font-body: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+
+    /* Code — monospace */
+    --bb-font-mono:
+        ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+        "Liberation Mono", monospace;
+}
+
+.cm-wysiwym-dark,
+.traven-preview.cm-wysiwym-dark {
+    --bb-bg: #0c0a09;
+    --bb-fg: #f5f5f4;
+    --bb-fg-muted: #a8a29e;
+    --bb-fg-subtle: #57534e;
+    --bb-border: #292524;
+    --bb-border-soft: #1c1917;
+    --bb-accent: #f5f5f4;
+    --bb-accent-soft: rgba(245, 245, 244, 0.08);
+    --bb-info: #60a5fa;
+    --bb-info-soft: rgba(96, 165, 250, 0.08);
+    --bb-warn: #fbbf24;
+    --bb-warn-soft: rgba(251, 191, 36, 0.08);
+}
+
+/* ─── 2. Surface — editor and preview share typography + metrics ───────── */
+/*    This is the parity block: font, size, line-height, padding, and bg.   */
+.cm-editor,
+.traven-preview {
+    font-family: var(--bb-font-body) !important;
+    background: var(--bb-bg) !important;
+    color: var(--bb-fg) !important;
+    font-size: 17px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+.cm-editor:focus,
+.cm-editor.cm-focused {
+    outline: none !important;
+}
+.cm-scroller {
+    line-height: inherit !important;
+    padding: 8px 0 !important;
+}
+
+/* Same horizontal gutter in both scopes so the text columns line up. */
+.cm-content,
+.traven-preview {
+    padding-left: max(24px, env(safe-area-inset-left)) !important;
+    padding-right: max(24px, env(safe-area-inset-right)) !important;
+}
+.traven-preview {
+    padding-top: 32px !important;
+    padding-bottom: 64px !important;
+}
+
+/* ─── 3. Caret, selection, gutter, active line ─────────────────────────── */
+.cm-cursor {
+    border-left: 2px solid var(--bb-accent) !important;
+}
+.cm-fat-cursor {
+    background: var(--bb-accent) !important;
+    opacity: 0.55 !important;
+}
+
+.cm-selectionBackground,
+.cm-native-selection,
+.traven-preview ::selection {
+    background: var(--bb-accent-soft) !important;
+}
+.cm-editor.cm-focused
+    > .cm-scroller
+    > .cm-selectionLayer
+    .cm-selectionBackground {
+    background: var(--bb-accent-soft) !important;
+}
+
+.cm-gutters {
+    background: transparent !important;
+    border-right: none !important;
+    color: var(--bb-fg-subtle) !important;
+    font-family: var(--bb-font-mono) !important;
+    font-size: 0.75em !important;
+}
+.cm-gutterElement {
+    padding: 0 12px 0 8px !important;
+}
+.cm-activeLine {
+    background: var(--bb-accent-soft) !important;
+}
+.cm-activeLineGutter {
+    background: transparent !important;
+    color: var(--bb-accent) !important;
+    font-weight: 600;
+}
+
+/* ─── 4. Inline marks ──────────────────────────────────────────────────── */
+.cm-wysiwym-bold {
+    font-weight: 700;
+    color: var(--bb-fg);
+}
+.cm-wysiwym-italic {
+    font-style: italic;
+}
+.cm-wysiwym-strikethrough {
+    text-decoration: line-through;
+    color: var(--bb-fg-muted);
+}
+.cm-wysiwym-highlight {
+    background: rgba(250, 204, 21, 0.3);
+    border-radius: 2px;
+    padding: 0 2px;
+}
+.cm-wysiwym-bullet {
+    color: var(--bb-fg-muted);
+    font-weight: 600;
+    margin-right: 0.3em;
+}
+
+.cm-wysiwym-inline-code,
+.cm-wysiwym-codeblock-line,
+.traven-preview code,
+.traven-preview pre,
+.cm-wysiwym-frontmatter {
+    font-family: var(--bb-font-mono) !important;
+    font-size: 0.88em;
+}
+.cm-wysiwym-inline-code,
+.traven-preview code:not(pre code) {
+    background: var(--bb-accent-soft);
+    border: var(--bb-rule) solid var(--bb-border);
+    color: var(--bb-fg);
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-weight: 500;
+}
+.cm-wysiwym-link-anchor,
+.traven-preview a {
+    color: var(--bb-fg) !important;
+    text-decoration: underline;
+    text-decoration-color: var(--bb-border);
+    text-underline-offset: 2px;
+    transition: text-decoration-color 0.15s ease;
+}
+.cm-wysiwym-link-anchor:hover,
+.traven-preview a:hover {
+    text-decoration-color: var(--bb-fg);
+}
+
+/* ─── 5. Headings (sans-serif, weights 600–800) ────────────────────────── */
+.cm-editor [class*="cm-wysiwym-h"],
+.traven-preview h1,
+.traven-preview h2,
+.traven-preview h3,
+.traven-preview h4,
+.traven-preview h5,
+.traven-preview h6 {
+    font-family: var(--bb-font-display) !important;
+    color: var(--bb-fg);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+}
+.cm-editor .cmt-heading,
+.cm-editor .tok-heading,
+.cm-editor [class*="cm-wysiwym-h"] span {
+    text-decoration: none !important;
+}
+
+/* Editor: padding-only (CodeMirror coordinate mapping §4.1) */
+.cm-editor .cm-wysiwym-h1 {
+    font-size: 2.1em;
+    font-weight: 800;
+    padding: 32px 0 12px !important;
+    margin: 0 !important;
+    line-height: 1.15;
+}
+.cm-editor .cm-wysiwym-h2 {
+    font-size: 1.6em;
+    font-weight: 700;
+    padding: 28px 0 10px !important;
+    margin: 0 !important;
+    line-height: 1.2;
+}
+.cm-editor .cm-wysiwym-h3 {
+    font-size: 1.3em;
+    font-weight: 700;
+    padding: 24px 0 8px !important;
+    margin: 0 !important;
+    line-height: 1.3;
+}
+.cm-editor .cm-wysiwym-h4 {
+    font-size: 1.15em;
+    font-weight: 700;
+    padding: 20px 0 6px !important;
+    margin: 0 !important;
+    line-height: 1.35;
+}
+.cm-editor .cm-wysiwym-h5 {
+    font-size: 1.05em;
+    font-weight: 600;
+    padding: 16px 0 4px !important;
+    margin: 0 !important;
+    line-height: 1.4;
+}
+.cm-editor .cm-wysiwym-h6 {
+    font-size: 0.95em;
+    font-weight: 600;
+    padding: 12px 0 4px !important;
+    margin: 0 !important;
+    line-height: 1.4;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Preview: identical sizes, same metrics expressed as margin */
+.traven-preview h1 {
+    font-size: 2.1em;
+    font-weight: 800;
+    margin: 32px 0 12px;
+    line-height: 1.15;
+}
+.traven-preview h2 {
+    font-size: 1.6em;
+    font-weight: 700;
+    margin: 28px 0 10px;
+    line-height: 1.2;
+}
+.traven-preview h3 {
+    font-size: 1.3em;
+    font-weight: 700;
+    margin: 24px 0 8px;
+    line-height: 1.3;
+}
+.traven-preview h4 {
+    font-size: 1.15em;
+    font-weight: 700;
+    margin: 20px 0 6px;
+    line-height: 1.35;
+}
+.traven-preview h5 {
+    font-size: 1.05em;
+    font-weight: 600;
+    margin: 16px 0 4px;
+    line-height: 1.4;
+}
+.traven-preview h6 {
+    font-size: 0.95em;
+    font-weight: 600;
+    margin: 12px 0 4px;
+    line-height: 1.4;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.traven-preview > h1:first-child {
+    margin-top: 16px !important;
+}
+
+/* Collapse the blank line the parser leaves after a heading. */
+.cm-editor .cm-wysiwym-h1 + .cm-line:has(br:only-child),
+.cm-editor .cm-wysiwym-h2 + .cm-line:has(br:only-child),
+.cm-editor .cm-wysiwym-h3 + .cm-line:has(br:only-child),
+.cm-editor .cm-wysiwym-h4 + .cm-line:has(br:only-child),
+.cm-editor .cm-wysiwym-h5 + .cm-line:has(br:only-child),
+.cm-editor .cm-wysiwym-h6 + .cm-line:has(br:only-child) {
+    height: 0.4em !important;
+    min-height: 0.4em !important;
+}
+
+/* ─── 6. Paragraphs, blockquotes ───────────────────────────────────────── */
+.traven-preview p,
+.cm-editor p {
+    margin: 0 0 1em;
+}
+
+.cm-editor .cm-wysiwym-blockquote,
+.traven-preview blockquote:not(.traven-component-pullquote) {
+    font-family: var(--bb-font-body) !important;
+    font-style: italic;
+    color: var(--bb-fg-muted);
+    border-left: 3px solid var(--bb-fg-muted);
+    margin: 0 !important;
+    position: relative;
+}
+.cm-editor .cm-wysiwym-blockquote {
+    padding: 8px 0 8px 16px !important;
+}
+.cm-editor .cm-wysiwym-blockquote + .cm-wysiwym-blockquote {
+    padding-top: 2px !important;
+}
+.cm-editor .cm-wysiwym-blockquote:not(:has(+ .cm-wysiwym-blockquote)) {
+    padding-bottom: 10px !important;
+}
+.cm-editor .cm-wysiwym-blockquote,
+.cm-editor .cm-wysiwym-blockquote * {
+    font-style: italic;
+}
+
+.traven-preview blockquote:not(.traven-component-pullquote) {
+    padding: 4px 0 4px 16px;
+    margin: 1.2em 0 !important;
+}
+.traven-preview p:has(+ blockquote:not(.traven-component-pullquote)),
+.traven-preview ul:has(+ blockquote:not(.traven-component-pullquote)),
+.traven-preview ol:has(+ blockquote:not(.traven-component-pullquote)),
+.traven-preview pre:has(+ blockquote:not(.traven-component-pullquote)) {
+    margin-bottom: 0.4em !important;
+}
+.traven-preview blockquote:not(.traven-component-pullquote) + p,
+.traven-preview blockquote:not(.traven-component-pullquote) + ul,
+.traven-preview blockquote:not(.traven-component-pullquote) + ol,
+.traven-preview blockquote:not(.traven-component-pullquote) + pre {
+    margin-top: 0.4em !important;
+}
+
+/* ─── 7. HR, frontmatter, code blocks ──────────────────────────────────── */
+.cm-wysiwym-hr-widget,
+.traven-preview hr {
+    border: 0;
+    border-top: var(--bb-rule) solid var(--bb-border);
+    margin: 2em 0 !important;
+    padding: 0 !important;
+    display: block;
+    width: 100%;
+    opacity: 1;
+}
+
+.cm-wysiwym-frontmatter {
+    background: var(--bb-border-soft) !important;
+    border-left: 3px solid var(--bb-fg-subtle) !important;
+    color: var(--bb-fg-muted) !important;
+    font-size: 0.85em !important;
+    padding: 4px 0 4px 16px !important;
+    margin: 0 !important;
+    opacity: 0.9;
+}
+.cm-wysiwym-frontmatter span {
+    color: inherit !important;
+    font: inherit !important;
+}
+.cm-wysiwym-frontmatter-active {
+    background: var(--bb-accent-soft) !important;
+    border-left-color: var(--bb-accent) !important;
+    color: var(--bb-fg) !important;
+    opacity: 1;
+}
+.cm-wysiwym-frontmatter-active span {
+    color: inherit !important;
+    font: inherit !important;
+}
+
+.cm-editor .cm-wysiwym-codeblock-line {
+    background: var(--bb-border-soft);
+    padding-left: 18px !important;
+    padding-right: 18px !important;
+}
+.cm-editor .cm-wysiwym-codeblock-line-first {
+    padding-top: 12px !important;
+    border: var(--bb-rule) solid var(--bb-border);
+    border-bottom: none;
+    border-radius: var(--bb-radius) var(--bb-radius) 0 0;
+}
+.cm-editor .cm-wysiwym-codeblock-line-last {
+    padding-bottom: 12px !important;
+    border: var(--bb-rule) solid var(--bb-border);
+    border-top: none;
+    border-radius: 0 0 var(--bb-radius) var(--bb-radius);
+}
+.cm-editor
+    .cm-wysiwym-codeblock-line:not(.cm-wysiwym-codeblock-line-first):not(
+        .cm-wysiwym-codeblock-line-last
+    ) {
+    border-left: var(--bb-rule) solid var(--bb-border);
+    border-right: var(--bb-rule) solid var(--bb-border);
+}
+.cm-editor .cm-wysiwym-collapsed-fence {
+    height: 0 !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    overflow: hidden !important;
+    visibility: hidden !important;
+}
+.traven-preview pre {
+    background: var(--bb-border-soft);
+    border: var(--bb-rule) solid var(--bb-border);
+    border-radius: var(--bb-radius);
+    padding: 14px 18px;
+    overflow-x: auto;
+    margin: 1.2em 0;
+}
+.traven-preview pre code {
+    background: transparent;
+    border: none;
+    padding: 0;
+    color: inherit;
+    font-size: 1em;
+}
+
+/* ─── 8. Tables & lists ────────────────────────────────────────────────── */
+.cm-editor .cm-wysiwym-table-row {
+    background: var(--bb-accent-soft) !important;
+    font-family: var(--bb-font-mono) !important;
+    font-size: 0.88em !important;
+}
+.cm-wysiwym-table-widget,
+.traven-preview > table {
+    margin: 1.4em 0;
+}
+.cm-wysiwym-table-widget table,
+.traven-preview table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95em;
+}
+.cm-wysiwym-table-widget th,
+.cm-wysiwym-table-widget td,
+.traven-preview th,
+.traven-preview td {
+    border: var(--bb-rule) solid var(--bb-border);
+    padding: 8px 12px;
+    text-align: left;
+    height: 38px;
+    box-sizing: border-box;
+}
+.cm-wysiwym-table-widget th,
+.traven-preview th {
+    background: var(--bb-border-soft);
+    font-weight: 600;
+}
+
+.traven-preview ul,
+.traven-preview ol {
+    padding-left: 1.5em;
+    margin: 1em 0;
+}
+.traven-preview li {
+    margin-bottom: 0.25em;
+}
+.traven-preview li::marker {
+    color: var(--bb-fg-muted);
+}
+
+.traven-preview mark {
+    background: rgba(250, 204, 21, 0.3);
+    border-radius: 2px;
+    padding: 1px 3px;
+}
+.traven-preview hr {
+    /* mirrored above */
+}
+.traven-preview strong {
+    font-weight: 700;
+    color: var(--bb-fg);
+}
+.traven-preview em {
+    font-style: italic;
+}
+.traven-preview del {
+    text-decoration: line-through;
+    color: var(--bb-fg-muted);
+}
+
+/* ─── 9. Shortcode widgets (editor side) ───────────────────────────────── */
+.cm-wysiwym-image-shortcode-container,
+.cm-wysiwym-video-shortcode-container,
+.cm-wysiwym-audio-shortcode-container,
+.cm-wysiwym-figure-shortcode {
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
+    margin: 1.2em 0 !important;
+    padding: 12px 16px;
+    background: var(--bb-bg);
+    border: var(--bb-rule) solid var(--bb-border);
+    border-radius: var(--bb-radius);
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Hover-revealed edit buttons on every block widget. */
+.cm-wysiwym-image-shortcode-container .image-edit-icon,
+.cm-wysiwym-video-shortcode-container .video-edit-icon,
+.cm-wysiwym-audio-shortcode-container .audio-edit-icon,
+.cm-wysiwym-component-shortcode .image-edit-icon,
+.cm-wysiwym-figure-shortcode .figure-edit-icon {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bb-bg);
+    border: var(--bb-rule) solid var(--bb-border);
+    border-radius: 50%;
+    color: var(--bb-fg-muted);
+    opacity: 0;
+    cursor: pointer;
+    z-index: 10;
+    transition:
+        opacity 0.15s ease,
+        color 0.15s ease,
+        border-color 0.15s ease,
+        background 0.15s ease;
+}
+.cm-wysiwym-image-shortcode-container:hover .image-edit-icon,
+.cm-wysiwym-video-shortcode-container:hover .video-edit-icon,
+.cm-wysiwym-audio-shortcode-container:hover .audio-edit-icon,
+.cm-wysiwym-component-shortcode:hover .image-edit-icon,
+.cm-wysiwym-figure-shortcode:hover .figure-edit-icon {
+    opacity: 1;
+}
+.cm-wysiwym-image-shortcode-container .image-edit-icon:hover,
+.cm-wysiwym-video-shortcode-container .video-edit-icon:hover,
+.cm-wysiwym-audio-shortcode-container .audio-edit-icon:hover,
+.cm-wysiwym-component-shortcode .image-edit-icon:hover,
+.cm-wysiwym-figure-shortcode .figure-edit-icon:hover {
+    color: var(--bb-bg);
+    background: var(--bb-fg);
+    border-color: var(--bb-fg);
+}
+
+/* Meta row, caption, badges, uploading pill, placeholder card. */
+.cm-wysiwym-image-caption,
+.cm-wysiwym-image-shortcode-container .shortcode-meta,
+.cm-wysiwym-video-shortcode-container .shortcode-meta,
+.cm-wysiwym-audio-shortcode-container .shortcode-meta,
+.cm-wysiwym-figure-shortcode .figure-caption {
+    font-size: 0.85em;
+    color: var(--bb-fg-muted);
+    font-style: italic;
+    font-family: var(--bb-font-body) !important;
+    padding: 8px 0;
+    border-top: var(--bb-rule) solid var(--bb-border-soft);
+}
+.cm-wysiwym-image-shortcode-container .meta-badge {
+    background: var(--bb-border-soft);
+    color: var(--bb-fg-muted);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-weight: 600;
+    font-size: 0.78em;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-family: var(--bb-font-mono) !important;
+}
+.cm-wysiwym-image-shortcode-container .meta-badge.tag-name {
+    background: var(--bb-accent-soft);
+    color: var(--bb-fg);
+}
+.cm-wysiwym-image-uploading {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(34, 197, 94, 0.08);
+    border: 1px dashed #22c55e;
+    color: #16a34a;
+    padding: 8px 14px;
+    border-radius: var(--bb-radius);
+    font-size: 0.88em;
+    font-weight: 500;
+    margin: 0 !important;
+}
+.cm-wysiwym-video-shortcode-container .video-placeholder,
+.cm-wysiwym-audio-shortcode-container .audio-placeholder {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--bb-border-soft);
+    border: var(--bb-rule) solid var(--bb-border);
+    border-radius: var(--bb-radius);
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+.cm-wysiwym-video-shortcode-container .video-placeholder:hover,
+.cm-wysiwym-audio-shortcode-container .audio-placeholder:hover {
+    background: var(--bb-accent-soft);
+}
+.cm-wysiwym-video-shortcode-container .video-placeholder-icon-wrap,
+.cm-wysiwym-audio-shortcode-container .audio-placeholder-icon-wrap {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--bb-border);
+    color: var(--bb-fg-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.cm-wysiwym-video-shortcode-container .video-placeholder-details,
+.cm-wysiwym-audio-shortcode-container .audio-placeholder-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    flex: 1;
+}
+.cm-wysiwym-video-shortcode-container .video-placeholder-platform,
+.cm-wysiwym-audio-shortcode-container .audio-placeholder-platform {
+    font-weight: 600;
+}
+.cm-wysiwym-video-shortcode-container .video-placeholder-url,
+.cm-wysiwym-audio-shortcode-container .audio-placeholder-url {
+    font-size: 0.8em;
+    color: var(--bb-fg-muted);
+    font-family: var(--bb-font-mono) !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ─── 10. Alignment & size utilities (shared by editor + preview) ──────── */
+.size-small {
+    width: 180px;
+}
+.size-medium {
+    width: 360px;
+}
+.size-large {
+    width: 640px;
+}
+.size-full {
+    width: 100%;
+}
+.cm-editor .align-left {
+    margin: 1.2em auto 1.2em 0 !important;
+}
+.cm-editor .align-right {
+    margin: 1.2em 0 1.2em auto !important;
+}
+.cm-editor .align-center {
+    margin: 1.2em auto !important;
+}
+.cm-editor .align-fullbleed {
+    width: 100% !important;
+    margin: 1.2em 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+}
+
+.traven-preview .align-left {
+    float: left;
+    margin: 8px 24px 8px 0;
+    clear: left;
+}
+.traven-preview .align-right {
+    float: right;
+    margin: 8px 0 8px 24px;
+    clear: right;
+}
+.traven-preview .align-center {
+    display: block;
+    float: none;
+    clear: both;
+    margin: 1.2em auto;
+}
+.traven-preview .align-fullbleed {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    margin-left: calc(-50vw + 50%) !important;
+    margin-right: calc(-50vw + 50%) !important;
+    border-radius: 0 !important;
+    display: block !important;
+    float: none !important;
+    clear: both !important;
+}
+
+/* ─── 11. Preview shortcode outputs ────────────────────────────────────── */
+.traven-preview img.traven-image-shortcode,
+.traven-preview figure.traven-image-figure,
+.traven-preview .traven-video-container,
+.traven-preview figure.traven-video-figure,
+.traven-preview .traven-audio-container,
+.traven-preview figure.traven-audio-figure,
+.traven-preview figure.traven-figure {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--bb-radius);
+    display: block;
+    box-sizing: border-box;
+    margin: 1.2em auto;
+}
+.traven-preview figure.traven-image-figure img.traven-image-shortcode {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    display: block;
+    border-radius: var(--bb-radius);
+}
+.traven-preview figcaption,
+.traven-preview .traven-figure-caption {
+    font-size: 0.88em;
+    color: var(--bb-fg-muted);
+    font-style: italic;
+    font-family: var(--bb-font-body);
+    margin-top: 8px;
+    text-align: center;
+    line-height: 1.45;
+}
+.traven-preview figure.traven-figure {
+    border: var(--bb-rule) solid var(--bb-border);
+    background: var(--bb-border-soft);
+    padding: 16px;
+}
+.traven-preview .traven-figure-caption {
+    border-top: var(--bb-rule) solid var(--bb-border);
+    padding-top: 10px;
+    margin-top: 12px;
+}
+
+.traven-preview .traven-video-container {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: #000;
+}
+.traven-preview .traven-video-container iframe,
+.traven-preview .traven-video-container video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    border-radius: var(--bb-radius);
+}
+.traven-preview .traven-video-container.align-fullbleed iframe,
+.traven-preview .traven-video-container.align-fullbleed video {
+    border-radius: 0 !important;
+}
+.traven-preview .traven-audio-container audio {
+    display: block;
+    width: 100%;
+    border: 0;
+    border-radius: var(--bb-radius);
+}
+.traven-preview .traven-audio-container.align-fullbleed audio {
+    border-radius: 0 !important;
+}
+
+/* ─── 12. Components: pullquote, blockquote, info, warning ────────────── */
+.cm-wysiwym-component-shortcode,
+.traven-preview .traven-component {
+    position: relative;
+    padding: 18px 20px;
+    margin: 1.6em 0 !important;
+    border: var(--bb-rule) solid var(--bb-border);
+    border-radius: var(--bb-radius);
+    background: var(--bb-border-soft);
+    font-family: var(--bb-font-body) !important;
+}
+.cm-wysiwym-component-shortcode .component-body p {
+    margin: 6px 0;
+    line-height: 1.7;
+}
+.cm-wysiwym-component-shortcode .component-body p:first-child {
+    margin-top: 0;
+}
+.cm-wysiwym-component-shortcode .component-body p:last-child {
+    margin-bottom: 0;
+}
+.cm-wysiwym-component-shortcode cite {
+    display: block;
+    margin-top: 10px;
+    font-size: 0.88em;
+    font-style: normal;
+    color: var(--bb-fg-muted);
+    text-align: right;
+}
+
+.cm-wysiwym-component-shortcode.component-pullquote,
+.traven-preview .traven-component-pullquote {
+    border: none !important;
+    background: transparent !important;
+    padding: 24px 12px !important;
+    margin: 2em 0 !important;
+    text-align: center;
+    font-size: 1.4em;
+    font-weight: 600;
+    line-height: 1.4 !important;
+    font-family: var(--bb-font-display) !important;
+    color: var(--bb-fg);
+    position: relative;
+}
+.cm-wysiwym-component-shortcode.component-pullquote::before,
+.cm-wysiwym-component-shortcode.component-pullquote::after,
+.traven-preview .traven-component-pullquote::before,
+.traven-preview .traven-component-pullquote::after {
+    content: "";
+    display: block;
+    width: 48px;
+    height: 1px;
+    background: var(--bb-fg-muted);
+    margin: 16px auto;
+}
+
+.cm-wysiwym-component-shortcode.component-blockquote,
+.traven-preview .traven-component-blockquote {
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+.cm-wysiwym-component-shortcode.component-blockquote blockquote,
+.traven-preview .traven-component-blockquote {
+    border-left: 3px solid var(--bb-fg-muted) !important;
+    padding: 4px 0 4px 16px !important;
+    margin: 1.2em 0 !important;
+    color: var(--bb-fg-muted);
+    font-style: italic;
+    font-family: var(--bb-font-body) !important;
+}
+.cm-wysiwym-component-shortcode.component-blockquote cite,
+.traven-preview .traven-component-blockquote cite {
+    display: block;
+    margin-top: 8px;
+    font-size: 0.85em;
+    color: var(--bb-fg-muted);
+    font-style: normal;
+    text-align: right;
+}
+
+.cm-wysiwym-component-shortcode.component-info,
+.traven-preview .traven-component-info {
+    border-left: 3px solid var(--bb-info) !important;
+    background: var(--bb-info-soft) !important;
+}
+.cm-wysiwym-component-shortcode.component-warning,
+.traven-preview .traven-component-warning {
+    border-left: 3px solid var(--bb-warn) !important;
+    background: var(--bb-warn-soft) !important;
+}
+
+/* ─── 13. Raw Markdown pane ────────────────────────────────────────────── */
+.raw-editor-mount .cm-editor,
+.raw-editor-mount .cm-content,
+.raw-editor-mount .cm-scroller,
+.raw-editor-mount .cm-line {
+    font-family: var(--bb-font-mono) !important;
+    font-size: 14px !important;
+    line-height: 1.8 !important;
+    background: var(--bb-bg) !important;
+    color: var(--bb-fg) !important;
+}
+
+/* ─── 14. Clearfix + math fallback ─────────────────────────────────────── */
+.traven-preview::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+.katex-inline-fallback,
+.katex-display-fallback {
+    font-family: var(--bb-font-mono);
+    color: var(--bb-fg-muted);
+    background: var(--bb-border-soft);
+    padding: 1px 6px;
+    border-radius: 4px;
+}
+.katex-display-fallback {
+    display: block;
+    text-align: center;
+    padding: 8px 12px;
+    margin: 12px 0;
+}

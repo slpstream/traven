@@ -1481,7 +1481,46 @@ export class TravenEditor {
     content = content.replace(/^(\-\-\-|\*\*\*|\_\_\_)$/gm, "<hr>");
 
     // 4. Convert blockquotes (restore escaped gt)
-    content = content.replace(/^&gt; (.*?)$/gm, "<blockquote>$1</blockquote>");
+    const contentLines = content.split("\n");
+    const processedBlockquoteLines = [];
+    let inBlockquote = false;
+    let blockquoteItems = [];
+
+    for (let i = 0; i < contentLines.length; i++) {
+      const line = contentLines[i];
+      if (line.startsWith("&gt; ") || line === "&gt;") {
+        if (!inBlockquote) {
+          inBlockquote = true;
+          blockquoteItems = [];
+          if (processedBlockquoteLines.length > 0 && processedBlockquoteLines[processedBlockquoteLines.length - 1] !== "") {
+            processedBlockquoteLines.push("");
+          }
+        }
+        blockquoteItems.push(line === "&gt;" ? "" : line.substring(5));
+      } else if (line.startsWith("&gt;")) {
+        if (!inBlockquote) {
+          inBlockquote = true;
+          blockquoteItems = [];
+          if (processedBlockquoteLines.length > 0 && processedBlockquoteLines[processedBlockquoteLines.length - 1] !== "") {
+            processedBlockquoteLines.push("");
+          }
+        }
+        blockquoteItems.push(line.substring(4));
+      } else {
+        if (inBlockquote) {
+          inBlockquote = false;
+          processedBlockquoteLines.push(`<blockquote>${blockquoteItems.join("<br>")}</blockquote>`);
+          processedBlockquoteLines.push("");
+        }
+        processedBlockquoteLines.push(line);
+      }
+    }
+
+    if (inBlockquote) {
+      processedBlockquoteLines.push(`<blockquote>${blockquoteItems.join("<br>")}</blockquote>`);
+    }
+
+    content = processedBlockquoteLines.join("\n");
 
     // 4.5. Convert GFM tables
     const tableLines = content.split("\n");
@@ -1588,7 +1627,10 @@ export class TravenEditor {
         }
 
         if (listStack.length === 0) {
-          // Open new outer list
+          // Open new outer list — ensure blank line before so step 7 splits it into its own block
+          if (processedLines.length > 0 && processedLines[processedLines.length - 1] !== "") {
+            processedLines.push("");
+          }
           listStack.push({ type, indent, hasOpenItem: true });
           processedLines.push(`<${type}>`);
           processedLines.push(`<li>${checkboxHtml}${itemContent}`);
@@ -1638,12 +1680,17 @@ export class TravenEditor {
         }
       } else {
         // Not a list item: close all open list tags
+        const wasInList = listStack.length > 0;
         while (listStack.length > 0) {
           const popped = listStack.pop();
           if (popped.hasOpenItem) {
             processedLines.push("</li>");
           }
           processedLines.push(`</${popped.type}>`);
+        }
+        // Ensure blank line after list so step 7 splits it into its own block
+        if (wasInList && line.trim() !== "") {
+          processedLines.push("");
         }
         processedLines.push(line);
       }
