@@ -45,14 +45,15 @@ function buildBubbleFragment(editor) {
   return frag;
 }
 
-function makeBubbleTooltip(pos, editor) {
+function makeBubbleTooltip(from, to, editor) {
   return {
-    pos,
+    pos: from,
+    end: to,
     above: true,
     create: () => {
       const dom = document.createElement("div");
       dom.className = "traven-bubble-menu";
-      const isTouch = typeof window !== "undefined" && 
+      const isTouch = typeof window !== "undefined" &&
         (window.matchMedia("(pointer: coarse)").matches || 'ontouchstart' in window);
       if (isTouch) {
         dom.classList.add("is-tablet-bottom-bar");
@@ -62,6 +63,11 @@ function makeBubbleTooltip(pos, editor) {
       const frag = buildBubbleFragment(editor);
       dom.appendChild(frag);
       wireBubbleKeyboard(dom, editor);
+
+      const arrow = document.createElement("div");
+      arrow.className = "traven-bubble-arrow";
+      dom.appendChild(arrow);
+
       return { dom };
     }
   };
@@ -75,10 +81,10 @@ function makeBubbleTooltip(pos, editor) {
  */
 export function selectionBubbleExtension(editor, options = {}) {
   const hotkey = options.hotkey || "Mod-.";
-  
-  /** @type {import("@codemirror/state").StateEffectType<number | null>} */
+
+  /** @type {import("@codemirror/state").StateEffectType<{ from: number, to: number } | null>} */
   const setBubblePos = StateEffect.define();
-  
+
   const bubbleField = StateField.define({
     create: () => null,
     update(value, tr) {
@@ -87,11 +93,11 @@ export function selectionBubbleExtension(editor, options = {}) {
       }
       if (tr.selection) {
         const sel = tr.state.selection.main;
-        return sel.empty ? null : sel.to;
+        return sel.empty ? null : { from: sel.from, to: sel.to };
       }
       return value;
     },
-    provide: (f) => showTooltip.from(f, (pos) => (pos == null ? null : makeBubbleTooltip(pos, editor))),
+    provide: (f) => showTooltip.from(f, (val) => (val == null ? null : makeBubbleTooltip(val.from, val.to, editor))),
   });
 
   /** @type {import("@codemirror/state").Extension[]} */
@@ -103,7 +109,7 @@ export function selectionBubbleExtension(editor, options = {}) {
         run: (view) => {
           const sel = view.state.selection.main;
           if (sel.empty) return false;
-          view.dispatch({ effects: setBubblePos.of(sel.to) });
+          view.dispatch({ effects: setBubblePos.of({ from: sel.from, to: sel.to }) });
           queueMicrotask(() => focusFirstBubbleButton(view.dom));
           return true;
         }
@@ -198,7 +204,7 @@ function openGutterMenu(editor, lineFrom, view) {
     document.removeEventListener("click", onDocClick, true);
     document.removeEventListener("keydown", onKey, true);
   };
-  
+
   const onDocClick = (e) => {
     const target = /** @type {HTMLElement} */ (e.target);
     if (target && target.closest(".traven-gutter-plus-btn")) {
@@ -208,7 +214,7 @@ function openGutterMenu(editor, lineFrom, view) {
       close();
     }
   };
-  
+
   const onKey = (e) => {
     if (e.key === "Escape") {
       e.preventDefault();

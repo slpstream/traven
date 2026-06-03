@@ -2,15 +2,18 @@
 
 /* Main editor layout and typography */
 .cm-editor.cm-wysiwym-dark {
-  background-color: #0f172a !important; /* Deep Slate 900 */
-  color: #e2e8f0 !important; /* Soft white/Slate 200 */
+  background-color: #0f172a !important;
+  /* Deep Slate 900 */
+  color: #e2e8f0 !important;
+  /* Soft white/Slate 200 */
 }
 
 /* Gutters & Line numbers */
 .cm-editor.cm-wysiwym-dark .cm-gutters {
   background-color: transparent !important;
   border-right: none !important;
-  color: #64748b !important; /* Readable Slate 500 line numbers */
+  color: #64748b !important;
+  /* Readable Slate 500 line numbers */
 }
 
 /* Active line highlighting */
@@ -20,16 +23,17 @@
 
 .cm-editor.cm-wysiwym-dark .cm-activeLineGutter {
   background-color: transparent !important;
-  color: #38bdf8 !important; /* Sky Blue active line indicator */
+  color: #38bdf8 !important;
+  /* Sky Blue active line indicator */
 }
 
 /* Selection highlight */
-.cm-editor.cm-wysiwym-dark .cm-selectionBackground, 
+.cm-editor.cm-wysiwym-dark .cm-selectionBackground,
 .cm-editor.cm-wysiwym-dark .cm-native-selection {
   background-color: rgba(56, 189, 248, 0.35) !important;
 }
 
-.cm-editor.cm-wysiwym-dark.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground {
+.cm-editor.cm-wysiwym-dark.cm-focused>.cm-scroller>.cm-selectionLayer .cm-selectionBackground {
   background-color: rgba(56, 189, 248, 0.6) !important;
 }
 
@@ -48,29 +52,34 @@
 
 /* Inline code pill */
 .cm-editor.cm-wysiwym-dark .cm-wysiwym-inline-code {
-  background-color: #1e293b; /* Slate 800 */
-  color: #38bdf8; /* Sky Blue code text */
-  border-color: #334155; /* Slate 700 */
+  background-color: #1e293b;
+  /* Slate 800 */
+  color: #38bdf8;
+  /* Sky Blue code text */
+  border-color: #334155;
+  /* Slate 700 */
 }
 
 /* Headings */
-.cm-editor.cm-wysiwym-dark .cm-wysiwym-h1, 
-.cm-editor.cm-wysiwym-dark .cm-wysiwym-h2, 
-.cm-editor.cm-wysiwym-dark .cm-wysiwym-h3, 
-.cm-editor.cm-wysiwym-dark .cm-wysiwym-h4, 
-.cm-editor.cm-wysiwym-dark .cm-wysiwym-h5, 
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-h1,
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-h2,
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-h3,
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-h4,
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-h5,
 .cm-editor.cm-wysiwym-dark .cm-wysiwym-h6 {
   color: #f8fafc !important;
 }
 
 /* Blockquotes */
 .cm-editor.cm-wysiwym-dark .cm-wysiwym-blockquote {
-  border-left-color: #475569; /* Slate 600 */
+  border-left-color: #475569;
+  /* Slate 600 */
 }
 
 .cm-editor.cm-wysiwym-dark .cm-wysiwym-blockquote,
 .cm-editor.cm-wysiwym-dark .cm-wysiwym-blockquote * {
-  color: #94a3b8 !important; /* Slate 400 */
+  color: #94a3b8 !important;
+  /* Slate 400 */
 }
 
 /* YAML Frontmatter */
@@ -253,8 +262,10 @@
 
 /* Caret color overrides */
 .cm-editor.cm-wysiwym-dark .cm-cursor {
-  border-left-color: #38bdf8 !important; /* Sky Blue caret */
+  border-left-color: #38bdf8 !important;
+  /* Sky Blue caret */
 }
+
 .cm-editor.cm-wysiwym-dark .cm-fat-cursor {
   background-color: #38bdf8 !important;
 }
@@ -284,19 +295,22 @@
 
 .cm-editor.cm-wysiwym-dark .tok-keyword,
 .cm-editor.cm-wysiwym-dark .cmt-keyword {
-  color: #fb923c !important; /* Orange */
+  color: #fb923c !important;
+  /* Orange */
 }
 
 .cm-editor.cm-wysiwym-dark .tok-string,
 .cm-editor.cm-wysiwym-dark .cmt-string {
-  color: #4ade80 !important; /* Green */
+  color: #4ade80 !important;
+  /* Green */
 }
 
 .cm-editor.cm-wysiwym-dark .tok-number,
 .cm-editor.cm-wysiwym-dark .cmt-number,
 .cm-editor.cm-wysiwym-dark .tok-boolean,
 .cm-editor.cm-wysiwym-dark .cmt-boolean {
-  color: #a78bfa !important; /* Purple */
+  color: #a78bfa !important;
+  /* Purple */
 }
 
 .cm-editor.cm-wysiwym-dark .tok-variableName,
@@ -326,13 +340,16 @@
   width: 10px;
   height: 10px;
 }
+
 .cm-editor.cm-wysiwym-dark ::-webkit-scrollbar-track {
   background: #0f172a;
 }
+
 .cm-editor.cm-wysiwym-dark ::-webkit-scrollbar-thumb {
   background: #334155;
   border-radius: 5px;
 }
+
 .cm-editor.cm-wysiwym-dark ::-webkit-scrollbar-thumb:hover {
   background: #475569;
 }
@@ -341,11 +358,13 @@
 .cm-wysiwym-inline-math-widget {
   padding: 0 2px;
 }
+
 .cm-wysiwym-block-math-widget {
   margin: 12px auto;
   text-align: center;
   padding: 8px 0;
 }
+
 .katex-display-fallback {
   text-align: center;
   margin: 12px auto;
@@ -355,6 +374,7 @@
   color: #e2e8f0;
   border-radius: 4px;
 }
+
 .katex-inline-fallback {
   font-family: monospace;
   background-color: #1e293b;
@@ -369,6 +389,55 @@
   background-color: #0f172a !important;
   color: #cbd5e1 !important;
 }
+
 .cm-editor.cm-wysiwym-dark .cm-wysiwym-component-shortcode cite {
   color: #64748b !important;
+}
+
+/* Selection Bubble Arrow & Tooltip positioning adjustments */
+.cm-tooltip {
+  overflow: visible !important;
+}
+
+.traven-bubble-menu {
+  position: relative;
+  /* Nested custom properties fallback for the arrow background and border */
+  --bubble-arrow-bg: var(--bubble-bg, var(--rail-bg, #ffffff));
+  --bubble-arrow-border: var(--bubble-border, var(--rail-border, rgba(0, 0, 0, 0.12)));
+}
+
+.traven-bubble-arrow {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background-color: var(--bubble-arrow-bg);
+  transform: translateX(-50%) rotate(45deg);
+  left: 50%;
+  z-index: -1;
+  box-sizing: border-box;
+}
+
+/* Tooltip above selection: arrow at bottom pointing down */
+.traven-bubble-menu.cm-tooltip-above .traven-bubble-arrow {
+  bottom: -4px;
+  top: auto;
+  border-top: none;
+  border-left: none;
+  border-right: 1px solid var(--bubble-arrow-border);
+  border-bottom: 1px solid var(--bubble-arrow-border);
+}
+
+/* Tooltip below selection: arrow at top pointing up */
+.traven-bubble-menu.cm-tooltip-below .traven-bubble-arrow {
+  top: -4px;
+  bottom: auto;
+  border-bottom: none;
+  border-right: none;
+  border-top: 1px solid var(--bubble-arrow-border);
+  border-left: 1px solid var(--bubble-arrow-border);
+}
+
+/* Hide arrow on mobile/tablet sticky bottom toolbar */
+.traven-bubble-menu.is-tablet-bottom-bar .traven-bubble-arrow {
+  display: none !important;
 }

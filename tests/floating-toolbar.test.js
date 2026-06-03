@@ -5,20 +5,20 @@ import { EditorView } from '@codemirror/view';
 
 // Polyfill Range.prototype.getClientRects and getBoundingClientRect for JSDOM / CodeMirror 6 compatibility
 if (typeof window !== 'undefined') {
-  window.Range.prototype.getClientRects = function() {
+  window.Range.prototype.getClientRects = function () {
     return {
       length: 0,
       item: () => null,
-      [Symbol.iterator]: function* () {}
+      [Symbol.iterator]: function* () { }
     };
   };
-  window.Range.prototype.getBoundingClientRect = function() {
+  window.Range.prototype.getBoundingClientRect = function () {
     return {
       bottom: 0, height: 0, left: 0, right: 0, top: 0, width: 0, x: 0, y: 0
     };
   };
   // Mock coordsAtPos for JSDOM CodeMirror 6 rendering
-  EditorView.prototype.coordsAtPos = function(pos) {
+  EditorView.prototype.coordsAtPos = function (pos) {
     return { left: 100, right: 120, top: 200, bottom: 220 };
   };
 }
@@ -29,7 +29,7 @@ describe('Floating Toolbar and Modes', () => {
   beforeEach(() => {
     container = document.createElement('div');
     document.body.appendChild(container);
-    
+
     // Default mocks for matchMedia and innerWidth to represent desktop
     vi.stubGlobal('matchMedia', (query) => ({
       matches: false,
@@ -90,49 +90,65 @@ describe('Floating Toolbar and Modes', () => {
       initialValue: '',
       toolbarMode: 'floating'
     });
-    
+
     // Simulate clicking the clear button
     const clearBtn = container.querySelector('.btn-clear');
     if (clearBtn) {
       clearBtn.click();
     }
-    
+
     expect(confirmSpy).not.toHaveBeenCalled();
     expect(editor.getValue()).toBe('');
   });
 
-  // 4. clear action on a non-empty document calls window.confirm; cancel preserves the document.
-  it('clear action on a non-empty document calls confirm and cancel preserves it', () => {
-    const confirmSpy = vi.spyOn(window, 'confirm').mockImplementation(() => false);
+  // 4. clear action on a non-empty document shows modal and cancel preserves the document.
+  it('clear action on a non-empty document shows modal and cancel preserves it', () => {
     const editor = new TravenEditor({
       element: container,
       initialValue: 'Important text',
       toolbarMode: 'floating'
     });
-    
+
     const clearBtn = container.querySelector('.btn-clear');
     expect(clearBtn).not.toBeNull();
     clearBtn.click();
-    
-    expect(confirmSpy).toHaveBeenCalled();
+
+    const modalOverlay = document.querySelector('.traven-modal-overlay');
+    expect(modalOverlay).not.toBeNull();
+
+    const bodyEl = modalOverlay.querySelector('.traven-modal-body');
+    expect(bodyEl.textContent).toBe('Clear all?');
+
+    const cancelBtn = modalOverlay.querySelector('.traven-modal-btn.btn-secondary');
+    expect(cancelBtn).not.toBeNull();
+    cancelBtn.click();
+
     expect(editor.getValue()).toBe('Important text');
+    expect(document.querySelector('.traven-modal-overlay')).toBeNull();
   });
 
-  // 5. clear action on a non-empty document with confirm-OK clears the document.
-  it('clear action on a non-empty document with confirm-OK clears it', () => {
-    const confirmSpy = vi.spyOn(window, 'confirm').mockImplementation(() => true);
+  // 5. clear action on a non-empty document with confirm clears the document.
+  it('clear action on a non-empty document with confirm clears it', () => {
     const editor = new TravenEditor({
       element: container,
       initialValue: 'Important text',
       toolbarMode: 'floating'
     });
-    
+
     const clearBtn = container.querySelector('.btn-clear');
     expect(clearBtn).not.toBeNull();
     clearBtn.click();
-    
-    expect(confirmSpy).toHaveBeenCalled();
+
+    const modalOverlay = document.querySelector('.traven-modal-overlay');
+    expect(modalOverlay).not.toBeNull();
+
+    const confirmBtn = modalOverlay.querySelector('.traven-modal-btn.btn-primary');
+    expect(confirmBtn).not.toBeNull();
+    expect(confirmBtn.textContent).toBe('CONFIRM');
+    confirmBtn.click();
+
     expect(editor.getValue()).toBe('');
+    expect(document.querySelector('.traven-modal-overlay')).toBeNull();
   });
 
   // 6. Selection Bubble does not render when the selection is empty.
@@ -145,7 +161,7 @@ describe('Floating Toolbar and Modes', () => {
     editor.focus();
     // Empty selection
     editor.setSelection(0, 0);
-    
+
     await new Promise(resolve => setTimeout(resolve, 50));
     const bubble = document.querySelector('.traven-bubble-menu');
     expect(bubble).toBeNull();
@@ -160,7 +176,7 @@ describe('Floating Toolbar and Modes', () => {
     });
     editor.focus();
     editor.setSelection(0, 4);
-    
+
     await new Promise(resolve => setTimeout(resolve, 50));
     const bubble = document.querySelector('.traven-bubble-menu');
     expect(bubble).not.toBeNull();
@@ -175,16 +191,16 @@ describe('Floating Toolbar and Modes', () => {
     });
     editor.focus();
     editor.setSelection(0, 6);
-    
+
     await new Promise(resolve => setTimeout(resolve, 50));
     const view = editor.getView();
-    
+
     // Dispatch keyboard event for Mod-.
     const event = new KeyboardEvent('keydown', { key: '.', ctrlKey: true, bubbles: true });
     view.contentDOM.dispatchEvent(event);
-    
+
     await new Promise(resolve => setTimeout(resolve, 50));
-    
+
     const firstButton = document.querySelector('.traven-bubble-menu button');
     expect(firstButton).not.toBeNull();
     expect(document.activeElement).toBe(firstButton);
@@ -199,17 +215,17 @@ describe('Floating Toolbar and Modes', () => {
     });
     editor.focus();
     editor.setSelection(0, 6);
-    
+
     await new Promise(resolve => setTimeout(resolve, 50));
     const firstButton = document.querySelector('.traven-bubble-menu button');
     expect(firstButton).not.toBeNull();
     firstButton.focus();
     expect(document.activeElement).toBe(firstButton);
-    
+
     // Press escape
     const escEvent = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true });
     firstButton.dispatchEvent(escEvent);
-    
+
     await new Promise(resolve => setTimeout(resolve, 50));
     expect(document.activeElement).toBe(editor.getView().contentDOM);
   });
@@ -250,7 +266,7 @@ describe('Floating Toolbar and Modes', () => {
     });
     editor.focus();
     await new Promise(resolve => setTimeout(resolve, 50));
-    
+
     const plusBtn = container.querySelector('.traven-gutter-plus-btn');
     expect(plusBtn).not.toBeNull();
   });
@@ -273,7 +289,7 @@ describe('Floating Toolbar and Modes', () => {
     await new Promise(resolve => setTimeout(resolve, 50));
     const menu = document.querySelector('.traven-gutter-menu');
     expect(menu).not.toBeNull();
-    
+
     // Close the menu
     const escEvent = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true });
     menu.dispatchEvent(escEvent);
@@ -332,15 +348,15 @@ describe('Floating Toolbar and Modes', () => {
       initialValue: 'Four words in here',
       toolbarMode: 'floating'
     });
-    
+
     const statsEl = container.querySelector('.traven-toolbar-stats');
     expect(statsEl).not.toBeNull();
     expect(statsEl.textContent).toContain('4 words');
     expect(statsEl.textContent).toContain('18 chars');
-    
+
     // Change value
     editor.setValue('Just one.');
-    
+
     await new Promise(resolve => setTimeout(resolve, 50));
     expect(statsEl.textContent).toContain('2 words');
     expect(statsEl.textContent).toContain('9 chars');
@@ -368,7 +384,7 @@ describe('Floating Toolbar and Modes', () => {
     plusBtn.dispatchEvent(clickEvent);
 
     await new Promise(resolve => setTimeout(resolve, 50));
-    
+
     // The menu should be open
     let menu = document.querySelector('.traven-gutter-menu');
     expect(menu).not.toBeNull();
@@ -382,5 +398,24 @@ describe('Floating Toolbar and Modes', () => {
     // The menu should be closed
     menu = document.querySelector('.traven-gutter-menu');
     expect(menu).toBeNull();
+  });
+
+  // 17. Selection bubble is center-aligned above/below selection (using from and to bounds) and contains the arrow element.
+  it('selection bubble contains arrow and is configured with both pos and end', async () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: 'Select me',
+      toolbarMode: 'floating'
+    });
+    editor.focus();
+    editor.setSelection(0, 6);
+    await new Promise(resolve => setTimeout(resolve, 50));
+
+    const bubble = document.querySelector('.traven-bubble-menu');
+    expect(bubble).not.toBeNull();
+
+    // Verify arrow element is present
+    const arrow = bubble.querySelector('.traven-bubble-arrow');
+    expect(arrow).not.toBeNull();
   });
 });

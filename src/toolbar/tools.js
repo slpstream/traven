@@ -1,5 +1,5 @@
 // @ts-check
-import { openLinkModal, openImageModal, openHelpModal, openTableModal, openComponentModal, openVideoModal, openAudioModal, openFigureModal } from "./modal.js";
+import { openModal, openLinkModal, openImageModal, openHelpModal, openTableModal, openComponentModal, openVideoModal, openAudioModal, openFigureModal } from "./modal.js";
 
 export const TOOL_REGISTRY = {
   undo: {
@@ -145,14 +145,34 @@ export const TOOL_REGISTRY = {
     key: "clear",
     title: "Clear Document",
     icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><line x1="96" y1="104" x2="160" y2="168" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><path d="M112,216,219.31,108.69a16,16,0,0,0,0-22.63L177.94,44.69a16,16,0,0,0-22.63,0L36.69,163.31a16,16,0,0,0,0,22.63L66.75,216H216" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>`,
-    action: (editor) => {
+    action: (editor, buttonEl) => {
       const val = editor.getValue();
       if (!val || val.trim() === "") {
         return;
       }
-      if (confirm("Are you sure you want to clear the document? This cannot be undone.")) {
-        editor.clear();
-      }
+      openModal({
+        title: "",
+        body: "Clear all?",
+        className: "traven-modal-confirm",
+        triggerElement: buttonEl,
+        buttons: [
+          {
+            text: "Cancel",
+            type: "secondary",
+            onClick: (e, overlay) => {
+              overlay.querySelector(".traven-modal-close").click();
+            }
+          },
+          {
+            text: "CONFIRM",
+            type: "primary",
+            onClick: (e, overlay) => {
+              editor.clear();
+              overlay.querySelector(".traven-modal-close").click();
+            }
+          }
+        ]
+      });
     }
   },
   uppercase: {

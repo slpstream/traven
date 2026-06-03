@@ -117,6 +117,11 @@ button.btn-blockquote {
   gap: 4px;
 }
 
+.traven-bubble-menu button.btn-heading {
+  width: auto !important;
+  padding: 0 6px !important;
+}
+
 .form-demo button.btn-heading,
 .form-demo button.btn-blockquote {
   width: auto;
@@ -255,6 +260,7 @@ button.btn-blockquote {
   opacity: 0;
   transition: opacity 0.2s ease;
 }
+
 .traven-modal-overlay.is-active {
   opacity: 1;
 }
@@ -272,6 +278,7 @@ button.btn-blockquote {
   border: 1px solid var(--border-color, #e2e8f0);
   font-family: 'Atkinson Hyperlegible Next', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
+
 .traven-modal-overlay.is-active .traven-modal {
   transform: scale(1);
 }
@@ -283,12 +290,14 @@ button.btn-blockquote {
   justify-content: space-between;
   align-items: center;
 }
+
 .traven-modal-title {
   font-size: 1.05em;
   font-weight: 700;
   color: var(--text-primary, #0f172a);
   margin: 0;
 }
+
 .traven-modal-close {
   background: transparent;
   border: none;
@@ -303,10 +312,12 @@ button.btn-blockquote {
   transition: all 0.15s ease;
   padding: 0;
 }
+
 .traven-modal-close:hover {
   background-color: var(--bg-hover, #f1f5f9);
   color: var(--text-primary, #0f172a);
 }
+
 .traven-modal-close svg {
   width: 14px;
   height: 14px;
@@ -330,9 +341,11 @@ button.btn-blockquote {
 .traven-modal-field {
   margin-bottom: 16px;
 }
+
 .traven-modal-field:last-child {
   margin-bottom: 0;
 }
+
 .traven-modal-label {
   display: block;
   font-size: 0.85em;
@@ -340,6 +353,7 @@ button.btn-blockquote {
   color: var(--text-secondary, #475569);
   margin-bottom: 6px;
 }
+
 .traven-modal-input {
   width: 100%;
   padding: 8px 12px;
@@ -352,6 +366,7 @@ button.btn-blockquote {
   transition: border-color 0.15s ease;
   box-sizing: border-box;
 }
+
 .traven-modal-input:focus {
   border-color: var(--accent, #475569);
 }
@@ -365,19 +380,23 @@ button.btn-blockquote {
   transition: all 0.15s ease;
   font-family: inherit;
 }
+
 .traven-modal-btn.btn-primary {
   background-color: var(--accent, #334155);
   color: white;
   border: 1px solid transparent;
 }
+
 .traven-modal-btn.btn-primary:hover {
   background-color: var(--accent-hover, #1e293b);
 }
+
 .traven-modal-btn.btn-secondary {
   background-color: var(--bg-primary, #ffffff);
   color: var(--text-secondary, #475569);
   border: 1px solid var(--border-color, #e2e8f0);
 }
+
 .traven-modal-btn.btn-secondary:hover {
   background-color: var(--bg-hover, #f8fafc);
   color: var(--text-primary, #0f172a);
@@ -392,6 +411,7 @@ button.btn-blockquote {
   overflow-y: auto;
   padding-right: 4px;
 }
+
 .help-section-title {
   font-weight: 700;
   font-size: 0.9em;
@@ -401,21 +421,26 @@ button.btn-blockquote {
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
+
 .help-section-title:first-child {
   margin-top: 0;
 }
+
 .help-row {
   display: flex;
   justify-content: space-between;
   border-bottom: 1px dashed var(--border-color, #e2e8f0);
   padding: 4px 0;
 }
+
 .help-row:last-child {
   border-bottom: none;
 }
+
 .help-key {
   color: var(--text-primary, #0f172a);
 }
+
 .help-value {
   color: var(--text-secondary, #64748b);
   font-family: monospace;
@@ -653,7 +678,8 @@ button.btn-blockquote {
   text-align: left;
   outline: none;
   min-width: 60px;
-  height: 38px; /* Acts as min-height for table cells */
+  height: 38px;
+  /* Acts as min-height for table cells */
   box-sizing: border-box;
   transition: background-color 0.1s ease;
 }
@@ -685,6 +711,27 @@ button.btn-blockquote {
 
 .traven-modal.traven-modal-table .traven-modal-body {
   overflow-x: auto;
+}
+
+/* Confirmation modal variant */
+.traven-modal.traven-modal-confirm {
+  max-width: 320px;
+}
+
+.traven-modal.traven-modal-confirm .traven-modal-header {
+  display: none;
+}
+
+.traven-modal.traven-modal-confirm .traven-modal-body {
+  padding: 24px 20px 20px;
+  text-align: center;
+  font-size: 1.1em;
+  font-weight: 500;
+}
+
+.traven-modal.traven-modal-confirm .traven-modal-footer {
+  justify-content: center;
+  padding: 12px 20px 16px;
 }
 
 /* ==========================================================================
@@ -831,6 +878,7 @@ button.btn-blockquote {
 .btn-expand-toggle {
   display: none !important;
 }
+
 .btn-expand-toggle .icon-expanded {
   display: none !important;
 }
@@ -942,5 +990,3 @@ button.btn-blockquote {
   color: #38bdf8;
   box-shadow: 0 0 0 1px #38bdf8;
 }
-
-

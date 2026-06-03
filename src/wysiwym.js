@@ -918,7 +918,7 @@ function buildWysiwymDecorations(state) {
     const attrsStr = match[1] || "";
     const bodyText = match[2] || "";
 
-    const isCursorInside = cursorHead >= from && cursorHead <= to;
+    const isCursorInside = cursorHead > from && cursorHead < to;
     if (!isCursorInside) {
       const attrs = {};
       const attrRegex = /\s*([a-zA-Z0-9_-]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=]+))/g;
@@ -951,7 +951,7 @@ function buildWysiwymDecorations(state) {
 
         // 1. Bold (StrongEmphasis)
         if (node.name === "StrongEmphasis") {
-          const isCursorInside = cursorHead >= node.from && cursorHead <= node.to;
+          const isCursorInside = cursorHead > node.from && cursorHead < node.to;
           const isSuppressed = suppressed && suppressed.some(s => s.from === node.from && s.to === node.to);
 
           if (!isCursorInside || isSuppressed) {
@@ -965,7 +965,7 @@ function buildWysiwymDecorations(state) {
 
         // 2. Italic (Emphasis)
         if (node.name === "Emphasis") {
-          const isCursorInside = cursorHead >= node.from && cursorHead <= node.to;
+          const isCursorInside = cursorHead > node.from && cursorHead < node.to;
           const isSuppressed = suppressed && suppressed.some(s => s.from === node.from && s.to === node.to);
 
           if (!isCursorInside || isSuppressed) {
@@ -979,7 +979,7 @@ function buildWysiwymDecorations(state) {
 
         // 2.5 Strikethrough (Strikethrough)
         if (node.name === "Strikethrough") {
-          const isCursorInside = cursorHead >= node.from && cursorHead <= node.to;
+          const isCursorInside = cursorHead > node.from && cursorHead < node.to;
           const isSuppressed = suppressed && suppressed.some(s => s.from === node.from && s.to === node.to);
 
           if (!isCursorInside || isSuppressed) {
@@ -993,7 +993,7 @@ function buildWysiwymDecorations(state) {
 
         // 2.6 Highlight (Highlight)
         if (node.name === "Highlight") {
-          const isCursorInside = cursorHead >= node.from && cursorHead <= node.to;
+          const isCursorInside = cursorHead > node.from && cursorHead < node.to;
           const isSuppressed = suppressed && suppressed.some(s => s.from === node.from && s.to === node.to);
 
           if (!isCursorInside || isSuppressed) {
@@ -1007,7 +1007,7 @@ function buildWysiwymDecorations(state) {
 
         // 3. Inline Code (InlineCode)
         if (node.name === "InlineCode") {
-          const isCursorInside = cursorHead >= node.from && cursorHead <= node.to;
+          const isCursorInside = cursorHead > node.from && cursorHead < node.to;
           
           if (!isCursorInside) {
             // Collapse delimiters (backticks)
@@ -1020,7 +1020,7 @@ function buildWysiwymDecorations(state) {
 
         // 3.1. Inline Math (InlineMath)
         if (node.name === "InlineMath") {
-          const isCursorInside = cursorHead >= node.from && cursorHead <= node.to;
+          const isCursorInside = cursorHead > node.from && cursorHead < node.to;
           const isSuppressed = suppressed && suppressed.some(s => s.from === node.from && s.to === node.to);
 
           if (!isCursorInside || isSuppressed) {
@@ -1036,7 +1036,7 @@ function buildWysiwymDecorations(state) {
 
         // 3.2. Block Math (BlockMath)
         if (node.name === "BlockMath") {
-          const isCursorInside = cursorHead >= node.from && cursorHead <= node.to;
+          const isCursorInside = cursorHead > node.from && cursorHead < node.to;
           const isSuppressed = suppressed && suppressed.some(s => s.from === node.from && s.to === node.to);
 
           if (!isCursorInside || isSuppressed) {
@@ -1053,7 +1053,7 @@ function buildWysiwymDecorations(state) {
 
         // 3.5. Links [text](url) / [text](url "title")
         if (node.name === "Link") {
-          const isCursorInside = cursorHead >= node.from && cursorHead <= node.to;
+          const isCursorInside = cursorHead > node.from && cursorHead < node.to;
 
           if (!isCursorInside) {
             // Walk child nodes to find content boundaries, collapse markers/URL/title
@@ -1096,7 +1096,7 @@ function buildWysiwymDecorations(state) {
 
         // 3.6. Autolinks <https://url> (which is mapped to "Autolink" in CommonMark)
         if (node.name === "Autolink") {
-          const isCursorInside = cursorHead >= node.from && cursorHead <= node.to;
+          const isCursorInside = cursorHead > node.from && cursorHead < node.to;
 
           if (!isCursorInside) {
             // Collapse the < and > angle brackets (first and last characters)
@@ -1111,7 +1111,7 @@ function buildWysiwymDecorations(state) {
           const parent = node.node.parent;
           const isNaked = parent && parent.name !== "Link" && parent.name !== "Image" && parent.name !== "Autolink";
           if (isNaked) {
-            const isCursorInside = cursorHead >= node.from && cursorHead <= node.to;
+            const isCursorInside = cursorHead > node.from && cursorHead < node.to;
             if (!isCursorInside) {
               collected.push({ from: node.from, to: node.to, deco: linkDeco });
             }
@@ -1119,7 +1119,7 @@ function buildWysiwymDecorations(state) {
         }
         // 3.7. Custom ImageShortcode [image src="..." ...]
         if (node.name === "ImageShortcode") {
-          const isCursorInside = cursorHead >= node.from && cursorHead <= node.to;
+          const isCursorInside = cursorHead > node.from && cursorHead < node.to;
 
           if (!isCursorInside) {
             const attrs = {};
@@ -1160,7 +1160,7 @@ function buildWysiwymDecorations(state) {
         }
         // Custom VideoShortcode [video src="..." ...]
         if (node.name === "VideoShortcode") {
-          const isCursorInside = cursorHead >= node.from && cursorHead <= node.to;
+          const isCursorInside = cursorHead > node.from && cursorHead < node.to;
 
           if (!isCursorInside) {
             const attrs = {};
@@ -1208,7 +1208,7 @@ function buildWysiwymDecorations(state) {
         }
         // Custom AudioShortcode [audio src="..." ...]
         if (node.name === "AudioShortcode") {
-          const isCursorInside = cursorHead >= node.from && cursorHead <= node.to;
+          const isCursorInside = cursorHead > node.from && cursorHead < node.to;
 
           if (!isCursorInside) {
             const attrs = {};
@@ -1273,7 +1273,7 @@ function buildWysiwymDecorations(state) {
           }
 
           if (tagName === "highlight") {
-            const isCursorInside = cursorHead >= node.from && cursorHead <= node.to;
+            const isCursorInside = cursorHead > node.from && cursorHead < node.to;
             const isSuppressed = suppressed && suppressed.some(s => s.from === node.from && s.to === node.to);
             if (!isCursorInside || isSuppressed) {
               if (openEnd !== null && closeStart !== null) {
@@ -1285,7 +1285,7 @@ function buildWysiwymDecorations(state) {
             return false;
           }
 
-          const isCursorInside = cursorHead >= node.from && cursorHead <= node.to;
+          const isCursorInside = cursorHead > node.from && cursorHead < node.to;
           if (!isCursorInside) {
             const attrs = {};
             let bodyText = "";
@@ -1451,7 +1451,7 @@ function buildWysiwymDecorations(state) {
             }
           }
 
-          const isCursorInside = cursorHead >= node.from && cursorHead <= frontmatterTo;
+          const isCursorInside = cursorHead > node.from && cursorHead < frontmatterTo;
           const startLine = state.doc.lineAt(node.from).number;
           const endLine = state.doc.lineAt(frontmatterTo).number;
 
@@ -1480,7 +1480,7 @@ function buildWysiwymDecorations(state) {
 
         // 9.5 GFM Table
         if (node.name === "Table") {
-          const isCursorInside = cursorHead >= node.from && cursorHead <= node.to;
+          const isCursorInside = cursorHead > node.from && cursorHead < node.to;
 
           if (!isCursorInside) {
             // Replace the entire table with a rendered HTML table widget
@@ -1506,7 +1506,7 @@ function buildWysiwymDecorations(state) {
 
         // 10. Fenced Code / Code Block
         if (node.name === "FencedCode" || node.name === "CodeBlock") {
-          const isCursorInside = cursorHead >= node.from && cursorHead <= node.to;
+          const isCursorInside = cursorHead > node.from && cursorHead < node.to;
           const startLine = state.doc.lineAt(node.from).number;
           const endLine = state.doc.lineAt(node.to).number;
 

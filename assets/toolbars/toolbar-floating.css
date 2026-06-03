@@ -65,13 +65,16 @@
 
 /* Selection bubble */
 .traven-bubble-menu {
+  --bubble-bg: #ffffff;
+  --bubble-fg: #1f2937;
+  --bubble-border: rgba(0, 0, 0, 0.12);
   display: flex;
   align-items: center;
   gap: 2px;
   padding: 4px;
-  background: var(--bubble-bg, #ffffff);
-  color: var(--bubble-fg, #1f2937);
-  border: 1px solid var(--bubble-border, rgba(0, 0, 0, 0.12));
+  background: var(--bubble-bg);
+  color: var(--bubble-fg);
+  border: 1px solid var(--bubble-border);
   border-radius: 6px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 }
@@ -122,7 +125,7 @@
 }
 
 .cm-traven-gutter .traven-gutter-plus-btn:hover,
-.cm-activeLineGutter ~ * .traven-gutter-plus-btn,
+.cm-activeLineGutter~* .traven-gutter-plus-btn,
 .cm-activeLineGutter .traven-gutter-plus-btn {
   opacity: 1;
   background: var(--gutter-btn-hover, rgba(0, 0, 0, 0.05));

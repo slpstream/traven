@@ -109,7 +109,7 @@ function buildImageDecorations(state) {
     to: state.doc.length,
     enter(node) {
         if (node.name === "Image") {
-          const isCursorInside = cursorHead >= node.from && cursorHead <= node.to;
+          const isCursorInside = cursorHead > node.from && cursorHead < node.to;
           if (!isCursorInside) {
             const nodeText = state.sliceDoc(node.from, node.to);
             const match = nodeText.match(/^!\[(.*?)\]\((.*?)\)$/);

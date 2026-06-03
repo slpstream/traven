@@ -2,11 +2,14 @@
 
 /* Styling overrides for square, white-on-slate, smaller buttons */
 .traven-toolbar-container .toolbar-btn {
-  background-color: #475569 !important; /* Slate 600 */
+  background-color: #475569 !important;
+  /* Slate 600 */
   color: #ffffff !important;
-  border-color: #334155 !important; /* Slate 700 */
+  border-color: #334155 !important;
+  /* Slate 700 */
   border-radius: 0px !important;
-  padding: 2px 4px !important; /* Even less padding */
+  padding: 2px 4px !important;
+  /* Even less padding */
 }
 
 .traven-toolbar-container button.toolbar-btn {
@@ -36,57 +39,72 @@
 
 /* Hover and active states */
 .traven-toolbar-container .toolbar-btn:hover {
-  background-color: #64748b !important; /* Slate 500 */
+  background-color: #64748b !important;
+  /* Slate 500 */
   border-color: #475569 !important;
 }
 
 .traven-toolbar-container .toolbar-btn:active {
-  background-color: #334155 !important; /* Slate 700 */
+  background-color: #334155 !important;
+  /* Slate 700 */
 }
 
 /* Dropdown Menu overrides for Reduced Dark */
 .traven-toolbar-container .toolbar-dropdown-menu {
-  background-color: #334155 !important; /* Slate 700 */
-  border-color: #1e293b !important;     /* Slate 800 */
-  border-radius: 0px !important;         /* Square corners */
-  padding: 2px !important;               /* Much less padding */
+  background-color: #334155 !important;
+  /* Slate 700 */
+  border-color: #1e293b !important;
+  /* Slate 800 */
+  border-radius: 0px !important;
+  /* Square corners */
+  padding: 2px !important;
+  /* Much less padding */
   gap: 2px !important;
-  margin-top: 0px !important;            /* Hard angles alignment */
+  margin-top: 0px !important;
+  /* Hard angles alignment */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
 }
 
 .traven-toolbar-container .toolbar-dropdown-item {
   background-color: transparent !important;
   color: #ffffff !important;
-  border-radius: 0px !important;         /* Square corners */
-  width: 26px !important;                /* Match toolbar btn size */
+  border-radius: 0px !important;
+  /* Square corners */
+  width: 26px !important;
+  /* Match toolbar btn size */
   height: 26px !important;
-  padding: 0 !important;                 /* No internal padding */
+  padding: 0 !important;
+  /* No internal padding */
 }
 
 /* Larger icons in dropdown items */
 .traven-toolbar-container .toolbar-dropdown-item svg {
-  width: 16px !important;                /* Larger icons */
+  width: 16px !important;
+  /* Larger icons */
   height: 16px !important;
 }
 
 /* Dropdown item states */
 .traven-toolbar-container .toolbar-dropdown-item:hover {
-  background-color: #475569 !important; /* Slate 600 (Hover) */
+  background-color: #475569 !important;
+  /* Slate 600 (Hover) */
   color: #ffffff !important;
 }
 
 .traven-toolbar-container .toolbar-dropdown-item:active {
-  background-color: #1e293b !important; /* Slate 800 (Active) */
+  background-color: #1e293b !important;
+  /* Slate 800 (Active) */
 }
 
 /* --- Floating Menus Styling Overrides --- */
 
 /* Gutter Insertion Menu matching colors for Reduced Dark */
 .traven-gutter-menu {
-  background: rgba(51, 65, 85, 0.85) !important; /* Semi-transparent Slate 700 */
+  background: rgba(51, 65, 85, 0.85) !important;
+  /* Semi-transparent Slate 700 */
   border: 1px solid #1e293b !important;
-  border-radius: 0px !important; /* Completely square */
+  border-radius: 0px !important;
+  /* Completely square */
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
 }
 
@@ -94,7 +112,8 @@
   background-color: #475569 !important;
   color: #ffffff !important;
   border: 1px solid #334155 !important;
-  border-radius: 0px !important; /* Square corners */
+  border-radius: 0px !important;
+  /* Square corners */
   width: 26px !important;
   height: 26px !important;
   padding: 0 !important;
@@ -119,15 +138,19 @@
   background: var(--bubble-bg) !important;
   color: var(--bubble-fg) !important;
   border: 1px solid var(--bubble-border) !important;
-  border-radius: 0px !important; /* Completely square */
+  border-radius: 0px !important;
+  /* Completely square */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4) !important;
+  --bubble-arrow-bg: var(--bubble-bg) !important;
+  --bubble-arrow-border: var(--bubble-border) !important;
 }
 
 .traven-bubble-menu .toolbar-btn {
   background-color: #475569 !important;
   color: #ffffff !important;
   border: 1px solid #334155 !important;
-  border-radius: 0px !important; /* Square corners */
+  border-radius: 0px !important;
+  /* Square corners */
   width: 26px !important;
   height: 26px !important;
   padding: 0 !important;
@@ -144,11 +167,17 @@
   background-color: #334155 !important;
 }
 
+.traven-bubble-menu button.btn-heading {
+  width: auto !important;
+  padding: 0 6px !important;
+}
+
 /* Dropdown Menu overrides inside Gutter Menu for Reduced Dark */
 .traven-gutter-menu .toolbar-dropdown-menu {
   background-color: #334155 !important;
   border: 1px solid #1e293b !important;
-  border-radius: 0px !important; /* Completely square */
+  border-radius: 0px !important;
+  /* Completely square */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
 }
 
@@ -169,6 +198,6 @@
 
 /* Color for the stats widget in dark reduced toolbar mode */
 .traven-toolbar-container .traven-toolbar-stats {
-  color: #94a3b8 !important; /* Soft Slate 400 */
+  color: #94a3b8 !important;
+  /* Soft Slate 400 */
 }
-

@@ -130,6 +130,8 @@
   border: none !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
   border-radius: 6px !important;
+  --bubble-arrow-bg: var(--rail-bg) !important;
+  --bubble-arrow-border: var(--rail-border) !important;
 }
 
 .traven-bubble-menu .toolbar-btn {
@@ -158,15 +160,15 @@
   display: inline-flex !important;
 }
 
-.traven-bubble-menu > *:first-child,
-.traven-bubble-menu > *:first-child .toolbar-btn {
+.traven-bubble-menu>*:first-child,
+.traven-bubble-menu>*:first-child .toolbar-btn {
   border-left: 1px solid var(--rail-border) !important;
   border-top-left-radius: 6px !important;
   border-bottom-left-radius: 6px !important;
 }
 
-.traven-bubble-menu > *:last-child,
-.traven-bubble-menu > *:last-child .toolbar-btn {
+.traven-bubble-menu>*:last-child,
+.traven-bubble-menu>*:last-child .toolbar-btn {
   border-top-right-radius: 6px !important;
   border-bottom-right-radius: 6px !important;
 }
@@ -186,4 +188,3 @@
   background-color: var(--rail-hover-bg) !important;
   color: var(--rail-icon-color) !important;
 }
-
