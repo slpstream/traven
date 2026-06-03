@@ -1,6 +1,6 @@
 // @ts-check
 import { StateEffect, StateField, RangeSet, Prec } from "@codemirror/state";
-import { showTooltip, keymap, EditorView, GutterMarker, gutter } from "@codemirror/view";
+import { showTooltip, keymap, EditorView, GutterMarker, gutter, ViewPlugin, Decoration } from "@codemirror/view";
 import { BUBBLE_ACTIONS, GUTTER_ACTIONS } from "./actions.js";
 import { buildToolButton } from "./dom-button.js";
 
@@ -74,34 +74,143 @@ function makeBubbleTooltip(from, to, editor) {
 }
 
 /**
+ * @param {{ appearDelay?: number, setBubblePos: import("@codemirror/state").StateEffectType<{from:number,to:number}|null>, clearBubble: import("@codemirror/state").StateEffectType<void> }} opts
+ */
+function bubblePointerController({ appearDelay, setBubblePos, clearBubble }) {
+  return ViewPlugin.fromClass(class {
+    constructor(view) {
+      this.view = view;
+      this.dom = view.contentDOM;
+      this.appearDelay = appearDelay;
+      /** @type {number | null} */
+      this.showTimer = null;
+      /** @type {number | null} */
+      this.lastPointerId = null;
+      /** @type {{ from: number, to: number } | null} */
+      this.lastShownRange = null;
+
+      // Bind once so we can remove them on destroy.
+      this._onPointerDown = this._onPointerDown.bind(this);
+      this._onPointerMove = this._onPointerMove.bind(this);
+      this._onPointerUp   = this._onPointerUp.bind(this);
+
+      this.dom.addEventListener("pointerdown", this._onPointerDown, true);
+      this.dom.addEventListener("pointermove", this._onPointerMove, true);
+      this.dom.addEventListener("pointerup",   this._onPointerUp,   true);
+    }
+
+    destroy() {
+      this.dom.removeEventListener("pointerdown", this._onPointerDown, true);
+      this.dom.removeEventListener("pointermove", this._onPointerMove, true);
+      this.dom.removeEventListener("pointerup",   this._onPointerUp,   true);
+      this._cancelTimer();
+    }
+
+    update(update) {
+      // If the user typed, clicked an empty area, or otherwise collapsed the
+      // selection, hide the bubble immediately. This is the only place we
+      // react to selection state without a pointer event.
+      if (update.selectionSet) {
+        const sel = update.state.selection.main;
+        if (sel.empty) {
+          this._cancelTimer();
+          Promise.resolve().then(() => {
+            this._dispatch(clearBubble.of(undefined));
+          });
+        }
+      }
+      if (update.docChanged) {
+        this._cancelTimer();
+        Promise.resolve().then(() => {
+          this._dispatch(clearBubble.of(undefined));
+        });
+      }
+    }
+
+    _onPointerDown(_e) {
+      // Pressing the mouse down starts (or restarts) a drag selection.
+      // Hide any currently-shown bubble and clear any pending show.
+      this._cancelTimer();
+      this._dispatch(clearBubble.of(undefined));
+    }
+
+    _onPointerMove(e) {
+      // Only react to moves while a button is held (i.e. during a drag).
+      if (e.buttons === 0) return;
+      // The selection is in flux; keep the bubble hidden.
+      this._dispatch(clearBubble.of(undefined));
+      this._cancelTimer();
+    }
+
+    _onPointerUp(_e) {
+      // Pointer released. If there's a real selection, schedule a show
+      // after the appear delay. If selection is empty (e.g. simple click),
+      // do nothing — update() will clear shortly anyway.
+      const sel = this.view.state.selection.main;
+      if (sel.empty) return;
+      this._scheduleShow(sel.from, sel.to);
+    }
+
+    _scheduleShow(from, to) {
+      this._cancelTimer();
+      this.showTimer = window.setTimeout(() => {
+        this.showTimer = null;
+        // Re-check selection at fire time; user may have moved again.
+        const cur = this.view.state.selection.main;
+        if (cur.empty || cur.from !== from || cur.to !== to) return;
+        if (cur.from === cur.to) return;
+        this.lastShownRange = { from: cur.from, to: cur.to };
+        this._dispatch(setBubblePos.of({ from: cur.from, to: cur.to }));
+      }, Math.max(0, this.appearDelay ?? 200));
+    }
+
+    _cancelTimer() {
+      if (this.showTimer != null) {
+        clearTimeout(this.showTimer);
+        this.showTimer = null;
+      }
+    }
+
+    _dispatch(effect) {
+      // No-op during teardown when the view is gone.
+      if (!this.view || this.view.destroyed) return;
+      this.view.dispatch({ effects: effect });
+    }
+  }, { decorations: v => Decoration.none });
+}
+
+/**
  * Selection bubble extension.
  * @param {any} editor
- * @param {{ hotkey?: string }} [options]
+ * @param {{ hotkey?: string, appearDelay?: number }} [options]
  * @returns {any[]}
  */
 export function selectionBubbleExtension(editor, options = {}) {
   const hotkey = options.hotkey || "Mod-.";
+  const appearDelay = options.appearDelay ?? 200;
 
   /** @type {import("@codemirror/state").StateEffectType<{ from: number, to: number } | null>} */
   const setBubblePos = StateEffect.define();
+  const clearBubble = StateEffect.define();
 
   const bubbleField = StateField.define({
     create: () => null,
     update(value, tr) {
       for (const e of tr.effects) {
         if (e.is(setBubblePos)) return e.value;
-      }
-      if (tr.selection) {
-        const sel = tr.state.selection.main;
-        return sel.empty ? null : { from: sel.from, to: sel.to };
+        if (e.is(clearBubble)) return null;
       }
       return value;
     },
     provide: (f) => showTooltip.from(f, (val) => (val == null ? null : makeBubbleTooltip(val.from, val.to, editor))),
   });
 
+  const pointerController = bubblePointerController({
+    appearDelay, setBubblePos, clearBubble,
+  });
+
   /** @type {import("@codemirror/state").Extension[]} */
-  const extensions = [bubbleField];
+  const extensions = [bubbleField, pointerController];
   if (hotkey !== "Mod-/") {
     extensions.push(
       Prec.high(keymap.of([{

@@ -471,6 +471,7 @@ To ensure accessibility on mobile, the layout mode is resolved dynamically:
 
 ### D. Selection Bubble Formatting
 * **Format Bubble Menu**: Mounts formatting options directly near the cursor using CodeMirror 6 `showTooltip`.
+* **Appearance Debounce**: The bubble does not appear instantly on selection to avoid flickering during selection drags. It is debounced by a configurable delay (`bubbleAppearDelay` options parameter, defaulting to 200ms) after the pointer stops moving.
 * **Keyboard Trapping**: Pressing `Escape` while formatting dismisses the bubble and redirects focus directly back to the editor view.
 * **Tablet Override**: On touch tablets, the bubble converts into a sticky bottom action bar, preventing soft-keyboard overlaps.
 

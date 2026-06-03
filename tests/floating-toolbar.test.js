@@ -21,6 +21,15 @@ if (typeof window !== 'undefined') {
   EditorView.prototype.coordsAtPos = function (pos) {
     return { left: 100, right: 120, top: 200, bottom: 220 };
   };
+  // Polyfill PointerEvent if not present in JSDOM
+  if (typeof window.PointerEvent === 'undefined') {
+    window.PointerEvent = class PointerEvent extends window.MouseEvent {
+      constructor(type, params = {}) {
+        super(type, params);
+        this.pointerType = params.pointerType || 'mouse';
+      }
+    };
+  }
 }
 
 describe('Floating Toolbar and Modes', () => {
@@ -177,7 +186,20 @@ describe('Floating Toolbar and Modes', () => {
     editor.focus();
     editor.setSelection(0, 4);
 
-    await new Promise(resolve => setTimeout(resolve, 50));
+    // No bubble immediately
+    expect(document.querySelector('.traven-bubble-menu')).toBeNull();
+
+    // Dispatch pointerup
+    const view = editor.getView();
+    view.contentDOM.dispatchEvent(new window.PointerEvent('pointerup', {
+      bubbles: true, cancelable: true, button: 0, pointerType: 'mouse',
+    }));
+
+    // Bubble still not visible immediately
+    expect(document.querySelector('.traven-bubble-menu')).toBeNull();
+
+    // Wait past default 200ms delay
+    await new Promise(resolve => setTimeout(resolve, 250));
     const bubble = document.querySelector('.traven-bubble-menu');
     expect(bubble).not.toBeNull();
   });
@@ -216,7 +238,12 @@ describe('Floating Toolbar and Modes', () => {
     editor.focus();
     editor.setSelection(0, 6);
 
-    await new Promise(resolve => setTimeout(resolve, 50));
+    const view = editor.getView();
+    view.contentDOM.dispatchEvent(new window.PointerEvent('pointerup', {
+      bubbles: true, cancelable: true, button: 0, pointerType: 'mouse',
+    }));
+
+    await new Promise(resolve => setTimeout(resolve, 250));
     const firstButton = document.querySelector('.traven-bubble-menu button');
     expect(firstButton).not.toBeNull();
     firstButton.focus();
@@ -409,7 +436,13 @@ describe('Floating Toolbar and Modes', () => {
     });
     editor.focus();
     editor.setSelection(0, 6);
-    await new Promise(resolve => setTimeout(resolve, 50));
+
+    const view = editor.getView();
+    view.contentDOM.dispatchEvent(new window.PointerEvent('pointerup', {
+      bubbles: true, cancelable: true, button: 0, pointerType: 'mouse',
+    }));
+
+    await new Promise(resolve => setTimeout(resolve, 250));
 
     const bubble = document.querySelector('.traven-bubble-menu');
     expect(bubble).not.toBeNull();
@@ -417,5 +450,169 @@ describe('Floating Toolbar and Modes', () => {
     // Verify arrow element is present
     const arrow = bubble.querySelector('.traven-bubble-arrow');
     expect(arrow).not.toBeNull();
+  });
+
+  // 18. Pointerdown cancels pending show
+  it('pointerdown cancels pending show', async () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: 'Select me',
+      toolbarMode: 'floating'
+    });
+    editor.focus();
+    editor.setSelection(0, 6);
+
+    const view = editor.getView();
+    view.contentDOM.dispatchEvent(new window.PointerEvent('pointerup', {
+      bubbles: true, cancelable: true, button: 0, pointerType: 'mouse',
+    }));
+
+    // Wait 100ms (less than 200ms delay)
+    await new Promise(resolve => setTimeout(resolve, 100));
+    expect(document.querySelector('.traven-bubble-menu')).toBeNull();
+
+    // Dispatch pointerdown
+    view.contentDOM.dispatchEvent(new window.PointerEvent('pointerdown', {
+      bubbles: true, cancelable: true, button: 0, pointerType: 'mouse',
+    }));
+
+    // Wait another 150ms (total 250ms since pointerup)
+    await new Promise(resolve => setTimeout(resolve, 150));
+    expect(document.querySelector('.traven-bubble-menu')).toBeNull();
+  });
+
+  // 19. Pointermove during drag keeps bubble hidden
+  it('pointermove during drag keeps bubble hidden', async () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: 'Select me',
+      toolbarMode: 'floating'
+    });
+    editor.focus();
+    editor.setSelection(0, 6);
+
+    const view = editor.getView();
+    view.contentDOM.dispatchEvent(new window.PointerEvent('pointerdown', {
+      bubbles: true, cancelable: true, button: 0, pointerType: 'mouse',
+    }));
+
+    // Move pointer with buttons: 1 (dragging)
+    view.contentDOM.dispatchEvent(new window.PointerEvent('pointermove', {
+      bubbles: true, cancelable: true, button: 0, buttons: 1, pointerType: 'mouse',
+    }));
+
+    await new Promise(resolve => setTimeout(resolve, 250));
+    expect(document.querySelector('.traven-bubble-menu')).toBeNull();
+  });
+
+  // 20. Doc change clears bubble
+  it('doc change clears bubble', async () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: 'Select me',
+      toolbarMode: 'floating'
+    });
+    editor.focus();
+    editor.setSelection(0, 6);
+
+    const view = editor.getView();
+    view.contentDOM.dispatchEvent(new window.PointerEvent('pointerup', {
+      bubbles: true, cancelable: true, button: 0, pointerType: 'mouse',
+    }));
+
+    await new Promise(resolve => setTimeout(resolve, 250));
+    expect(document.querySelector('.traven-bubble-menu')).not.toBeNull();
+
+    editor.setValue('New document content');
+    await new Promise(resolve => setTimeout(resolve, 50));
+    expect(document.querySelector('.traven-bubble-menu')).toBeNull();
+  });
+
+  // 21. bubbleAppearDelay: 0 restores eager behavior
+  it('bubbleAppearDelay: 0 restores eager behavior', async () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: 'Select me',
+      toolbarMode: 'floating',
+      bubbleAppearDelay: 0
+    });
+    editor.focus();
+    editor.setSelection(0, 6);
+
+    const view = editor.getView();
+    view.contentDOM.dispatchEvent(new window.PointerEvent('pointerup', {
+      bubbles: true, cancelable: true, button: 0, pointerType: 'mouse',
+    }));
+
+    // Resolved promise / minimal tick is enough
+    await new Promise(resolve => setTimeout(resolve, 10));
+    expect(document.querySelector('.traven-bubble-menu')).not.toBeNull();
+  });
+
+  // 22. bubbleAppearDelay: 50 is respected
+  it('bubbleAppearDelay: 50 is respected', async () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: 'Select me',
+      toolbarMode: 'floating',
+      bubbleAppearDelay: 50
+    });
+    editor.focus();
+    editor.setSelection(0, 6);
+
+    const view = editor.getView();
+    view.contentDOM.dispatchEvent(new window.PointerEvent('pointerup', {
+      bubbles: true, cancelable: true, button: 0, pointerType: 'mouse',
+    }));
+
+    await new Promise(resolve => setTimeout(resolve, 20));
+    expect(document.querySelector('.traven-bubble-menu')).toBeNull();
+
+    await new Promise(resolve => setTimeout(resolve, 50));
+    expect(document.querySelector('.traven-bubble-menu')).not.toBeNull();
+  });
+
+  // 23. Single click inside existing selection still shows bubble
+  it('single click inside existing selection still shows bubble', async () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: 'Select me',
+      toolbarMode: 'floating'
+    });
+    editor.focus();
+    editor.setSelection(0, 6);
+
+    // Dispatch pointerup directly (e.g. click release) without prior drag
+    const view = editor.getView();
+    view.contentDOM.dispatchEvent(new window.PointerEvent('pointerup', {
+      bubbles: true, cancelable: true, button: 0, pointerType: 'mouse',
+    }));
+
+    await new Promise(resolve => setTimeout(resolve, 250));
+    expect(document.querySelector('.traven-bubble-menu')).not.toBeNull();
+  });
+
+  // 24. Selection collapsing via setSelection dismisses bubble
+  it('selection collapsing via setSelection dismisses bubble', async () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: 'Select me',
+      toolbarMode: 'floating'
+    });
+    editor.focus();
+    editor.setSelection(0, 6);
+
+    const view = editor.getView();
+    view.contentDOM.dispatchEvent(new window.PointerEvent('pointerup', {
+      bubbles: true, cancelable: true, button: 0, pointerType: 'mouse',
+    }));
+
+    await new Promise(resolve => setTimeout(resolve, 250));
+    expect(document.querySelector('.traven-bubble-menu')).not.toBeNull();
+
+    // Collapse selection
+    editor.setSelection(0, 0);
+    await new Promise(resolve => setTimeout(resolve, 50));
+    expect(document.querySelector('.traven-bubble-menu')).toBeNull();
   });
 });

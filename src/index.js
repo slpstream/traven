@@ -173,6 +173,7 @@ function buildBaseSetup(options = {}) {
  * @property {string} [toolbarMode] - Effective mode for toolbar layout ("static" | "floating" | "hybrid").
  * @property {string} [bubbleHotkey] - Key binding to open selection bubble.
  * @property {string} [gutterHotkey] - Key binding to open gutter plus menu.
+ * @property {number} [bubbleAppearDelay=200] - Delay in ms between pointer settling on a stable selection and the selection bubble appearing. Set to 0 to restore the previous eager-appear behavior.
  */
 
 
@@ -280,7 +281,10 @@ export class TravenEditor {
 
       // Selection bubble and gutter block insertion extensions
       ...(mode === "floating" || mode === "hybrid" ? [
-        selectionBubbleExtension(this, { hotkey: options.bubbleHotkey || "Mod-." }),
+        selectionBubbleExtension(this, {
+          hotkey: options.bubbleHotkey || "Mod-.",
+          appearDelay: options.bubbleAppearDelay ?? 200
+        }),
         gutterInserterExtension(this, { hotkey: options.gutterHotkey || "Mod-Shift-Enter" })
       ] : [])
     ];
