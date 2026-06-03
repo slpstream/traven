@@ -112,6 +112,7 @@ if (empty($skins)) {
         "skin-dark" => "Dark Skin",
         "skin-editorial" => "Editorial Skin",
         "skin-modern" => "Modern Skin",
+        "skin-starter" => "Starter Skin",
     ];
 }
 if (empty($toolbars)) {

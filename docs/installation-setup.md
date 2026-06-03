@@ -5,7 +5,7 @@ Traven is framework-agnostic and has zero peer dependencies. You can easily inte
 > [!IMPORTANT]
 > **Understanding Toolbars vs. Skins (Themes):**
 > *   **Toolbar (Built-in & Optional):** Traven ships with a fully functional default toolbar (`toolbar-default.css`) baked directly into the core `traven.css` bundle. You do not need to load a separate stylesheet for the toolbar, though you can override it by loading any of the alternative layouts (like `toolbar-expandable.css`).
-> *   **Skin/Theme (Required & Decoupled):** Traven does *not* bundle a default skin. To remain an unopinionated embeddable component, the presentation layer (colors, fonts, line heights) is kept completely decoupled. Therefore, loading a skin stylesheet is **mandatory** for the editor viewport to render correctly. You must either include one of Traven's pre-built skins (like `skin-default.css`, `skin-dark.css`) or [develop your own skin](theme-development.md).
+> *   **Skin/Theme (Required & Decoupled):** Traven does *not* bundle a default skin. To remain an unopinionated embeddable component, the presentation layer (colors, fonts, line heights) is kept completely decoupled. Therefore, loading a skin stylesheet is **mandatory** for the editor viewport to render correctly. You must either include one of Traven's pre-built skins (like `skin-default.css`, `skin-starter.css`, `skin-dark.css`) or [develop your own skin](theme-development.md).
 
 ## 1. CDN Include (Quickest Setup)
 

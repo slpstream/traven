@@ -62,9 +62,9 @@ graph TD
 
 ---
 
-## 2. The five shipping skins, side by side
+## 2. The six shipping skins, side by side
 
-All five skins live in `assets/skins/` and are auto-discovered by the customization dropdown (`includes/_customization-dropdowns.php`); any new file you add to that directory shows up in the demo page's skin picker with no further wiring.
+All six skins live in `assets/skins/` and are auto-discovered by the customization dropdown (`includes/_customization-dropdowns.php`); any new file you add to that directory shows up in the demo page's skin picker with no further wiring.
 
 | Skin | Design intent | Body font | Mono font | Gutter | Headings | Caret | Accent |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -73,13 +73,14 @@ All five skins live in `assets/skins/` and are auto-discovered by the customizat
 | `skin-dark.css` | Premium Dark Slate | `Atkinson Hyperlegible Next` | `Fira Code` | Visible, dim slate | Bold sans, near-white | Sky `#38bdf8` | Sky `#38bdf8` |
 | `skin-editorial.css` | Minimalist Focus — no chrome | `Goudy Bookletter 1911` (serif) | `Victor Mono` | **Hidden** | `Macondo` (h1–h3), Goudy (h4–h6) | Ink black | None — pure paper |
 | `skin-modern.css` | Modern Clean — premium | `Epunda Slab` (serif) | `JetBrains Mono` | Visible, borderless | `Saira Condensed` (sans) | Zinc 900 | `#115e59` teal |
+| `skin-starter.css` | Modern Georgia — base | `Georgia` (serif) | System monospace | Visible, soft slate | System sans, bold | Slate 900 | Slate 600 |
 
 Other dimensions worth knowing:
 
-* **External requests.** `skin-default.css` and `skin-dark.css` load zero web fonts. `skin-colorful.css`, `skin-editorial.css`, and `skin-modern.css` `@import` from Google Fonts by default. See [§10](#10-telemetry--offline-self-hosting) for how to switch a skin to local fonts.
-* **First-load fonts.** `skin-default.css` and `skin-dark.css` declare `'Atkinson Hyperlegible Next'` in the stack but the file itself does not import it. The host page is expected to load it (the demos do via `assets/fonts/fonts.css`).
-* **Blockquote treatment.** The `skin-default`, `skin-colorful`, `skin-dark`, and `skin-modern` themes use a thick left bar. The `skin-editorial` theme uses a decorative `::before` curly-quote mark, with the wavy line dividers on pullquotes.
-* **Info / warning cards.** The `skin-default`, `skin-colorful`, `skin-dark`, and `skin-modern` themes render these as soft rounded/bordered cards. The `skin-editorial` theme uses the "hand-drawn" organic border-radius (`255px 15px 225px 15px / 15px 225px 15px 255px`) for a handcrafted look.
+* **External requests.** `skin-default.css`, `skin-dark.css`, and `skin-starter.css` load zero web fonts. `skin-colorful.css`, `skin-editorial.css`, and `skin-modern.css` `@import` from Google Fonts by default. See [§10](#10-telemetry--offline-self-hosting) for how to switch a skin to local fonts.
+* **First-load fonts.** `skin-default.css`, `skin-dark.css`, and `skin-starter.css` declare `'Atkinson Hyperlegible Next'` or generic system fonts in the stack but the files do not import them. The host page is expected to load them if custom (the demos do via `assets/fonts/fonts.css`).
+* **Blockquote treatment.** The `skin-default`, `skin-colorful`, `skin-dark`, `skin-modern`, and `skin-starter` themes use a thick left bar. The `skin-editorial` theme uses a decorative `::before` curly-quote mark, with the wavy line dividers on pullquotes.
+* **Info / warning cards.** The `skin-default`, `skin-colorful`, `skin-dark`, `skin-modern`, and `skin-starter` themes render these as soft rounded/bordered cards. The `skin-editorial` theme uses the "hand-drawn" organic border-radius (`255px 15px 225px 15px / 15px 225px 15px 255px`) for a handcrafted look.
 * **Pullquote dividers.** Only the `skin-editorial` theme renders the decorative wave SVG above and below `.traven-component-pullquote`; the other themes use simple top/bottom rules.
 
 When in doubt, copy the theme that is closest to your goal and patch its variables.

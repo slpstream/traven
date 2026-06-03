@@ -6,7 +6,7 @@ Traven is designed with a strict, privacy-first philosophy.
 * **No Analytics:** There are no tracking scripts, no Google Analytics, and no marketing pixels included in the library.
 * **No Cookies:** Traven does not set, read, or require any cookies.
 
-By default, the core editor theme (`skin-default.css`) loads absolutely nothing from external servers and works out-of-the-box using standard system fonts. Some alternative themes (like `skin-colorful.css`) or the pre-built distribution bundle (`dist/traven.css`) may include a default `@import` rule fetching accessible typography from the Google Fonts CDN for ease of deployment.
+By default, the core editor skins (like `skin-default.css` and `skin-starter.css`) load absolutely nothing from external servers and work out-of-the-box using standard system fonts. Some alternative themes (like `skin-colorful.css`) or the pre-built distribution bundle (`dist/traven.css`) may include a default `@import` rule fetching accessible typography from the Google Fonts CDN for ease of deployment.
 
 ---
 
@@ -72,3 +72,9 @@ This is a premium dark theme skin.
 * **No Network Footprint:** It does not link or import any external fonts or styles.
 * **Fallback Behavior:** It uses your local system font stack by default (rendering `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto` for the body, and `monospace` for code blocks).
 * **Self-Hosting Option:** You can still load custom self-hosted fonts alongside this theme by manually linking `assets/fonts/fonts.css` in your HTML.
+
+### Starter Skin (`skin-starter.css`)
+This is a barebones starter theme skin.
+* **No Network Footprint:** It does not link or import any external fonts or styles.
+* **Fallback Behavior:** It uses your local system font stack by default (rendering Georgia/Times for the body, and system monospace for code blocks).
+* **Self-Hosting Option:** You can load custom self-hosted fonts alongside this theme by manually linking `assets/fonts/fonts.css` in your HTML.

@@ -8,7 +8,7 @@
 <p align="center">
   Add Traven Editor to any website:
   LaTeX, table editor, image drag-n-drop, shortcode system, floating and hybrid toolbars, audio, video, custom Lezer extensions, 
-  five skins, five demos, full documentation
+  six skins, five demos, full documentation
 </p>
 
 <p align="center">
@@ -60,7 +60,7 @@ Traven is a framework-agnostic editor with zero peer dependencies. It can be int
 > [!IMPORTANT]
 > **Make it your own: Customize how you want the editor to look:**
 > *   **Toolbar (Built-in & Optional):** Traven ships with a fully functional default toolbar (`toolbar-default.css`) baked directly into the core `traven.css` bundle. You do not need to load a separate toolbar, but if you want to customize it, the easiest way to do that is to just load any of the alternative layouts (like `toolbar-expandable.css`).
-> *   **Skin/Theme (Required & Decoupled):** When loading the editor, specify a theme. Setting a "skin"-stylesheet is **mandatory** for the editor's content to render correctly. You must either include one of Traven's pre-built skins (like `skin-default.css`, `skin-dark.css`, etc.) or [develop your own skin](docs/theme-development.md).
+> *   **Skin/Theme (Required & Decoupled):** When loading the editor, specify a theme. Setting a "skin"-stylesheet is **mandatory** for the editor's content to render correctly. You must either include one of Traven's pre-built skins (like `skin-default.css`, `skin-starter.css`, `skin-dark.css`, etc.) or [develop your own skin](docs/theme-development.md).
 
 #### CDN Integration (Quickest Setup)
 
