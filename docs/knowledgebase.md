@@ -479,6 +479,11 @@ To ensure accessibility on mobile, the layout mode is resolved dynamically:
 * **Contextual Inserter**: Hovering or positioning the cursor on an empty line reveals a gutter `+` button, opening a block-insertion popup.
 * **Hotkey Trigger**: Pressing `Mod-Shift-Enter` triggers the insert menu at the current cursor line.
 
+### F. Selection-to-Block Insertion Shortcut
+* **Mechanism**: The Selection Bubble features an insert shortcut button (`.btn-bubble-insert`, showing a pencil-ruler SVG) to insert block elements immediately after the selected text's line.
+* **Layout Spacing & Newline Normalization**: To prevent block elements (e.g., tables, code blocks, figures) from colliding with preceding or succeeding paragraphs, the action dynamically inspects the characters succeeding the current line. It calculates and inserts the exact number of newlines needed to guarantee a 4-newline gap between the current line and subsequent content (or 3 newlines if at the end of the document).
+* **Cursor Positioning**: The cursor is positioned at `anchorLine.to + 2` within this newly created spacing area, leaving exactly one blank line above and one blank line below. The Gutter Insertion Menu is then triggered at this cursor position on the next tick.
+
 
 
 
