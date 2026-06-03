@@ -2355,3 +2355,52 @@
   background-color: #131924;
   color: #e4e4e7;
 }
+
+/* Component Headers (both preview and editor) */
+.traven-component-header,
+.cm-wysiwym-component-shortcode .component-header {
+  font-family: var(--traven-sans-font, sans-serif);
+  font-weight: 700;
+  font-size: 0.85em;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  user-select: none;
+}
+
+/* Collapsible (Details/Summary) Styling */
+summary.traven-component-header,
+summary.component-header {
+  cursor: pointer;
+  outline: none;
+  list-style: none;
+}
+
+summary.traven-component-header::-webkit-details-marker,
+summary.component-header::-webkit-details-marker {
+  display: none;
+}
+
+/* Custom expand/collapse indicator arrow */
+summary.traven-component-header::after,
+summary.component-header::after {
+  content: "▼";
+  font-size: 0.75em;
+  margin-left: 8px;
+  transition: transform 0.2s ease;
+  opacity: 0.7;
+  display: inline-block;
+}
+
+details[open] summary.traven-component-header::after,
+details[open] summary.component-header::after {
+  transform: rotate(-180deg);
+}
+
+/* Remove bottom margin on headers when the collapsible box is closed to center the title vertically */
+details:not([open]) .traven-component-header,
+details:not([open]) .component-header {
+  margin-bottom: 0 !important;
+}
