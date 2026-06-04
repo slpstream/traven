@@ -149,6 +149,12 @@ $markdownBody = $_POST['body']; // Automatically contains the updated Markdown
 // Validate and save to database...
 ```
 
-### Laravel / Django equivalents
+### Idiomatic Framework Integrations
 
-The behavior is identical for modern frameworks. In Laravel, you can retrieve the editor content using `$request->input('body')`. In Django, if you map it to a field in a `ModelForm`, it will be available in `form.cleaned_data['body']`. No special client-side JavaScript handlers (`onSubmit`, `fetch`, etc.) are necessary unless you want to use them.
+To make integration as seamless as possible, we have created zero-dependency boilerplate snippets for the most common server-side templating engines. These snippets demonstrate how to wrap the `<traven-editor>` Web Component into idiomatic, reusable helpers that bind perfectly to your framework's native form validation and CSRF protection.
+
+Choose your stack:
+- **[Laravel Anonymous Blade Components (Laravel 9+)](laravel-snippet.md)** — `<x-traven-editor>`
+- **[Laravel Custom Blade Directives (Legacy)](php-blade-snippet.md)** — `@travenEditor`
+- **[Django Custom Template Tags](django-snippet.md)** — `{% traven_editor %}`
+- **[Plain PHP Helpers](plain-php-snippet.md)** — `<?php traven_editor(); ?>`
