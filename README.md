@@ -60,21 +60,19 @@ Traven is a framework-agnostic editor with zero peer dependencies. It can be int
 > [!IMPORTANT]
 > **Make it your own: Customize how you want the editor to look:**
 > *   **Toolbar (Built-in & Optional):** Traven ships with a fully functional default toolbar (`toolbar-default.css`) baked directly into the core `traven.css` bundle. You do not need to load a separate toolbar, but if you want to customize it, the easiest way to do that is to just load any of the alternative layouts (like `toolbar-expandable.css`).
-> *   **Skin/Theme (Required & Decoupled):** When loading the editor, specify a theme. Setting a "skin"-stylesheet is **mandatory** for the editor's content to render correctly. You must either include one of Traven's pre-built skins (like `skin-default.css`, `skin-starter.css`, `skin-dark.css`, etc.) or [develop your own skin](docs/theme-development.md).
+> *   **Skin/Theme (Built-in Default):** The compiled bundle (`dist/traven.css`) ships with a built-in starter skin (`skin-starter.css`) that provides sane typographic defaults. No separate skin `<link>` is needed for basic usage. To customize the editor's appearance, load one of the pre-built skins (like `skin-modern.css`, `skin-editorial.css`, `skin-dark.css`) or [develop your own skin](docs/theme-development.md) — the external skin will override the bundled defaults.
 
 #### CDN Integration (Quickest Setup)
 
 Add the base styling sheet and load the editor module from the CDN:
 ```html
-<!-- Load Traven Styles (includes default toolbar) -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/slpstream/traven@v0.2.2/dist/traven.css">
-<!-- Load default skin styling -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/slpstream/traven@v0.2.2/assets/skins/skin-default.css">
+<!-- Load Traven Styles (includes default toolbar + starter skin) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/slpstream/traven@v0.2.3/dist/traven.css">
 
 <div id="editor"></div>
 
 <script type="module">
-  import { TravenEditor } from "https://cdn.jsdelivr.net/gh/slpstream/traven@v0.2.2/dist/traven.js";
+  import { TravenEditor } from "https://cdn.jsdelivr.net/gh/slpstream/traven@v0.2.3/dist/traven.js";
   
   document.fonts.ready.then(() => {
     new TravenEditor({

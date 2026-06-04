@@ -73,7 +73,7 @@ All six skins live in `assets/skins/` and are auto-discovered by the customizati
 | `skin-dark.css` | Premium Dark Slate | `Atkinson Hyperlegible Next` | `Fira Code` | Visible, dim slate | Bold sans, near-white | Sky `#38bdf8` | Sky `#38bdf8` |
 | `skin-editorial.css` | Minimalist Focus — no chrome | `Goudy Bookletter 1911` (serif) | `Victor Mono` | **Hidden** | `Macondo` (h1–h3), Goudy (h4–h6) | Ink black | None — pure paper |
 | `skin-modern.css` | Modern Clean — premium | `Epunda Slab` (serif) | `JetBrains Mono` | Visible, borderless | `Saira Condensed` (sans) | Zinc 900 | `#115e59` teal |
-| `skin-starter.css` | Modern Georgia — base | `Georgia` (serif) | System monospace | Visible, soft slate | System sans, bold | Slate 900 | Slate 600 |
+| `skin-starter.css` ⭐ | Modern Georgia — base (**bundled default**) | `Georgia` (serif) | System monospace | Visible, soft slate | System sans, bold | Slate 900 | Slate 600 |
 
 Other dimensions worth knowing:
 
