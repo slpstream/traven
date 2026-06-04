@@ -22,6 +22,11 @@
 
 ## The Typora-like Markdown editor you can embed anywhere
 
+```html
+<!-- One single line is all you need to include: -->
+<script type="module" src="https://cdn.jsdelivr.net/gh/slpstream/traven@v0.2.4/dist/traven.js"></script>
+```
+
 **Traven Editor** is a non-brittle WYSIWYM (What You See Is What You Mean) Markdown editor for embedding directly into custom CMS systems, administrative dashboards, web forms and apps. Built on the **CodeMirror 6** editing engine, Traven delivers a high-fidelity editing experience while outputting clean, raw Markdown.
 
 Traven is highly modular and straightforward to customize or extend. If you need a powerful, flexible and mostly unopinionated Markdown editor that adapts to the layout, theme, and behavior of an existing project, its theming and configuration options and decoupled styling make integration fast and easy.
@@ -72,7 +77,7 @@ Drop the editor module from the CDN into your page (the core styles and structur
 </form>
 
 <!-- Load the module once in your page footer -->
-<script type="module" src="https://cdn.jsdelivr.net/gh/slpstream/traven@v0.2.3/dist/traven.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/gh/slpstream/traven@v0.2.4/dist/traven.js"></script>
 ```
 
 > [!NOTE]
