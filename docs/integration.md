@@ -118,7 +118,7 @@ By decoupling the structured data from the editor, you maintain clean architectu
 
 Traven's `<traven-editor>` Web Component is specifically designed to work natively inside standard HTML forms without requiring any JavaScript glue code. 
 
-Because `<traven-editor>` is `formAssociated` and maintains a hidden `<textarea name="…">` as a fallback, standard `FormData` serialization picks it up automatically. The hidden textarea is the load-bearing piece: `ElementInternals.setFormValue` is the *modern* path, but the textarea is the *compatibility* path, and it's what `$_POST`, Laravel's `Request::input`, and Django's form binding actually see in all real-world backends.
+**Why this works:** `<traven-editor>` is `formAssociated` (so the form can find it via `ElementInternals`) and synchronizes a hidden `<textarea name="…">` as a child of itself (so `FormData` always serializes it via the normal textarea code path). The hidden textarea is the load-bearing piece for any backend — `ElementInternals.setFormValue` is the modern supplement, but the textarea is what every server-side framework actually reads.
 
 ### Plain PHP `$_POST` Example
 
