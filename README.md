@@ -101,7 +101,7 @@ Architectural details, examples, and splitting/recombination helper functions ar
 ### Customization & Styling
 
 Editor themes, layouts, and toolbar behaviors are fully customizable. Choose between `"static"` (fixed top), `"floating"` (clean canvas with formatting bubble and gutter menus), or `"hybrid"` modes, swap stylesheet skins to match your website, or override selectors using custom CSS.
-To learn more about CSS class listings, custom skin configurations, and toolbar styling options, consult the **[Customization & Styling Guide](docs/customization-styling.md)**. For instructions on how to build a new theme from scratch or extend an existing skin, follow the **[Theme Development Guide](docs/theme-development.md)**.
+To learn more about CSS class listings, custom skin configurations, and toolbar styling options, consult the **[Customization & Styling Guide](docs/customization-styling.md)**. For instructions on how to build a new theme from scratch or extend an existing skin, follow the **[Theme Development Guide](docs/theme-development.md)**. To enable syntax highlighting for fenced code blocks inside the editor or in your HTML output, see the **[Code Syntax Highlighting Guide](docs/code-syntax-highlighting.md)**.
 
 ### Custom Shortcodes Architecture
 

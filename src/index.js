@@ -177,6 +177,7 @@ function buildBaseSetup(options = {}) {
  * @property {string} [gutterHotkey] - Key binding to open gutter plus menu.
  * @property {number} [bubbleAppearDelay=200] - Delay in ms between pointer settling on a stable selection and the selection bubble appearing. Set to 0 to restore the previous eager-appear behavior.
  * @property {boolean} [autoLoadStyles=true] - Auto-inject core CSS from CDN/local bundle. Set to false for strict CSP environments.
+ * @property {any} [codeLanguages] - Optional CodeMirror LanguageDescription array (e.g. from @codemirror/language-data) or matching function to enable syntax highlighting in fenced code blocks without bloating the core bundle.
  */
 
 
@@ -265,7 +266,12 @@ export class TravenEditor {
       }),
       ...(wrapLines ? [EditorView.lineWrapping] : []),
       readOnlyCompartment.of(EditorState.readOnly.of(!!options.readOnly)),
-      yamlFrontmatter({ content: markdown({ extensions: [Strikethrough, TaskList, Table, Autolink, Highlight, Shortcode, VideoShortcode, AudioShortcode, FigureShortcode, ComponentShortcode, MathExtension, { remove: ["SetextHeading"] }] }) }),
+      yamlFrontmatter({
+        content: markdown({
+          ...(options.codeLanguages ? { codeLanguages: options.codeLanguages } : {}),
+          extensions: [Strikethrough, TaskList, Table, Autolink, Highlight, Shortcode, VideoShortcode, AudioShortcode, FigureShortcode, ComponentShortcode, MathExtension, { remove: ["SetextHeading"] }]
+        })
+      }),
       wysiwymPlugin(),
       delimiterSkipKeymap(),
       imageDecorationPlugin(),
@@ -1279,6 +1285,27 @@ export class TravenEditor {
     // 1. Strip YAML frontmatter if present
     let content = this.#stripFrontmatter(md);
 
+    // Extract fenced code blocks to avoid splitting them on empty lines or parsing inline elements inside
+    const codeBlocks = [];
+    content = content.replace(/^```[ \t]*([a-zA-Z0-9_\-]*)([^\r\n]*)\r?\n([\s\S]*?)\r?\n```\s*$/gm, (match, lang, meta, code) => {
+      const index = codeBlocks.length;
+      const classAttr = lang ? ` class="language-${lang}"` : "";
+      const escapedCode = code
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+      codeBlocks.push(`<pre><code${classAttr}>${escapedCode}</code></pre>`);
+      return `\n\nCODEBLOCKPLACEHOLDER${index}\n\n`;
+    });
+
+    // Extract inline code spans to avoid processing math, links, or styles inside them
+    const inlineCodePlaceholders = [];
+    content = content.replace(/(`[^`\n]+`)/g, (match) => {
+      const index = inlineCodePlaceholders.length;
+      inlineCodePlaceholders.push(match);
+      return `INLINECODEPLACEHOLDER${index}`;
+    });
+
     // Extract component shortcodes to protect them and compile recursively
     const componentPlaceholders = [];
     const componentRegex = /\[(component|quote|pullquote|blockquote|info|warning|highlight)((?:\s+[^\]]*|=\s*(?:"[^"]*"|'[^']*'|[^\s\]]+)(?:\s+[^\]]*)?)?)\]([\s\S]*?)\[\/\1\]/g;
@@ -1393,19 +1420,6 @@ export class TravenEditor {
       });
     } while (content !== prevContent);
 
-    // Extract fenced code blocks to avoid splitting them on empty lines or parsing inline elements inside
-    const codeBlocks = [];
-    content = content.replace(/^```[ \t]*([a-zA-Z0-9_\-]*)([^\r\n]*)\r?\n([\s\S]*?)\r?\n```\s*$/gm, (match, lang, meta, code) => {
-      const index = codeBlocks.length;
-      const classAttr = lang ? ` class="language-${lang}"` : "";
-      const escapedCode = code
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;");
-      codeBlocks.push(`<pre><code${classAttr}>${escapedCode}</code></pre>`);
-      return `\n\nCODEBLOCKPLACEHOLDER${index}\n\n`;
-    });
-
     // Extract math blocks early to avoid conflict with markdown parsing/escaping
     const mathBlocks = [];
     // 1. Display math blocks ($$ ... $$)
@@ -1438,12 +1452,6 @@ export class TravenEditor {
     content = content.replace(/<(https?:\/\/[^\s>]+)>/g, '[$1]($1)');
 
     // 1.6. Protect existing markdown links, image shortcodes, and inline code from being double-processed
-    const inlineCodePlaceholders = [];
-    content = content.replace(/(`[^`\n]+`)/g, (match) => {
-      const index = inlineCodePlaceholders.length;
-      inlineCodePlaceholders.push(match);
-      return `__INLINE_CODE_PLACEHOLDER_${index}__`;
-    });
 
     const shortcodePlaceholders = [];
     content = content.replace(/(\[image\s+[^\]]+\])/g, (match) => {
@@ -1507,9 +1515,6 @@ export class TravenEditor {
     });
     content = content.replace(/__AUDIO_SHORTCODE_PLACEHOLDER_(\d+)__/g, (match, index) => {
       return shortcodePlaceholders[parseInt(index)];
-    });
-    content = content.replace(/__INLINE_CODE_PLACEHOLDER_(\d+)__/g, (match, index) => {
-      return inlineCodePlaceholders[parseInt(index)];
     });
 
     // 2. Escape HTML characters to prevent XSS in fallback
@@ -1586,7 +1591,10 @@ export class TravenEditor {
         let clean = rowText.trim();
         if (clean.startsWith("|")) clean = clean.slice(1);
         if (clean.endsWith("|")) clean = clean.slice(0, -1);
-        return clean.split("|").map(cell => cell.trim());
+        // Protect escaped pipes
+        clean = clean.replace(/\\\|/g, "___ESCAPED_PIPE___");
+        const cells = clean.split("|").map(cell => cell.trim());
+        return cells.map(cell => cell.replace(/___ESCAPED_PIPE___/g, "|"));
       };
 
       // Parse GFM column alignments
@@ -1844,6 +1852,17 @@ export class TravenEditor {
     content = content.replace(/~~(.*?)~~/g, "<del>$1</del>");
     content = content.replace(/`(.*?)`/g, "<code>$1</code>");
 
+    // Restore inline code spans and escape their contents
+    content = content.replace(/INLINECODEPLACEHOLDER(\d+)/g, (match, index) => {
+      const rawCodeWithBackticks = inlineCodePlaceholders[parseInt(index)];
+      const code = rawCodeWithBackticks.slice(1, -1); // remove backticks
+      const escapedCode = code
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+      return `<code>${escapedCode}</code>`;
+    });
+
     // 7. Convert paragraphs (blank lines split)
     const blocks = content.split(/\n{2,}/);
     const htmlBlocks = blocks.map(block => {
@@ -1972,7 +1991,8 @@ export class TravenEditorElement extends HTMLElement {
     if (this.hasAttribute("toolbar-mode")) options.toolbarMode = this.getAttribute("toolbar-mode");
     if (this.hasAttribute("line-numbers")) options.lineNumbers = this.hasAttribute("line-numbers") && this.getAttribute("line-numbers") !== "false";
     if (this.hasAttribute("auto-load-styles")) options.autoLoadStyles = this.getAttribute("auto-load-styles") !== "false";
-    
+    if (this._codeLanguages) options.codeLanguages = this._codeLanguages;
+
     if (this.hasAttribute("toolbar")) {
       const tbAttr = this.getAttribute("toolbar");
       if (tbAttr === "false") {
@@ -1984,7 +2004,7 @@ export class TravenEditorElement extends HTMLElement {
 
     // 5. Instantiate
     this._editor = new TravenEditor(options);
-    
+
     // Set initial form value
     if (this._internals && this._internals.setFormValue) {
       this._internals.setFormValue(initialValue);
@@ -2056,6 +2076,14 @@ export class TravenEditorElement extends HTMLElement {
 
   get editor() {
     return this._editor;
+  }
+
+  get codeLanguages() {
+    return this._codeLanguages || null;
+  }
+
+  set codeLanguages(langs) {
+    this._codeLanguages = langs;
   }
 }
 

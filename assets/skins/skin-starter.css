@@ -133,6 +133,7 @@
 .cm-wysiwym-figure-shortcode .figure-caption,
 .traven-preview figcaption,
 .video-placeholder,
+.audio-placeholder,
 .cm-wysiwym-image-uploading,
 .image-edit-icon,
 .video-edit-icon,
@@ -653,8 +654,9 @@
   box-shadow: none !important;
 }
 
-/* Video placeholder inside editor */
-.video-placeholder {
+/* Video & Audio placeholders inside editor */
+.video-placeholder,
+.audio-placeholder {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -667,11 +669,13 @@
   transition: background-color 0.2s ease;
 }
 
-.video-placeholder:hover {
+.video-placeholder:hover,
+.audio-placeholder:hover {
   background-color: var(--traven-active-line);
 }
 
-.video-placeholder-icon-wrap {
+.video-placeholder-icon-wrap,
+.audio-placeholder-icon-wrap {
   width: 36px;
   height: 36px;
   border-radius: 50%;
@@ -680,9 +684,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
-.video-placeholder-details {
+.video-placeholder-details,
+.audio-placeholder-details {
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -690,13 +696,15 @@
   flex-grow: 1;
 }
 
-.video-placeholder-platform {
+.video-placeholder-platform,
+.audio-placeholder-platform {
   font-weight: 700;
   color: var(--traven-h-color);
   font-size: 0.9em;
 }
 
-.video-placeholder-url {
+.video-placeholder-url,
+.audio-placeholder-url {
   font-size: 0.78em;
   color: var(--traven-muted);
   word-break: break-all;

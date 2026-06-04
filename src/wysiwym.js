@@ -144,7 +144,15 @@ class TableWidget extends WidgetType {
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;");
 
-      // Convert inline elements (images, links, bold, italic, highlight, code)
+      // Protect inline code spans first to prevent formatting parsing inside them
+      const codeSpans = [];
+      html = html.replace(/`(.*?)`/g, (match, code) => {
+        const index = codeSpans.length;
+        codeSpans.push(`<code>${code}</code>`);
+        return `CODESPANXPLACEHOLDERX${index}`;
+      });
+
+      // Convert inline elements (images, links, bold, italic, highlight)
       html = html.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, src) => `<img src="${sanitizeUrl(src)}" alt="${alt}" style="max-width: 100%; height: auto; display: inline-block;">`);
       html = html.replace(/\[(.*?)\]\((.*?)\)/g, (match, text, url) => `<a href="${sanitizeUrl(url)}" target="_blank">${text}</a>`);
       html = html.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
@@ -152,7 +160,11 @@ class TableWidget extends WidgetType {
       html = html.replace(/__(.*?)__/g, "<strong>$1</strong>");
       html = html.replace(/_(.*?)_/g, "<em>$1</em>");
       html = html.replace(/==(.*?)==/g, '<span class="cm-wysiwym-highlight">$1</span>');
-      html = html.replace(/`(.*?)`/g, "<code>$1</code>");
+
+      // Restore inline code spans
+      html = html.replace(/CODESPANXPLACEHOLDERX(\d+)/g, (match, index) => {
+        return codeSpans[parseInt(index, 10)];
+      });
 
       return html;
     };
@@ -628,6 +640,15 @@ class ComponentShortcodeWidget extends WidgetType {
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;");
+
+      // Protect inline code spans first to prevent formatting parsing inside them
+      const codeSpans = [];
+      html = html.replace(/`(.*?)`/g, (match, code) => {
+        const index = codeSpans.length;
+        codeSpans.push(`<code>${code}</code>`);
+        return `CODESPANXPLACEHOLDERX${index}`;
+      });
+
       html = html.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, src) => `<img src="${sanitizeUrl(src)}" alt="${alt}" style="max-width: 100%; height: auto; display: inline-block;">`);
       html = html.replace(/\[(.*?)\]\((.*?)\)/g, (match, text, url) => `<a href="${sanitizeUrl(url)}" target="_blank">${text}</a>`);
       html = html.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
@@ -635,7 +656,12 @@ class ComponentShortcodeWidget extends WidgetType {
       html = html.replace(/__(.*?)__/g, "<strong>$1</strong>");
       html = html.replace(/_(.*?)_/g, "<em>$1</em>");
       html = html.replace(/==(.*?)==/g, '<span class="cm-wysiwym-highlight">$1</span>');
-      html = html.replace(/`(.*?)`/g, "<code>$1</code>");
+
+      // Restore inline code spans
+      html = html.replace(/CODESPANXPLACEHOLDERX(\d+)/g, (match, index) => {
+        return codeSpans[parseInt(index, 10)];
+      });
+
       return html;
     };
 
@@ -766,6 +792,15 @@ class FigureShortcodeWidget extends WidgetType {
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;");
+
+      // Protect inline code spans first to prevent formatting parsing inside them
+      const codeSpans = [];
+      html = html.replace(/`(.*?)`/g, (match, code) => {
+        const index = codeSpans.length;
+        codeSpans.push(`<code>${code}</code>`);
+        return `CODESPANXPLACEHOLDERX${index}`;
+      });
+
       html = html.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, src) => `<img src="${sanitizeUrl(src)}" alt="${alt}" style="max-width: 100%; height: auto; display: inline-block;">`);
       html = html.replace(/\[(.*?)\]\((.*?)\)/g, (match, text, url) => `<a href="${sanitizeUrl(url)}" target="_blank">${text}</a>`);
       html = html.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
@@ -773,7 +808,12 @@ class FigureShortcodeWidget extends WidgetType {
       html = html.replace(/__(.*?)__/g, "<strong>$1</strong>");
       html = html.replace(/_(.*?)_/g, "<em>$1</em>");
       html = html.replace(/==(.*?)==/g, '<span class="cm-wysiwym-highlight">$1</span>');
-      html = html.replace(/`(.*?)`/g, "<code>$1</code>");
+
+      // Restore inline code spans
+      html = html.replace(/CODESPANXPLACEHOLDERX(\d+)/g, (match, index) => {
+        return codeSpans[parseInt(index, 10)];
+      });
+
       return html;
     };
 
