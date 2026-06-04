@@ -64,18 +64,15 @@ Traven is a framework-agnostic editor with zero peer dependencies. It can be int
 
 #### CDN Integration (Quickest Setup)
 
-Drop the editor module from the CDN into your page (the core styles and structural skin are auto-injected):
+Drop the editor module from the CDN into your page (the core styles and structural skin are auto-injected), and use the custom `<traven-editor>` tag:
 ```html
-<div id="editor"></div>
+<form action="/submit" method="POST">
+  <traven-editor name="body"># Hello Traven via CDN</traven-editor>
+  <button type="submit">Save</button>
+</form>
 
-<script type="module">
-  import { TravenEditor } from "https://cdn.jsdelivr.net/gh/slpstream/traven@v0.2.3/dist/traven.js";
-  
-  new TravenEditor({
-    element: document.getElementById("editor"),
-    initialValue: "# Hello Traven via CDN"
-  });
-</script>
+<!-- Load the module once in your page footer -->
+<script type="module" src="https://cdn.jsdelivr.net/gh/slpstream/traven@v0.2.3/dist/traven.js"></script>
 ```
 
 > [!NOTE]

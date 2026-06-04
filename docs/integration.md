@@ -111,3 +111,42 @@ await fetch("/api/posts/42", {
 *Note: For the parsing and serialization steps above, we recommend using the MIT-licensed `js-yaml` library, but you can also delegate the parsing entirely to your backend API (e.g. sending `yaml` and `markdown` as separate fields in the payload).*
 
 By decoupling the structured data from the editor, you maintain clean architectural boundaries and prevent authors from breaking document parsing layouts.
+
+---
+
+## 2. Server-Side Framework Forms (PHP, Django, Laravel)
+
+Traven's `<traven-editor>` Web Component is specifically designed to work natively inside standard HTML forms without requiring any JavaScript glue code. Because it uses the `ElementInternals` API and maintains a synchronized hidden `<textarea>` fallback, standard `FormData` serialization picks it up automatically.
+
+### Plain PHP `$_POST` Example
+
+```html
+<form action="/save.php" method="POST">
+  <label for="post-title">Title</label>
+  <input type="text" id="post-title" name="title" value="Hello World">
+
+  <label for="post-body">Body Content</label>
+  <!-- The editor acts exactly like a <textarea> -->
+  <traven-editor name="body" theme="light"># Initial markdown content...</traven-editor>
+
+  <button type="submit">Publish</button>
+</form>
+
+<!-- Load the module once in the page footer -->
+<script type="module" src="/dist/traven.js"></script>
+```
+
+When the user submits the form, your backend receives the data precisely as if it were a standard textarea:
+
+```php
+<?php
+// save.php
+$title = $_POST['title'];
+$markdownBody = $_POST['body']; // Automatically contains the updated Markdown
+
+// Validate and save to database...
+```
+
+### Laravel / Django equivalents
+
+The behavior is identical for modern frameworks. In Laravel, you can retrieve the editor content using `$request->input('body')`. In Django, if you map it to a field in a `ModelForm`, it will be available in `form.cleaned_data['body']`. No special client-side JavaScript handlers (`onSubmit`, `fetch`, etc.) are necessary unless you want to use them.

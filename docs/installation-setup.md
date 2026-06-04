@@ -22,18 +22,14 @@ You can load Traven directly from the jsDelivr CDN without hosting any local ass
 
   <!-- Parent container for mounting -->
   <div class="editor-container">
-    <div id="editor-mount"></div>
+    <traven-editor name="body" line-numbers>
+      # Hello Traven via CDN
+
+      Edit **this bold text** to see delimiters appear!
+    </traven-editor>
   </div>
 
-  <script type="module">
-    import { TravenEditor } from "https://cdn.jsdelivr.net/gh/slpstream/traven@v0.2.3/dist/traven.js";
-
-    const editor = new TravenEditor({
-      element: document.getElementById("editor-mount"),
-      initialValue: "# Hello Traven via CDN\n\nEdit **this bold text** to see delimiters appear!",
-      lineNumbers: true
-    });
-  </script>
+  <script type="module" src="https://cdn.jsdelivr.net/gh/slpstream/traven@v0.2.3/dist/traven.js"></script>
 </body>
 </html>
 ```
@@ -53,18 +49,14 @@ If you prefer to host files locally, copy `dist/traven.js` and `dist/traven.css`
 
   <!-- Parent containers for mounting -->
   <div class="editor-container">
-    <div id="editor-mount"></div>
+    <traven-editor name="body" line-numbers>
+      # Hello Traven
+
+      Edit **this bold text** to see delimiters appear!
+    </traven-editor>
   </div>
 
-  <script type="module">
-    import { TravenEditor } from "./dist/traven.js";
-
-    const editor = new TravenEditor({
-      element: document.getElementById("editor-mount"),
-      initialValue: "# Hello Traven\n\nEdit **this bold text** to see delimiters appear!",
-      lineNumbers: true
-    });
-  </script>
+  <script type="module" src="./dist/traven.js"></script>
 </body>
 </html>
 ```
@@ -78,13 +70,12 @@ To accommodate this, you can disable the auto-injection by passing `autoLoadStyl
 ```html
 <link rel="stylesheet" href="dist/traven.css">
 <!-- ... -->
-<script type="module">
-  import { TravenEditor } from "./dist/traven.js";
-
-  const editor = new TravenEditor({
-    element: document.getElementById("editor-mount"),
-    autoLoadStyles: false, // Disables dynamic CSS injection
-    initialValue: "# Hello Traven"
-  });
-</script>
+<traven-editor name="body" auto-load-styles="false"># Hello Traven</traven-editor>
+<script type="module" src="./dist/traven.js"></script>
 ```
+
+## 4. Known Limitations
+
+While `<traven-editor>` acts as a highly portable drop-in editor, keep these temporary constraints in mind:
+*   **Style Encapsulation:** The core styles (`dist/traven.css`) are injected globally. If your host page uses `!important` tags on universally scoped selectors like `body`, or conflicts with CodeMirror's `cm-*` classes, you may experience layout bleed. True CSS isolation is deferred to Phase 10 (Shadow DOM adapter).
+*   **Modal Positioning:** Rich tool modals (like the image uploader) currently append to `document.body` with fixed positioning. If your embed context involves ancestors with `transform` or `filter` properties, the modal positioning can be incorrect. In these setups, prefer `toolbar-mode="static"`.
