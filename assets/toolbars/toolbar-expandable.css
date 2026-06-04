@@ -216,7 +216,9 @@
 }
 
 .traven-bubble-menu>*:last-child,
-.traven-bubble-menu>*:last-child .toolbar-btn {
+.traven-bubble-menu>*:last-child .toolbar-btn,
+.traven-bubble-menu>*:nth-last-child(2),
+.traven-bubble-menu>*:nth-last-child(2) .toolbar-btn {
   border-top-right-radius: 6px !important;
   border-bottom-right-radius: 6px !important;
 }

@@ -43,11 +43,6 @@ function buildBubbleFragment(editor, view, clearBubble) {
     buildToolButton(frag, key, editor);
   }
 
-  // Visual separator
-  const sep = document.createElement("span");
-  sep.className = "traven-bubble-sep";
-  frag.appendChild(sep);
-
   // Insert button
   buildToolButton(frag, BUBBLE_INSERT_KEY, editor);
   const lastChild = frag.lastChild;

@@ -1607,7 +1607,11 @@ export class TravenEditor {
         tableRows.push(trimmed);
       } else {
         if (inTable) {
-          processedTableLines.push(renderTableHtml(tableRows));
+          let tableHtml = renderTableHtml(tableRows);
+          if (trimmed === "") {
+            tableHtml += "\n<br>";
+          }
+          processedTableLines.push(tableHtml);
           inTable = false;
         }
         processedTableLines.push(line);

@@ -616,8 +616,8 @@ describe('Floating Toolbar and Modes', () => {
     expect(document.querySelector('.traven-bubble-menu')).toBeNull();
   });
 
-  // 25. Insert button and separator are present in the Selection Bubble
-  it('renders bubble-insert button and separator inside the selection bubble', async () => {
+  // 25. Insert button is present in the Selection Bubble
+  it('renders bubble-insert button inside the selection bubble', async () => {
     const editor = new TravenEditor({
       element: container,
       initialValue: 'Select me',
@@ -638,9 +638,6 @@ describe('Floating Toolbar and Modes', () => {
 
     const insertBtn = bubble.querySelector('.btn-bubble-insert');
     expect(insertBtn).not.toBeNull();
-
-    const separator = bubble.querySelector('.traven-bubble-sep');
-    expect(separator).not.toBeNull();
   });
 
   // 26. Clicking insert button closes the bubble and opens the gutter menu

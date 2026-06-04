@@ -1317,6 +1317,15 @@ describe('fallback rendering table alignment', () => {
     expect(html).toContain('<td style="text-align: right;">c</td>');
     expect(html).toContain('<td>d</td>');
   });
+
+  it('applies a <br> after the table if followed by a blank line in markdown', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '| Header |\n| --- |\n| Cell |\n\n# Heading',
+    });
+    const html = editor.getContentHtml();
+    expect(html).toContain('</table>\n<br>\n<h1>Heading</h1>');
+  });
 });
 
 describe('fallback rendering LaTeX math', () => {
