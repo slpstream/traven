@@ -17,9 +17,6 @@ You can load Traven directly from the jsDelivr CDN without hosting any local ass
 <head>
   <meta charset="UTF-8">
   <title>Traven CDN Integration</title>
-  
-  <!-- Load Traven styles (includes default toolbar + starter skin) -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/slpstream/traven@v0.2.3/dist/traven.css">
 </head>
 <body>
 
@@ -31,13 +28,10 @@ You can load Traven directly from the jsDelivr CDN without hosting any local ass
   <script type="module">
     import { TravenEditor } from "https://cdn.jsdelivr.net/gh/slpstream/traven@v0.2.3/dist/traven.js";
 
-    // Defer initialization until fonts are ready for CodeMirror coordinate caching
-    document.fonts.ready.then(() => {
-      const editor = new TravenEditor({
-        element: document.getElementById("editor-mount"),
-        initialValue: "# Hello Traven via CDN\n\nEdit **this bold text** to see delimiters appear!",
-        lineNumbers: true
-      });
+    const editor = new TravenEditor({
+      element: document.getElementById("editor-mount"),
+      initialValue: "# Hello Traven via CDN\n\nEdit **this bold text** to see delimiters appear!",
+      lineNumbers: true
     });
   </script>
 </body>
@@ -54,9 +48,6 @@ If you prefer to host files locally, copy `dist/traven.js` and `dist/traven.css`
 <head>
   <meta charset="UTF-8">
   <title>Traven Local Integration</title>
-  
-  <!-- Load Traven styles (includes default toolbar + starter skin) -->
-  <link rel="stylesheet" href="dist/traven.css">
 </head>
 <body>
 
@@ -68,15 +59,32 @@ If you prefer to host files locally, copy `dist/traven.js` and `dist/traven.css`
   <script type="module">
     import { TravenEditor } from "./dist/traven.js";
 
-    // Defer initialization until fonts are ready for CodeMirror coordinate caching
-    document.fonts.ready.then(() => {
-      const editor = new TravenEditor({
-        element: document.getElementById("editor-mount"),
-        initialValue: "# Hello Traven\n\nEdit **this bold text** to see delimiters appear!",
-        lineNumbers: true
-      });
+    const editor = new TravenEditor({
+      element: document.getElementById("editor-mount"),
+      initialValue: "# Hello Traven\n\nEdit **this bold text** to see delimiters appear!",
+      lineNumbers: true
     });
   </script>
 </body>
 </html>
+```
+
+## 3. Strict Content Security Policies (CSP)
+
+By default, Traven dynamically injects its core CSS (`dist/traven.css`) into the page when the editor is instantiated. If your environment enforces a strict CSP that forbids dynamic stylesheet injection (`style-src 'self'`), this will fail.
+
+To accommodate this, you can disable the auto-injection by passing `autoLoadStyles: false` in the constructor, and manually add the `<link rel="stylesheet" href="...">` tag to your document's `<head>`.
+
+```html
+<link rel="stylesheet" href="dist/traven.css">
+<!-- ... -->
+<script type="module">
+  import { TravenEditor } from "./dist/traven.js";
+
+  const editor = new TravenEditor({
+    element: document.getElementById("editor-mount"),
+    autoLoadStyles: false, // Disables dynamic CSS injection
+    initialValue: "# Hello Traven"
+  });
+</script>
 ```

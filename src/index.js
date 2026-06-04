@@ -176,6 +176,7 @@ function buildBaseSetup(options = {}) {
  * @property {string} [bubbleHotkey] - Key binding to open selection bubble.
  * @property {string} [gutterHotkey] - Key binding to open gutter plus menu.
  * @property {number} [bubbleAppearDelay=200] - Delay in ms between pointer settling on a stable selection and the selection bubble appearing. Set to 0 to restore the previous eager-appear behavior.
+ * @property {boolean} [autoLoadStyles=true] - Auto-inject core CSS from CDN/local bundle. Set to false for strict CSP environments.
  */
 
 
@@ -201,6 +202,21 @@ export class TravenEditor {
       throw new Error("TravenEditor requires a parent element option.");
     }
     this.#options = options;
+
+    if (options.autoLoadStyles !== false) {
+      if (typeof document !== "undefined" && !document.getElementById("traven-core-styles")) {
+        try {
+          const cssUrl = new URL('./traven.css', import.meta.url).href;
+          const link = document.createElement("link");
+          link.id = "traven-core-styles";
+          link.rel = "stylesheet";
+          link.href = cssUrl;
+          document.head.appendChild(link);
+        } catch (e) {
+          console.warn("Traven: Could not auto-inject CSS. If styling looks broken, manually <link> dist/traven.css");
+        }
+      }
+    }
 
     // Initialize component name schema options with fallbacks
     this.#components = DEFAULT_COMPONENTS;
@@ -422,6 +438,18 @@ export class TravenEditor {
     Promise.resolve().then(() => {
       this.#triggerStatsUpdate();
     });
+
+    // Wait for fonts to load to prevent layout jumps on first paint
+    if (typeof document !== "undefined" && document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => {
+        if (this.#view) {
+          this.#view.requestMeasure();
+        }
+        if (this.#rawView) {
+          this.#rawView.requestMeasure();
+        }
+      });
+    }
   }
 
   // --- Public API Methods ---

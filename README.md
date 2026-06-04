@@ -64,24 +64,23 @@ Traven is a framework-agnostic editor with zero peer dependencies. It can be int
 
 #### CDN Integration (Quickest Setup)
 
-Add the base styling sheet and load the editor module from the CDN:
+Drop the editor module from the CDN into your page (the core styles and structural skin are auto-injected):
 ```html
-<!-- Load Traven Styles (includes default toolbar + starter skin) -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/slpstream/traven@v0.2.3/dist/traven.css">
-
 <div id="editor"></div>
 
 <script type="module">
   import { TravenEditor } from "https://cdn.jsdelivr.net/gh/slpstream/traven@v0.2.3/dist/traven.js";
   
-  document.fonts.ready.then(() => {
-    new TravenEditor({
-      element: document.getElementById("editor"),
-      initialValue: "# Hello Traven via CDN"
-    });
+  new TravenEditor({
+    element: document.getElementById("editor"),
+    initialValue: "# Hello Traven via CDN"
   });
 </script>
 ```
+
+> [!NOTE]
+> **Strict CSP Environments:** If your project enforces a strict Content Security Policy that forbids dynamic stylesheet injection (`style-src 'self'`), you can disable the CSS auto-injection by passing `autoLoadStyles: false` in the constructor options, and manually add the `<link rel="stylesheet" href=".../dist/traven.css">` to your `<head>`.
+
 
 Check out alternative toolbar layouts, custom themes and skins, and detailed configuration options in the **[Installation & Setup Guide](docs/installation-setup.md)**.
 
