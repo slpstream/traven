@@ -78,6 +78,25 @@ describe("TravenEditorElement (Web Component)", () => {
     }).not.toThrow();
   });
 
+  it("handles mount -> unmount -> remount correctly", () => {
+    const el = document.createElement("traven-editor");
+    el.textContent = "# First mount";
+    
+    // First mount
+    document.body.appendChild(el);
+    expect(el.editor).toBeDefined();
+    expect(el.value).toBe("# First mount");
+
+    // Unmount
+    el.remove();
+    expect(el.editor).toBeNull(); // Editor should be destroyed and nulled out
+
+    // Remount
+    document.body.appendChild(el);
+    expect(el.editor).toBeDefined(); // Editor should be recreated
+    expect(el.value).toBe("# First mount"); // Value should persist from textContent/hiddenTextarea
+  });
+
   it("parses the toolbar attribute correctly", () => {
     const el1 = document.createElement("traven-editor");
     el1.setAttribute("toolbar", "false");

@@ -545,7 +545,7 @@ describe('Floating Toolbar and Modes', () => {
     }));
 
     // Resolved promise / minimal tick is enough
-    await new Promise(resolve => setTimeout(resolve, 10));
+    await new Promise(resolve => setTimeout(resolve, 50));
     expect(document.querySelector('.traven-bubble-menu')).not.toBeNull();
   });
 

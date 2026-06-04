@@ -9,6 +9,11 @@ Traven is framework-agnostic and has zero peer dependencies. You can easily inte
 
 ## 1. CDN Include (Quickest Setup)
 
+> [!WARNING]
+> **Known Limitations:** While `<traven-editor>` acts as a highly portable drop-in editor, keep these temporary constraints in mind:
+> *   **Style Encapsulation:** The core styles (`dist/traven.css`) are injected globally. If your host page uses `!important` tags on universally scoped selectors like `body`, or conflicts with CodeMirror's `cm-*` classes, you may experience layout bleed. True CSS isolation requires a Shadow DOM adapter (on roadmap).
+> *   **Modal Positioning:** Rich tool modals (like the image uploader) currently append to `document.body` with fixed positioning. If your embed context involves ancestors with `transform` or `filter` properties, the modal positioning can be incorrect. In these setups, prefer `toolbar-mode="static"`.
+
 You can load Traven directly from the jsDelivr CDN without hosting any local assets:
 
 ```html
@@ -73,9 +78,3 @@ To accommodate this, you can disable the auto-injection by passing `autoLoadStyl
 <traven-editor name="body" auto-load-styles="false"># Hello Traven</traven-editor>
 <script type="module" src="./dist/traven.js"></script>
 ```
-
-## 4. Known Limitations
-
-While `<traven-editor>` acts as a highly portable drop-in editor, keep these temporary constraints in mind:
-*   **Style Encapsulation:** The core styles (`dist/traven.css`) are injected globally. If your host page uses `!important` tags on universally scoped selectors like `body`, or conflicts with CodeMirror's `cm-*` classes, you may experience layout bleed. True CSS isolation is deferred to Phase 10 (Shadow DOM adapter).
-*   **Modal Positioning:** Rich tool modals (like the image uploader) currently append to `document.body` with fixed positioning. If your embed context involves ancestors with `transform` or `filter` properties, the modal positioning can be incorrect. In these setups, prefer `toolbar-mode="static"`.

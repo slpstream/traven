@@ -1935,7 +1935,9 @@ export class TravenEditorElement extends HTMLElement {
 
   connectedCallback() {
     // 1. Read Initial State
-    const initialValue = this.textContent || "";
+    // If remounting, preserve the value from the existing textarea
+    const isRemount = this._hiddenTextarea !== null;
+    const initialValue = isRemount ? this._hiddenTextarea.value : (this.textContent || "");
     const nameAttr = this.getAttribute("name");
 
     // 2. Clear DOM
@@ -2002,7 +2004,11 @@ export class TravenEditorElement extends HTMLElement {
     switch (name) {
       case "name":
         if (this._hiddenTextarea) {
-          this._hiddenTextarea.name = newValue || "";
+          if (newValue) {
+            this._hiddenTextarea.setAttribute("name", newValue);
+          } else {
+            this._hiddenTextarea.removeAttribute("name");
+          }
         }
         break;
       case "theme":
