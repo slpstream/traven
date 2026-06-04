@@ -21,6 +21,8 @@ Writers hate overload. Notification badges, cluttered editing interfaces, and co
 Want to draw attention to key phrases? Add ==highlight formatting== directly on inline text using standard double equals delimiters, or use a shortcode. The shortcode option is great for wrapping block-level or inline-level text:
 [highlight]This text block is highlighted using the highlight shortcode. Pro-tip: Click on this text to discover the delimiters. You can edit them anything here by yourself, even the shortcodes.[/highlight]
 
+[image src="https://traven.dev/img/sampleimg.png" align="center" size="large" alt="Image with a caption. Edit me!" caption="Unlike plain Markdown, images can have captions and positioning"]
+
 You can easily structure your thoughts using bulleted or nested lists:
 1.  **First Item**: This is a numbered list item.
 2.  **Second Item**: With some nested lists:
@@ -89,11 +91,6 @@ For the more graphic, editorial pullquotes, use `[pullquote]` to break up long b
 
 Traven makes embedding external or local media a breeze. Each media shortcode is rendered as an interactive placeholder card with inline edit controls.
 
-### Images with Advanced Layouts
-Use the custom `[image]` shortcode to configure image alignments, sizing, and custom classes:
-
-[image src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5" align="center" size="medium" alt="Abstract painting" caption="A stunning abstract canvas displaying vibrant brush strokes" class="shadow-lg"]
-
 ### YouTube Video Embeds
 Easily display video playbacks using the `[youtube]` shortcode:
 
@@ -101,6 +98,7 @@ Easily display video playbacks using the `[youtube]` shortcode:
 
 ### Audio Embeds
 Integrate podcast episodes or audio files using the `[audio]` shortcode:
+
 [audio src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" size="large" caption="SoundHelix Song 1 (Sample Audio Stream)"]
 
 ### LaTeX Mathematical Formulas
