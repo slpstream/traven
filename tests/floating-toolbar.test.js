@@ -36,6 +36,20 @@ describe('Floating Toolbar and Modes', () => {
   let container;
 
   beforeEach(() => {
+    vi.useFakeTimers({
+      toFake: [
+        'setTimeout',
+        'clearTimeout',
+        'setInterval',
+        'clearInterval',
+        'setImmediate',
+        'clearImmediate',
+        'Date',
+        'requestAnimationFrame',
+        'cancelAnimationFrame',
+        'queueMicrotask'
+      ]
+    });
     container = document.createElement('div');
     document.body.appendChild(container);
 
@@ -57,6 +71,7 @@ describe('Floating Toolbar and Modes', () => {
     container.remove();
     vi.restoreAllMocks();
     vi.unstubAllGlobals();
+    vi.useRealTimers();
   });
 
   // 1. resolveToolbarMode({ toolbarMode: "hybrid" }) with desktop matchMedia returns "hybrid".
@@ -161,7 +176,7 @@ describe('Floating Toolbar and Modes', () => {
   });
 
   // 6. Selection Bubble does not render when the selection is empty.
-  it('selection bubble does not render when selection is empty', async () => {
+  it('selection bubble does not render when selection is empty', () => {
     const editor = new TravenEditor({
       element: container,
       initialValue: 'Some text',
@@ -171,13 +186,13 @@ describe('Floating Toolbar and Modes', () => {
     // Empty selection
     editor.setSelection(0, 0);
 
-    await new Promise(resolve => setTimeout(resolve, 50));
+    vi.advanceTimersByTime(50);
     const bubble = document.querySelector('.traven-bubble-menu');
     expect(bubble).toBeNull();
   });
 
   // 7. Selection Bubble renders when the selection is non-empty.
-  it('selection bubble renders when selection is non-empty', async () => {
+  it('selection bubble renders when selection is non-empty', () => {
     const editor = new TravenEditor({
       element: container,
       initialValue: 'Some text here',
@@ -199,13 +214,13 @@ describe('Floating Toolbar and Modes', () => {
     expect(document.querySelector('.traven-bubble-menu')).toBeNull();
 
     // Wait past default 200ms delay
-    await new Promise(resolve => setTimeout(resolve, 250));
+    vi.advanceTimersByTime(250);
     const bubble = document.querySelector('.traven-bubble-menu');
     expect(bubble).not.toBeNull();
   });
 
   // 8. Mod + . with a non-empty selection focuses the first button in the bubble.
-  it('Mod + . keydown focuses the first button in the bubble', async () => {
+  it('Mod + . keydown focuses the first button in the bubble', () => {
     const editor = new TravenEditor({
       element: container,
       initialValue: 'Select me',
@@ -214,14 +229,14 @@ describe('Floating Toolbar and Modes', () => {
     editor.focus();
     editor.setSelection(0, 6);
 
-    await new Promise(resolve => setTimeout(resolve, 50));
+    vi.advanceTimersByTime(50);
     const view = editor.getView();
 
     // Dispatch keyboard event for Mod-.
     const event = new KeyboardEvent('keydown', { key: '.', ctrlKey: true, bubbles: true });
     view.contentDOM.dispatchEvent(event);
 
-    await new Promise(resolve => setTimeout(resolve, 50));
+    vi.advanceTimersByTime(50);
 
     const firstButton = document.querySelector('.traven-bubble-menu button');
     expect(firstButton).not.toBeNull();
@@ -229,7 +244,7 @@ describe('Floating Toolbar and Modes', () => {
   });
 
   // 9. Escape from the bubble returns focus to the editor.
-  it('Escape keydown inside bubble returns focus to the editor', async () => {
+  it('Escape keydown inside bubble returns focus to the editor', () => {
     const editor = new TravenEditor({
       element: container,
       initialValue: 'Select me',
@@ -243,7 +258,7 @@ describe('Floating Toolbar and Modes', () => {
       bubbles: true, cancelable: true, button: 0, pointerType: 'mouse',
     }));
 
-    await new Promise(resolve => setTimeout(resolve, 250));
+    vi.advanceTimersByTime(250);
     const firstButton = document.querySelector('.traven-bubble-menu button');
     expect(firstButton).not.toBeNull();
     firstButton.focus();
@@ -253,19 +268,19 @@ describe('Floating Toolbar and Modes', () => {
     const escEvent = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true });
     firstButton.dispatchEvent(escEvent);
 
-    await new Promise(resolve => setTimeout(resolve, 50));
+    vi.advanceTimersByTime(50);
     expect(document.activeElement).toBe(editor.getView().contentDOM);
   });
 
   // 10. After the image modal's onClose callback runs, the bubble is not re-shown until the next selectionSet
-  it('after modal closes, selection bubble is not re-shown until next selectionSet', async () => {
+  it('after modal closes, selection bubble is not re-shown until next selectionSet', () => {
     const editor = new TravenEditor({
       element: container,
       initialValue: '[image src="https://example.com/pic.jpg" align="right" size="medium" caption="My caption"]\nSome text',
       toolbarMode: 'floating'
     });
     editor.setSelection(editor.getValue().length, editor.getValue().length);
-    await new Promise(resolve => setTimeout(resolve, 50));
+    vi.advanceTimersByTime(50);
 
     const widgetEl = container.querySelector('.cm-wysiwym-image-shortcode-container');
     expect(widgetEl).not.toBeNull();
@@ -279,27 +294,27 @@ describe('Floating Toolbar and Modes', () => {
     const closeBtn = modal.querySelector('.traven-modal-close');
     closeBtn.click();
 
-    await new Promise(resolve => setTimeout(resolve, 50));
+    vi.advanceTimersByTime(50);
     const bubble = document.querySelector('.traven-bubble-menu');
     expect(bubble).toBeNull();
   });
 
   // 11. Gutter + marker renders on empty lines only.
-  it('gutter plus marker renders only on empty lines', async () => {
+  it('gutter plus marker renders only on empty lines', () => {
     const editor = new TravenEditor({
       element: container,
       initialValue: 'line1\n\nline3',
       toolbarMode: 'floating'
     });
     editor.focus();
-    await new Promise(resolve => setTimeout(resolve, 50));
+    vi.advanceTimersByTime(50);
 
     const plusBtn = container.querySelector('.traven-gutter-plus-btn');
     expect(plusBtn).not.toBeNull();
   });
 
   // 12. Mod + Shift + Enter opens the gutter popover at the caret.
-  it('Mod + Shift + Enter keydown opens the gutter menu', async () => {
+  it('Mod + Shift + Enter keydown opens the gutter menu', () => {
     const editor = new TravenEditor({
       element: container,
       initialValue: '\n',
@@ -307,13 +322,13 @@ describe('Floating Toolbar and Modes', () => {
     });
     editor.focus();
     editor.setSelection(0, 0);
-    await new Promise(resolve => setTimeout(resolve, 50));
+    vi.advanceTimersByTime(50);
 
     const view = editor.getView();
     const event = new KeyboardEvent('keydown', { key: 'Enter', ctrlKey: true, shiftKey: true, bubbles: true });
     view.contentDOM.dispatchEvent(event);
 
-    await new Promise(resolve => setTimeout(resolve, 50));
+    vi.advanceTimersByTime(50);
     const menu = document.querySelector('.traven-gutter-menu');
     expect(menu).not.toBeNull();
 
@@ -323,7 +338,7 @@ describe('Floating Toolbar and Modes', () => {
   });
 
   // 13. bubbleHotkey: "F1" swap: dispatching F1 keydown with a selection focuses the bubble.
-  it('respects custom bubbleHotkey: F1', async () => {
+  it('respects custom bubbleHotkey: F1', () => {
     const editor = new TravenEditor({
       element: container,
       initialValue: 'Select me',
@@ -332,21 +347,21 @@ describe('Floating Toolbar and Modes', () => {
     });
     editor.focus();
     editor.setSelection(0, 6);
-    await new Promise(resolve => setTimeout(resolve, 50));
+    vi.advanceTimersByTime(50);
 
     const view = editor.getView();
     // Dispatch F1 keydown
     const event = new KeyboardEvent('keydown', { key: 'F1', bubbles: true });
     view.contentDOM.dispatchEvent(event);
 
-    await new Promise(resolve => setTimeout(resolve, 50));
+    vi.advanceTimersByTime(50);
     const firstButton = document.querySelector('.traven-bubble-menu button');
     expect(firstButton).not.toBeNull();
     expect(document.activeElement).toBe(firstButton);
   });
 
   // 14. bubbleHotkey: "Mod-/" does not open the bubble — the existing Mod-/ keybinding for Help is preserved.
-  it('does not allow bubbleHotkey Mod-/ to override Help keybinding', async () => {
+  it('does not allow bubbleHotkey Mod-/ to override Help keybinding', () => {
     const editor = new TravenEditor({
       element: container,
       initialValue: 'Select me',
@@ -355,21 +370,21 @@ describe('Floating Toolbar and Modes', () => {
     });
     editor.focus();
     editor.setSelection(0, 6);
-    await new Promise(resolve => setTimeout(resolve, 50));
+    vi.advanceTimersByTime(50);
 
     const view = editor.getView();
     // Dispatch Mod-/
     const event = new KeyboardEvent('keydown', { key: '/', ctrlKey: true, bubbles: true });
     view.contentDOM.dispatchEvent(event);
 
-    await new Promise(resolve => setTimeout(resolve, 50));
+    vi.advanceTimersByTime(50);
     const firstButton = document.querySelector('.traven-bubble-menu button');
     // It should not focus the first button in bubble menu because Mod-/ is for help/shortcuts dialog
     expect(document.activeElement).not.toBe(firstButton);
   });
 
   // 15. Stats widget updates word and character counts dynamically in the DOM when typing/value changes occur.
-  it('updates stats widget dynamically on content change', async () => {
+  it('updates stats widget dynamically on content change', () => {
     const editor = new TravenEditor({
       element: container,
       initialValue: 'Four words in here',
@@ -384,20 +399,20 @@ describe('Floating Toolbar and Modes', () => {
     // Change value
     editor.setValue('Just one.');
 
-    await new Promise(resolve => setTimeout(resolve, 50));
+    vi.advanceTimersByTime(50);
     expect(statsEl.textContent).toContain('2 words');
     expect(statsEl.textContent).toContain('9 chars');
   });
 
   // 16. Gutter plus button interaction opens the gutter menu and clicking outside closes it.
-  it('gutter plus button interaction opens and closes the menu correctly', async () => {
+  it('gutter plus button interaction opens and closes the menu correctly', () => {
     const editor = new TravenEditor({
       element: container,
       initialValue: '\n',
       toolbarMode: 'floating'
     });
     editor.focus();
-    await new Promise(resolve => setTimeout(resolve, 50));
+    vi.advanceTimersByTime(50);
 
     const plusBtn = container.querySelector('.traven-gutter-plus-btn');
     expect(plusBtn).not.toBeNull();
@@ -410,7 +425,7 @@ describe('Floating Toolbar and Modes', () => {
     const clickEvent = new MouseEvent('click', { bubbles: true, cancelable: true });
     plusBtn.dispatchEvent(clickEvent);
 
-    await new Promise(resolve => setTimeout(resolve, 50));
+    vi.advanceTimersByTime(50);
 
     // The menu should be open
     let menu = document.querySelector('.traven-gutter-menu');
@@ -420,7 +435,7 @@ describe('Floating Toolbar and Modes', () => {
     const docClickEvent = new MouseEvent('click', { bubbles: true, cancelable: true });
     document.body.dispatchEvent(docClickEvent);
 
-    await new Promise(resolve => setTimeout(resolve, 50));
+    vi.advanceTimersByTime(50);
 
     // The menu should be closed
     menu = document.querySelector('.traven-gutter-menu');
@@ -428,7 +443,7 @@ describe('Floating Toolbar and Modes', () => {
   });
 
   // 17. Selection bubble is center-aligned above/below selection (using from and to bounds) and contains the arrow element.
-  it('selection bubble contains arrow and is configured with both pos and end', async () => {
+  it('selection bubble contains arrow and is configured with both pos and end', () => {
     const editor = new TravenEditor({
       element: container,
       initialValue: 'Select me',
@@ -442,7 +457,7 @@ describe('Floating Toolbar and Modes', () => {
       bubbles: true, cancelable: true, button: 0, pointerType: 'mouse',
     }));
 
-    await new Promise(resolve => setTimeout(resolve, 250));
+    vi.advanceTimersByTime(250);
 
     const bubble = document.querySelector('.traven-bubble-menu');
     expect(bubble).not.toBeNull();
@@ -453,7 +468,7 @@ describe('Floating Toolbar and Modes', () => {
   });
 
   // 18. Pointerdown cancels pending show
-  it('pointerdown cancels pending show', async () => {
+  it('pointerdown cancels pending show', () => {
     const editor = new TravenEditor({
       element: container,
       initialValue: 'Select me',
@@ -468,7 +483,7 @@ describe('Floating Toolbar and Modes', () => {
     }));
 
     // Wait 100ms (less than 200ms delay)
-    await new Promise(resolve => setTimeout(resolve, 100));
+    vi.advanceTimersByTime(100);
     expect(document.querySelector('.traven-bubble-menu')).toBeNull();
 
     // Dispatch pointerdown
@@ -477,12 +492,12 @@ describe('Floating Toolbar and Modes', () => {
     }));
 
     // Wait another 150ms (total 250ms since pointerup)
-    await new Promise(resolve => setTimeout(resolve, 150));
+    vi.advanceTimersByTime(150);
     expect(document.querySelector('.traven-bubble-menu')).toBeNull();
   });
 
   // 19. Pointermove during drag keeps bubble hidden
-  it('pointermove during drag keeps bubble hidden', async () => {
+  it('pointermove during drag keeps bubble hidden', () => {
     const editor = new TravenEditor({
       element: container,
       initialValue: 'Select me',
@@ -501,12 +516,12 @@ describe('Floating Toolbar and Modes', () => {
       bubbles: true, cancelable: true, button: 0, buttons: 1, pointerType: 'mouse',
     }));
 
-    await new Promise(resolve => setTimeout(resolve, 250));
+    vi.advanceTimersByTime(250);
     expect(document.querySelector('.traven-bubble-menu')).toBeNull();
   });
 
   // 20. Doc change clears bubble
-  it('doc change clears bubble', async () => {
+  it('doc change clears bubble', () => {
     const editor = new TravenEditor({
       element: container,
       initialValue: 'Select me',
@@ -520,16 +535,16 @@ describe('Floating Toolbar and Modes', () => {
       bubbles: true, cancelable: true, button: 0, pointerType: 'mouse',
     }));
 
-    await new Promise(resolve => setTimeout(resolve, 250));
+    vi.advanceTimersByTime(250);
     expect(document.querySelector('.traven-bubble-menu')).not.toBeNull();
 
     editor.setValue('New document content');
-    await new Promise(resolve => setTimeout(resolve, 50));
+    vi.advanceTimersByTime(50);
     expect(document.querySelector('.traven-bubble-menu')).toBeNull();
   });
 
   // 21. bubbleAppearDelay: 0 restores eager behavior
-  it('bubbleAppearDelay: 0 restores eager behavior', async () => {
+  it('bubbleAppearDelay: 0 restores eager behavior', () => {
     const editor = new TravenEditor({
       element: container,
       initialValue: 'Select me',
@@ -545,12 +560,12 @@ describe('Floating Toolbar and Modes', () => {
     }));
 
     // Resolved promise / minimal tick is enough
-    await new Promise(resolve => setTimeout(resolve, 50));
+    vi.advanceTimersByTime(50);
     expect(document.querySelector('.traven-bubble-menu')).not.toBeNull();
   });
 
   // 22. bubbleAppearDelay: 50 is respected
-  it('bubbleAppearDelay: 50 is respected', async () => {
+  it('bubbleAppearDelay: 50 is respected', () => {
     const editor = new TravenEditor({
       element: container,
       initialValue: 'Select me',
@@ -565,15 +580,15 @@ describe('Floating Toolbar and Modes', () => {
       bubbles: true, cancelable: true, button: 0, pointerType: 'mouse',
     }));
 
-    await new Promise(resolve => setTimeout(resolve, 20));
+    vi.advanceTimersByTime(20);
     expect(document.querySelector('.traven-bubble-menu')).toBeNull();
 
-    await new Promise(resolve => setTimeout(resolve, 50));
+    vi.advanceTimersByTime(50);
     expect(document.querySelector('.traven-bubble-menu')).not.toBeNull();
   });
 
   // 23. Single click inside existing selection still shows bubble
-  it('single click inside existing selection still shows bubble', async () => {
+  it('single click inside existing selection still shows bubble', () => {
     const editor = new TravenEditor({
       element: container,
       initialValue: 'Select me',
@@ -588,12 +603,12 @@ describe('Floating Toolbar and Modes', () => {
       bubbles: true, cancelable: true, button: 0, pointerType: 'mouse',
     }));
 
-    await new Promise(resolve => setTimeout(resolve, 250));
+    vi.advanceTimersByTime(250);
     expect(document.querySelector('.traven-bubble-menu')).not.toBeNull();
   });
 
   // 24. Selection collapsing via setSelection dismisses bubble
-  it('selection collapsing via setSelection dismisses bubble', async () => {
+  it('selection collapsing via setSelection dismisses bubble', () => {
     const editor = new TravenEditor({
       element: container,
       initialValue: 'Select me',
@@ -607,17 +622,17 @@ describe('Floating Toolbar and Modes', () => {
       bubbles: true, cancelable: true, button: 0, pointerType: 'mouse',
     }));
 
-    await new Promise(resolve => setTimeout(resolve, 250));
+    vi.advanceTimersByTime(250);
     expect(document.querySelector('.traven-bubble-menu')).not.toBeNull();
 
     // Collapse selection
     editor.setSelection(0, 0);
-    await new Promise(resolve => setTimeout(resolve, 50));
+    vi.advanceTimersByTime(50);
     expect(document.querySelector('.traven-bubble-menu')).toBeNull();
   });
 
   // 25. Insert button is present in the Selection Bubble
-  it('renders bubble-insert button inside the selection bubble', async () => {
+  it('renders bubble-insert button inside the selection bubble', () => {
     const editor = new TravenEditor({
       element: container,
       initialValue: 'Select me',
@@ -631,7 +646,7 @@ describe('Floating Toolbar and Modes', () => {
       bubbles: true, cancelable: true, button: 0, pointerType: 'mouse',
     }));
 
-    await new Promise(resolve => setTimeout(resolve, 250));
+    vi.advanceTimersByTime(250);
     
     const bubble = document.querySelector('.traven-bubble-menu');
     expect(bubble).not.toBeNull();
@@ -641,7 +656,7 @@ describe('Floating Toolbar and Modes', () => {
   });
 
   // 26. Clicking insert button closes the bubble and opens the gutter menu
-  it('closes bubble and opens gutter menu on bubble-insert button click', async () => {
+  it('closes bubble and opens gutter menu on bubble-insert button click', () => {
     const editor = new TravenEditor({
       element: container,
       initialValue: 'Hello world',
@@ -655,14 +670,14 @@ describe('Floating Toolbar and Modes', () => {
       bubbles: true, cancelable: true, button: 0, pointerType: 'mouse',
     }));
 
-    await new Promise(resolve => setTimeout(resolve, 250));
+    vi.advanceTimersByTime(250);
     expect(document.querySelector('.traven-bubble-menu')).not.toBeNull();
 
     const insertBtn = document.querySelector('.btn-bubble-insert');
     insertBtn.click();
 
     // Wait a tick for dispatch and queueMicrotask/setTimeout
-    await new Promise(resolve => setTimeout(resolve, 50));
+    vi.advanceTimersByTime(50);
 
     expect(document.querySelector('.traven-bubble-menu')).toBeNull();
     expect(document.querySelector('.traven-gutter-menu')).not.toBeNull();
@@ -673,7 +688,7 @@ describe('Floating Toolbar and Modes', () => {
   });
 
   // 27. Insert button opens gutter menu anchored after the selection's last line
-  it('opens gutter menu anchored after the selection last line', async () => {
+  it('opens gutter menu anchored after the selection last line', () => {
     const editor = new TravenEditor({
       element: container,
       initialValue: 'Line one\nLine two\nLine three',
@@ -687,11 +702,11 @@ describe('Floating Toolbar and Modes', () => {
       bubbles: true, cancelable: true, button: 0, pointerType: 'mouse',
     }));
 
-    await new Promise(resolve => setTimeout(resolve, 250));
+    vi.advanceTimersByTime(250);
     const insertBtn = document.querySelector('.btn-bubble-insert');
     insertBtn.click();
 
-    await new Promise(resolve => setTimeout(resolve, 50));
+    vi.advanceTimersByTime(50);
     const menu = document.querySelector('.traven-gutter-menu');
     expect(menu).not.toBeNull();
 
@@ -704,7 +719,7 @@ describe('Floating Toolbar and Modes', () => {
   });
 
   // 28. Insert button computes correct number of newlines to avoid extra spacing
-  it('does not insert extra newlines if blank lines already exist', async () => {
+  it('does not insert extra newlines if blank lines already exist', () => {
     const editor = new TravenEditor({
       element: container,
       initialValue: 'Line one\n\nLine three',
@@ -718,11 +733,11 @@ describe('Floating Toolbar and Modes', () => {
       bubbles: true, cancelable: true, button: 0, pointerType: 'mouse',
     }));
 
-    await new Promise(resolve => setTimeout(resolve, 250));
+    vi.advanceTimersByTime(250);
     const insertBtn = document.querySelector('.btn-bubble-insert');
     insertBtn.click();
 
-    await new Promise(resolve => setTimeout(resolve, 50));
+    vi.advanceTimersByTime(50);
     
     // Original text has \n\n (2 newlines) after Line one. We need 4 - 2 = 2 newlines.
     // Total newlines after insert should be exactly 4: 'Line one\n\n\n\nLine three'

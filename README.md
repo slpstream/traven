@@ -23,7 +23,7 @@
 ## The Typora-like Markdown editor you can embed anywhere
 
 ```html
-<!-- One single line is all you need to include: -->
+<!-- Include the editor with just a single line of code: -->
 <script type="module" src="https://cdn.jsdelivr.net/gh/slpstream/traven@v0.2.4/dist/traven.js"></script>
 ```
 
