@@ -13,7 +13,7 @@
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License"></a>
-  <img src="https://img.shields.io/badge/version-0.2.2-orange.svg" alt="Version 0.2.2">
+  <img src="https://img.shields.io/badge/version-0.2.3-orange.svg" alt="Version 0.2.3">
   <img src="https://img.shields.io/badge/engine-CodeMirror_6-6aa00.svg" alt="CodeMirror 6 Engine">
   <img src="https://img.shields.io/badge/peer_dependencies-none-blue.svg" alt="Zero Peer Dependencies">
 </p>

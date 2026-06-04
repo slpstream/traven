@@ -148,6 +148,8 @@ function bubblePointerController({ appearDelay, setBubblePos, clearBubble }) {
       this.lastPointerId = null;
       /** @type {{ from: number, to: number } | null} */
       this.lastShownRange = null;
+      /** @type {number | null} */
+      this._clearRaf = null;
 
       // Bind once so we can remove them on destroy.
       this._onPointerDown = this._onPointerDown.bind(this);
@@ -164,27 +166,44 @@ function bubblePointerController({ appearDelay, setBubblePos, clearBubble }) {
       this.dom.removeEventListener("pointermove", this._onPointerMove, true);
       this.dom.removeEventListener("pointerup",   this._onPointerUp,   true);
       this._cancelTimer();
+      if (this._clearRaf != null) {
+        cancelAnimationFrame(this._clearRaf);
+        this._clearRaf = null;
+      }
     }
 
     update(update) {
       // If the user typed, clicked an empty area, or otherwise collapsed the
       // selection, hide the bubble immediately. This is the only place we
       // react to selection state without a pointer event.
+      //
+      // We use requestAnimationFrame instead of Promise.resolve() to defer
+      // the clearBubble dispatch. Microtasks (Promise) fire before the
+      // browser finishes processing focus events, which can cause a race
+      // condition: when a bubble button formats text, insertSnippet calls
+      // view.focus() synchronously, but microtask clearBubble dispatches
+      // can interfere with CM6's focus tracking and leave focusField stuck
+      // at false — permanently suppressing delimiter display. rAF ensures
+      // we dispatch only after all focus events have fully settled.
       if (update.selectionSet) {
         const sel = update.state.selection.main;
         if (sel.empty) {
           this._cancelTimer();
-          Promise.resolve().then(() => {
-            this._dispatch(clearBubble.of(undefined));
-          });
+          this._deferredClear();
         }
       }
       if (update.docChanged) {
         this._cancelTimer();
-        Promise.resolve().then(() => {
-          this._dispatch(clearBubble.of(undefined));
-        });
+        this._deferredClear();
       }
+    }
+
+    _deferredClear() {
+      if (this._clearRaf != null) return; // already scheduled
+      this._clearRaf = requestAnimationFrame(() => {
+        this._clearRaf = null;
+        this._dispatch(clearBubble.of(undefined));
+      });
     }
 
     _onPointerDown(_e) {
