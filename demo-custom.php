@@ -220,9 +220,13 @@ if ($isPost) {
     </main>
 
     <!-- Load the Traven Editor Web Component module -->
-    <script type="module" src="dist/traven.js"></script>
-    <script>
+    <script type="module">
+        import { TravenEditor } from "./dist/traven.js";
+
         document.addEventListener("DOMContentLoaded", () => {
+            // Enable Mermaid rendering support
+            TravenEditor.configureMermaid(true);
+
             const toggleBtn = document.getElementById("btn-toggle-toolbar");
             const editorEl = document.getElementById("traven-default-instance");
 

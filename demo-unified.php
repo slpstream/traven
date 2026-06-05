@@ -217,6 +217,9 @@ This demo illustrates a unified layout where:
 
     // 4. Initialize Traven Editor with tabbed layout
     document.fonts.ready.then(() => {
+      // Enable Mermaid rendering support
+      TravenEditor.configureMermaid(true);
+
       window.editor = new TravenEditor({
         element: document.getElementById("editor"),
         sourceElement: document.getElementById("raw-editor"),
@@ -388,6 +391,9 @@ This demo illustrates a unified layout where:
           const htmlContent = window.editor.getContentHtml();
           previewEl.innerHTML = htmlContent;
           rawPreviewEl.textContent = htmlContent;
+
+          // Render Mermaid diagrams in HTML preview
+          TravenEditor.initMermaid(previewEl);
         }
 
         // Grey out toolbar in Markdown and Preview modes

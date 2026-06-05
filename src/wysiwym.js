@@ -12,6 +12,7 @@ import { viewToEditor } from "./bridge.js";
 import { parseMarkdownTable, openTableModal, openImageModal, openComponentModal, openVideoModal, openAudioModal, openFigureModal } from "./toolbar/modal.js";
 import { sanitizeUrl, parseVideoUrl } from "./security.js";
 import { ensureKatex } from "./math-parser.js";
+import { ensureMermaid } from "./mermaid-parser.js";
 
 // --- Custom Widget Types ---
 
@@ -57,6 +58,85 @@ class MathWidget extends WidgetType {
   eq(other) {
     return this.math === other.math && this.isBlock === other.isBlock;
   }
+}
+
+function extractMermaidCode(blockText) {
+  const lines = blockText.split(/\r?\n/);
+  if (lines.length >= 2) {
+    return lines.slice(1, lines.length - 1).join("\n").trim();
+  }
+  return blockText.trim();
+}
+
+function escapeHtml(text) {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+class MermaidWidget extends WidgetType {
+  /**
+   * @param {string} code
+   * @param {number} nodeFrom
+   */
+  constructor(code, nodeFrom) {
+    super();
+    this.code = code;
+    this.nodeFrom = nodeFrom;
+  }
+
+  toDOM(view) {
+    const container = document.createElement("div");
+    container.className = "cm-wysiwym-mermaid-container";
+    container.style.display = "block";
+    container.style.overflow = "auto";
+
+    const inner = document.createElement("div");
+    inner.className = "mermaid";
+    inner.textContent = this.code;
+    container.appendChild(inner);
+
+    ensureMermaid().then(async (mermaid) => {
+      if (mermaid) {
+        try {
+          mermaid.initialize({
+            startOnLoad: false,
+            theme: "default",
+            securityLevel: "loose",
+          });
+          const id = `mermaid-wysiwym-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+          const { svg } = await mermaid.render(id, this.code);
+          inner.innerHTML = svg;
+          
+          if (view && !view.destroyed) {
+            view.requestMeasure();
+          }
+        } catch (e) {
+          console.warn("Mermaid render error in WYSIWYM:", e);
+          const errorMsg = e instanceof Error ? e.message : String(e);
+          inner.innerHTML = `<pre class="language-mermaid"><code>${escapeHtml(this.code)}</code></pre><p class="mermaid-error-message">Failed to render diagram: ${escapeHtml(errorMsg)}</p>`;
+        }
+      } else {
+        inner.innerHTML = `<pre class="language-mermaid"><code>${escapeHtml(this.code)}</code></pre>`;
+      }
+    });
+
+    container.addEventListener("mousedown", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      view.dispatch({ selection: { anchor: this.nodeFrom } });
+      view.focus();
+    });
+
+    return container;
+  }
+
+  eq(other) {
+    return other instanceof MermaidWidget && this.code === other.code && this.nodeFrom === other.nodeFrom;
+  }
+
+  ignoreEvent() { return false; }
 }
 
 class HRWidget extends WidgetType {
@@ -1586,6 +1666,23 @@ function buildWysiwymDecorations(state) {
         // 10. Fenced Code / Code Block
         if (node.name === "FencedCode" || node.name === "CodeBlock") {
           const isCursorInside = cursorHead > node.from && cursorHead < node.to;
+
+          if (node.name === "FencedCode") {
+            const blockText = state.sliceDoc(node.from, node.to);
+            const isMermaid = blockText.trim().startsWith("```mermaid") || blockText.trim().startsWith("~~~mermaid");
+            if (isMermaid) {
+              if (!isCursorInside) {
+                const rawCode = extractMermaidCode(blockText);
+                collected.push({
+                  from: node.from,
+                  to: node.to,
+                  deco: Decoration.replace({ widget: new MermaidWidget(rawCode, node.from), block: true })
+                });
+                return false;
+              }
+            }
+          }
+
           const startLine = state.doc.lineAt(node.from).number;
           const endLine = state.doc.lineAt(node.to).number;
 

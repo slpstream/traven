@@ -46,6 +46,17 @@ function greetUser(username) {
 greetUser("Author");
 ```
 
+### Mermaid Diagrams (Flowcharts & Visualization)
+You can render diagrams directly from raw text code blocks:
+
+```mermaid
+graph TD
+    A[Start] --> B(Process)
+    B --> C{Decision}
+    C -->|Yes| D[Success]
+    C -->|No| E[Fail]
+```
+
 ### Structured Tables
 Markdown tables are rendered as rich, interactive database-style visual tables in the editor. You can double-click on any table block to open a spreadsheet-style table editor modal.
 
