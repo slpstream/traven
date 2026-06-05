@@ -7,7 +7,7 @@
 </p>
 <p align="center">
   Add Traven Editor to any website:
-  LaTeX, table editor, image drag-n-drop, shortcode system, floating and hybrid toolbars, audio, video, custom Lezer extensions, 
+  LaTeX, Mermaid diagrams, table editor, image drag-n-drop, shortcode system, floating and hybrid toolbars, audio, video, custom Lezer extensions, 
   six skins, five demos, full documentation
 </p>
 
@@ -52,9 +52,12 @@ Traven Editor offers a modern WYSIWYM editing experience with support for:
 * Extendible custom shortcode system
 * Bidirectional raw sync
 * Vim emulation
-* Math rendering via LaTeX, and more. 
+* Math rendering via LaTeX and Mermaid diagrams, and more. 
 
 For a complete list and detailed explanation of all that Traven can do, see **[Key Features Documentation](docs/key-features.md)**.
+
+### LaTeX & Mermaid Diagrams
+Traven includes optional, privacy-first, lazy-loaded support for rendering mathematical equations (via LaTeX/KaTeX) and visual diagrams (via Mermaid) directly within the WYSIWYM editor and preview panels. For setup and integration details, see the **[LaTeX Math Support Guide](docs/latex-support.md)** and the **[Mermaid Diagram Support Guide](docs/mermaid-support.md)**.
 
 ---
 
