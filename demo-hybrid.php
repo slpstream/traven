@@ -13,7 +13,7 @@
   <link rel="preload" href="assets/fonts/mozilla-headline-v1-latin-700.woff2" as="font" type="font/woff2" crossorigin>
 
   <link rel="stylesheet" href="assets/fonts/fonts.css">
-  <link rel="stylesheet" href="assets/skins/skin-default.css" id="editor-skin-link">
+
 
   <link rel="stylesheet" href="assets/toolbars/toolbar-default.css" id="editor-toolbar-link">
   <link rel="stylesheet" href="assets/css/demo.css">
@@ -238,13 +238,7 @@ This demo illustrates a hybrid layout where:
     authorInput.addEventListener("input", updateCombinedPreview);
     statusSelect.addEventListener("change", updateCombinedPreview);
 
-    // Dynamic skin selector handler
-    document.getElementById("skin-select")?.addEventListener("change", (e) => {
-      const skinLink = document.getElementById("editor-skin-link");
-      if (skinLink) {
-        skinLink.href = "assets/skins/" + e.target.value + ".css";
-      }
-    });
+
 
     // Dynamic toolbar selector handler
     document.getElementById("toolbar-select")?.addEventListener("change", (e) => {

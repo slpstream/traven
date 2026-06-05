@@ -10,7 +10,7 @@ Traven is designed to be a lightweight, framework-agnostic editor component. It 
 
 * **[package.json](file:///home/user/Desktop/refactor/traven/package.json)**: Bundler settings (`esbuild`), script pipelines (`npm run build`/`watch`), and versioned CodeMirror 6 packages.
 * **[src/index.js](file:///home/user/Desktop/refactor/traven/src/index.js)**: Public API surface exposed via the `TravenEditor` class (mounts CodeMirror, encapsulates state lifecycle, inserts snippets, and fires events).
-* **[assets/skins/](file:///home/user/Desktop/refactor/traven/assets/skins/)**: Decoupled stylesheets (`skin-default.css`, `skin-colorful.css`, and `skin-dark.css`) containing editor visual theme configurations that require no rebuilds.
+* **[assets/skins/](file:///home/user/Desktop/refactor/traven/assets/skins/)**: Decoupled stylesheets (`skin-light.css`, `skin-colorful.css`, and `skin-dark.css`) containing editor visual theme configurations that require no rebuilds.
 * **[assets/toolbars/toolbar-default.css](file:///home/user/Desktop/refactor/traven/assets/toolbars/toolbar-default.css)**: Decoupled toolbar presentation stylesheet, letting users skin and toggle toolbar buttons independently.
 * **[src/toolbar/](file:///home/user/Desktop/refactor/traven/src/toolbar/)**: Modular toolbar components (`toolbar.js`, `tools.js`, `modal.js`) handling dynamic generation, accessibility behaviors, modals, and actions.
 * **[src/wysiwym.js](file:///home/user/Desktop/refactor/traven/src/wysiwym.js)**: Core decoration state machine mapping markdown parser nodes to collapsed replacement decorations.
@@ -198,7 +198,7 @@ Recent core enhancements introduced runtime-level configurations, real-time anal
 Traven supports a separate dark mode state for CodeMirror editor scopes, decoupled from the surrounding page context:
 * **Activation**: Set the initialization option `theme: "dark"` or call `setTheme("dark")` dynamically at runtime.
 * **Mechanism**: Dynamic theme toggling works by adding/removing the `.cm-wysiwym-dark` class from the editor host DOM nodes (`this.#view.dom` and `this.#rawView.dom`).
-* **Styling**: Specific dark styles (such as caret, gutters, code blocks, and markdown token colors) are separated into `src/style.css`. External visual skin styles are placed in scoped `.cm-wysiwym-dark` selectors in the respective skin files (e.g. `skin-default.css`, `skin-colorful.css`).
+* **Styling**: Specific dark styles (such as caret, gutters, code blocks, and markdown token colors) are separated into `src/style.css`. External visual skin styles are placed in scoped `.cm-wysiwym-dark` selectors in the respective skin files (e.g. `skin-light.css`, `skin-colorful.css`).
 
 ### B. Real-Time Statistics API
 Host applications can query document size statistics at runtime or subscribe to changes:
@@ -216,7 +216,7 @@ Traven features a compilation hook allowing custom renderers to generate the HTM
 * **Registration**: Call `registerRenderer(renderFn)` to pass a custom Markdown-to-HTML parser function (e.g., marked, markdown-it, micromark).
 * **Usage**: `getContentHtml()` retrieves the rendered HTML of the current document.
 * **Out-of-the-Box Fallback**: If no renderer is registered, Traven falls back to `#fallbackRender(md)`, a secure, parser-assisted inline renderer that strips frontmatter metadata (via Lezer syntax tree boundaries) and parses headings, blockquotes, code, lists, linebreaks, images (`![alt](url)`), links (`[text](url)`), and inline text styling safely.
-* **Preview Styling & Skin Sync**: The preview container element uses the `.traven-preview` class. Styles for headings, lists, links, blockquotes, and code elements inside `.traven-preview` are defined directly in the theme skins (e.g. `skin-default.css`, `skin-colorful.css`, `skin-dark.css`) and dark mode class triggers (`.cm-wysiwym-dark`). This ensures the Preview tab mirrors the exact visual typography, colors, and borders of the current active skin and dark/light configuration dynamically.
+* **Preview Styling & Skin Sync**: The preview container element uses the `.traven-preview` class. Styles for headings, lists, links, blockquotes, and code elements inside `.traven-preview` are defined directly in the theme skins (e.g. `skin-light.css`, `skin-colorful.css`, `skin-dark.css`) and dark mode class triggers (`.cm-wysiwym-dark`). This ensures the Preview tab mirrors the exact visual typography, colors, and borders of the current active skin and dark/light configuration dynamically.
 
 ### D. Vim Keybindings Support
 Vim-mode keybindings can be toggled on-the-fly inside both the WYSIWYM and raw Markdown editor panes:
@@ -274,7 +274,7 @@ Traven includes a graphical Table Editor and full WYSIWYM rendering for GFM tabl
   - **Theme highlight sync**: Highlight tokens (`==`) are converted into `<span class="cm-wysiwym-highlight">` so they inherit visual highlights directly from the active editor stylesheet/skin instead of defaulting to generic browser-native yellow `<mark>` styling.
   - **Alignment styling**: Headers and cells dynamically apply `style.textAlign` matching the parsed column alignment settings.
   - **Interactive Links**: Clicks on link anchors (`<a>`) in the WYSIWYM cells bypass the modal launch, letting the browser follow the link in a new tab.
-  - **Min cell dimensions**: Both the editor widget cells and the HTML Preview cells apply `height: 38px` and `box-sizing: border-box` across all skins (`skin-default.css`, `skin-colorful.css`, `skin-dark.css`) to prevent blank cells from visually collapsing.
+  - **Min cell dimensions**: Both the editor widget cells and the HTML Preview cells apply `height: 38px` and `box-sizing: border-box` across all skins (`skin-light.css`, `skin-colorful.css`, `skin-dark.css`) to prevent blank cells from visually collapsing.
 
 ### I. Lezer-based YAML Frontmatter Parsing
 To prevent common regex matching bugs on mixed CRLF/LF line endings, nested `---` tokens, or leading horizontal rules, Traven relies on Lezer's syntax tree to parse and strip YAML frontmatter:
@@ -404,6 +404,16 @@ When converting or adapting a normal CSS stylesheet from a standard HTML website
   - For horizontal alignment, use auto-margins (e.g. `margin: 0 auto 0 0 !important` to align left, `margin: 0 0 0 auto !important` to align right, and `margin: 0 auto !important` to center).
   - For vertical spacing, use top/bottom `padding` on the widget container instead of `margin`.
   - Floats are still fully supported and recommended in the HTML Preview (`.traven-preview`) stylesheet definitions where CodeMirror coordinate calculations do not apply.
+
+### F. Font Family Inheritance on Nested Paragraphs (The CSS Cascade Override)
+* **Problem**: `skin-starter.css` (which is bundled inside `dist/traven.css`) defines a high-priority `.traven-preview p { font-family: var(--traven-font-body) !important; }` rule. Because standard blockquotes, blockquote components (`[component="blockquote"]`), and info/warning notice components (`[info]`, `[warning]`) contain nested paragraph (`p`) elements, the nested `p` tags will inherit/use the starter skin's default body typeface (`Georgia` or `var(--traven-font-body)`), completely overriding any custom font-family declared on the parent container elements (such as `skin-editorial`'s `'Goudy Bookletter 1911'`, `skin-modern`'s `'Epunda Slab'`, or other custom skin stacks).
+* **Fix**: When styling custom components, blockquotes, or any notice cards that contain paragraphs in both the editor and preview DOM scopes, target the container element and *all* its descendants (using the universal selector `*`) to apply the skin's custom typography with `!important`:
+  ```css
+  .cm-wysiwym-component-shortcode.component-info,
+  .cm-wysiwym-component-shortcode.component-info * {
+    font-family: 'Atkinson Hyperlegible Next', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  }
+  ```
 
 ---
 

@@ -218,6 +218,7 @@
   font-style: italic;
   color: #94a3b8; /* Slate 400 */
   line-height: 1.5 !important;
+  font-family: 'Atkinson Hyperlegible Next', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
 }
 
 /* Reduce blank line spacing immediately before and after blockquotes */
@@ -813,6 +814,22 @@
   border-right: 1px solid #334155;
 }
 
+/* Scrollbars styling for dark mode */
+.cm-editor ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.cm-editor ::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+.cm-editor ::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 5px;
+}
+.cm-editor ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
 /* Caret color overrides for dark theme to prevent invisible cursor */
 .cm-editor .cm-cursor {
   border-left-color: #38bdf8 !important; /* Sky Blue accent caret */
@@ -909,6 +926,8 @@
   border: 1px solid #334155;
   border-radius: 8px;
   overflow: hidden;
+  background-color: #0f172a;
+  color: #e2e8f0;
 }
 
 .cm-wysiwym-table-widget th,
@@ -918,6 +937,10 @@
   text-align: left;
   height: 38px; /* Acts as min-height for table cells */
   box-sizing: border-box;
+}
+
+.cm-wysiwym-table-widget td {
+  background-color: transparent;
 }
 
 .cm-wysiwym-table-widget th {
@@ -994,6 +1017,7 @@
   font-style: italic;
   color: #94a3b8;
   line-height: 1.5 !important;
+  font-family: 'Atkinson Hyperlegible Next', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
 }
 
 .traven-preview blockquote:not(.traven-component-pullquote) p:last-child {
@@ -1077,6 +1101,8 @@
   border-collapse: collapse;
   margin: 16px 0;
   font-size: 0.92em;
+  background-color: #0f172a;
+  color: #e2e8f0;
 }
 .traven-preview th,
 .traven-preview td {
@@ -1085,6 +1111,9 @@
   text-align: left;
   height: 38px; /* Acts as min-height for table cells */
   box-sizing: border-box;
+}
+.traven-preview td {
+  background-color: transparent;
 }
 .traven-preview th {
   background-color: #1e293b;
@@ -1488,7 +1517,8 @@
   border-top: 2px solid #475569 !important;
   border-bottom: 2px solid #475569 !important;
   padding: 24px 16px !important;
-  margin: 0 !important;
+  margin: 0 auto !important;
+  max-width: 80% !important;
   font-size: 1.2em !important;
   font-weight: bold;
   text-align: center;
@@ -1499,6 +1529,9 @@
 .cm-wysiwym-component-shortcode.component-pullquote,
 .cm-wysiwym-component-shortcode.component-pullquote * {
   line-height: 1.5 !important;
+  font-style: normal !important;
+  color: #f8fafc !important;
+  text-align: center !important;
 }
 .cm-wysiwym-component-shortcode.component-pullquote blockquote {
   margin: 0 !important;
@@ -1528,6 +1561,7 @@
 .cm-wysiwym-component-shortcode.component-blockquote blockquote,
 .cm-wysiwym-component-shortcode.component-blockquote blockquote * {
   line-height: 1.5 !important;
+  font-family: 'Atkinson Hyperlegible Next', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
 }
 .cm-wysiwym-component-shortcode.component-blockquote cite {
   display: block;
@@ -1554,6 +1588,10 @@
   padding: 16px !important;
   margin: 0 !important;
 }
+.cm-wysiwym-component-shortcode.component-info,
+.cm-wysiwym-component-shortcode.component-info * {
+  font-family: 'Atkinson Hyperlegible Next', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
 .cm-wysiwym-component-shortcode.component-info .component-body p {
   font-size: 16px !important;
   line-height: 1.5 !important;
@@ -1571,6 +1609,10 @@
   color: #cbd5e1 !important;
   padding: 16px !important;
   margin: 0 !important;
+}
+.cm-wysiwym-component-shortcode.component-warning,
+.cm-wysiwym-component-shortcode.component-warning * {
+  font-family: 'Atkinson Hyperlegible Next', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
 }
 .cm-wysiwym-component-shortcode.component-warning .component-body p {
   font-size: 16px !important;
@@ -1623,6 +1665,7 @@
 .traven-preview .traven-component-blockquote,
 .traven-preview .traven-component-blockquote * {
   line-height: 1.5 !important;
+  font-family: 'Atkinson Hyperlegible Next', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
 }
 .traven-preview .traven-component-blockquote p {
   margin-top: 0 !important;
@@ -1662,7 +1705,8 @@
   border-top: 2px solid #475569 !important;
   border-bottom: 2px solid #475569 !important;
   padding: 24px 0 !important;
-  margin: 24px 0 !important;
+  margin: 24px auto !important;
+  max-width: 80% !important;
   font-size: 1.2em !important;
   font-weight: bold !important;
   font-style: normal !important;
@@ -1676,6 +1720,8 @@
   line-height: 1.5 !important;
   font-style: normal !important;
   font-weight: bold !important;
+  color: #f8fafc !important;
+  text-align: center !important;
 }
 .traven-preview .traven-component-pullquote p {
   margin: 0 !important;
@@ -1697,6 +1743,10 @@
   padding: 16px !important;
   margin: 16px 0 !important;
 }
+.traven-preview .traven-component-info,
+.traven-preview .traven-component-info * {
+  font-family: 'Atkinson Hyperlegible Next', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
 .traven-preview .traven-component-info p {
   font-size: 16px !important;
   line-height: 1.5 !important;
@@ -1714,6 +1764,10 @@
   color: #cbd5e1 !important;
   padding: 16px !important;
   margin: 16px 0 !important;
+}
+.traven-preview .traven-component-warning,
+.traven-preview .traven-component-warning * {
+  font-family: 'Atkinson Hyperlegible Next', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
 }
 .traven-preview .traven-component-warning p {
   font-size: 16px !important;

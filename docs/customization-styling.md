@@ -5,7 +5,7 @@ Skins are configured as plain CSS files, letting developers override colors and 
 > [!IMPORTANT]
 > **Understanding Toolbars vs. Skins (Themes):**
 > *   **Toolbar (Built-in & Optional):** Traven ships with a fully functional default toolbar (`toolbar-default.css`) baked directly into the core `traven.css` bundle. You do not need to load a separate stylesheet for the toolbar, though you can override it by loading any of the alternative layouts (like `toolbar-expandable.css`).
-> *   **Skin/Theme (Required & Decoupled):** Traven does *not* bundle a default skin. To remain an unopinionated embeddable component, the presentation layer (colors, fonts, line heights) is kept completely decoupled. Therefore, loading a skin stylesheet is **mandatory** for the editor viewport to render correctly. You must either include one of Traven's pre-built skins (like `skin-default.css`, `skin-dark.css`) or [develop your own skin](theme-development.md).
+> *   **Skin/Theme (Required & Decoupled):** Traven does *not* bundle a default skin. To remain an unopinionated embeddable component, the presentation layer (colors, fonts, line heights) is kept completely decoupled. Therefore, loading a skin stylesheet is **mandatory** for the editor viewport to render correctly. You must either include one of Traven's pre-built skins (like `skin-light.css`, `skin-dark.css`) or [develop your own skin](theme-development.md).
 
 ---
 
@@ -15,7 +15,7 @@ Simply swap the styling link in your HTML document:
 
 ```html
 <!-- For a slate, clean typography-focused feel: -->
-<link rel="stylesheet" href="assets/skins/skin-default.css">
+<link rel="stylesheet" href="assets/skins/skin-light.css">
 
 <!-- For a warm, rust-tinted brand feel: -->
 <link rel="stylesheet" href="assets/skins/skin-colorful.css">
@@ -35,8 +35,8 @@ Simply swap the styling link in your HTML document:
 If using CDN integration, target the assets directly from the repository using jsDelivr:
 
 ```html
-<!-- Example: Load skin-default.css via CDN -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/slpstream/traven@v0.2.2/assets/skins/skin-default.css">
+<!-- Example: Load skin-light.css via CDN -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/slpstream/traven@v0.2.2/assets/skins/skin-light.css">
 ```
 
 ---

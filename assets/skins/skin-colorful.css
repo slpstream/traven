@@ -116,7 +116,7 @@
 .cm-editor .cm-wysiwym-h5, 
 .cm-editor .cm-wysiwym-h6 {
   font-family: 'Atkinson Hyperlegible Next', sans-serif;
-  color: #0f172a;
+  color: #92400e; /* Deep blood-amber — warm chromatic accent for headings */
   letter-spacing: -0.02em;
   text-decoration: none;
 }
@@ -220,6 +220,7 @@
   font-style: italic;
   color: #cc4a0a;
   line-height: 1.5 !important;
+  font-family: 'Atkinson Hyperlegible Next', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
 }
 
 /* Reduce blank line spacing immediately before and after blockquotes */
@@ -972,7 +973,7 @@
 .cm-editor.cm-wysiwym-dark .cm-wysiwym-h4, 
 .cm-editor.cm-wysiwym-dark .cm-wysiwym-h5, 
 .cm-editor.cm-wysiwym-dark .cm-wysiwym-h6 {
-  color: #fafafa !important;
+  color: #fbbf24 !important; /* Amber-gold — glows warmly against dark backgrounds */
 }
 
 .cm-editor.cm-wysiwym-dark .cm-wysiwym-blockquote {
@@ -1295,6 +1296,7 @@
   font-style: italic;
   color: #cc4a0a;
   line-height: 1.5 !important;
+  font-family: 'Atkinson Hyperlegible Next', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
 }
 
 .traven-preview blockquote:not(.traven-component-pullquote) p:last-child {
@@ -1754,7 +1756,8 @@
   border-top: 2px solid #cc4a0a !important;
   border-bottom: 2px solid #cc4a0a !important;
   padding: 24px 16px !important;
-  margin: 0 !important;
+  margin: 0 auto !important;
+  max-width: 80% !important;
   font-size: 1.2em !important;
   font-weight: bold;
   text-align: center;
@@ -1765,6 +1768,8 @@
 .cm-wysiwym-component-shortcode.component-pullquote,
 .cm-wysiwym-component-shortcode.component-pullquote * {
   line-height: 1.5 !important;
+  font-style: normal !important;
+  text-align: center !important;
 }
 .cm-wysiwym-component-shortcode.component-pullquote blockquote {
   margin: 0 !important;
@@ -1794,6 +1799,7 @@
 .cm-wysiwym-component-shortcode.component-blockquote blockquote,
 .cm-wysiwym-component-shortcode.component-blockquote blockquote * {
   line-height: 1.5 !important;
+  font-family: 'Atkinson Hyperlegible Next', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
 }
 .cm-wysiwym-component-shortcode.component-blockquote cite {
   display: block;
@@ -1820,6 +1826,10 @@
   padding: 16px !important;
   margin: 0 !important;
 }
+.cm-wysiwym-component-shortcode.component-info,
+.cm-wysiwym-component-shortcode.component-info * {
+  font-family: 'Atkinson Hyperlegible Next', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
 .cm-wysiwym-component-shortcode.component-info .component-body p {
   font-size: 16px !important;
   line-height: 1.5 !important;
@@ -1837,6 +1847,10 @@
   color: #1e293b !important;
   padding: 16px !important;
   margin: 0 !important;
+}
+.cm-wysiwym-component-shortcode.component-warning,
+.cm-wysiwym-component-shortcode.component-warning * {
+  font-family: 'Atkinson Hyperlegible Next', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
 }
 .cm-wysiwym-component-shortcode.component-warning .component-body p {
   font-size: 16px !important;
@@ -1889,6 +1903,7 @@
 .traven-preview .traven-component-blockquote,
 .traven-preview .traven-component-blockquote * {
   line-height: 1.5 !important;
+  font-family: 'Atkinson Hyperlegible Next', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
 }
 .traven-preview .traven-component-blockquote p {
   margin-top: 0 !important;
@@ -1928,7 +1943,8 @@
   border-top: 2px solid #cc4a0a !important;
   border-bottom: 2px solid #cc4a0a !important;
   padding: 24px 0 !important;
-  margin: 24px 0 !important;
+  margin: 24px auto !important;
+  max-width: 80% !important;
   font-size: 1.2em !important;
   font-weight: bold !important;
   font-style: normal !important;
@@ -1942,6 +1958,7 @@
   line-height: 1.5 !important;
   font-style: normal !important;
   font-weight: bold !important;
+  text-align: center !important;
 }
 .traven-preview .traven-component-pullquote p {
   margin: 0 !important;
@@ -1963,6 +1980,10 @@
   padding: 16px !important;
   margin: 16px 0 !important;
 }
+.traven-preview .traven-component-info,
+.traven-preview .traven-component-info * {
+  font-family: 'Atkinson Hyperlegible Next', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
 .traven-preview .traven-component-info p {
   font-size: 16px !important;
   line-height: 1.5 !important;
@@ -1980,6 +2001,10 @@
   color: #1e293b !important;
   padding: 16px !important;
   margin: 16px 0 !important;
+}
+.traven-preview .traven-component-warning,
+.traven-preview .traven-component-warning * {
+  font-family: 'Atkinson Hyperlegible Next', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
 }
 .traven-preview .traven-component-warning p {
   font-size: 16px !important;
@@ -2004,7 +2029,8 @@
 .cm-editor.cm-wysiwym-dark .cm-wysiwym-component-shortcode.component-blockquote cite {
   color: #a1a1aa !important;
 }
-.cm-editor.cm-wysiwym-dark .cm-wysiwym-component-shortcode.component-pullquote {
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-component-shortcode.component-pullquote,
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-component-shortcode.component-pullquote * {
   border-top-color: #4f46e5 !important;
   border-bottom-color: #4f46e5 !important;
   color: #fafafa !important;
@@ -2038,7 +2064,8 @@
 .traven-preview.cm-wysiwym-dark .traven-component-blockquote cite {
   color: #a1a1aa !important;
 }
-.traven-preview.cm-wysiwym-dark .traven-component-pullquote {
+.traven-preview.cm-wysiwym-dark .traven-component-pullquote,
+.traven-preview.cm-wysiwym-dark .traven-component-pullquote * {
   border-top-color: #4f46e5 !important;
   border-bottom-color: #4f46e5 !important;
   color: #fafafa !important;

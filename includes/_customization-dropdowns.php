@@ -52,12 +52,12 @@ if (is_dir($skins_dir)) {
             $label = format_customization_name($file, "skin");
             $skins[$val] = $label;
         }
-        // Sort skins: skin-default first, then alphabetical
+        // Sort skins: skin-starter first, then alphabetical
         uksort($skins, function ($a, $b) {
-            if ($a === "skin-default") {
+            if ($a === "skin-starter") {
                 return -1;
             }
-            if ($b === "skin-default") {
+            if ($b === "skin-starter") {
                 return 1;
             }
             return strcasecmp($a, $b);
@@ -107,12 +107,12 @@ if ($demo_files) {
 // Fallback to defaults if glob failed or directories are empty
 if (empty($skins)) {
     $skins = [
-        "skin-default" => "Default Skin",
+        "skin-starter" => "Starter Skin",
         "skin-colorful" => "Colorful Skin",
         "skin-dark" => "Dark Skin",
         "skin-editorial" => "Editorial Skin",
+        "skin-light" => "Light Skin",
         "skin-modern" => "Modern Skin",
-        "skin-starter" => "Starter Skin",
     ];
 }
 if (empty($toolbars)) {
@@ -133,7 +133,7 @@ if (empty($demos)) {
 // Generate skin options
 $skin_options_html = "";
 foreach ($skins as $value => $label) {
-    $selected = $value === "skin-default" ? " selected" : "";
+    $selected = $value === "skin-starter" ? " selected" : "";
     $skin_options_html .= "  <option value=\"{$value}\"{$selected}>{$label}</option>\n";
 }
 
@@ -185,7 +185,6 @@ $customization_dropdowns_html =
   const toolbarSelect = document.getElementById("toolbar-select");
   const themeSelect = document.getElementById("theme-select");
   const vimCheckbox = document.getElementById("vim-checkbox");
-  const skinLink = document.getElementById("editor-skin-link");
   const toolbarLink = document.getElementById("editor-toolbar-link");
 
   function applySelection(selectEl, linkEl, storageKey, pathPrefix) {
@@ -210,7 +209,44 @@ $customization_dropdowns_html =
     });
   }
 
-  applySelection(skinSelect, skinLink, "traven-selected-skin", "assets/skins/");
+  function applySkinSelection(selectEl, storageKey, pathPrefix) {
+    if (!selectEl) return;
+
+    function updateSkin(value) {
+      let linkEl = document.getElementById("editor-skin-link");
+      if (value === "skin-starter") {
+        if (linkEl) {
+          linkEl.remove();
+        }
+      } else {
+        if (!linkEl) {
+          linkEl = document.createElement("link");
+          linkEl.id = "editor-skin-link";
+          linkEl.rel = "stylesheet";
+          document.head.appendChild(linkEl);
+        }
+        linkEl.href = pathPrefix + value + ".css";
+      }
+    }
+
+    // 1. Load saved selection from LocalStorage
+    const savedValue = localStorage.getItem(storageKey);
+    if (savedValue && Array.from(selectEl.options).some(opt => opt.value === savedValue)) {
+      selectEl.value = savedValue;
+      updateSkin(savedValue);
+    } else {
+      updateSkin(selectEl.value);
+    }
+
+    // 2. Listen for changes to save and apply
+    selectEl.addEventListener("change", (e) => {
+      const selectedValue = e.target.value;
+      localStorage.setItem(storageKey, selectedValue);
+      updateSkin(selectedValue);
+    });
+  }
+
+  applySkinSelection(skinSelect, "traven-selected-skin", "assets/skins/");
   applySelection(toolbarSelect, toolbarLink, "traven-selected-toolbar", "assets/toolbars/");
 
   // Handle Theme Selection

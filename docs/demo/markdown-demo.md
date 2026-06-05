@@ -2,7 +2,7 @@
 
 TAKE ME FOR A SPIN.  Everything you see here is a **fully live editor.** Type anywhere, like *just right here, for instance.* Everything works using the Markdown you know and love, along with a few shortcodes thrown in to make Markdown more powerful (but they are completely optional, so go ahead and ignore them if shortcodes are not your thing).
 
-### What You See Is What You Get (*and mean*)
+### What You See Is What You Get (*and what you mean*)
 
 Writing in Traven is designed to be completely distraction-free. As you type, the underlying Markdown formatting characters are displayed inline to keep you close to the source, but they disappear the moment your cursor moves away. This approach, known as WYSIWYM (What You See Is What You Mean), combines the simplicity of plaintext Markdown with the rich formatting of a visual word processor. To find out more about Traven and how to integrate the editor in your own projects, go to **[traven.dev](https://traven.dev)**
 
@@ -21,7 +21,7 @@ Writers hate overload. Notification badges, cluttered editing interfaces, and co
 Want to draw attention to key phrases? Add ==highlight formatting== directly on inline text using standard double equals delimiters, or use a shortcode. The shortcode option is great for wrapping block-level or inline-level text:
 [highlight]This text block is highlighted using the highlight shortcode. Pro-tip: Click on this text to discover the delimiters. You can edit them anything here by yourself, even the shortcodes.[/highlight]
 
-[image src="https://traven.dev/img/sampleimg.png" align="center" size="large" alt="Image with a caption. Edit me!" caption="Unlike plain Markdown, images can have captions and positioning"]
+[image src="https://traven.dev/img/sample.jpg" align="center" size="large" alt="Image with a caption. Edit me!" caption="Unlike plain Markdown, images can have captions and positioning"]
 
 You can easily structure your thoughts using bulleted or nested lists:
 1.  **First Item**: This is a numbered list item.
@@ -30,7 +30,7 @@ You can easily structure your thoughts using bulleted or nested lists:
     *   Sub-bullet two
 3.  **Third Item**: Back to the parent list.
 
-### Code blocks ...and optional syntax highlighting
+### Code blocks (with optional syntax highlighting)
 Code blocks are clean, readable, and support dynamic syntax highlighting. To keep the core editor bundle small, language syntax highlighting is opt-in and can be chosen when you embed the editor.
 
 Here is an example of a code block:

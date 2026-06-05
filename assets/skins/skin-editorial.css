@@ -200,6 +200,7 @@
   font-style: italic;
   color: #57534e;
   line-height: 1.3 !important;
+  font-family: 'Goudy Bookletter 1911', Georgia, serif !important;
 }
 
 /* Elegant decorative opening quote mark */
@@ -1126,6 +1127,7 @@
 .traven-preview blockquote:not(.traven-component-pullquote),
 .traven-preview blockquote:not(.traven-component-pullquote) * {
   line-height: 1.3 !important;
+  font-family: 'Goudy Bookletter 1911', Georgia, serif !important;
 }
 
 .traven-preview blockquote:not(.traven-component-pullquote)::before {
@@ -1586,7 +1588,7 @@
   border: none !important;
   width: 100% !important;
   box-sizing: border-box !important;
-  margin: 0 !important;
+  margin: 0 auto !important;
   padding: 0 !important;
   font-size: 1.3em !important;
   font-weight: bold;
@@ -1594,11 +1596,15 @@
   color: #111111;
   background-color: transparent !important;
   line-height: 1.05 !important;
+  font-family: 'Goudy Bookletter 1911', Georgia, serif !important;
 }
 
 .cm-wysiwym-component-shortcode.component-pullquote,
 .cm-wysiwym-component-shortcode.component-pullquote * {
   line-height: 1.05 !important;
+  font-style: normal !important;
+  text-align: center !important;
+  font-family: 'Goudy Bookletter 1911', Georgia, serif !important;
 }
 
 .cm-wysiwym-component-shortcode.component-pullquote blockquote {
@@ -1653,6 +1659,7 @@
 .cm-wysiwym-component-shortcode.component-blockquote blockquote,
 .cm-wysiwym-component-shortcode.component-blockquote blockquote * {
   line-height: 1.3 !important;
+  font-family: 'Goudy Bookletter 1911', Georgia, serif !important;
 }
 
 .cm-wysiwym-component-shortcode.component-blockquote blockquote::before {
@@ -1703,6 +1710,11 @@
   margin: 0 !important;
 }
 
+.cm-wysiwym-component-shortcode.component-info,
+.cm-wysiwym-component-shortcode.component-info * {
+  font-family: 'Goudy Bookletter 1911', Georgia, serif !important;
+}
+
 .cm-wysiwym-component-shortcode.component-info .component-body p {
   font-size: 18px !important;
   line-height: 1.1 !important;
@@ -1720,6 +1732,11 @@
   color: #1a1a1a !important;
   padding: 16px !important;
   margin: 0 !important;
+}
+
+.cm-wysiwym-component-shortcode.component-warning,
+.cm-wysiwym-component-shortcode.component-warning * {
+  font-family: 'Goudy Bookletter 1911', Georgia, serif !important;
 }
 
 .cm-wysiwym-component-shortcode.component-warning .component-body p {
@@ -1776,6 +1793,7 @@
 .traven-preview .traven-component-blockquote,
 .traven-preview .traven-component-blockquote * {
   line-height: 1.3 !important;
+  font-family: 'Goudy Bookletter 1911', Georgia, serif !important;
 }
 
 .traven-preview .traven-component-blockquote::before {
@@ -1832,7 +1850,7 @@
   border: none !important;
   width: 100% !important;
   box-sizing: border-box !important;
-  margin: 24px 0 !important;
+  margin: 24px auto !important;
   padding: 0 !important;
   font-size: 1.3em !important;
   font-weight: bold !important;
@@ -1841,6 +1859,7 @@
   color: #111111;
   background-color: transparent !important;
   line-height: 1.05 !important;
+  font-family: 'Goudy Bookletter 1911', Georgia, serif !important;
 }
 
 .traven-preview .traven-component-pullquote,
@@ -1848,6 +1867,8 @@
   line-height: 1.05 !important;
   font-style: normal !important;
   font-weight: bold !important;
+  text-align: center !important;
+  font-family: 'Goudy Bookletter 1911', Georgia, serif !important;
 }
 
 .traven-preview .traven-component-pullquote p {
@@ -1893,6 +1914,11 @@
   margin: 16px 0 !important;
 }
 
+.traven-preview .traven-component-info,
+.traven-preview .traven-component-info * {
+  font-family: 'Goudy Bookletter 1911', Georgia, serif !important;
+}
+
 .traven-preview .traven-component-info p {
   font-size: 18px !important;
   line-height: 1.1 !important;
@@ -1910,6 +1936,11 @@
   color: #1a1a1a !important;
   padding: 16px !important;
   margin: 16px 0 !important;
+}
+
+.traven-preview .traven-component-warning,
+.traven-preview .traven-component-warning * {
+  font-family: 'Goudy Bookletter 1911', Georgia, serif !important;
 }
 
 .traven-preview .traven-component-warning p {
@@ -1942,7 +1973,8 @@
   color: #cbd5e1 !important;
 }
 
-.cm-editor.cm-wysiwym-dark .cm-wysiwym-component-shortcode.component-pullquote {
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-component-shortcode.component-pullquote,
+.cm-editor.cm-wysiwym-dark .cm-wysiwym-component-shortcode.component-pullquote * {
   color: #f8fafc !important;
   background-color: transparent !important;
 }
@@ -1973,7 +2005,8 @@
   color: #a8a29e !important;
 }
 
-.traven-preview.cm-wysiwym-dark .traven-component-pullquote {
+.traven-preview.cm-wysiwym-dark .traven-component-pullquote,
+.traven-preview.cm-wysiwym-dark .traven-component-pullquote * {
   color: #f8fafc !important;
   background-color: transparent !important;
 }
