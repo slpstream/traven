@@ -117,6 +117,9 @@
 
     // Instantiate editor after fonts are loaded to prevent CodeMirror coordinate measuring cache errors
     document.fonts.ready.then(() => {
+      // Enable Mermaid rendering support
+      TravenEditor.configureMermaid(true);
+
       window.editor = new TravenEditor({
         element: document.getElementById("editor"),
         sourceElement: document.getElementById("raw-editor"),

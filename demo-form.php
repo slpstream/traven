@@ -236,6 +236,9 @@ Try modifying the inputs in the form or editing the body text here to see how th
 
     // 4. Initialize Traven with only the Markdown body content
     document.fonts.ready.then(() => {
+      // Enable Mermaid rendering support
+      TravenEditor.configureMermaid(true);
+
       window.editor = new TravenEditor({
         element: document.getElementById("editor"),
         initialValue: markdown,

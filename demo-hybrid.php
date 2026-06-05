@@ -254,6 +254,9 @@ This demo illustrates a hybrid layout where:
 
     // 4. Initialize Traven Editor with side-by-side editing syncing
     document.fonts.ready.then(() => {
+      // Enable Mermaid rendering support
+      TravenEditor.configureMermaid(true);
+
       window.editor = new TravenEditor({
         element: document.getElementById("editor"),
         sourceElement: document.getElementById("raw-editor"),

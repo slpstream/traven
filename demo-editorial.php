@@ -293,6 +293,9 @@
   <script type="module">
     import { TravenEditor, DEFAULT_TOOLBAR } from "./dist/traven.js";
 
+    // Enable Mermaid rendering support
+    TravenEditor.configureMermaid(true);
+
     const initialText = `# A Quiet Place
 
 This might look like a web page, but there's a bit more to it than that: It is also a fully live editor. Type anywhere, like *just right here, for instance.* Traven's Editorial theme uses the display font **Macondo** for headings and  **Goudy Bookletter 1911** as its body typeface, along with a fixed, top-centered floating toolbar. Switch between WYSIWYM, Markdown, and Preview tabs above to view raw markdown or see what your work will look like when rendered as a static page.
@@ -454,6 +457,8 @@ Think of this page as an interactive sandbox, so use all the toys in the toolbar
         if (isPreview) {
           const previewEl = document.getElementById("html-preview");
           previewEl.innerHTML = window.editor.getContentHtml();
+          // Render Mermaid diagrams in HTML preview
+          TravenEditor.initMermaid(previewEl);
         }
 
         if (window.editor) {
