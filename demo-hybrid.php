@@ -6,13 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Traven Editor — Hybrid Editing Demo</title>
 
-  <!-- Preload Critical Fonts & Styles -->
-  <link rel="preload" href="assets/fonts/fonts.css" as="style">
-  <link rel="preload" href="assets/fonts/AtkinsonHyperlegibleNext-Regular.woff2" as="font" type="font/woff2"
-    crossorigin>
-  <link rel="preload" href="assets/fonts/mozilla-headline-v1-latin-700.woff2" as="font" type="font/woff2" crossorigin>
-
-  <link rel="stylesheet" href="assets/fonts/fonts.css">
+  <!-- Google Fonts CDN -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,700;1,400;1,700&family=Fira+Code:wght@400..700&family=Mozilla+Headline:wght@700;800;900&display=swap" rel="stylesheet">
 
 
   <link rel="stylesheet" href="assets/toolbars/toolbar-default.css" id="editor-toolbar-link">
@@ -22,9 +19,9 @@
 <body class="hybrid-demo">
 
   <?php
-  include 'includes/_customization-dropdowns.php';
+  include "includes/_customization-dropdowns.php";
   $header_nav_html = $customization_dropdowns_html;
-  include 'includes/_header.php';
+  include "includes/_header.php";
   ?>
 
   <main>
@@ -217,11 +214,11 @@ This demo illustrates a hybrid layout where:
         navigator.clipboard.writeText(textToCopy).then(() => {
           button.innerHTML = checkIconHtml;
           button.classList.add('copied');
-          
+
           if (timeoutId) {
             clearTimeout(timeoutId);
           }
-          
+
           timeoutId = setTimeout(() => {
             button.innerHTML = copyIconHtml;
             button.classList.remove('copied');

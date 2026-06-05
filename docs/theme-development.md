@@ -68,17 +68,17 @@ All six skins live in `assets/skins/` and are auto-discovered by the customizati
 
 | Skin | Design intent | Body font | Mono font | Gutter | Headings | Caret | Accent |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| `skin-light.css` | Neutral Slate — baseline | `Atkinson Hyperlegible Next` → system stack | `Fira Code` → monospace | Visible, soft slate | Bold sans, tight | Slate 900 | Slate 600 |
-| `skin-colorful.css` | Warm Rust — expressive | `Atkinson Hyperlegible Next` | `Fira Code` | Visible, indigo active | Bold sans, bright rust caret | `#cc4a0a` rust | `#3b82f6` indigo |
-| `skin-dark.css` | Premium Dark Slate | `Atkinson Hyperlegible Next` | `Fira Code` | Visible, dim slate | Bold sans, near-white | Sky `#38bdf8` | Sky `#38bdf8` |
+| `skin-light.css` | Neutral Slate — baseline | `Atkinson Hyperlegible Next` (Google Fonts) | `Fira Code` (Google Fonts) | Visible, soft slate | Bold sans, tight | Slate 900 | Slate 600 |
+| `skin-colorful.css` | Warm Rust — expressive | `Atkinson Hyperlegible Next` (Google Fonts) | `Fira Code` (Google Fonts) | Visible, indigo active | Bold sans, bright rust caret | `#cc4a0a` rust | `#3b82f6` indigo |
+| `skin-dark.css` | Premium Dark Slate | `Atkinson Hyperlegible Next` (Google Fonts) | `Fira Code` (Google Fonts) | Visible, dim slate | Bold sans, near-white | Sky `#38bdf8` | Sky `#38bdf8` |
 | `skin-editorial.css` | Minimalist Focus — no chrome | `Goudy Bookletter 1911` (serif) | `Victor Mono` | **Hidden** | `Macondo` (h1–h3), Goudy (h4–h6) | Ink black | None — pure paper |
 | `skin-modern.css` | Modern Clean — premium | `Epunda Slab` (serif) | `JetBrains Mono` | Visible, borderless | `Saira Condensed` (sans) | Zinc 900 | `#115e59` teal |
 | `skin-starter.css` ⭐ | Modern Georgia — base (**bundled default**) | `Georgia` (serif) | System monospace | Visible, soft slate | System sans, bold | Slate 900 | Slate 600 |
 
 Other dimensions worth knowing:
 
-* **External requests.** `skin-light.css`, `skin-dark.css`, and `skin-starter.css` load zero web fonts. `skin-colorful.css`, `skin-editorial.css`, and `skin-modern.css` `@import` from Google Fonts by default. See [§10](#10-telemetry--offline-self-hosting) for how to switch a skin to local fonts.
-* **First-load fonts.** `skin-light.css`, `skin-dark.css`, and `skin-starter.css` declare `'Atkinson Hyperlegible Next'` or generic system fonts in the stack but the files do not import them. The host page is expected to load them if custom (the demos do via `assets/fonts/fonts.css`).
+* **External requests.** `skin-light.css`, `skin-dark.css`, `skin-colorful.css`, `skin-editorial.css`, and `skin-modern.css` `@import` from Google Fonts by default. `skin-starter.css` loads zero web fonts. See [§10](#10-telemetry--offline-self-hosting) for how to switch a skin to local fonts.
+* **First-load fonts.** `skin-light.css` and `skin-dark.css` import Atkinson Hyperlegible Next and Fira Code from Google Fonts. `skin-starter.css` uses system fonts only. The demos also load all three demo fonts (Atkinson, Fira Code, Mozilla Headline) from Google Fonts CDN directly in their HTML.
 * **Blockquote treatment.** The `skin-light`, `skin-colorful`, `skin-dark`, `skin-modern`, and `skin-starter` themes use a thick left bar. The `skin-editorial` theme uses a decorative `::before` curly-quote mark, with the wavy line dividers on pullquotes.
 * **Info / warning cards.** The `skin-light`, `skin-colorful`, `skin-dark`, `skin-modern`, and `skin-starter` themes render these as soft rounded/bordered cards. The `skin-editorial` theme uses the "hand-drawn" organic border-radius (`255px 15px 225px 15px / 15px 225px 15px 255px`) for a handcrafted look.
 * **Pullquote dividers.** Only the `skin-editorial` theme renders the decorative wave SVG above and below `.traven-component-pullquote`; the other themes use simple top/bottom rules.
@@ -959,9 +959,9 @@ That said, some themes load web fonts from Google Fonts. The default posture is:
 
 | Skin | Network footprint | How to go offline |
 | :--- | :--- | :--- |
-| `skin-light.css` | None | Add `<link rel="stylesheet" href="path/to/assets/fonts/fonts.css">` to your `<head>`. |
-| `skin-dark.css` | None | Same. |
-| `skin-colorful.css` | Google Fonts CDN | Remove or replace the `@import url(...Google Fonts...)` at the top of the file with `@import url('../fonts/fonts.css');`. The repo's `assets/fonts/` already contains the binary files. |
+| `skin-light.css` | Google Fonts CDN | Replace the `@import url(...Google Fonts...)` at the top of the file with `@import url('/path/to/your/local-fonts.css');` (and provide your own binary files). |
+| `skin-dark.css` | Google Fonts CDN | Same. |
+| `skin-colorful.css` | Google Fonts CDN | Remove or replace the `@import url(...Google Fonts...)` at the top of the file with `@import url('/path/to/your/local-fonts.css');`. |
 | `skin-editorial.css` | Google Fonts CDN | Same. |
 | `skin-modern.css` | Google Fonts CDN | Same. |
 
@@ -987,7 +987,7 @@ A quick lookup of the assets that each shipping theme overrides or extends.
 
 | Concern | `skin-light` | `skin-colorful` | `skin-dark` | `skin-editorial` | `skin-modern` |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **External `@import`** | — | Google Fonts | — | Google Fonts | Google Fonts |
+| **External `@import`** | Google Fonts | Google Fonts | Google Fonts | Google Fonts | Google Fonts |
 | **Body font** | Atkinson + system | Atkinson + system | Atkinson + system | Goudy Bookletter 1911 | Epunda Slab + system |
 | **Mono font** | Fira Code | Fira Code | Fira Code | Victor Mono | JetBrains Mono |
 | **Gutter visible?** | Yes | Yes | Yes | **No** (`display: none`) | Yes |

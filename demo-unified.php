@@ -6,13 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Traven Editor — Unified Editing Demo</title>
 
-  <!-- Preload Critical Fonts & Styles -->
-  <link rel="preload" href="assets/fonts/fonts.css" as="style">
-  <link rel="preload" href="assets/fonts/AtkinsonHyperlegibleNext-Regular.woff2" as="font" type="font/woff2"
-    crossorigin>
-  <link rel="preload" href="assets/fonts/mozilla-headline-v1-latin-700.woff2" as="font" type="font/woff2" crossorigin>
-
-  <link rel="stylesheet" href="assets/fonts/fonts.css">
+  <!-- Google Fonts CDN -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,700;1,400;1,700&family=Fira+Code:wght@400..700&family=Mozilla+Headline:wght@700;800;900&display=swap" rel="stylesheet">
 
 
   <link rel="stylesheet" href="assets/toolbars/toolbar-default.css" id="editor-toolbar-link">
@@ -22,9 +19,9 @@
 <body class="unified-demo">
 
   <?php
-  include 'includes/_customization-dropdowns.php';
+  include "includes/_customization-dropdowns.php";
   $header_nav_html = $customization_dropdowns_html;
-  include 'includes/_header.php';
+  include "includes/_header.php";
   ?>
 
   <main>
@@ -202,11 +199,11 @@ This demo illustrates a unified layout where:
         navigator.clipboard.writeText(textToCopy).then(() => {
           button.innerHTML = checkIconHtml;
           button.classList.add('copied');
-          
+
           if (timeoutId) {
             clearTimeout(timeoutId);
           }
-          
+
           timeoutId = setTimeout(() => {
             button.innerHTML = copyIconHtml;
             button.classList.remove('copied');
@@ -335,7 +332,7 @@ This demo illustrates a unified layout where:
         wysiwymTab.classList.toggle('is-active', isWysiwym);
         markdownTab.classList.toggle('is-active', isMarkdown);
         previewTab.classList.toggle('is-active', isPreview);
-        
+
         editorWrapper.classList.toggle('mode-wysiwym', isWysiwym);
         editorWrapper.classList.toggle('mode-markdown', isMarkdown);
         editorWrapper.classList.toggle('mode-preview', isPreview);
@@ -366,7 +363,7 @@ This demo illustrates a unified layout where:
           rawEditorEl.style.display = "none";
           previewActions.style.display = "flex";
           copyMarkdownBtn.style.display = "none";
-          
+
           if (showRawHtml) {
             previewEl.style.display = "none";
             rawPreviewEl.style.display = "block";
@@ -374,7 +371,7 @@ This demo illustrates a unified layout where:
             previewEl.style.display = "block";
             rawPreviewEl.style.display = "none";
           }
-          
+
           // Apply custom rendering or fallback rendering
           const isDark = localStorage.getItem("traven-selected-theme") === "dark";
           if (isDark) {
@@ -413,7 +410,7 @@ This demo illustrates a unified layout where:
       // Accordion toggle logic
       const accordionTrigger = document.getElementById('metadata-accordion-trigger');
       const formCard = document.querySelector('.form-card');
-      
+
       accordionTrigger.addEventListener('click', () => {
         formCard.classList.toggle('is-collapsed');
       });

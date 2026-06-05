@@ -12,28 +12,22 @@ By default, the core editor skins (like `skin-light.css` and `skin-starter.css`)
 
 ## Going 100% Offline (Self-Hosting Fonts)
 
-If you are deploying Traven in a strictly firewalled, offline, or high-privacy environment, but still want to use alternative themes which use external fonts, you can easily disable the calls to Google Fonts.
+If you are deploying Traven in a strictly firewalled, offline, or high-privacy environment, you can easily self-host fonts by providing your own font files and updating the skin's `@import` rule.
 
-For demo themes like the sample `skin-colorful.css`, all the required font files are already included in the Traven repository. Follow these simple steps to make your editor completely self-contained:
+### Step 1: Create Your Own Font Files
+Create a `fonts/` directory in your project with the binary font files (`.woff2`) and a stylesheet that defines `@font-face` rules for the font families your skin uses (e.g., Atkinson Hyperlegible Next, Fira Code, Mozilla Headline).
 
-### Step 1: Copy the Font Folder
-Copy the **`assets/fonts/`** folder (which contains both the raw font files and the `fonts.css` configuration file) from the Traven project into your own website or application's public assets folder.
-
-### Step 2: Load the Fonts in Your HTML
-In the `<head>` of your website or app pages where the editor is used, load your local `fonts.css`:
+### Step 2: Load Your Local Fonts
+In the `<head>` of your website or app pages where the editor is used, link your custom stylesheet:
 ```html
-<link rel="stylesheet" href="path/to/your/assets/fonts/fonts.css">
+<link rel="stylesheet" href="path/to/your/fonts/fonts.css">
 ```
 
-### Step 3: Tell the Editor to Use Your Local Fonts
-If you are using a theme or pre-built stylesheet that fetches fonts from the internet:
-1. Open the stylesheet file (e.g., **`dist/traven.css`** or the active theme's `.css` file).
-2. Remove or comment out the very first line starting with `@import`:
-   ```css
-   /* Delete or comment out this line: */
-   @import "https://fonts.googleapis.com/...";
-   ```
-3. Save the file.
+### Step 3: Update the Skin's Import Rule
+Open the skin's `.css` file (e.g., `skin-light.css`, `skin-dark.css`, `skin-colorful.css`) and replace the `@import url(...Google Fonts...)` line at the top with:
+```css
+@import url('/path/to/your/fonts/fonts.css');
+```
 
 Now, Traven will render using your locally hosted font files, and no external calls will be made to Google Fonts.
 
@@ -41,11 +35,11 @@ Now, Traven will render using your locally hosted font files, and no external ca
 
 ## Why Google Fonts?
 
-Google Fonts loading is **disabled** by default. If you use Traven with its standard skin, no Google Fonts are loaded and no connections will be made to Google servers at any time.
+Google Fonts loading is **enabled by default** for `skin-light.css`, `skin-dark.css`, and `skin-colorful.css` — they import Atkinson Hyperlegible Next and Fira Code from the Google Fonts CDN via an `@import` at the top of the file. The `skin-starter.css` uses only system fonts and makes no external requests.
 
-For secondary or alternative skins, external CDN imports are used to prioritize **ease of deployment and testing**. It allows developers to quickly preview different design aesthetics (like the Colorful theme) without needing to configure server assets or copy local binary files beforehand. 
+This default behavior prioritizes **ease of deployment and visual consistency** — developers get accessible, beautiful typography out of the box without needing to configure server assets or copy local binary files. The `skin-editorial.css` and `skin-modern.css` also import their own specialty fonts from Google Fonts.
 
-However, because these settings are contained entirely within modular CSS theme files, they are completely customizable. You can easily switch to a fully offline setup at any time by copying the preloaded font files and updating the theme's import rule as described above.
+Since these settings are contained entirely within modular CSS theme files, they are completely customizable. You can easily switch to a fully offline setup at any time by providing your own font files and updating the theme's `@import` rule as described in the "Going 100% Offline" section above.
 
 ---
 
@@ -55,26 +49,21 @@ Traven supports customizable layout skins. Each skin handles asset loading depen
 
 ### Light Skin (`skin-light.css`)
 This is the light theme skin.
-* **No Network Footprint:** It does not link or import any external fonts or styles.
-* **Fallback Behavior:** It uses your local system font stack by default (rendering `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto` for the body, and `monospace` for code blocks).
-* **Self-Hosting Option:** You can still load custom self-hosted fonts alongside this theme by manually linking `assets/fonts/fonts.css` in your HTML.
+* **Default Behavior:** It imports Atkinson Hyperlegible Next and Fira Code from the Google Fonts CDN via an `@import` at the top of the file.
+* **Self-Hosting Option:** To make this theme 100% offline-ready, replace the Google Fonts `@import` at the top of `skin-light.css` with `@import url('/path/to/your/local-fonts.css');` (and provide your own binary files).
 
 ### Colorful Skin (`skin-colorful.css`)
 This is a sample alternative theme skin.
 * **Default Behavior:** It imports Atkinson Hyperlegible Next and Fira Code from the Google Fonts CDN for quick visual polish out-of-the-box.
-* **Self-Hosting Option:** To make this theme 100% offline-ready, change the Google Fonts import at the top of `skin-colorful.css` to import your local stylesheet instead:
-  ```css
-  @import url('../fonts/fonts.css');
-  ```
+* **Self-Hosting Option:** To make this theme 100% offline-ready, replace the Google Fonts import at the top of `skin-colorful.css` with `@import url('/path/to/your/local-fonts.css');` (and provide your own binary files).
 
 ### Dark Skin (`skin-dark.css`)
 This is a premium dark theme skin.
-* **No Network Footprint:** It does not link or import any external fonts or styles.
-* **Fallback Behavior:** It uses your local system font stack by default (rendering `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto` for the body, and `monospace` for code blocks).
-* **Self-Hosting Option:** You can still load custom self-hosted fonts alongside this theme by manually linking `assets/fonts/fonts.css` in your HTML.
+* **Default Behavior:** It imports Atkinson Hyperlegible Next and Fira Code from the Google Fonts CDN via an `@import` at the top of the file.
+* **Self-Hosting Option:** To make this theme 100% offline-ready, replace the Google Fonts `@import` at the top of `skin-dark.css` with `@import url('/path/to/your/local-fonts.css');` (and provide your own binary files).
 
 ### Starter Skin (`skin-starter.css`)
 This is a barebones starter theme skin.
 * **No Network Footprint:** It does not link or import any external fonts or styles.
 * **Fallback Behavior:** It uses your local system font stack by default (rendering Georgia/Times for the body, and system monospace for code blocks).
-* **Self-Hosting Option:** You can load custom self-hosted fonts alongside this theme by manually linking `assets/fonts/fonts.css` in your HTML.
+* **Self-Hosting Option:** To use custom fonts with this theme, provide your own font files and stylesheet (e.g., `@import url('/path/to/your/fonts/fonts.css');` at the top of `skin-starter.css` or link it in your HTML).

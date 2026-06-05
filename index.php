@@ -4,9 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Traven — Developer Playground & Demos</title>
-  
-  <!-- Self-hosted Fonts -->
-  <link rel="stylesheet" href="assets/fonts/fonts.css">
+
+  <!-- Google Fonts CDN (Atkinson Hyperlegible Next, Fira Code, Mozilla Headline) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,700;1,400;1,700&family=Fira+Code:wght@400..700&family=Mozilla+Headline:wght@700;800;900&display=swap" rel="stylesheet">
 
   <style>
     :root {
@@ -484,7 +486,7 @@
   <header>
     <a href="index.php" class="brand">
       <div class="brand-logo">
-        <?php readfile('assets/images/traven-wordmark.svg'); ?>
+        <?php readfile("assets/images/traven-wordmark.svg"); ?>
       </div>
     </a>
     <div class="header-nav">
@@ -507,7 +509,7 @@
       <p>Welcome to the local development dashboard. Use this playground to explore, test, and adapt Traven Editor's various styling, metadata management, and presentation configuration modes.</p>
     </div>
 
-    
+
     <div class="demo-grid">
       <!-- Card 1: Inline YAML -->
       <a href="demo-inline.php" class="demo-card">
@@ -627,7 +629,7 @@
       </a>
 
 
-    
+
     <div class="resources-grid">
       <div class="info-card">
         <h3>
@@ -646,7 +648,7 @@
 
   <footer>
     <div class="opensource-logo">
-      <?php readfile('assets/images/opensource-light.svg'); ?>
+      <?php readfile("assets/images/opensource-light.svg"); ?>
     </div>
     <div>&copy; 2026 SLPStream / Freedomware. Open source MIT licensed.</div>
   </footer>
