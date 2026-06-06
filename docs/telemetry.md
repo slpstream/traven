@@ -67,3 +67,9 @@ This is a barebones starter theme skin.
 * **No Network Footprint:** It does not link or import any external fonts or styles.
 * **Fallback Behavior:** It uses your local system font stack by default (rendering Georgia/Times for the body, and system monospace for code blocks).
 * **Self-Hosting Option:** To use custom fonts with this theme, provide your own font files and stylesheet (e.g., `@import url('/path/to/your/fonts/fonts.css');` at the top of `skin-starter.css` or link it in your HTML).
+
+### Custom Skin (`skin-custom.css`)
+This is a parameterized custom font theme.
+* **No Network Footprint:** The CSS stylesheet itself is completely static and makes no external calls.
+* **Fully Host-Configurable:** Font families are mapped using CSS variables. The hosting application has full control over how fonts are loaded (e.g., Google Fonts, self-hosted font assets, or local system fallbacks).
+* **Self-Hosting / Privacy Option:** When no JavaScript overrides are present, the theme falls back to local system fonts (mirroring `skin-starter.css` behavior). Developers can configure dynamic font loaders to point directly to self-hosted assets to keep the layout 100% offline.

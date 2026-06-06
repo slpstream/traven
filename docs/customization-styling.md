@@ -28,6 +28,9 @@ Simply swap the styling link in your HTML document:
 
 <!-- For a modern, high-contrast layout -->
 <link rel="stylesheet" href="assets/skins/skin-modern.css">
+
+<!-- For runtime-configurable dynamic fonts via JavaScript: -->
+<link rel="stylesheet" href="assets/skins/skin-custom.css">
 ```
 
 ### Loading Skins via CDN

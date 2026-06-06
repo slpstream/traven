@@ -124,6 +124,7 @@ $$\int_{-\infty}^{\infty} e^{-x^2} dx = \sqrt{\pi}$$
 $$\sum_{i=1}^{n} i^3 = \left(\frac{n(n+1)}{2}\right)^2$$
 
 # Ready to build?
-Get Traven with a **one-line include**. It is free and you can customize it with themes and toolbars that fit any look and feel that you prefer. To find out more about Traven and how to integrate the editor in your own projects, go to *[traven.dev](https://traven.dev)*
+Get Traven with a **one-line include**. It is free and you can customize it with themes and toolbars that fit any look and feel that you prefer. To find out more about Traven and how to integrate the editor in your own projects, go to *[traven.dev](https://traven.dev)* and read more about how easy Traven is to embed and what else you can do with the powerful configuration options that are hidden under the hood.
+
 
 

@@ -74,10 +74,11 @@ All six skins live in `assets/skins/` and are auto-discovered by the customizati
 | `skin-editorial.css` | Minimalist Focus — no chrome | `Goudy Bookletter 1911` (serif) | `Victor Mono` | **Hidden** | `Macondo` (h1–h3), Goudy (h4–h6) | Ink black | None — pure paper |
 | `skin-modern.css` | Modern Clean — premium | `Epunda Slab` (serif) | `JetBrains Mono` | Visible, borderless | `Saira Condensed` (sans) | Zinc 900 | `#115e59` teal |
 | `skin-starter.css` ⭐ | Modern Georgia — base (**bundled default**) | `Georgia` (serif) | System monospace | Visible, soft slate | System sans, bold | Slate 900 | Slate 600 |
+| `skin-custom.css` | Dynamic parameterized fonts | Configurable via `--traven-font-body` | Configurable via `--traven-font-mono` | Inherits starter | Configurable via `--traven-font-display` | Slate 900 | Slate 600 |
 
 Other dimensions worth knowing:
 
-* **External requests.** `skin-light.css`, `skin-dark.css`, `skin-colorful.css`, `skin-editorial.css`, and `skin-modern.css` `@import` from Google Fonts by default. `skin-starter.css` loads zero web fonts. See [§10](#10-telemetry--offline-self-hosting) for how to switch a skin to local fonts.
+* **External requests.** `skin-light.css`, `skin-dark.css`, `skin-colorful.css`, `skin-editorial.css`, and `skin-modern.css` `@import` from Google Fonts by default. `skin-starter.css` and `skin-custom.css` load zero web fonts on initial request. Custom font loading for `skin-custom.css` is handled dynamically at runtime by the host page. See [§10](#10-telemetry--offline-self-hosting) for self-hosting setups.
 * **First-load fonts.** `skin-light.css` and `skin-dark.css` import Atkinson Hyperlegible Next and Fira Code from Google Fonts. `skin-starter.css` uses system fonts only. The demos also load all three demo fonts (Atkinson, Fira Code, Mozilla Headline) from Google Fonts CDN directly in their HTML.
 * **Blockquote treatment.** The `skin-light`, `skin-colorful`, `skin-dark`, `skin-modern`, and `skin-starter` themes use a thick left bar. The `skin-editorial` theme uses a decorative `::before` curly-quote mark, with the wavy line dividers on pullquotes.
 * **Info / warning cards.** The `skin-light`, `skin-colorful`, `skin-dark`, `skin-modern`, and `skin-starter` themes render these as soft rounded/bordered cards. The `skin-editorial` theme uses the "hand-drawn" organic border-radius (`255px 15px 225px 15px / 15px 225px 15px 255px`) for a handcrafted look.
@@ -964,8 +965,35 @@ That said, some themes load web fonts from Google Fonts. The default posture is:
 | `skin-colorful.css` | Google Fonts CDN | Remove or replace the `@import url(...Google Fonts...)` at the top of the file with `@import url('/path/to/your/local-fonts.css');`. |
 | `skin-editorial.css` | Google Fonts CDN | Same. |
 | `skin-modern.css` | Google Fonts CDN | Same. |
+| `skin-custom.css` | None | Statically inherits local system fallback font stacks. Dynamics font injection is driven entirely by client-side JS on the host page. |
 
 If you ship a custom skin, you decide whether to `@import` from a CDN. The recommended pattern for a privacy-respecting theme is the same as the dark/default skin: use a system font stack in the CSS, and let the host page load self-hosted fonts via `<link rel="preload">` tags so that CodeMirror's first measurement cache is correct.
+
+### 10.1 Dynamic Parameterized Font Customization
+The custom overlay theme `skin-custom.css` implements font variables that can be overridden at runtime. This enables client-side selectors to hot-swap Display, Body, and Monospace fonts using standard CSS variables:
+
+```css
+:root {
+  --traven-font-display: 'Your Custom Display Font', sans-serif;
+  --traven-font-body: 'Your Custom Body Font', serif;
+  --traven-font-mono: 'Your Custom Monospace Font', monospace;
+}
+```
+
+To update fonts dynamically and ensure CodeMirror layout accuracy, perform the update and request a viewport measurement:
+
+```javascript
+// 1. Swap font variables dynamically
+document.documentElement.style.setProperty('--traven-font-body', "'Atkinson Hyperlegible Next', sans-serif");
+
+// 2. Trigger CodeMirror re-measurement once fonts are fully rendered
+document.fonts.ready.then(() => {
+  if (window.editor) {
+    const view = window.editor.getView();
+    if (view) view.requestMeasure();
+  }
+});
+```
 
 ---
 
@@ -985,22 +1013,22 @@ You can sanity-check a finished skin without writing tests:
 
 A quick lookup of the assets that each shipping theme overrides or extends.
 
-| Concern | `skin-light` | `skin-colorful` | `skin-dark` | `skin-editorial` | `skin-modern` |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **External `@import`** | Google Fonts | Google Fonts | Google Fonts | Google Fonts | Google Fonts |
-| **Body font** | Atkinson + system | Atkinson + system | Atkinson + system | Goudy Bookletter 1911 | Epunda Slab + system |
-| **Mono font** | Fira Code | Fira Code | Fira Code | Victor Mono | JetBrains Mono |
-| **Gutter visible?** | Yes | Yes | Yes | **No** (`display: none`) | Yes |
-| **Caret color** | Slate 900 | Rust `#cc4a0a` | Sky `#38bdf8` | Ink black | Zinc 900 |
-| **Selection color** | Slate 18% | Indigo 15% | Sky 35% | Slate 18% | Teal 15% |
-| **Blockquote treatment** | Left bar | Rust left bar | Slate left bar | Curly quote `::before` | Teal left bar |
-| **Pullquote treatment** | Top/bottom rules | Top/bottom rust rules | Top/bottom slate rules | Wavy SVG lines | Top/bottom teal rules |
-| **Info / Warning cards** | Soft rounded | Soft tinted | Slate variants | Hand-drawn border-radius | Teal / Orange borders |
-| **Image borders** | 1 px slate, 12 px radius | Same | Same | Same | No border, 8px radius |
-| **Component blockquote** | Slate left bar | Rust left bar | Slate left bar | Curly quote | Teal left bar |
-| **Math fallback colors** | Inherits from base | Inherits from base | Inherits from base | Light slate | Light zinc |
-| **Hidden gutter padding** | n/a | n/a | n/a | `0 8px` | n/a |
-| **Raw editor override** | n/a | n/a | n/a | Victor Mono 14 px / lh 2 | n/a |
+| Concern | `skin-light` | `skin-colorful` | `skin-dark` | `skin-editorial` | `skin-modern` | `skin-custom` |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **External `@import`** | Google Fonts | Google Fonts | Google Fonts | Google Fonts | Google Fonts | **None** |
+| **Body font** | Atkinson + system | Atkinson + system | Atkinson + system | Goudy Bookletter 1911 | Epunda Slab + system | Configurable |
+| **Mono font** | Fira Code | Fira Code | Fira Code | Victor Mono | JetBrains Mono | Configurable |
+| **Gutter visible?** | Yes | Yes | Yes | **No** (`display: none`) | Yes | Yes |
+| **Caret color** | Slate 900 | Rust `#cc4a0a` | Sky `#38bdf8` | Ink black | Zinc 900 | Slate 900 |
+| **Selection color** | Slate 18% | Indigo 15% | Sky 35% | Slate 18% | Teal 15% | Slate 18% |
+| **Blockquote treatment** | Left bar | Rust left bar | Slate left bar | Curly quote `::before` | Teal left bar | Left bar |
+| **Pullquote treatment** | Top/bottom rules | Top/bottom rust rules | Top/bottom slate rules | Wavy SVG lines | Top/bottom teal rules | Top/bottom rules |
+| **Info / Warning cards** | Soft rounded | Soft tinted | Slate variants | Hand-drawn border-radius | Teal / Orange borders | Soft rounded |
+| **Image borders** | 1 px slate, 12 px radius | Same | Same | Same | No border, 8px radius | Same |
+| **Component blockquote** | Slate left bar | Rust left bar | Slate left bar | Curly quote | Teal left bar | Left bar |
+| **Math fallback colors** | Inherits from base | Inherits from base | Inherits from base | Light slate | Light zinc | Inherits from base |
+| **Hidden gutter padding** | n/a | n/a | n/a | `0 8px` | n/a | n/a |
+| **Raw editor override** | n/a | n/a | n/a | Victor Mono 14 px / lh 2 | n/a | n/a |
 
 When you build a new theme, picking a "donor" from this table gets you 80% of the way there.
 

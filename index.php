@@ -628,6 +628,29 @@
         </div>
       </a>
 
+      <!-- Card 6: Dynamic Typography -->
+      <a href="demo-typography.php" class="demo-card">
+        <div class="card-top">
+          <div class="card-meta">
+            <div class="card-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 7V4h16v3M9 20h6M12 4v16"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="card-title">Dynamic Typography</div>
+          <div class="card-desc">Real-time customizable typography sandbox. Dynamically configure and pair Display, Body, and Monospace fonts using the skin-custom.css parameterized overlay.</div>
+        </div>
+        <div class="card-cta">
+          Launch Demo
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </div>
+      </a>
+    </div>
+
 
 
     <div class="resources-grid">

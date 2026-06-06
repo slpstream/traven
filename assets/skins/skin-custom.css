@@ -1,0 +1,47 @@
+/* assets/skins/skin-custom.css */
+/* Traven Editor — Custom Parameterized Font Skin
+   ==========================================================================
+   This skin inherits all layout and color rules from the bundled
+   skin-starter.css (inside dist/traven.css). It exists solely to be paired
+   with a host page that sets --traven-font-display, --traven-font-body,
+   and --traven-font-mono dynamically at runtime via JavaScript.
+
+   When no JS override is present, it falls back to clean system fonts.
+   This file contains no @import rules to respect privacy and offline usage.
+   ========================================================================== */
+
+:root {
+  /* Typography Variables - Fallbacks pointing to starter defaults */
+  --traven-font-display: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --traven-font-body: Georgia, Cambria, "Times New Roman", Times, serif;
+  --traven-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+/* Dark Mode Overrides (Inherit same variables, colors are defined in skin-starter) */
+.cm-wysiwym-dark,
+.traven-preview.cm-wysiwym-dark {
+  --traven-font-display: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --traven-font-body: Georgia, Cambria, "Times New Roman", Times, serif;
+  --traven-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+/* Ensure component headers use the custom Display font (700 bold weight) */
+.traven-component-header,
+.cm-wysiwym-component-shortcode .component-header {
+  font-family: var(--traven-font-display) !important;
+  font-weight: 700 !important;
+}
+
+/* Override Info component content to use the Body font (400 weight) */
+.cm-wysiwym-component-shortcode.component-info,
+.traven-preview .traven-component-info {
+  font-family: var(--traven-font-body) !important;
+  font-weight: 400 !important;
+}
+
+/* Override Warning component content to use the Body font (700 bold weight) */
+.cm-wysiwym-component-shortcode.component-warning,
+.traven-preview .traven-component-warning {
+  font-family: var(--traven-font-body) !important;
+  font-weight: 700 !important;
+}
