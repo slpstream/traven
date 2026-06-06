@@ -10,6 +10,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Goudy+Bookletter+1911&family=Macondo&family=Victor+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 
+  <!-- Core Editor Styles -->
+  <link rel="stylesheet" href="dist/traven.css" id="traven-core-styles">
+
   <link rel="stylesheet" href="assets/skins/skin-editorial.css" id="editor-skin-link">
   <link rel="stylesheet" href="assets/toolbars/toolbar-expandable.css?v=1.0.1" id="editor-toolbar-link">
 
