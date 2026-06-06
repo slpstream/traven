@@ -17,7 +17,7 @@ if ($isPost) {
         $message = "Warning: Content was empty.";
     }
 } else {
-    $submittedContent = "# Dynamic Typography Control\n\nWelcome to the Traven Typography sandbox! This page allows you to customize the fonts used in the editor and HTML preview in real-time.\n\nUse the dropdown selectors above to pair different Display (headings/components), Body (paragraphs), and Monospace (code/frontmatter) typefaces.\n\n## Custom Shortcode Elements\n\nNotice how the Display font affects headings, captions, and shortcodes like pullquotes:\n\n[pullquote]“Design is not just what it looks like and feels like. Design is how it works.” — Steve Jobs[/pullquote]\n\nAnd how the Mono font applies to inline code like `const version = '0.2.5';` and code blocks:\n\n```js\n// JetBrains Mono or Fira Code look great here!\nfunction greet(user) {\n  return `Hello, \${user}!`;\n}\n```\n\n[component name=\"info\"]This info card is also styled using the Display font for its header structure but inherits the Body typeface for content consistency.[/component]\n\nTry selecting different combinations and feel free to submit this form or view the static HTML preview!";
+    $submittedContent = "# LIVE HOT-SWAPPING OF FONTS\n\nWelcome to the Traven Typography sandbox! This page allows you to customize the fonts used in the editor and HTML preview in real-time.\n\nUse the dropdown selectors above to pair different Display (headings/components), Body (paragraphs), and Monospace (code/frontmatter) typefaces.\n\n## Custom Shortcode Elements\n\nNotice how the Display font affects headings, captions, and shortcodes like pullquotes:\n\n[pullquote]“Design is not just what it looks like and feels like. Design is how it works.” — Steve Jobs[/pullquote]\n\nAnd how the Mono font applies to inline code like `const version = '0.2.5';` and code blocks:\n\n```js\n// Code blocks look best with mono fonts like this one.\nfunction greet(user) {\n  return `Hello, \${user}!`;\n}\n```\n\n[component name=\"info\"]This info card is also styled using the Display font for its header structure but inherits the Body typeface for content consistency.[/component]\n\nTry selecting different combinations and feel free to submit this form or view the static HTML preview!";
 }
 ?>
 <!DOCTYPE html>
@@ -144,6 +144,56 @@ if ($isPost) {
     .control-select:focus {
       border-color: var(--accent-color);
       box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1);
+    }
+
+    /* Preset Grid & Mini-Cards Styling */
+    .preset-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+      width: 100%;
+    }
+
+    .preset-card {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 12px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-family: inherit;
+      outline: none;
+    }
+
+    .preset-card:hover {
+      border-color: var(--text-main);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      transform: translateY(-1px);
+    }
+
+    .preset-card.is-active {
+      border-color: var(--accent-color);
+      background: var(--accent-color);
+      color: #ffffff;
+    }
+
+    .preset-card.is-active .preset-desc {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .preset-name {
+      font-weight: 700;
+      font-size: 0.9em;
+    }
+
+    .preset-desc {
+      font-size: 0.75em;
+      color: var(--text-secondary);
+      line-height: 1.25;
     }
 
     /* Status Box */
@@ -351,9 +401,52 @@ if ($isPost) {
       <img src="assets/images/traven.png" alt="Traven Logo">
     </a>
 
-    <!-- Controls Panel -->
+    <!-- Controls Panel: Preset -->
     <div class="control-panel">
-      <h2 class="control-header">Typography Customizer</h2>
+      <h2 class="control-header">Choose a Preset</h2>
+      <div class="preset-grid">
+        <button type="button" class="preset-card" data-preset="default">
+          <span class="preset-name">Default</span>
+          <span class="preset-desc">System Default</span>
+        </button>
+        <button type="button" class="preset-card" data-preset="scifi">
+          <span class="preset-name">Sci-fi Tech</span>
+          <span class="preset-desc">Science Gothic + Rajdhani</span>
+        </button>
+        <button type="button" class="preset-card" data-preset="retro">
+          <span class="preset-name">Retro-Literary</span>
+          <span class="preset-desc">Special Elite + Goudy</span>
+        </button>
+        <button type="button" class="preset-card" data-preset="startup">
+          <span class="preset-name">Tech Startup</span>
+          <span class="preset-desc">Outfit + Inter</span>
+        </button>
+        <button type="button" class="preset-card" data-preset="literary">
+          <span class="preset-name">Longform Writing</span>
+          <span class="preset-desc">Playfair + Baskerville</span>
+        </button>
+        <button type="button" class="preset-card" data-preset="newsroom">
+          <span class="preset-name">Newsroom</span>
+          <span class="preset-desc">Oswald + Epunda Slab</span>
+        </button>
+        <button type="button" class="preset-card" data-preset="whimsical">
+          <span class="preset-name">Whimsical</span>
+          <span class="preset-desc">Macondo + Comic Relief</span>
+        </button>
+        <button type="button" class="preset-card" data-preset="casual">
+          <span class="preset-name">Casual</span>
+          <span class="preset-desc">Comic Relief + Inter</span>
+        </button>
+        <button type="button" class="preset-card" data-preset="typed">
+          <span class="preset-name">Typed Report</span>
+          <span class="preset-desc">Courier Prime + JetBrains</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Controls Panel: Mix and Match -->
+    <div class="control-panel">
+      <h2 class="control-header">Or Mix and Match</h2>
       <div class="control-row">
         <!-- Display Font Selector -->
         <div class="control-group">
@@ -436,7 +529,7 @@ if ($isPost) {
     const FONT_CATALOG = {
       display: [
         { name: "System Sans (Default)", css: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif', gfonts: null },
-        { name: "Saira Condensed",       css: "'Saira Condensed', sans-serif",           gfonts: "Saira+Condensed:wght@800;900" },
+        { name: "Science Gothic",        css: "'Science Gothic', sans-serif",            gfonts: "Science+Gothic:wght@700;900" },
         { name: "Macondo",               css: "'Macondo', cursive",                      gfonts: "Macondo" },
         { name: "Playfair Display",      css: "'Playfair Display', serif",               gfonts: "Playfair+Display:wght@700;900" },
         { name: "Oswald",                css: "'Oswald', sans-serif",                    gfonts: "Oswald:wght@700" },
@@ -448,7 +541,7 @@ if ($isPost) {
       body: [
         { name: "Georgia (Default)",     css: 'Georgia, Cambria, "Times New Roman", Times, serif', gfonts: null },
         { name: "Epunda Slab",           css: "'Epunda Slab', Georgia, serif",           gfonts: "Epunda+Slab:ital,wght@0,400;0,700;1,400;1,700" },
-        { name: "Atkinson Hyperlegible",  css: "'Atkinson Hyperlegible Next', sans-serif", gfonts: "Atkinson+Hyperlegible+Next:ital,wght@0,400;0,700;1,400;1,700" },
+        { name: "Rajdhani",              css: "'Rajdhani', sans-serif",                  gfonts: "Rajdhani:wght@500;600;700" },
         { name: "Goudy Bookletter 1911",  css: "'Goudy Bookletter 1911', serif",          gfonts: "Goudy+Bookletter+1911" },
         { name: "Inter",                 css: "'Inter', sans-serif",                     gfonts: "Inter:wght@400;600;700" },
         { name: "Libre Baskerville",     css: "'Libre Baskerville', serif",              gfonts: "Libre+Baskerville:ital,wght@0,400;0,700;1,400" },
@@ -458,7 +551,7 @@ if ($isPost) {
       mono: [
         { name: "System Mono (Default)",  css: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace', gfonts: null },
         { name: "JetBrains Mono",        css: "'JetBrains Mono', monospace",             gfonts: "JetBrains+Mono:ital,wght@0,400;0,700;1,400;1,700" },
-        { name: "Fira Code",             css: "'Fira Code', monospace",                  gfonts: "Fira+Code:wght@400;700" },
+        { name: "Share Tech Mono",       css: "'Share Tech Mono', monospace",            gfonts: "Share+Tech+Mono" },
         { name: "Victor Mono",           css: "'Victor Mono', monospace",                gfonts: "Victor+Mono:ital,wght@0,400;0,700;1,400;1,700" },
         { name: "Courier Prime",         css: "'Courier Prime', monospace",              gfonts: "Courier+Prime:ital,wght@0,400;0,700;1,400;1,700" }
       ]
@@ -509,10 +602,49 @@ if ($isPost) {
       });
     }
 
+    const PRESETS = {
+      default:   { display: 0, body: 0, mono: 0 },
+      scifi:     { display: 1, body: 2, mono: 2 },
+      retro:     { display: 6, body: 3, mono: 3 },
+      startup:   { display: 5, body: 4, mono: 1 },
+      literary:  { display: 3, body: 5, mono: 4 },
+      newsroom:  { display: 4, body: 1, mono: 1 },
+      whimsical: { display: 2, body: 6, mono: 4 },
+      casual:    { display: 7, body: 4, mono: 3 },
+      typed:     { display: 8, body: 7, mono: 1 }
+    };
+
+    function updatePresetDropdownState() {
+      const selectDisplay = document.getElementById('select-display').value;
+      const selectBody = document.getElementById('select-body').value;
+      const selectMono = document.getElementById('select-mono').value;
+
+      let matchedPreset = 'custom';
+      for (const [key, config] of Object.entries(PRESETS)) {
+        if (
+          config.display === parseInt(selectDisplay, 10) &&
+          config.body === parseInt(selectBody, 10) &&
+          config.mono === parseInt(selectMono, 10)
+        ) {
+          matchedPreset = key;
+          break;
+        }
+      }
+
+      // Update active states on preset cards
+      document.querySelectorAll('.preset-card').forEach(card => {
+        const isMatch = card.getAttribute('data-preset') === matchedPreset;
+        card.classList.toggle('is-active', isMatch);
+      });
+
+      localStorage.setItem('traven-custom-font-preset', matchedPreset);
+    }
+
     // Populate selectors and restore settings
     function setupDropdowns() {
       const roles = ['display', 'body', 'mono'];
 
+      // Populate options
       roles.forEach(role => {
         const select = document.getElementById(`select-${role}`);
         const optionsList = FONT_CATALOG[role];
@@ -523,20 +655,58 @@ if ($isPost) {
           opt.textContent = font.name;
           select.appendChild(opt);
         });
+      });
 
-        // Restore saved index
-        const savedIdx = localStorage.getItem(`traven-custom-font-${role}`);
-        if (savedIdx !== null && optionsList[savedIdx]) {
-          select.value = savedIdx;
-          applyFont(role, savedIdx);
-        } else {
-          select.value = 0;
-          applyFont(role, 0);
-        }
+      // Restore selections
+      const savedPreset = localStorage.getItem('traven-custom-font-preset');
+      if (savedPreset && savedPreset !== 'custom' && PRESETS[savedPreset]) {
+        const config = PRESETS[savedPreset];
+        roles.forEach(role => {
+          const select = document.getElementById(`select-${role}`);
+          const idx = config[role];
+          select.value = idx;
+          applyFont(role, idx);
+        });
+      } else {
+        roles.forEach(role => {
+          const select = document.getElementById(`select-${role}`);
+          const savedIdx = localStorage.getItem(`traven-custom-font-${role}`);
+          const optionsList = FONT_CATALOG[role];
+          if (savedIdx !== null && optionsList[savedIdx]) {
+            select.value = savedIdx;
+            applyFont(role, savedIdx);
+          } else {
+            select.value = 0;
+            applyFont(role, 0);
+          }
+        });
+      }
+      updatePresetDropdownState();
 
-        // Add event listener
+      // Add change listeners to individual selects
+      roles.forEach(role => {
+        const select = document.getElementById(`select-${role}`);
         select.addEventListener('change', (e) => {
-          applyFont(role, parseInt(e.target.value, 10));
+          const idx = parseInt(e.target.value, 10);
+          applyFont(role, idx);
+          updatePresetDropdownState();
+        });
+      });
+
+      // Add click listeners to preset cards
+      document.querySelectorAll('.preset-card').forEach(card => {
+        card.addEventListener('click', () => {
+          const val = card.getAttribute('data-preset');
+          if (val && PRESETS[val]) {
+            const config = PRESETS[val];
+            roles.forEach(role => {
+              const select = document.getElementById(`select-${role}`);
+              const idx = config[role];
+              select.value = idx;
+              applyFont(role, idx);
+            });
+            updatePresetDropdownState();
+          }
         });
       });
     }

@@ -24,7 +24,7 @@
 
 ```html
 <!-- Include the editor with just a single line of code: -->
-<script type="module" src="https://cdn.jsdelivr.net/gh/slpstream/traven@v0.2.4/dist/traven.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/gh/slpstream/traven@v0.2.5/dist/traven.js"></script>
 ```
 
 **Traven Editor** is a non-brittle WYSIWYM (What You See Is What You Mean) Markdown editor for embedding directly into custom CMS systems, administrative dashboards, web forms and apps. Built on the **CodeMirror 6** editing engine, Traven delivers a high-fidelity editing experience while outputting clean, raw Markdown.
@@ -80,7 +80,7 @@ Drop the editor module from the CDN into your page (the core styles and structur
 </form>
 
 <!-- Load the module once in your page footer -->
-<script type="module" src="https://cdn.jsdelivr.net/gh/slpstream/traven@v0.2.4/dist/traven.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/gh/slpstream/traven@v0.2.5/dist/traven.js"></script>
 ```
 
 > [!NOTE]
@@ -104,7 +104,7 @@ Architectural details, examples, and splitting/recombination helper functions ar
 ### Customization & Styling
 
 Editor themes, layouts, and toolbar behaviors are fully customizable. Choose between `"static"` (fixed top), `"floating"` (clean canvas with formatting bubble and gutter menus), or `"hybrid"` modes, swap stylesheet skins to match your website, or override selectors using custom CSS.
-To learn more about CSS class listings, custom skin configurations, and toolbar styling options, consult the **[Customization & Styling Guide](docs/customization-styling.md)**. For instructions on how to build a new theme from scratch or extend an existing skin, follow the **[Theme Development Guide](docs/theme-development.md)**. To enable syntax highlighting for fenced code blocks inside the editor or in your HTML output, see the **[Code Syntax Highlighting Guide](docs/code-syntax-highlighting.md)**.
+To learn more about CSS class listings, custom skin configurations, and toolbar styling options, consult the **[Customization & Styling Guide](docs/customization-styling.md)**. For instructions on how to build a new theme from scratch or extend an existing skin, follow the **[Theme Development Guide](docs/theme-development.md)**. To change the editor's fonts at runtime using CSS custom properties, see the **[Custom Typography Guide](docs/custom-typography.md)**. To enable syntax highlighting for fenced code blocks inside the editor or in your HTML output, see the **[Code Syntax Highlighting Guide](docs/code-syntax-highlighting.md)**.
 
 ### Custom Shortcodes Architecture
 

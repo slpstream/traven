@@ -390,6 +390,8 @@ Mitigations:
 * Avoid `font-display: swap` for the editor's body font.
 * For self-hosted fonts, preload the `.woff2` files in the `<head>` so the measurement cache is correct from the first paint.
 
+For runtime font swapping (changing typefaces after the editor is mounted), see the **[Custom Typography Guide](custom-typography.md)** which covers the CSS custom property pattern (`--traven-font-display`, `--traven-font-body`, `--traven-font-mono`) and the `requestMeasure()` re-measurement step.
+
 ---
 
 ## 5. WYSIWYM/Preview parity
