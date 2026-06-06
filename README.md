@@ -125,4 +125,4 @@ If you want to develop on Traven, start with the **[Development Guide](docs/deve
 
 ### License
 
-Traven is open-source software licensed under the [MIT License](LICENSE).
+Open-source, licensed under the [MIT License](LICENSE).
