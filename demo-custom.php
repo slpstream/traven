@@ -186,6 +186,7 @@ if ($isPost) {
         <div class="demo-controls">
             <select id="skin-selector" class="skin-select" title="Choose Editor Skin">
                 <option value="skin-starter">Starter Skin (Default)</option>
+                <option value="skin-academic">Academic Skin</option>
                 <option value="skin-light">Light Skin</option>
                 <option value="skin-colorful">Colorful Skin</option>
                 <option value="skin-dark">Dark Skin</option>

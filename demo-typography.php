@@ -154,19 +154,23 @@ if ($isPost) {
       width: 100%;
     }
 
-    .preset-card {
+    .preset-card,
+    .preset-card-gray {
       background: #ffffff;
       border: 1px solid var(--border-color);
       border-radius: 10px;
       padding: 12px;
       text-align: left;
-      cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       display: flex;
       flex-direction: column;
       gap: 4px;
       font-family: inherit;
       outline: none;
+    }
+
+    .preset-card {
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .preset-card:hover {
@@ -183,6 +187,12 @@ if ($isPost) {
 
     .preset-card.is-active .preset-desc {
       color: rgba(255, 255, 255, 0.7);
+    }
+
+    .preset-card-gray {
+      opacity: 0.6;
+      cursor: default;
+      pointer-events: none;
     }
 
     .preset-name {
@@ -440,6 +450,10 @@ if ($isPost) {
         <button type="button" class="preset-card" data-preset="typed">
           <span class="preset-name">Typed Report</span>
           <span class="preset-desc">Courier Prime + JetBrains</span>
+        </button>
+        <button type="button" class="preset-card-gray">
+          <span class="preset-name">Make Your Own</span>
+          <span class="preset-desc">Mix and Match fonts below</span>
         </button>
       </div>
     </div>

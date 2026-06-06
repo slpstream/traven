@@ -1,0 +1,1111 @@
+/* Traven Editor - Academic Theme (Classic LaTeX Booktabs Aesthetic) */
+
+@import url('https://cdn.jsdelivr.net/gh/bitmaks/cm-web-fonts@latest/fonts.css');
+@import url('https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&display=swap');
+
+:root {
+  /* Typography Variables */
+  --traven-font-display: "Computer Modern Serif", "Source Serif 4", Georgia, Cambria, "Times New Roman", Times, serif;
+  --traven-font-body: "Computer Modern Serif", "Source Serif 4", Georgia, Cambria, "Times New Roman", Times, serif;
+  --traven-font-mono: "Computer Modern Typewriter", "Courier Prime", "Courier New", Courier, monospace;
+
+  /* Color Palette Variables */
+  --traven-bg: #faf8f2;                   /* Academic Paper */
+  --traven-text: #1c1b17;                 /* Ink */
+  --traven-muted: #7d776a;                /* Muted Paper */
+  --traven-border: #d9d3c2;               /* Thin Rule */
+  --traven-border-light: #efe9d9;         /* Sheet Border */
+  --traven-selection: rgba(122, 34, 38, 0.12);      /* Soft Oxblood Selection */
+  --traven-selection-focused: rgba(122, 34, 38, 0.22); /* Oxblood Focused Selection */
+  --traven-caret: #7a2226;                /* Oxblood Caret */
+  
+  --traven-h-color: #1c1b17;              /* Ink */
+  --traven-bold-color: #1c1b17;           /* Ink */
+  --traven-italic-color: #403d35;         /* Soft Ink */
+  --traven-highlight-bg: rgba(122, 34, 38, 0.08); /* Oxblood soft highlight */
+  
+  --traven-code-bg: rgba(58, 56, 47, 0.05); /* Soft concrete/typewriter bg */
+  --traven-code-text: #1c1b17;
+  --traven-code-border: #d9d3c2;
+  
+  --traven-blockquote-border: #7d776a;    /* Muted Border */
+  --traven-blockquote-text: #403d35;      /* Soft Ink */
+  
+  --traven-widget-bg: #faf8f2;
+  --traven-widget-border: #d9d3c2;
+  --traven-widget-shadow: 0 1px 0 rgba(0,0,0,.04), 0 4px 12px rgba(40,34,20,.12);
+  --traven-widget-hover-shadow: 0 1px 0 rgba(0,0,0,.04), 0 8px 24px rgba(40,34,20,.2);
+  
+  --traven-active-line: rgba(236, 232, 219, 0.45); /* Soft active line tint */
+  --traven-frontmatter-bg: rgba(58, 56, 47, 0.03);
+  --traven-frontmatter-border: #7d776a;
+  --traven-frontmatter-active-bg: rgba(58, 56, 47, 0.06);
+  --traven-frontmatter-active-text: #1c1b17;
+  
+  --traven-info-bg: rgba(58, 56, 47, 0.05);       /* Observation soft background (all gray) */
+  --traven-info-border: #3a382f;                  /* Rule strong (all gray) */
+  --traven-info-text: #1c1b17;                    /* Normal Ink */
+  --traven-warning-bg: rgba(122, 34, 38, 0.07);   /* Oxblood soft background (touch of red) */
+  --traven-warning-border: #7a2226;               /* Oxblood solid (touch of red) */
+  --traven-warning-text: #1c1b17;                 /* Normal Ink */
+}
+
+/* Dark Mode Overrides (Dark Academic Library) */
+.cm-wysiwym-dark,
+.traven-preview.cm-wysiwym-dark {
+  --traven-bg: #22201c;                   /* Dark sepia paper */
+  --traven-text: #e6e1d5;                 /* Warm bone text */
+  --traven-muted: #948e81;                /* Muted sepia */
+  --traven-border: #4d463b;               /* Warm charcoal border */
+  --traven-border-light: #38342c;         /* Dark sheet border */
+  --traven-selection: rgba(181, 58, 60, 0.2);       /* Dark Oxblood selection */
+  --traven-selection-focused: rgba(181, 58, 60, 0.35); /* Dark Oxblood focused selection */
+  --traven-caret: #b53a3c;                /* Dark Oxblood Caret */
+  
+  --traven-h-color: #f2ede1;              /* Warm bone white */
+  --traven-bold-color: #f2ede1;
+  --traven-italic-color: #d6d0c2;
+  --traven-highlight-bg: rgba(181, 58, 60, 0.15);
+  
+  --traven-code-bg: #1a1916;              /* Darker block bg */
+  --traven-code-text: #e6e1d5;
+  --traven-code-border: #4d463b;
+  
+  --traven-blockquote-border: #948e81;
+  --traven-blockquote-text: #d6d0c2;
+  
+  --traven-widget-bg: #22201c;
+  --traven-widget-border: #4d463b;
+  --traven-widget-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  --traven-widget-hover-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  
+  --traven-active-line: rgba(58, 53, 43, 0.4);
+  --traven-frontmatter-bg: #1a1916;
+  --traven-frontmatter-border: #4d463b;
+  --traven-frontmatter-active-bg: #12110f;
+  --traven-frontmatter-active-text: #f2ede1;
+  
+  --traven-info-bg: rgba(148, 142, 129, 0.08);
+  --traven-info-border: #948e81;
+  --traven-info-text: #e6e1d5;
+  --traven-warning-bg: rgba(181, 58, 60, 0.1);
+  --traven-warning-border: #b53a3c;
+  --traven-warning-text: #e6e1d5;
+}
+
+/* Base Typography Stacks */
+.cm-editor,
+.traven-preview {
+  font-family: var(--traven-font-body) !important;
+  font-size: 18px;
+  line-height: 1.62 !important;
+}
+
+/* Subtle paper texture overlay */
+.cm-editor,
+.traven-preview {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.018'/%3E%3C/svg%3E") !important;
+}
+
+.cm-wysiwym-inline-code,
+.cm-wysiwym-codeblock-line,
+.cm-wysiwym-frontmatter,
+.raw-editor-mount .cm-editor,
+.traven-preview code,
+.traven-preview pre {
+  font-family: var(--traven-font-mono) !important;
+}
+
+/* Display typography overrides */
+.cm-editor .cm-wysiwym-h1,
+.cm-editor .cm-wysiwym-h2,
+.cm-editor .cm-wysiwym-h3,
+.traven-preview h1,
+.traven-preview h2,
+.traven-preview h3,
+.traven-preview .traven-component-pullquote,
+.cm-wysiwym-component-shortcode,
+.traven-preview .traven-component,
+.traven-preview .traven-component-blockquote,
+.traven-preview .traven-component-info,
+.traven-preview .traven-component-warning,
+.cm-wysiwym-image-shortcode-container,
+.cm-wysiwym-video-shortcode-container,
+.cm-wysiwym-audio-shortcode-container,
+.cm-wysiwym-figure-shortcode,
+.traven-preview figure.traven-image-figure,
+.traven-preview figure.traven-video-figure,
+.traven-preview figure.traven-audio-figure,
+.traven-preview .traven-figure,
+.cm-wysiwym-image-caption,
+.cm-wysiwym-image-shortcode-container .shortcode-meta,
+.cm-wysiwym-video-shortcode-container .shortcode-meta,
+.cm-wysiwym-audio-shortcode-container .shortcode-meta,
+.cm-wysiwym-figure-shortcode .figure-caption,
+.traven-preview figcaption,
+.video-placeholder,
+.audio-placeholder,
+.cm-wysiwym-image-uploading,
+.image-edit-icon,
+.video-edit-icon,
+.audio-edit-icon,
+.figure-edit-icon {
+  font-family: var(--traven-font-display) !important;
+}
+
+/* Font Family Inheritance on Nested Elements (The CSS Cascade Override) */
+.cm-wysiwym-component-shortcode.component-info,
+.cm-wysiwym-component-shortcode.component-info *,
+.cm-wysiwym-component-shortcode.component-warning,
+.cm-wysiwym-component-shortcode.component-warning *,
+.traven-preview .traven-component-info,
+.traven-preview .traven-component-info *,
+.traven-preview .traven-component-warning,
+.traven-preview .traven-component-warning * {
+  font-family: var(--traven-font-body) !important;
+}
+
+/* ==========================================================================
+   1. EDITOR SCOPE (.cm-editor)
+   ========================================================================== */
+
+.cm-editor {
+  background-color: var(--traven-bg) !important;
+  color: var(--traven-text) !important;
+}
+
+.cm-editor:focus,
+.cm-editor.cm-focused {
+  outline: none !important;
+}
+
+.cm-scroller {
+  font-family: inherit !important;
+  line-height: 1.62 !important;
+  padding: 12px 0 !important;
+}
+
+.cm-content {
+  padding: 0 28px !important;
+}
+
+/* Gutters & Line Numbers */
+.cm-gutters {
+  background-color: transparent !important;
+  border-right: none !important;
+  color: var(--traven-muted) !important;
+  font-size: 0.82em !important;
+  opacity: 0.5;
+}
+
+.cm-gutterElement {
+  padding: 0 16px 0 8px !important;
+}
+
+/* Selections & Caret */
+.cm-selectionBackground,
+.cm-native-selection {
+  background-color: var(--traven-selection) !important;
+}
+
+.cm-editor.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground {
+  background-color: var(--traven-selection-focused) !important;
+}
+
+.cm-editor .cm-cursor {
+  border-left-color: var(--traven-caret) !important;
+  border-left-width: 1.5px !important;
+}
+
+.cm-editor .cm-fat-cursor {
+  background-color: var(--traven-caret) !important;
+  opacity: 0.6 !important;
+}
+
+.cm-activeLine {
+  background-color: var(--traven-active-line) !important;
+}
+
+.cm-activeLineGutter {
+  background-color: transparent !important;
+  color: var(--traven-caret) !important;
+  font-weight: 700;
+  opacity: 1;
+}
+
+/* Inline Elements styling */
+.cm-wysiwym-bold {
+  font-weight: 700;
+  color: var(--traven-bold-color);
+}
+
+.cm-wysiwym-italic {
+  font-style: italic;
+  color: var(--traven-italic-color);
+}
+
+.cm-wysiwym-strikethrough {
+  text-decoration: line-through;
+  color: var(--traven-muted);
+}
+
+.cm-wysiwym-highlight {
+  background-color: var(--traven-highlight-bg);
+  border-radius: 2px;
+  padding: 1px 0;
+}
+
+.cm-wysiwym-inline-code {
+  background-color: var(--traven-code-bg);
+  color: var(--traven-code-text);
+  padding: 2px 5px;
+  border-radius: 3px;
+  font-size: 0.88em;
+  font-weight: 500;
+  border: 1px solid var(--traven-code-border);
+}
+
+.cm-wysiwym-link-anchor {
+  color: var(--traven-caret);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.cm-wysiwym-bullet {
+  color: var(--traven-caret);
+  font-weight: 700;
+  margin-right: 0.35em;
+}
+
+/* Remove underlines from highlighting engine marks */
+.cm-editor .cmt-heading,
+.cm-editor .tok-heading,
+.cm-editor [class^="cm-wysiwym-h"] span {
+  text-decoration: none !important;
+}
+
+/* Headings (Padding-based layout engine rules) */
+.cm-editor .cm-wysiwym-h1,
+.cm-editor .cm-wysiwym-h2,
+.cm-editor .cm-wysiwym-h3,
+.cm-editor .cm-wysiwym-h4,
+.cm-editor .cm-wysiwym-h5,
+.cm-editor .cm-wysiwym-h6 {
+  color: var(--traven-h-color);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 0 !important;
+}
+
+.cm-editor .cm-wysiwym-h1 { font-size: 2.25em; padding-top: 32px !important; padding-bottom: 12px !important; }
+.cm-editor .cm-wysiwym-h2 { font-size: 1.4em; padding-top: 24px !important; padding-bottom: 8px !important; }
+.cm-editor .cm-wysiwym-h3 { font-size: 1.1em; padding-top: 20px !important; padding-bottom: 6px !important; }
+.cm-editor .cm-wysiwym-h4 { font-size: 1.0em; padding-top: 14px !important; padding-bottom: 6px !important; font-style: italic; }
+.cm-editor .cm-wysiwym-h5 { font-size: 0.95em; padding-top: 12px !important; padding-bottom: 4px !important; }
+.cm-editor .cm-wysiwym-h6 { font-size: 0.9em; padding-top: 10px !important; padding-bottom: 2px !important; }
+
+/* Empty Line Collapse After Headings */
+.cm-editor .cm-wysiwym-h1 + .cm-line:has(br:only-child),
+.cm-editor .cm-wysiwym-h2 + .cm-line:has(br:only-child),
+.cm-editor .cm-wysiwym-h3 + .cm-line:has(br:only-child) {
+  height: 0.6em !important;
+  min-height: 0.6em !important;
+}
+
+/* Blockquotes with :has() Line Decoration */
+.cm-editor .cm-wysiwym-blockquote {
+  border-left: 3px solid var(--traven-blockquote-border);
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+  margin: 0 !important;
+  position: relative;
+  font-style: italic;
+  color: var(--traven-blockquote-text);
+  background-color: transparent !important;
+  border-radius: 0;
+}
+.cm-editor .cm-wysiwym-blockquote { padding-top: 10px !important; padding-bottom: 2px !important; }
+.cm-editor .cm-wysiwym-blockquote + .cm-wysiwym-blockquote { padding-top: 2px !important; }
+.cm-editor .cm-wysiwym-blockquote:not(:has(+ .cm-wysiwym-blockquote)) { padding-bottom: 10px !important; }
+
+/* Frontmatter */
+.cm-wysiwym-frontmatter {
+  background-color: var(--traven-frontmatter-bg) !important;
+  border-left: 3px solid var(--traven-frontmatter-border) !important;
+  color: var(--traven-muted) !important;
+  font-size: 0.85em !important;
+  padding: 4px 0 4px 16px !important;
+  margin: 0 !important;
+  opacity: 0.8;
+}
+
+.cm-wysiwym-frontmatter span {
+  color: inherit !important;
+}
+
+.cm-wysiwym-frontmatter-active {
+  background-color: var(--traven-frontmatter-active-bg) !important;
+  border-left: 3px solid var(--traven-frontmatter-border) !important;
+  color: var(--traven-frontmatter-active-text) !important;
+  font-size: 0.85em !important;
+  padding: 4px 0 4px 16px !important;
+  margin: 0 !important;
+}
+
+.cm-wysiwym-frontmatter-active span {
+  color: inherit !important;
+}
+
+/* Horizontal Rules */
+.cm-wysiwym-hr-widget {
+  border: 0;
+  border-top: 1px solid var(--traven-border);
+  margin: 0 !important;
+  padding: 12px 0 !important;
+  display: block;
+  width: 100%;
+}
+
+/* Code Blocks formatting */
+.cm-editor .cm-wysiwym-codeblock-line {
+  background-color: var(--traven-code-bg);
+  font-size: 0.88em;
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+}
+
+.cm-editor .cm-wysiwym-codeblock-line-first {
+  padding-top: 12px !important;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  border: 1px solid var(--traven-code-border);
+  border-bottom: none;
+}
+
+.cm-editor .cm-wysiwym-codeblock-line-last {
+  padding-bottom: 12px !important;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  border: 1px solid var(--traven-code-border);
+  border-top: none;
+}
+
+.cm-editor .cm-wysiwym-codeblock-line:not(.cm-wysiwym-codeblock-line-first):not(.cm-wysiwym-codeblock-line-last) {
+  border-left: 1px solid var(--traven-code-border);
+  border-right: 1px solid var(--traven-code-border);
+}
+
+.cm-editor .cm-wysiwym-collapsed-fence {
+  height: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  overflow: hidden !important;
+  visibility: hidden !important;
+}
+
+/* CodeMirror Highlighter Tokens */
+.cm-editor .tok-markup, .cm-editor .cmt-markup,
+.cm-editor .tok-meta, .cm-editor .cmt-meta,
+.cm-editor .tok-punctuation, .cm-editor .cmt-punctuation,
+.cm-editor .tok-list, .cm-editor .cmt-list {
+  color: var(--traven-text) !important;
+}
+
+.cm-editor .tok-comment, .cm-editor .cmt-comment {
+  color: var(--traven-muted) !important;
+  font-style: italic;
+}
+
+.cm-editor .tok-keyword, .cm-editor .cmt-keyword {
+  color: var(--traven-caret) !important;
+  font-weight: 600;
+}
+
+.cm-editor .tok-string, .cm-editor .cmt-string {
+  color: var(--traven-text) !important;
+}
+
+/* LaTeX Booktabs Tables Editing Mode */
+.cm-editor .cm-wysiwym-table-row {
+  background-color: var(--traven-code-bg) !important;
+  font-size: 0.88em !important;
+}
+
+.cm-wysiwym-table-widget {
+  margin: 0 !important;
+  padding: 12px 0;
+}
+
+.cm-wysiwym-table-widget table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9em;
+  border: none !important;
+  border-top: 1.4px solid var(--traven-text) !important;
+  border-bottom: 1.4px solid var(--traven-text) !important;
+  background-color: transparent !important;
+}
+
+.cm-wysiwym-table-widget th,
+.cm-wysiwym-table-widget td {
+  padding: 10px 14px;
+  border: none !important;
+  text-align: left;
+}
+
+.cm-wysiwym-table-widget th {
+  border-bottom: 0.8px solid var(--traven-text) !important;
+  font-weight: 700;
+  color: var(--traven-h-color);
+  background-color: transparent !important;
+}
+
+.cm-wysiwym-table-widget tr:last-child td {
+  border-bottom: 1.4px solid var(--traven-text) !important;
+}
+
+/* Shortcode Widgets & Custom Components Layout Rules */
+.cm-wysiwym-video-shortcode-container,
+.cm-wysiwym-audio-shortcode-container,
+.cm-wysiwym-figure-shortcode {
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+  margin: 0 !important;
+  padding: 12px 0;
+  border: 1px solid var(--traven-widget-border);
+  border-radius: 4px;
+  overflow: hidden;
+  background-color: var(--traven-widget-bg);
+  box-shadow: var(--traven-widget-shadow);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  position: relative;
+}
+
+.cm-wysiwym-image-shortcode-container,
+.cm-wysiwym-image-widget-container {
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+  margin: 0 !important;
+  padding: 12px 0;
+  border: none;
+  background-color: transparent;
+  box-shadow: none;
+  position: relative;
+}
+
+.cm-wysiwym-video-shortcode-container:hover,
+.cm-wysiwym-audio-shortcode-container:hover,
+.cm-wysiwym-figure-shortcode:hover {
+  box-shadow: var(--traven-widget-hover-shadow);
+}
+
+.cm-wysiwym-image-preview,
+.cm-wysiwym-video-shortcode-container img,
+.cm-wysiwym-audio-shortcode-container img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+  padding: 10px;
+  object-fit: contain;
+}
+
+.cm-wysiwym-video-shortcode-container .shortcode-meta,
+.cm-wysiwym-audio-shortcode-container .shortcode-meta,
+.cm-wysiwym-figure-shortcode .figure-caption {
+  font-size: 0.82em;
+  color: var(--traven-muted);
+  padding: 10px 16px;
+  border-top: 1px solid var(--traven-border-light);
+  background-color: var(--traven-code-bg);
+  font-weight: 500;
+}
+
+.cm-wysiwym-image-caption,
+.cm-wysiwym-image-shortcode-container .shortcode-meta {
+  font-size: 0.82em;
+  color: var(--traven-muted);
+  padding: 10px 16px;
+  border-top: none;
+  background-color: transparent;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* Edit icons on hover */
+.image-edit-icon,
+.video-edit-icon,
+.audio-edit-icon,
+.figure-edit-icon {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--traven-widget-bg) !important;
+  border: 1px solid var(--traven-border) !important;
+  border-radius: 4px;
+  color: var(--traven-muted) !important;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, background-color 0.2s ease;
+  z-index: 10;
+}
+
+[class*="-shortcode-container"]:hover .image-edit-icon,
+[class*="-shortcode-container"]:hover .video-edit-icon,
+[class*="-shortcode-container"]:hover .audio-edit-icon,
+.cm-wysiwym-figure-shortcode:hover .figure-edit-icon,
+.cm-wysiwym-component-shortcode:hover .image-edit-icon {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Alignment and size classes in editor */
+.align-left { margin: 0 auto 0 0 !important; }
+.align-right { margin: 0 0 0 auto !important; }
+.align-center { margin: 0 auto !important; }
+.align-fullbleed { width: 100% !important; margin: 0 !important; border-radius: 0 !important; }
+
+.size-small { width: 180px; }
+.size-medium { width: 340px; }
+.size-large { width: 620px; }
+.size-full { width: 100%; }
+
+/* Optimistic uploading status wrapper */
+.cm-wysiwym-image-uploading {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background-color: var(--traven-info-bg);
+  border: 1px dashed var(--traven-info-border);
+  color: var(--traven-info-text);
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 0.88em;
+  font-weight: 500;
+  margin: 0 !important;
+}
+
+/* Custom Component Block Types styling */
+.cm-wysiwym-component-shortcode {
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+  margin: 0 !important;
+  padding: 20px 24px !important;
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* Reset margins for inner elements inside custom component blocks */
+.cm-wysiwym-component-shortcode blockquote,
+.cm-wysiwym-component-shortcode p,
+.cm-wysiwym-figure-shortcode p {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.cm-wysiwym-component-shortcode p + p,
+.cm-wysiwym-figure-shortcode p + p {
+  margin-top: 0.8em !important;
+}
+
+.cm-wysiwym-component-shortcode.component-blockquote {
+  border-left: 3px solid var(--traven-blockquote-border) !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  background-color: transparent !important;
+  color: var(--traven-blockquote-text) !important;
+  font-style: italic;
+  border-radius: 0;
+  box-shadow: none !important;
+}
+
+.cm-wysiwym-component-shortcode.component-blockquote cite {
+  display: block;
+  padding-top: 8px;
+  font-size: 0.82em;
+  color: var(--traven-muted);
+  font-style: normal;
+}
+
+.cm-wysiwym-component-shortcode.component-pullquote {
+  margin: 0 auto !important;
+  padding: 16px 0 !important;
+  border-top: 1.4px solid var(--traven-border) !important;
+  border-bottom: 1.4px solid var(--traven-border) !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-radius: 0 !important;
+  text-align: center;
+  font-size: 1.25em;
+  font-style: italic;
+  max-width: 85%;
+  color: var(--traven-h-color) !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.cm-wysiwym-component-shortcode.component-pullquote blockquote,
+.cm-wysiwym-component-shortcode.component-pullquote p {
+  text-align: center;
+  margin: 0 !important;
+  font-style: inherit;
+}
+
+/* Custom left-border callout shapes */
+.cm-wysiwym-component-shortcode.component-info {
+  background-color: var(--traven-info-bg) !important;
+  border: none !important;
+  border-left: 3px solid var(--traven-info-border) !important;
+  color: var(--traven-info-text) !important;
+  border-radius: 0 4px 4px 0 !important;
+  box-shadow: none !important;
+}
+
+.cm-wysiwym-component-shortcode.component-warning {
+  background-color: var(--traven-warning-bg) !important;
+  border: none !important;
+  border-left: 3px solid var(--traven-warning-border) !important;
+  color: var(--traven-warning-text) !important;
+  border-radius: 0 4px 4px 0 !important;
+  box-shadow: none !important;
+}
+
+/* Video & Audio placeholders inside editor */
+.video-placeholder,
+.audio-placeholder {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background-color: var(--traven-code-bg);
+  border-radius: 4px;
+  margin: 0 16px;
+  cursor: pointer;
+  border: 1px solid var(--traven-border-light);
+  transition: background-color 0.2s ease;
+}
+
+.video-placeholder:hover,
+.audio-placeholder:hover {
+  background-color: var(--traven-active-line);
+}
+
+.video-placeholder-icon-wrap,
+.audio-placeholder-icon-wrap {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--traven-border-light);
+  color: var(--traven-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.video-placeholder-details,
+.audio-placeholder-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex-grow: 1;
+}
+
+.video-placeholder-platform,
+.audio-placeholder-platform {
+  font-weight: 700;
+  color: var(--traven-h-color);
+  font-size: 0.9em;
+}
+
+.video-placeholder-url,
+.audio-placeholder-url {
+  font-size: 0.78em;
+  color: var(--traven-muted);
+  word-break: break-all;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ==========================================================================
+   2. PREVIEW SCOPE (.traven-preview)
+   ========================================================================== */
+
+.traven-preview {
+  background-color: var(--traven-bg) !important;
+  color: var(--traven-text) !important;
+  line-height: 1.62;
+}
+
+/* Typographic Headings spacing */
+.traven-preview h1,
+.traven-preview h2,
+.traven-preview h3,
+.traven-preview h4,
+.traven-preview h5,
+.traven-preview h6 {
+  color: var(--traven-h-color);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-top: 1.8em;
+  margin-bottom: 0.6em;
+  line-height: 1.25;
+}
+
+.traven-preview h1 { font-size: 2.25em; }
+.traven-preview h2 { font-size: 1.4em; }
+.traven-preview h3 { font-size: 1.1em; }
+.traven-preview h4 { font-size: 1.0em; font-style: italic; }
+.traven-preview h5 { font-size: 0.95em; }
+.traven-preview h6 { font-size: 0.9em; }
+
+.traven-preview > h1:first-child { margin-top: 32px !important; }
+.traven-preview > h2:first-child { margin-top: 24px !important; }
+.traven-preview > h3:first-child { margin-top: 20px !important; }
+
+.traven-preview p {
+  margin-top: 0;
+  margin-bottom: 1.0em;
+}
+
+.traven-preview a {
+  color: var(--traven-caret);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.traven-preview a:hover {
+  color: var(--traven-text);
+}
+
+/* Lists formatting */
+.traven-preview ul,
+.traven-preview ol {
+  margin-top: 0;
+  margin-bottom: 1.0em;
+  padding-left: 24px;
+}
+
+.traven-preview li {
+  margin-bottom: 0.35em;
+}
+
+.traven-preview li p {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.traven-preview li p:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* Blockquotes inside Preview */
+.traven-preview blockquote:not(.traven-component-pullquote) {
+  margin: 1.5em 0;
+  padding: 10px 20px;
+  border-left: 3px solid var(--traven-blockquote-border);
+  color: var(--traven-blockquote-text);
+  font-style: italic;
+  background-color: transparent !important;
+  border-radius: 0;
+}
+
+.traven-preview blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* Code elements inside Preview */
+.traven-preview code {
+  background-color: var(--traven-code-bg);
+  color: var(--traven-code-text);
+  padding: 2px 5px;
+  border-radius: 3px;
+  font-size: 0.88em;
+  border: 1px solid var(--traven-code-border);
+}
+
+.traven-preview pre {
+  background-color: var(--traven-code-bg);
+  padding: 16px;
+  border-radius: 4px;
+  overflow-x: auto;
+  border: 1px solid var(--traven-code-border);
+  margin-top: 0;
+  margin-bottom: 1.0em;
+}
+
+.traven-preview pre code {
+  background-color: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  font-size: 0.9em;
+}
+
+.traven-preview mark {
+  background-color: var(--traven-highlight-bg);
+  border-radius: 2px;
+  padding: 1px 0;
+}
+
+.traven-preview hr {
+  border: 0;
+  border-top: 1px solid var(--traven-border);
+  margin: 24px 0;
+}
+
+/* GFM LaTeX booktabs Tables in Preview */
+.traven-preview table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.2em;
+  font-size: 0.9em;
+  border: none !important;
+  border-top: 1.4px solid var(--traven-text) !important;
+  border-bottom: 1.4px solid var(--traven-text) !important;
+}
+
+.traven-preview th,
+.traven-preview td {
+  padding: 10px 14px;
+  border: none !important;
+  text-align: left;
+}
+
+.traven-preview th {
+  border-bottom: 0.8px solid var(--traven-text) !important;
+  font-weight: 700;
+  color: var(--traven-h-color);
+  background-color: transparent !important;
+}
+
+.traven-preview tr:last-child td {
+  border-bottom: 1.4px solid var(--traven-text) !important;
+}
+
+/* Advanced Shortcode layouts (Preview scope) */
+.traven-preview figure.traven-video-figure,
+.traven-preview figure.traven-audio-figure,
+.traven-preview .traven-figure {
+  margin: 1.5em 0;
+  padding: 0;
+  border: 1px solid var(--traven-widget-border);
+  border-radius: 4px;
+  overflow: hidden;
+  background-color: var(--traven-widget-bg);
+  box-shadow: var(--traven-widget-shadow);
+}
+
+.traven-preview figure.traven-image-figure {
+  margin: 1.5em 0;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  box-shadow: none;
+}
+
+.traven-preview img.traven-image-shortcode,
+.traven-preview .traven-video-container iframe,
+.traven-preview .traven-video-container video,
+.traven-preview .traven-audio-container audio {
+  display: block;
+  max-width: 100%;
+  margin: 0 auto;
+  border: none;
+}
+
+.traven-preview .traven-video-container {
+  aspect-ratio: 16/9;
+  width: 100%;
+  background-color: #000000;
+}
+
+.traven-preview .traven-audio-container {
+  padding: 16px;
+  background-color: var(--traven-code-bg);
+}
+
+.traven-preview .traven-audio-container audio {
+  width: 100%;
+}
+
+.traven-preview figcaption.traven-video-caption,
+.traven-preview figcaption.traven-audio-caption,
+.traven-preview .traven-figure-caption {
+  font-size: 0.82em;
+  color: var(--traven-muted);
+  padding: 10px 16px;
+  border-top: 1px solid var(--traven-border-light);
+  background-color: var(--traven-code-bg);
+  font-weight: 500;
+  margin: 0;
+  text-align: center;
+}
+
+.traven-preview figcaption.traven-image-caption {
+  font-size: 0.82em;
+  color: var(--traven-muted);
+  padding: 10px 16px;
+  border-top: none;
+  background-color: transparent;
+  font-weight: 500;
+  margin: 0;
+  text-align: center;
+}
+
+/* Alignments inside preview */
+.traven-preview .align-left {
+  float: left;
+  margin: 8px 16px 16px 0 !important;
+}
+
+.traven-preview .align-right {
+  float: right;
+  margin: 8px 0 16px 16px !important;
+}
+
+.traven-preview .align-center {
+  margin: 1.5em auto !important;
+  float: none !important;
+}
+
+.traven-preview .align-fullbleed {
+  width: 100vw !important;
+  max-width: 100vw !important;
+  margin-left: calc(-50vw + 50%) !important;
+  margin-right: calc(-50vw + 50%) !important;
+  border-radius: 0 !important;
+  float: none !important;
+  clear: both !important;
+}
+
+/* Components rendering inside preview */
+.traven-preview .traven-component {
+  margin: 1.5em 0;
+  padding: 20px 24px;
+  border: 1px solid var(--traven-widget-border);
+  border-radius: 4px;
+  background-color: var(--traven-widget-bg);
+}
+
+.traven-preview .traven-component p:last-child {
+  margin-bottom: 0;
+}
+
+.traven-preview .traven-component-blockquote {
+  margin: 1.5em 0;
+  padding: 20px 24px;
+  border-left: 3px solid var(--traven-blockquote-border) !important;
+  background-color: transparent !important;
+  color: var(--traven-blockquote-text);
+  font-style: italic;
+  border-radius: 0;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+}
+
+.traven-preview .traven-component-blockquote footer {
+  margin-top: 8px;
+  font-size: 0.82em;
+  color: var(--traven-muted);
+  font-style: normal;
+}
+
+.traven-preview .traven-component-pullquote {
+  margin: 2em auto;
+  padding: 16px 0;
+  border-top: 1.4px solid var(--traven-border) !important;
+  border-bottom: 1.4px solid var(--traven-border) !important;
+  text-align: center;
+  font-size: 1.25em;
+  font-style: italic;
+  max-width: 85%;
+  color: var(--traven-h-color);
+}
+
+/* Clean left-border callouts in preview */
+.traven-preview .traven-component-info {
+  border: none !important;
+  border-left: 3px solid var(--traven-info-border) !important;
+  color: var(--traven-info-text) !important;
+  border-radius: 0 4px 4px 0 !important;
+  background-color: var(--traven-info-bg) !important;
+}
+
+.traven-preview .traven-component-warning {
+  border: none !important;
+  border-left: 3px solid var(--traven-warning-border) !important;
+  color: var(--traven-warning-text) !important;
+  border-radius: 0 4px 4px 0 !important;
+  background-color: var(--traven-warning-bg) !important;
+}
+
+/* Component Headers (both preview and editor) */
+.traven-component-header,
+.cm-wysiwym-component-shortcode .component-header {
+  font-family: var(--traven-font-display);
+  font-weight: 700;
+  font-size: 0.85em;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  user-select: none;
+}
+
+/* Collapsible (Details/Summary) Styling */
+summary.traven-component-header,
+summary.component-header {
+  cursor: pointer;
+  outline: none;
+  list-style: none;
+}
+
+summary.traven-component-header::-webkit-details-marker,
+summary.component-header::-webkit-details-marker {
+  display: none;
+}
+
+/* Custom expand/collapse indicator arrow */
+summary.traven-component-header::after,
+summary.component-header::after {
+  content: "▼";
+  font-size: 0.75em;
+  margin-left: 8px;
+  transition: transform 0.2s ease;
+  opacity: 0.7;
+  display: inline-block;
+}
+
+details[open] summary.traven-component-header::after,
+details[open] summary.component-header::after {
+  transform: rotate(-180deg);
+}
+
+/* Remove bottom margin on headers when the collapsible box is closed */
+details:not([open]) .traven-component-header,
+details:not([open]) .component-header {
+  margin-bottom: 0 !important;
+}
+
+/* Clearfix for floated widgets in preview */
+.traven-preview::after {
+  content: "";
+  display: table;
+  clear: both;
+}

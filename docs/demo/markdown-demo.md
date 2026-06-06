@@ -2,7 +2,7 @@
 
 TAKE ME FOR A SPIN.  Everything you see here is a **fully live editor.** Type anywhere, like *just right here, for instance.* Everything works using the Markdown you know and love, along with a few shortcodes thrown in to make Markdown more powerful (but they are completely optional, so go ahead and ignore them if shortcodes are not your thing).
 
-### What You See Is What You Get (*and what you mean*)
+## What You See Is What You Get (*and what you mean*)
 
 Writing in Traven is designed to be completely distraction-free. As you type, the underlying Markdown formatting characters are displayed inline to keep you close to the source, but they disappear the moment your cursor moves away. This approach, known as WYSIWYM (What You See Is What You Mean), combines the simplicity of plaintext Markdown with the rich formatting of a visual word processor. To find out more about Traven and how to integrate the editor in your own projects, go to **[traven.dev](https://traven.dev)**
 
@@ -15,7 +15,7 @@ Good writing demands clear typography. Traven fully supports all standard Markdo
 
 Here is a sample of how a blog post might read in an editorial layout. Notice how the headers, paragraphs, and media flow naturally together:
 
-### The Art of Distraction-Free Writing
+## The Art of Distraction-Free Writing
 Writers hate overload. Notification badges, cluttered editing interfaces, and complex design systems pull attention away from the main task of *putting words on the page*. In a WYSIWYM editing environment, writers maintain their flow state. There are no heavy preview panels or complex layout settings to configure. You simply write, structure your thoughts with headings, and let stylesheets handle the rest.
 
 Want to draw attention to key phrases? Add ==highlight formatting== directly on inline text using standard double equals delimiters, or use a shortcode. The shortcode option is great for wrapping block-level or inline-level text:

@@ -62,9 +62,9 @@ graph TD
 
 ---
 
-## 2. The six shipping skins, side by side
+## 2. The seven shipping skins, side by side
 
-All six skins live in `assets/skins/` and are auto-discovered by the customization dropdown (`includes/_customization-dropdowns.php`); any new file you add to that directory shows up in the demo page's skin picker with no further wiring.
+All seven skins live in `assets/skins/` and are auto-discovered by the customization dropdown (`includes/_customization-dropdowns.php`); any new file you add to that directory shows up in the demo page's skin picker with no further wiring.
 
 | Skin | Design intent | Body font | Mono font | Gutter | Headings | Caret | Accent |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -73,15 +73,16 @@ All six skins live in `assets/skins/` and are auto-discovered by the customizati
 | `skin-dark.css` | Premium Dark Slate | `Atkinson Hyperlegible Next` (Google Fonts) | `Fira Code` (Google Fonts) | Visible, dim slate | Bold sans, near-white | Sky `#38bdf8` | Sky `#38bdf8` |
 | `skin-editorial.css` | Minimalist Focus — no chrome | `Goudy Bookletter 1911` (serif) | `Victor Mono` | **Hidden** | `Macondo` (h1–h3), Goudy (h4–h6) | Ink black | None — pure paper |
 | `skin-modern.css` | Modern Clean — premium | `Epunda Slab` (serif) | `JetBrains Mono` | Visible, borderless | `Saira Condensed` (sans) | Zinc 900 | `#115e59` teal |
+| `skin-academic.css` | Classic LaTeX Booktabs | `Source Serif 4` (serif) | `Courier Prime` | Visible, soft slate | Serif, booktabs tables | Oxblood `#7a2226` | Oxblood `#7a2226` |
 | `skin-starter.css` ⭐ | Modern Georgia — base (**bundled default**) | `Georgia` (serif) | System monospace | Visible, soft slate | System sans, bold | Slate 900 | Slate 600 |
 | `skin-custom.css` | Dynamic parameterized fonts | Configurable via `--traven-font-body` | Configurable via `--traven-font-mono` | Inherits starter | Configurable via `--traven-font-display` | Slate 900 | Slate 600 |
 
 Other dimensions worth knowing:
 
-* **External requests.** `skin-light.css`, `skin-dark.css`, `skin-colorful.css`, `skin-editorial.css`, and `skin-modern.css` `@import` from Google Fonts by default. `skin-starter.css` and `skin-custom.css` load zero web fonts on initial request. Custom font loading for `skin-custom.css` is handled dynamically at runtime by the host page. See [§10](#10-telemetry--offline-self-hosting) for self-hosting setups.
-* **First-load fonts.** `skin-light.css` and `skin-dark.css` import Atkinson Hyperlegible Next and Fira Code from Google Fonts. `skin-starter.css` uses system fonts only. The demos also load all three demo fonts (Atkinson, Fira Code, Mozilla Headline) from Google Fonts CDN directly in their HTML.
-* **Blockquote treatment.** The `skin-light`, `skin-colorful`, `skin-dark`, `skin-modern`, and `skin-starter` themes use a thick left bar. The `skin-editorial` theme uses a decorative `::before` curly-quote mark, with the wavy line dividers on pullquotes.
-* **Info / warning cards.** The `skin-light`, `skin-colorful`, `skin-dark`, `skin-modern`, and `skin-starter` themes render these as soft rounded/bordered cards. The `skin-editorial` theme uses the "hand-drawn" organic border-radius (`255px 15px 225px 15px / 15px 225px 15px 255px`) for a handcrafted look.
+* **External requests.** `skin-light.css`, `skin-dark.css`, `skin-colorful.css`, `skin-editorial.css`, `skin-modern.css`, and `skin-academic.css` `@import` from Google Fonts by default. `skin-starter.css` and `skin-custom.css` load zero web fonts on initial request. Custom font loading for `skin-custom.css` is handled dynamically at runtime by the host page. See [§10](#10-telemetry--offline-self-hosting) for self-hosting setups.
+* **First-load fonts.** `skin-light.css`, `skin-dark.css`, and `skin-academic.css` import Atkinson Hyperlegible, Fira Code, Source Serif 4, and/or Courier Prime from Google Fonts. `skin-starter.css` uses system fonts only.
+* **Blockquote treatment.** The `skin-light`, `skin-colorful`, `skin-dark`, `skin-modern`, and `skin-starter` themes use a thick left bar. The `skin-editorial` theme uses a decorative `::before` curly-quote mark. The `skin-academic` theme uses a transparent background with a simple left bar.
+* **Info / warning cards.** The `skin-light`, `skin-colorful`, `skin-dark`, `skin-modern`, and `skin-starter` themes render these as soft rounded/bordered cards. The `skin-editorial` theme uses the "hand-drawn" organic border-radius. The `skin-academic` theme uses clean rectangular left-bordered callout boxes matching the academic position paper callout style.
 * **Pullquote dividers.** Only the `skin-editorial` theme renders the decorative wave SVG above and below `.traven-component-pullquote`; the other themes use simple top/bottom rules.
 
 When in doubt, copy the theme that is closest to your goal and patch its variables.
