@@ -123,6 +123,6 @@ If you want to develop on Traven, start with the **[Development Guide](docs/deve
 
 ---
 
-### License
+### License: MIT
 
 Open-source, licensed under the [MIT License](LICENSE).
