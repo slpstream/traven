@@ -34,14 +34,16 @@
 
 /* Override Info component content to use the Body font (400 weight) */
 .cm-wysiwym-component-shortcode.component-info,
-.traven-preview .traven-component-info {
+.traven-preview .traven-component.traven-component-info,
+.traven-preview div.traven-component-info {
   font-family: var(--traven-font-body) !important;
   font-weight: 400 !important;
 }
 
 /* Override Warning component content to use the Body font (700 bold weight) */
 .cm-wysiwym-component-shortcode.component-warning,
-.traven-preview .traven-component-warning {
+.traven-preview .traven-component.traven-component-warning,
+.traven-preview div.traven-component-warning {
   font-family: var(--traven-font-body) !important;
   font-weight: 700 !important;
 }
