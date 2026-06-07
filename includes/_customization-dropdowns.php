@@ -49,6 +49,9 @@ if (is_dir($skins_dir)) {
     if ($files) {
         foreach ($files as $file) {
             $val = pathinfo($file, PATHINFO_FILENAME);
+            if ($val === "skin-custom") {
+                continue;
+            }
             $label = format_customization_name($file, "skin");
             $skins[$val] = $label;
         }

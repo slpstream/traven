@@ -309,7 +309,7 @@
 
 .cm-wysiwym-image-caption,
 .cm-wysiwym-image-shortcode-container .shortcode-meta {
-  font-family: 'Goudy Bookletter 1911', Georgia, serif;
+  font-family: inherit !important;
   font-size: 0.82em;
   color: #64748b;
   padding: 8px 16px;
@@ -558,7 +558,7 @@
 }
 
 .cm-wysiwym-video-shortcode-container .shortcode-meta {
-  font-family: 'Goudy Bookletter 1911', Georgia, serif;
+  font-family: inherit !important;
   font-size: 0.82em;
   color: #64748b;
   padding: 8px 16px;
@@ -693,7 +693,7 @@
 }
 
 .cm-wysiwym-audio-shortcode-container .shortcode-meta {
-  font-family: 'Goudy Bookletter 1911', Georgia, serif;
+  font-family: inherit !important;
   font-size: 0.82em;
   color: #64748b;
   padding: 8px 16px;
@@ -1326,7 +1326,7 @@
 }
 
 .traven-preview figure.traven-image-figure figcaption.traven-image-caption {
-  font-family: 'Goudy Bookletter 1911', Georgia, serif;
+  font-family: inherit !important;
   font-size: 0.82em;
   color: #64748b;
   margin-top: 8px;
@@ -1425,7 +1425,7 @@
 }
 
 .traven-preview figure.traven-video-figure figcaption.traven-video-caption {
-  font-family: 'Goudy Bookletter 1911', Georgia, serif;
+  font-family: inherit !important;
   font-size: 0.82em;
   color: #64748b;
   margin-top: 8px;
@@ -1517,7 +1517,7 @@
 }
 
 .traven-preview figure.traven-audio-figure figcaption.traven-audio-caption {
-  font-family: 'Goudy Bookletter 1911', Georgia, serif;
+  font-family: inherit !important;
   font-size: 0.82em;
   color: #64748b;
   margin-top: 8px;
@@ -1605,6 +1605,7 @@
   font-style: normal !important;
   text-align: center !important;
   font-family: 'Goudy Bookletter 1911', Georgia, serif !important;
+  color: #111111 !important;
 }
 
 .cm-wysiwym-component-shortcode.component-pullquote blockquote {
@@ -1869,6 +1870,7 @@
   font-weight: bold !important;
   text-align: center !important;
   font-family: 'Goudy Bookletter 1911', Georgia, serif !important;
+  color: #111111 !important;
 }
 
 .traven-preview .traven-component-pullquote p {
@@ -2060,7 +2062,7 @@
 }
 
 .cm-wysiwym-figure-shortcode .figure-caption {
-  font-family: inherit;
+  font-family: inherit !important;
   font-size: 0.85em;
   color: #64748b;
   margin-top: 12px;
@@ -2266,4 +2268,16 @@ details[open] summary.component-header::after {
 details:not([open]) .traven-component-header,
 details:not([open]) .component-header {
   margin-bottom: 0 !important;
+}
+
+/* Ensure shortcode containers cascade the body typeface to their child elements */
+.cm-wysiwym-image-shortcode-container,
+.cm-wysiwym-video-shortcode-container,
+.cm-wysiwym-audio-shortcode-container,
+.cm-wysiwym-figure-shortcode,
+.traven-preview figure.traven-image-figure,
+.traven-preview figure.traven-video-figure,
+.traven-preview figure.traven-audio-figure,
+.traven-preview .traven-figure {
+  font-family: inherit !important;
 }

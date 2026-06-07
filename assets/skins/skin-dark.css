@@ -130,7 +130,7 @@
 .cm-editor .cm-wysiwym-h4,
 .cm-editor .cm-wysiwym-h5,
 .cm-editor .cm-wysiwym-h6 {
-    font-family: "Atkinson Hyperlegible Next", sans-serif;
+    font-family: "Atkinson Hyperlegible Next", sans-serif !important;
     color: #f8fafc !important; /* White/Slate 50 headings */
     letter-spacing: -0.02em;
     text-decoration: none;
@@ -331,7 +331,7 @@
 
 .cm-wysiwym-image-caption,
 .cm-wysiwym-image-shortcode-container .shortcode-meta {
-    font-family: "Atkinson Hyperlegible Next", sans-serif;
+    font-family: inherit !important;
     font-size: 0.82em;
     color: #94a3b8;
     padding: 8px 16px;
@@ -578,7 +578,7 @@
 }
 
 .cm-wysiwym-video-shortcode-container .shortcode-meta {
-    font-family: "Atkinson Hyperlegible Next", sans-serif;
+    font-family: inherit !important;
     font-size: 0.82em;
     color: #94a3b8;
     padding: 8px 16px;
@@ -717,7 +717,7 @@
 }
 
 .cm-wysiwym-audio-shortcode-container .shortcode-meta {
-    font-family: "Atkinson Hyperlegible Next", sans-serif;
+    font-family: inherit !important;
     font-size: 0.82em;
     color: #94a3b8;
     padding: 8px 16px;
@@ -992,7 +992,7 @@
 .traven-preview {
     background-color: #0f172a !important;
     color: #e2e8f0 !important;
-    font-family: "Atkinson Hyperlegible Next", sans-serif;
+    font-family: "Atkinson Hyperlegible Next", sans-serif !important;
 }
 .traven-preview h1,
 .traven-preview h2,
@@ -1000,7 +1000,7 @@
 .traven-preview h4,
 .traven-preview h5,
 .traven-preview h6 {
-    font-family: "Atkinson Hyperlegible Next", sans-serif;
+    font-family: "Atkinson Hyperlegible Next", sans-serif !important;
     color: #f8fafc;
     letter-spacing: -0.02em;
     margin-top: 24px;
@@ -1255,7 +1255,7 @@
 }
 
 .traven-preview figure.traven-image-figure figcaption.traven-image-caption {
-    font-family: "Atkinson Hyperlegible Next", sans-serif;
+    font-family: inherit !important;
     font-size: 0.82em;
     color: #94a3b8;
     margin-top: 8px;
@@ -1354,7 +1354,7 @@
 }
 
 .traven-preview figure.traven-video-figure figcaption.traven-video-caption {
-    font-family: "Atkinson Hyperlegible Next", sans-serif;
+    font-family: inherit !important;
     font-size: 0.82em;
     color: #94a3b8;
     margin-top: 8px;
@@ -1446,7 +1446,7 @@
 }
 
 .traven-preview figure.traven-audio-figure figcaption.traven-audio-caption {
-    font-family: "Atkinson Hyperlegible Next", sans-serif;
+    font-family: inherit !important;
     font-size: 0.82em;
     color: #94a3b8;
     margin-top: 8px;
@@ -1593,6 +1593,7 @@
     font-style: normal !important;
     color: #f8fafc !important;
     text-align: center !important;
+    font-family: "Atkinson Hyperlegible Next", sans-serif !important;
 }
 .cm-wysiwym-component-shortcode.component-pullquote blockquote {
     margin: 0 !important;
@@ -1818,6 +1819,7 @@
     font-weight: bold !important;
     color: #f8fafc !important;
     text-align: center !important;
+    font-family: "Atkinson Hyperlegible Next", sans-serif !important;
 }
 .traven-preview .traven-component-pullquote p {
     margin: 0 !important;
@@ -1915,7 +1917,7 @@
 }
 
 .cm-wysiwym-figure-shortcode .figure-caption {
-    font-family: inherit;
+    font-family: inherit !important;
     font-size: 0.85em;
     color: #94a3b8;
     margin-top: 12px;
@@ -2094,4 +2096,17 @@ details[open] summary.component-header::after {
 details:not([open]) .traven-component-header,
 details:not([open]) .component-header {
     margin-bottom: 0 !important;
+}
+
+
+/* Ensure shortcode containers cascade the body typeface to their child elements */
+.cm-wysiwym-image-shortcode-container,
+.cm-wysiwym-video-shortcode-container,
+.cm-wysiwym-audio-shortcode-container,
+.cm-wysiwym-figure-shortcode,
+.traven-preview figure.traven-image-figure,
+.traven-preview figure.traven-video-figure,
+.traven-preview figure.traven-audio-figure,
+.traven-preview .traven-figure {
+  font-family: inherit !important;
 }

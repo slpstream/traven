@@ -115,8 +115,8 @@
 .cm-editor .cm-wysiwym-h4, 
 .cm-editor .cm-wysiwym-h5, 
 .cm-editor .cm-wysiwym-h6 {
-  font-family: 'Atkinson Hyperlegible Next', sans-serif;
-  color: #92400e; /* Deep blood-amber — warm chromatic accent for headings */
+  font-family: 'Atkinson Hyperlegible Next', sans-serif !important;
+  color: #92400e !important; /* Deep blood-amber — warm chromatic accent for headings */
   letter-spacing: -0.02em;
   text-decoration: none;
 }
@@ -308,7 +308,7 @@
 
 .cm-wysiwym-image-caption,
 .cm-wysiwym-image-shortcode-container .shortcode-meta {
-  font-family: 'Atkinson Hyperlegible Next', sans-serif;
+  font-family: inherit !important;
   font-size: 0.82em;
   color: #64748b;
   padding: 8px 16px;
@@ -557,7 +557,7 @@
 }
 
 .cm-wysiwym-video-shortcode-container .shortcode-meta {
-  font-family: 'Atkinson Hyperlegible Next', sans-serif;
+  font-family: inherit !important;
   font-size: 0.82em;
   color: #8c7f70;
   padding: 8px 16px;
@@ -692,7 +692,7 @@
 }
 
 .cm-wysiwym-audio-shortcode-container .shortcode-meta {
-  font-family: 'Atkinson Hyperlegible Next', sans-serif;
+  font-family: inherit !important;
   font-size: 0.82em;
   color: #8c7f70;
   padding: 8px 16px;
@@ -780,7 +780,7 @@
 
 /* Links (inside markdown, when rendered optionally) */
 .cm-wysiwym-link-anchor {
-  color: #3b82f6; /* Blue link anchor */
+  color: #cc4a0a !important; /* Rust link anchor */
   text-decoration: underline;
   cursor: pointer;
 }
@@ -1237,7 +1237,7 @@
 .traven-preview {
   background-color: #ffffff;
   color: #1e293b;
-  font-family: 'Atkinson Hyperlegible Next', sans-serif;
+  font-family: 'Atkinson Hyperlegible Next', sans-serif !important;
 }
 .traven-preview h1, 
 .traven-preview h2, 
@@ -1245,8 +1245,8 @@
 .traven-preview h4, 
 .traven-preview h5, 
 .traven-preview h6 {
-  font-family: 'Atkinson Hyperlegible Next', sans-serif;
-  color: #0f172a;
+  font-family: 'Atkinson Hyperlegible Next', sans-serif !important;
+  color: #92400e !important;
   letter-spacing: -0.02em;
   margin-top: 24px;
   margin-bottom: 12px;
@@ -1409,7 +1409,7 @@
 .traven-preview.cm-wysiwym-dark h4,
 .traven-preview.cm-wysiwym-dark h5,
 .traven-preview.cm-wysiwym-dark h6 {
-  color: #ffffff;
+  color: #fbbf24 !important;
 }
 .traven-preview.cm-wysiwym-dark blockquote {
   border-left-color: #52525b;
@@ -1525,7 +1525,7 @@
 }
 
 .traven-preview figure.traven-image-figure figcaption.traven-image-caption {
-  font-family: 'Atkinson Hyperlegible Next', sans-serif;
+  font-family: inherit !important;
   font-size: 0.82em;
   color: #71717a;
   margin-top: 8px;
@@ -1624,7 +1624,7 @@
 }
 
 .traven-preview figure.traven-video-figure figcaption.traven-video-caption {
-  font-family: 'Atkinson Hyperlegible Next', sans-serif;
+  font-family: inherit !important;
   font-size: 0.82em;
   color: #71717a;
   margin-top: 8px;
@@ -1716,7 +1716,7 @@
 }
 
 .traven-preview figure.traven-audio-figure figcaption.traven-audio-caption {
-  font-family: 'Atkinson Hyperlegible Next', sans-serif;
+  font-family: inherit !important;
   font-size: 0.82em;
   color: #71717a;
   margin-top: 8px;
@@ -1761,7 +1761,7 @@
   font-size: 1.2em !important;
   font-weight: bold;
   text-align: center;
-  color: #cc4a0a;
+  color: #cc4a0a !important;
   background-color: transparent !important;
   line-height: 1.5 !important;
 }
@@ -1770,6 +1770,8 @@
   line-height: 1.5 !important;
   font-style: normal !important;
   text-align: center !important;
+  font-family: 'Atkinson Hyperlegible Next', sans-serif !important;
+  color: #cc4a0a !important;
 }
 .cm-wysiwym-component-shortcode.component-pullquote blockquote {
   margin: 0 !important;
@@ -1959,6 +1961,8 @@
   font-style: normal !important;
   font-weight: bold !important;
   text-align: center !important;
+  font-family: 'Atkinson Hyperlegible Next', sans-serif !important;
+  color: #cc4a0a !important;
 }
 .traven-preview .traven-component-pullquote p {
   margin: 0 !important;
@@ -2114,7 +2118,7 @@
 }
 
 .cm-wysiwym-figure-shortcode .figure-caption {
-  font-family: inherit;
+  font-family: inherit !important;
   font-size: 0.85em;
   color: #cc4a0a;
   margin-top: 12px;
@@ -2326,3 +2330,16 @@ details:not([open]) .component-header {
 
 
 
+
+
+/* Ensure shortcode containers cascade the body typeface to their child elements */
+.cm-wysiwym-image-shortcode-container,
+.cm-wysiwym-video-shortcode-container,
+.cm-wysiwym-audio-shortcode-container,
+.cm-wysiwym-figure-shortcode,
+.traven-preview figure.traven-image-figure,
+.traven-preview figure.traven-video-figure,
+.traven-preview figure.traven-audio-figure,
+.traven-preview .traven-figure {
+  font-family: inherit !important;
+}
