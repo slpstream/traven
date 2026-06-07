@@ -415,7 +415,7 @@ When converting or adapting a normal CSS stylesheet from a standard HTML website
   }
   ```
 
-For the complete guide to runtime font customization using CSS custom properties — including dynamic Google Fonts loading, static overrides, and extending font roles beyond the default three — see **[Custom Typography](custom-typography.md)**.
+For the complete guide to runtime font customization using CSS custom properties — including dynamic Google Fonts loading, static overrides, and extending font roles beyond the default three — see **[Custom Typography](dev/custom-typography.md)**.
 
 ---
 

@@ -1042,7 +1042,7 @@ When you build a new theme, picking a "donor" from this table gets you 80% of th
 * **WYSIWYM** — "What You See Is What You Mean." Markdown syntax markers (the `**` around bold, the `[]` around links, the ` ``` ` fences) collapse into a clean visual representation while the cursor is outside, and re-expand for editing when the cursor enters. See `docs/key-features.md` and the knowledgebase §5.
 * **Scope** — a wrapper class that isolates CSS so the same selectors can mean different things in the live editor vs. the preview. The two scopes are `.cm-editor` and `.traven-preview`.
 * **Skin** — a single CSS file under `assets/skins/` that styles a theme. Auto-discovered, hot-swappable at runtime.
-* **Toolbar** — a separate concern, governed by `assets/toolbars/*.css`. Toolbar styles live in their own files; see `docs/customization-styling.md`.
+* **Toolbar** — a separate concern, governed by `assets/toolbars/*.css`. Toolbar styles live in their own files; see `customization-styling.md`.
 * **Shortcode** — a Traven-extended Markdown construct (`[image]`, `[video]`, `[audio]`, `[figure]`, `[component]`) parsed by a custom Lezer grammar in `src/*.js`. Shortcodes compile to clean semantic HTML in the preview.
 * **Decoration** — a CodeMirror 6 visual transformation of a range. Inlined in `wysiwym.js`. Decorations can be marks (`.cm-wysiwym-bold`) or block-replacement widgets (the `[image]` card).
 * **Dark class** — `.cm-wysiwym-dark` toggled on the editor host DOM by `setTheme("dark")` and on the preview container by the demo's theme switcher.
@@ -1051,10 +1051,10 @@ When you build a new theme, picking a "donor" from this table gets you 80% of th
 
 ## 14. Where to go next
 
-* `docs/customization-styling.md` — toolbar styling, button CSS identifiers, how to hide buttons.
-* `docs/shortcodes-architecture.md` — what each shortcode compiles to, attribute parsing, and how to register a brand-new shortcode (parser, widget, and skin).
-* `docs/shortcodes.md` — technical blueprint for adding custom shortcode support, including the regex/scanner pattern used in `wysiwym.js`.
-* `docs/installation-setup.md` — how to wire the editor into a host page.
-* `docs/api-reference.md` — full constructor options and instance methods (notably `setTheme()`, `setVimMode()`, `getUploadHandler()`).
-* `docs/shortcodestyles.css` — the canonical copy-paste cheat sheet for every shortcode's HTML output and CSS variables, kept in sync with the cheat sheet summary in [§6](#6-shortcode-markup-reference-cheat-sheet).
-* `docs/knowledgebase.md` §2 and §6 — the engineering rules behind this guide (CodeMirror 6 pitfalls, dark-mode parity tips, list-parsing constraints). Read this if you plan to extend the editor itself.
+* `customization-styling.md` — toolbar styling, button CSS identifiers, how to hide buttons.
+* `shortcodes-architecture.md` — what each shortcode compiles to, attribute parsing, and how to register a brand-new shortcode (parser, widget, and skin).
+* `shortcodes.md` — technical blueprint for adding custom shortcode support, including the regex/scanner pattern used in `wysiwym.js`.
+* `../installation-setup.md` — how to wire the editor into a host page.
+* `../api-reference.md` — full constructor options and instance methods (notably `setTheme()`, `setVimMode()`, `getUploadHandler()`).
+* `../shortcodestyles.css` — the canonical copy-paste cheat sheet for every shortcode's HTML output and CSS variables, kept in sync with the cheat sheet summary in [§6](#6-shortcode-markup-reference-cheat-sheet).
+* `../knowledgebase.md` §2 and §6 — the engineering rules behind this guide (CodeMirror 6 pitfalls, dark-mode parity tips, list-parsing constraints). Read this if you plan to extend the editor itself.

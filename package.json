@@ -1,9 +1,9 @@
 {
   "name": "traven",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "Embeddable MIT-licensed WYSIWYM Markdown Editor built on CodeMirror 6",
   "license": "MIT",
-  "author": "SLPStream / Freedomware",
+  "author": "SLPStream / Freedomware.dev",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/slpstream/traven.git"

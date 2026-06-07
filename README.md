@@ -13,7 +13,7 @@
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License"></a>
-  <img src="https://img.shields.io/badge/version-0.2.5-orange.svg" alt="Version 0.2.5">
+  <img src="https://img.shields.io/badge/version-0.2.6-orange.svg" alt="Version 0.2.6">
   <img src="https://img.shields.io/badge/engine-CodeMirror_6-6aa00.svg" alt="CodeMirror 6 Engine">
   <img src="https://img.shields.io/badge/peer_dependencies-none-blue.svg" alt="Zero Peer Dependencies">
 </p>
@@ -24,7 +24,7 @@
 
 ```html
 <!-- Include the editor with just a single line of code: -->
-<script type="module" src="https://cdn.jsdelivr.net/gh/slpstream/traven@v0.2.5/dist/traven.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/gh/slpstream/traven@v0.2.6/dist/traven.js"></script>
 ```
 
 **Traven Editor** is a non-brittle WYSIWYM (What You See Is What You Mean) Markdown editor for embedding directly into custom CMS systems, administrative dashboards, web forms and apps. Built on the **CodeMirror 6** editing engine, Traven delivers a high-fidelity editing experience while outputting clean, raw Markdown.
@@ -68,7 +68,7 @@ Traven is a framework-agnostic editor with zero peer dependencies. It can be int
 > [!IMPORTANT]
 > **Make it your own: Customize how you want the editor to look:**
 > *   **Toolbar (Built-in & Optional):** Traven ships with a fully functional default toolbar (`toolbar-default.css`) baked directly into the core `traven.css` bundle. You do not need to load a separate toolbar, but if you want to customize it, the easiest way to do that is to just load any of the alternative layouts (like `toolbar-expandable.css`).
-> *   **Skin/Theme (Built-in Default):** The compiled bundle (`dist/traven.css`) ships with a built-in starter skin (`skin-starter.css`) that provides sane typographic defaults. No separate skin `<link>` is needed for basic usage. To customize the editor's appearance, load one of the pre-built skins (like `skin-modern.css`, `skin-editorial.css`, `skin-dark.css`) or [develop your own skin](docs/theme-development.md) — the external skin will override the bundled defaults.
+> *   **Skin/Theme (Built-in Default):** The compiled bundle (`dist/traven.css`) ships with a built-in starter skin (`skin-starter.css`) that provides sane typographic defaults. No separate skin `<link>` is needed for basic usage. To customize the editor's appearance, load one of the pre-built skins (like `skin-modern.css`, `skin-editorial.css`, `skin-dark.css`) or [develop your own skin](docs/dev/theme-development.md) — the external skin will override the bundled defaults.
 
 #### CDN Integration (Quickest Setup)
 
@@ -80,7 +80,7 @@ Drop the editor module from the CDN into your page (the core styles and structur
 </form>
 
 <!-- Load the module once in your page footer -->
-<script type="module" src="https://cdn.jsdelivr.net/gh/slpstream/traven@v0.2.5/dist/traven.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/gh/slpstream/traven@v0.2.6/dist/traven.js"></script>
 ```
 
 > [!NOTE]
@@ -104,16 +104,16 @@ Architectural details, examples, and splitting/recombination helper functions ar
 ### Customization & Styling
 
 Editor themes, layouts, and toolbar behaviors are fully customizable. Choose between `"static"` (fixed top), `"floating"` (clean canvas with formatting bubble and gutter menus), or `"hybrid"` modes, swap stylesheet skins to match your website, or override selectors using custom CSS.
-To learn more about CSS class listings, custom skin configurations, and toolbar styling options, consult the **[Customization & Styling Guide](docs/customization-styling.md)**. For instructions on how to build a new theme from scratch or extend an existing skin, follow the **[Theme Development Guide](docs/theme-development.md)**. To change the editor's fonts at runtime using CSS custom properties, see the **[Custom Typography Guide](docs/custom-typography.md)**. To enable syntax highlighting for fenced code blocks inside the editor or in your HTML output, see the **[Code Syntax Highlighting Guide](docs/code-syntax-highlighting.md)**.
+To learn more about CSS class listings, custom skin configurations, and toolbar styling options, consult the **[Customization & Styling Guide](docs/dev/customization-styling.md)**. For instructions on how to build a new theme from scratch or extend an existing skin, follow the **[Theme Development Guide](docs/dev/theme-development.md)**. To change the editor's fonts at runtime using CSS custom properties, see the **[Custom Typography Guide](docs/dev/custom-typography.md)**. To enable syntax highlighting for fenced code blocks inside the editor or in your HTML output, see the **[Code Syntax Highlighting Guide](docs/code-syntax-highlighting.md)**.
 
 ### Custom Shortcodes Architecture
 
 Traven supports extending standard Markdown with custom shortcodes. By default, it comes with rich, interactive WYSIWYM widgets and semantic HTML compilers for `[image]`, `[video]`, `[audio]`, `[figure]`, and `[component]` layouts.
-The technical blueprint, widget rendering lifecycles, and syntax extension details are covered in the **[Custom Shortcodes Architecture Guide](docs/shortcodes-architecture.md)**.
+The technical blueprint, widget rendering lifecycles, and syntax extension details are covered in the **[Custom Shortcodes Architecture Guide](docs/dev/shortcodes-architecture.md)**.
 
 ### Development
 
-If you want to develop on Traven, start with the **[Development Guide](docs/development.md)** which contains instructions for setting up the developer workspace, installing bundler dependencies, building local assets with esbuild, running the unit test suite, and serving the PHP integration demos locally.
+If you want to develop on Traven, start with the **[Development Guide](docs/dev/development.md)** which contains instructions for setting up the developer workspace, installing bundler dependencies, building local assets with esbuild, running the unit test suite, and serving the PHP integration demos locally.
 
 ---
 

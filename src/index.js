@@ -2110,6 +2110,14 @@ export class TravenEditor {
       (match, text, url) =>
         `<a href="${sanitizeUrl(url)}" target="_blank">${text}</a>`,
     );
+    // Mask HTML tags to protect their attributes from inline formatting
+    const htmlTagPlaceholders = [];
+    content = content.replace(/<[^>]+>/g, (match) => {
+      const index = htmlTagPlaceholders.length;
+      htmlTagPlaceholders.push(match);
+      return `HTMLTAGPLACEHOLDER${index}`;
+    });
+
     content = content.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
     content = content.replace(/__(.*?)__/g, "<strong>$1</strong>");
     content = content.replace(/\*(.*?)\*/g, "<em>$1</em>");
@@ -2117,6 +2125,11 @@ export class TravenEditor {
     content = content.replace(/==(.*?)==/g, "<mark>$1</mark>");
     content = content.replace(/~~(.*?)~~/g, "<del>$1</del>");
     content = content.replace(/`(.*?)`/g, "<code>$1</code>");
+
+    // Restore HTML tags
+    content = content.replace(/HTMLTAGPLACEHOLDER(\d+)/g, (match, index) => {
+      return htmlTagPlaceholders[parseInt(index, 10)];
+    });
 
     // Restore inline code spans and escape their contents
     content = content.replace(/INLINECODEPLACEHOLDER(\d+)/g, (match, index) => {
