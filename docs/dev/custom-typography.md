@@ -137,7 +137,7 @@ Load the corresponding Google Fonts `<link>` in your HTML `<head>` and the edito
 For the full dynamic typography experience, load `skin-custom.css` instead of another skin. This skin is specifically designed as a parameterized overlay — it inherits all layout and color rules from the bundled `skin-starter.css` and exposes the three font variables for runtime control.
 
 ```html
-<link rel="stylesheet" href="assets/skins/skin-custom.css">
+<link rel="stylesheet" href="packages/core/assets/skins/skin-custom.css">
 ```
 
 See `demo-typography.php` for a complete working example with dropdown font selectors, Google Fonts integration, and localStorage persistence.

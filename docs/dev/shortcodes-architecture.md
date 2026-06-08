@@ -9,7 +9,7 @@ Traven supports custom shortcodes to extend the standard Markdown syntax. By def
 Traven includes an advanced, optional `[image]` shortcode (e.g. `[image src="..." alt="..." align="center" size="medium" class="my-custom-class"]`) designed for modular, responsive layouts:
 * **Fully Backwards-Compatible**: The custom shortcode is completely optional. Traven remains fully backwards-compatible and non-breaking for standard legacy Markdown syntax (`![alt](src)`). Existing standard images continue to render and compile flawlessly.
 * **Toolbar Toggle**: The "Insert Image" toolbar modal contains a sliders-icon toggle to switch between Advanced mode (generating the custom `[image]` shortcode with support for captions, custom CSS classes, sizing, and alignment settings) and Legacy mode (producing standard `![alt](src)` Markdown).
-* **Decoupled Presentation Styling**: The fallback renderer compiles the shortcode to clean semantic HTML (an `<img>` tag with class attributes and no inline `style=""` declarations). Layout formatting (width, display, float, margin) is delegated entirely to the skin stylesheets (e.g. `assets/skins/skin-light.css`) via `.align-[alignment]` and `.size-[size]` selector classes.
+* **Decoupled Presentation Styling**: The fallback renderer compiles the shortcode to clean semantic HTML (an `<img>` tag with class attributes and no inline `style=""` declarations). Layout formatting (width, display, float, margin) is delegated entirely to the skin stylesheets (e.g. `packages/core/assets/skins/skin-light.css`) via `.align-[alignment]` and `.size-[size]` selector classes.
 
 ---
 
@@ -68,4 +68,4 @@ Developers can also extend Traven to support other custom shortcodes using its d
 
 1.  **Grammar & Parser (`src/component-parser.js`)**: Extends the Lezer Markdown parser to detect tag pairs, attributes, and values.
 2.  **Replacement Widget (`src/wysiwym.js`)**: Injets a custom CodeMirror `WidgetType` returning custom interactive preview elements when the cursor is outside the shortcode range.
-3.  **Themes (`assets/skins/*.css`)**: Defines visual tokens (e.g. background colors, border styles, hand-drawn styles) for classes like `.cm-wysiwym-component-shortcode`.
+3.  **Themes (`packages/core/assets/skins/*.css`)**: Defines visual tokens (e.g. background colors, border styles, hand-drawn styles) for classes like `.cm-wysiwym-component-shortcode`.

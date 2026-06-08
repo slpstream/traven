@@ -16,7 +16,7 @@ graph TD
     Decorator -->|Active Cursor: Show Code| Text[Raw Text Rendering]
     Decorator -->|Inactive Cursor: Hide Code| Widget[Replace Widget Injection]
     Widget -->|4. Render DOM| DOM[Shortcode Preview DOM]
-    DOM -->|5. Apply Skin| CSS[assets/skins/*.css]
+    DOM -->|5. Apply Skin| CSS[packages/core/assets/skins/*.css]
 ```
 
 ### A. Parser Logic (`src/wysiwym.js`)
@@ -28,7 +28,7 @@ graph TD
 * **Replace Widgets**: CodeMirror `WidgetType` classes will represent the shortcodes visually (e.g., `GalleryShortcodeWidget`, `YoutubeShortcodeWidget`).
 * **Interactive DOM**: These widgets return DOM nodes representing the shortcode's output. They can fetch media previews asynchronously or display interactive UI elements (like placeholder cards).
 
-### C. Skins & Themes (`assets/skins/*.css`)
+### C. Skins & Themes (`packages/core/assets/skins/*.css`)
 The DOM elements rendered by the widgets are assigned semantic classes (e.g., `.cm-wysiwym-shortcode-widget`, `.cm-wysiwym-gallery-preview`).
 * **Skin Decoupling**: The CSS skins handle color palettes, border styling, transition animations, and shadow treatments:
   - **Neutral Skin**: Renders the shortcode preview as a flat, distraction-free container with gray slate borders (`#cbd5e1`) and a clean background (`#f8fafc`).

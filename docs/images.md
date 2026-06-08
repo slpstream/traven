@@ -123,7 +123,7 @@ If the upload fails, the spinner indicator is cleanly removed, and a localized e
 
 ## 5. UI Styling Classes for Skins
 
-Every element in the modal and upload workflow is assigned generic, semantic CSS classes. You can override these classes in your custom stylesheets (e.g., `assets/skins/`) to change the styling to match your brand:
+Every element in the modal and upload workflow is assigned generic, semantic CSS classes. You can override these classes in your custom stylesheets (e.g., `packages/core/assets/skins/`) to change the styling to match your brand:
 
 | Selector | Description |
 | :--- | :--- |

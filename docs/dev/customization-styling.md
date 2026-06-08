@@ -15,25 +15,25 @@ Simply swap the styling link in your HTML document:
 
 ```html
 <!-- For a slate, clean typography-focused feel: -->
-<link rel="stylesheet" href="assets/skins/skin-light.css">
+<link rel="stylesheet" href="packages/core/assets/skins/skin-light.css">
 
 <!-- For a warm, rust-tinted brand feel: -->
-<link rel="stylesheet" href="assets/skins/skin-colorful.css">
+<link rel="stylesheet" href="packages/core/assets/skins/skin-colorful.css">
 
 <!-- For a premium slate dark theme feel: -->
-<link rel="stylesheet" href="assets/skins/skin-dark.css">
+<link rel="stylesheet" href="packages/core/assets/skins/skin-dark.css">
 
 <!-- For a distraction-free, quiet paper feel: -->
-<link rel="stylesheet" href="assets/skins/skin-editorial.css">
+<link rel="stylesheet" href="packages/core/assets/skins/skin-editorial.css">
 
 <!-- For a modern, high-contrast layout -->
-<link rel="stylesheet" href="assets/skins/skin-modern.css">
+<link rel="stylesheet" href="packages/core/assets/skins/skin-modern.css">
 
 <!-- For an academic, LaTeX-style serif reading layout -->
-<link rel="stylesheet" href="assets/skins/skin-academic.css">
+<link rel="stylesheet" href="packages/core/assets/skins/skin-academic.css">
 
 <!-- For runtime-configurable dynamic fonts via JavaScript: -->
-<link rel="stylesheet" href="assets/skins/skin-custom.css">
+<link rel="stylesheet" href="packages/core/assets/skins/skin-custom.css">
 ```
 
 ### Loading Skins via CDN
@@ -42,7 +42,7 @@ If using CDN integration, target the assets directly from the repository using j
 
 ```html
 <!-- Example: Load skin-light.css via CDN (pinned version) -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@freedomware/traven@latest/assets/skins/skin-light.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@freedomware/traven@latest/packages/core/assets/skins/skin-light.css">
 ```
 
 ---
@@ -53,7 +53,7 @@ You can customize the toolbar layout by passing an array of tool keys to the con
 
 ### Available Toolbar Stylesheets
 
-Alternative pre-configured toolbar presentation sheets are available in `assets/toolbars/` and can be loaded dynamically or statically to swap editor layouts:
+Alternative pre-configured toolbar presentation sheets are available in `packages/core/assets/toolbars/` and can be loaded dynamically or statically to swap editor layouts:
 *   `toolbar-default.css`: The default clean toolbar skin, containing the full set of all available buttons.
 *   `toolbar-compact.css` / `toolbar-compact-dark.css`: Slim layouts with reduced padding.
 *   `toolbar-reduced.css` / `toolbar-reduced-dark.css`: Ultra-minimalist layouts for simplified interfaces.

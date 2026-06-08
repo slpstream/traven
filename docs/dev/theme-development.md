@@ -9,14 +9,14 @@ This document is a comprehensive guide to styling Traven, detailing the side-by-
 ## Quick Start: How to Build or Extend a Skin
 
 ### Building a Skin from Scratch
-1.  **Duplicate a Base Theme**: Copy `assets/skins/skin-light.css` and rename it (e.g., `skin-forest.css`).
+1.  **Duplicate a Base Theme**: Copy `packages/core/assets/skins/skin-light.css` and rename it (e.g., `skin-forest.css`).
 2.  **Define Fonts and Variables**: Import your preferred typography (e.g., from Google Fonts, or locally loaded for better reader privacy and no telemetry) and update the main CSS color variables.
 3.  **Adjust Editor Typography**: Map heading styles and inline code elements. Make sure to apply `!important` to headings padding.
 4.  **Set Up Shortcode Styles**: Target the CodeMirror widget containers (`.cm-wysiwym-*`) and the HTML Preview equivalents (`.traven-preview *`) using the cheat sheet selectors.
 5.  **Test Dark Mode**: Ensure variables and overrides resolve correctly when `.cm-wysiwym-dark` is toggled.
 6.  **Load the Skin**: Link your stylesheet in the `<head>` of your host application:
     ```html
-    <link rel="stylesheet" href="assets/skins/skin-forest.css">
+    <link rel="stylesheet" href="packages/core/assets/skins/skin-forest.css">
     ```
 
 ### Extending an Existing Skin
@@ -24,7 +24,7 @@ If you just want to tweak colors or minor settings on an existing skin without m
 1.  Create a custom override stylesheet (e.g., `theme-overrides.css`).
 2.  Import or load the main skin first:
     ```html
-    <link rel="stylesheet" href="assets/skins/skin-editorial.css">
+    <link rel="stylesheet" href="packages/core/assets/skins/skin-editorial.css">
     <link rel="stylesheet" href="theme-overrides.css">
     ```
 3.  Apply specific overrides using CSS variables or classes:
@@ -44,7 +44,7 @@ A Traven skin is a single `.css` file that targets **two cooperating DOM trees**
 
 ```mermaid
 graph TD
-    A[assets/skins/skin-yourname.css] -->|styles| B[Editor Scope: .cm-editor]
+    A[packages/core/assets/skins/skin-yourname.css] -->|styles| B[Editor Scope: .cm-editor]
     A -->|styles| C[Preview Scope: .traven-preview]
     B -->|WYSIWYM| W[Writer's live view]
     C -->|Compiled HTML| P[Reader's preview]
@@ -64,7 +64,7 @@ graph TD
 
 ## 2. The eight shipping skins, side by side
 
-All eight skins live in `assets/skins/` and are auto-discovered by the customization dropdown (`includes/_customization-dropdowns.php`); any new file you add to that directory shows up in the demo page's skin picker with no further wiring.
+All eight skins live in `packages/core/assets/skins/` and are auto-discovered by the customization dropdown (`includes/_customization-dropdowns.php`); any new file you add to that directory shows up in the demo page's skin picker with no further wiring.
 
 | Skin | Design intent | Body font | Mono font | Gutter | Headings | Caret | Accent |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -264,7 +264,7 @@ Every shortcode accepts `align="left|right|center|fullbleed"` and `size="small|m
 
 ### 3.4 Modal dialog scope
 
-Traven's modal overlay (link, image, video, audio, component, figure, table editor, help, etc.) is rendered in a separate overlay class `.traven-modal-overlay`. The default toolbar stylesheet (`assets/toolbars/toolbar-default.css`) handles most of the modal chrome. A theme normally only needs to override these:
+Traven's modal overlay (link, image, video, audio, component, figure, table editor, help, etc.) is rendered in a separate overlay class `.traven-modal-overlay`. The default toolbar stylesheet (`packages/core/assets/toolbars/toolbar-default.css`) handles most of the modal chrome. A theme normally only needs to override these:
 
 * `.traven-modal-overlay` — outer backdrop.
 * `.traven-modal-overlay.cm-wysiwym-dark` — dark-mode modal.
@@ -705,13 +705,13 @@ A complete theme declares both. If you only style one, the editor and the previe
 ## 8. Building a new theme
 
 ### 8.1 File placement
-Drop a new file into `assets/skins/` with the `skin-` prefix:
+Drop a new file into `packages/core/assets/skins/` with the `skin-` prefix:
 
 ```
-assets/skins/skin-aurora.css
+packages/core/assets/skins/skin-aurora.css
 ```
 
-The dropdown script (`includes/_customization-dropdowns.php`) auto-discovers any `*.css` file in that directory, sorts `skin-light` first and everything else alphabetically, and registers a `<select>` option labeled "Aurora Skin" (it strips the prefix, title-cases the remainder, and appends "Skin"). For the new option to actually load when picked, the host page must contain a `<link id="editor-skin-link" rel="stylesheet" href="assets/skins/skin-light.css">` tag; the demo's `applySelection()` script will rewrite that `href` at runtime.
+The dropdown script (`includes/_customization-dropdowns.php`) auto-discovers any `*.css` file in that directory, sorts `skin-light` first and everything else alphabetically, and registers a `<select>` option labeled "Aurora Skin" (it strips the prefix, title-cases the remainder, and appends "Skin"). For the new option to actually load when picked, the host page must contain a `<link id="editor-skin-link" rel="stylesheet" href="packages/core/assets/skins/skin-light.css">` tag; the demo's `applySelection()` script will rewrite that `href` at runtime.
 
 ### 8.2 Walkthrough: from zero to a working skin
 The minimum viable skin is short:
@@ -902,17 +902,17 @@ Use this when reviewing a finished theme before publishing it.
 Static load (recommended for production):
 
 ```html
-<link rel="stylesheet" href="assets/skins/skin-aurora.css" id="editor-skin-link">
-<link rel="stylesheet" href="assets/toolbars/toolbar-default.css">
+<link rel="stylesheet" href="packages/core/assets/skins/skin-aurora.css" id="editor-skin-link">
+<link rel="stylesheet" href="packages/core/assets/toolbars/toolbar-default.css">
 ```
 
 Dynamic load (matches the demos' skin dropdown):
 
 ```html
-<link rel="stylesheet" href="assets/skins/skin-aurora.css" id="editor-skin-link">
+<link rel="stylesheet" href="packages/core/assets/skins/skin-aurora.css" id="editor-skin-link">
 <script>
   document.getElementById("editor-skin-link").href =
-    "assets/skins/" + (localStorage.getItem("traven-selected-skin") || "skin-aurora") + ".css";
+    "packages/core/assets/skins/" + (localStorage.getItem("traven-selected-skin") || "skin-aurora") + ".css";
 </script>
 ```
 
@@ -927,8 +927,8 @@ If you just want to recolor or restyle a few elements without forking the file:
 1. Ship an override stylesheet that is **loaded after** the base skin:
 
    ```html
-   <link rel="stylesheet" href="assets/skins/skin-editorial.css">
-   <link rel="stylesheet" href="assets/css/site-overrides.css">
+   <link rel="stylesheet" href="packages/core/assets/skins/skin-editorial.css">
+   <link rel="stylesheet" href="packages/core/assets/css/site-overrides.css">
    ```
 
 2. Use `!important` to win specificity wars (the shipping skins use `!important` heavily, which is intentional to defeat page-level resets).
@@ -1009,7 +1009,7 @@ You can sanity-check a finished skin without writing tests:
 2. **Visual check.** Load the theme in one of the demos (`demo-inline.php`, `demo-form.php`, `demo-hybrid.php`, `demo-unified.php`, `demo-editorial.php`). The default dropdown at the top will list the new file automatically. Toggle dark mode, scroll a long document, and visit each shortcode.
 3. **Cursor accuracy.** Click around headings, blockquotes, and the shortcode widgets. The cursor should land precisely on the character under the mouse. If it doesn't, you almost certainly introduced a vertical margin or a `float` somewhere — see [§4](#4-codemirror-6-layout-engine-rules).
 4. **Preview parity.** Toggle the preview tab (or open the split-pane demo) and compare. Headings should align; first-child headings should not jump; blockquote spacing should match the editor.
-5. **Build pipeline.** The theme is referenced by `<link>` tags in the demo pages only. The `dist/traven.css` bundle (built from `src/style.css`) provides **only** the dark-mode base styles and the math / Vim / scrollbar rules; the live themes live entirely in `assets/skins/`. So you can iterate on a theme without ever running `npm run build`.
+5. **Build pipeline.** The theme is referenced by `<link>` tags in the demo pages only. The `dist/traven.css` bundle (built from `src/style.css`) provides **only** the dark-mode base styles and the math / Vim / scrollbar rules; the live themes live entirely in `packages/core/assets/skins/`. So you can iterate on a theme without ever running `npm run build`.
 
 ---
 
@@ -1042,8 +1042,8 @@ When you build a new theme, picking a "donor" from this table gets you 80% of th
 
 * **WYSIWYM** — "What You See Is What You Mean." Markdown syntax markers (the `**` around bold, the `[]` around links, the ` ``` ` fences) collapse into a clean visual representation while the cursor is outside, and re-expand for editing when the cursor enters. See `docs/key-features.md` and the knowledgebase §5.
 * **Scope** — a wrapper class that isolates CSS so the same selectors can mean different things in the live editor vs. the preview. The two scopes are `.cm-editor` and `.traven-preview`.
-* **Skin** — a single CSS file under `assets/skins/` that styles a theme. Auto-discovered, hot-swappable at runtime.
-* **Toolbar** — a separate concern, governed by `assets/toolbars/*.css`. Toolbar styles live in their own files; see `customization-styling.md`.
+* **Skin** — a single CSS file under `packages/core/assets/skins/` that styles a theme. Auto-discovered, hot-swappable at runtime.
+* **Toolbar** — a separate concern, governed by `packages/core/assets/toolbars/*.css`. Toolbar styles live in their own files; see `customization-styling.md`.
 * **Shortcode** — a Traven-extended Markdown construct (`[image]`, `[video]`, `[audio]`, `[figure]`, `[component]`) parsed by a custom Lezer grammar in `src/*.js`. Shortcodes compile to clean semantic HTML in the preview.
 * **Decoration** — a CodeMirror 6 visual transformation of a range. Inlined in `wysiwym.js`. Decorations can be marks (`.cm-wysiwym-bold`) or block-replacement widgets (the `[image]` card).
 * **Dark class** — `.cm-wysiwym-dark` toggled on the editor host DOM by `setTheme("dark")` and on the preview container by the demo's theme switcher.

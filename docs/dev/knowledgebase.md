@@ -10,8 +10,8 @@ Traven is designed to be a lightweight, framework-agnostic editor component. It 
 
 * **[package.json](file:///home/user/Desktop/refactor/traven/package.json)**: Bundler settings (`esbuild`), script pipelines (`npm run build`/`watch`), and versioned CodeMirror 6 packages.
 * **[src/index.js](file:///home/user/Desktop/refactor/traven/src/index.js)**: Public API surface exposed via the `TravenEditor` class (mounts CodeMirror, encapsulates state lifecycle, inserts snippets, and fires events).
-* **[assets/skins/](file:///home/user/Desktop/refactor/traven/assets/skins/)**: Decoupled stylesheets (`skin-light.css`, `skin-colorful.css`, and `skin-dark.css`) containing editor visual theme configurations that require no rebuilds.
-* **[assets/toolbars/toolbar-default.css](file:///home/user/Desktop/refactor/traven/assets/toolbars/toolbar-default.css)**: Decoupled toolbar presentation stylesheet, letting users skin and toggle toolbar buttons independently.
+* **[packages/core/assets/skins/](file:///home/user/Desktop/refactor/traven/packages/core/assets/skins/)**: Decoupled stylesheets (`skin-light.css`, `skin-colorful.css`, and `skin-dark.css`) containing editor visual theme configurations that require no rebuilds.
+* **[packages/core/assets/toolbars/toolbar-default.css](file:///home/user/Desktop/refactor/traven/packages/core/assets/toolbars/toolbar-default.css)**: Decoupled toolbar presentation stylesheet, letting users skin and toggle toolbar buttons independently.
 * **[src/toolbar/](file:///home/user/Desktop/refactor/traven/src/toolbar/)**: Modular toolbar components (`toolbar.js`, `tools.js`, `modal.js`) handling dynamic generation, accessibility behaviors, modals, and actions.
 * **[src/wysiwym.js](file:///home/user/Desktop/refactor/traven/src/wysiwym.js)**: Core decoration state machine mapping markdown parser nodes to collapsed replacement decorations.
 * **[src/delimiter-skip.js](file:///home/user/Desktop/refactor/traven/src/delimiter-skip.js)**: Arrow-key keyboard hook checking if cursors are on boundaries of folded syntax blocks to skip them.
@@ -162,7 +162,7 @@ Each button generated in the toolbar is assigned the class `.toolbar-btn` and a 
 | `help` | `.btn-help` | Open keyboard shortcuts help modal | `Ctrl+/` (`Cmd+/` on Mac) |
 
 ### Hiding Buttons via CSS
-Although the preferred way to hide buttons is through the `toolbar` array configuration, host platforms can also hide toolbar buttons by editing or overriding styles in `assets/toolbars/toolbar-default.css`. E.g., to hide the "Redo" and "Heading" buttons:
+Although the preferred way to hide buttons is through the `toolbar` array configuration, host platforms can also hide toolbar buttons by editing or overriding styles in `packages/core/assets/toolbars/toolbar-default.css`. E.g., to hide the "Redo" and "Heading" buttons:
 
 ```css
 .toolbar-btn.btn-redo,
@@ -186,7 +186,7 @@ To add a brand-new formatting tool to Traven, follow these three steps:
    }
    ```
 2. **Add to Toolbar Config**: Add the new tool key (e.g., `"strikethrough"`) to `DEFAULT_TOOLBAR` in `src/index.js`, or include it in the custom `toolbar` array passed during initialization.
-3. **Optional Custom Styling**: Add specific visual rules for the button class (e.g., `.btn-strikethrough`) in `assets/toolbars/toolbar-default.css` if custom styling is needed.
+3. **Optional Custom Styling**: Add specific visual rules for the button class (e.g., `.btn-strikethrough`) in `packages/core/assets/toolbars/toolbar-default.css` if custom styling is needed.
 
 ---
 
@@ -475,7 +475,7 @@ To ensure accessibility on mobile, the layout mode is resolved dynamically:
 * **Enforced Static Mode**: On touch-based mobile viewports, the editor automatically forces `toolbarMode: "static"`, ensuring user access to all formatting options without relying on precise mouse cursor selections.
 
 ### B. Dynamic Stylesheet Injection
-* **`loadStyles()`**: To eliminate manual `<link>` management on host pages, `src/toolbar/load-styles.js` dynamically scans the DOM's stylesheets. If `.traven-slim-rail` is not already styled (meaning `dist/traven.css` has not been loaded), it appends a `<link>` pointing to the local `assets/toolbars/toolbar-floating.css`.
+* **`loadStyles()`**: To eliminate manual `<link>` management on host pages, `src/toolbar/load-styles.js` dynamically scans the DOM's stylesheets. If `.traven-slim-rail` is not already styled (meaning `dist/traven.css` has not been loaded), it appends a `<link>` pointing to the local `packages/core/assets/toolbars/toolbar-floating.css`.
 
 ### C. Slim Control Rail & Roving Tabindex
 * **Rail Element**: In `"floating"` mode, the static toolbar is replaced by a horizontal rail containing global document-level actions (Undo, Redo, Save, Vim, Help, Clear, and Fullscreen) and the statistics widget.
