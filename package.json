@@ -1,6 +1,6 @@
 {
   "name": "traven",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "Embeddable MIT-licensed WYSIWYM Markdown Editor built on CodeMirror 6",
   "license": "MIT",
   "author": "SLPStream / Freedomware.dev",

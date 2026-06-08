@@ -56,6 +56,6 @@ $content = $_POST['content'] ?? 'Write something...';
   <?php endif; ?>
 
   <!-- Step 2 — Load Traven in 1 line -->
-  <script type="module" src="https://cdn.jsdelivr.net/gh/slpstream/traven@v0.2.6/dist/traven.js"></script>
+  <script type="module" src="https://cdn.jsdelivr.net/gh/slpstream/traven@v0.2.7/dist/traven.js"></script>
 </body>
 </html>

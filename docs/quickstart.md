@@ -28,7 +28,7 @@ Inside your form, swap `<textarea>` for `<traven-editor>`. To show the editor wi
 Add this one line before the closing `</body>` tag.
 
 ```html
-  <script type="module" src="https://cdn.jsdelivr.net/gh/slpstream/traven@v0.2.6/dist/traven.js"></script>
+  <script type="module" src="https://cdn.jsdelivr.net/gh/slpstream/traven@v0.2.7/dist/traven.js"></script>
 </body>
 ```
 
