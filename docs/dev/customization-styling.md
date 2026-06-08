@@ -41,8 +41,8 @@ Simply swap the styling link in your HTML document:
 If using CDN integration, target the assets directly from the repository using jsDelivr:
 
 ```html
-<!-- Example: Load skin-light.css via CDN -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/slpstream/traven@v0.2.2/assets/skins/skin-light.css">
+<!-- Example: Load skin-light.css via CDN (pinned version) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/slpstream/traven@v0.2.7/assets/skins/skin-light.css">
 ```
 
 ---

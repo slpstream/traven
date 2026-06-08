@@ -18,7 +18,7 @@ This component will accept a `name` attribute, forward any extra attributes (lik
 
 {{-- Push the script to the footer stack, ensuring it only loads once --}}
 @pushOnce('scripts')
-    <script type="module" src="https://cdn.jsdelivr.net/gh/slpstream/traven@v0.2.4/dist/traven.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/gh/slpstream/traven@v0.2.7/dist/traven.js"></script>
 @endPushOnce
 ```
 
