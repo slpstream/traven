@@ -59,7 +59,7 @@ header {
 }
 
 .logo-container svg {
-  height: 32px;
+  height: 25px;
   width: auto;
   display: block;
 }
@@ -84,10 +84,10 @@ header {
 
 .nav-btn {
   text-decoration: none;
-  font-size: 0.9em;
+  font-size: 0.72em;
   font-weight: 600;
   color: var(--text-secondary);
-  padding: 8px 16px;
+  padding: 5px 10px;
   border-radius: 6px;
   transition: all 0.2s;
 }

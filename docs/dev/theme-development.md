@@ -71,7 +71,7 @@ All eight skins live in `packages/core/assets/skins/` and are auto-discovered by
 | `skin-light.css` | Neutral Slate — baseline | `Atkinson Hyperlegible Next` (Google Fonts) | `Fira Code` (Google Fonts) | Visible, soft slate | Bold sans, tight | Slate 900 | Slate 600 |
 | `skin-colorful.css` | Warm Rust — expressive | `Atkinson Hyperlegible Next` (Google Fonts) | `Fira Code` (Google Fonts) | Visible, indigo active | Bold sans, bright rust caret | `#cc4a0a` rust | `#3b82f6` indigo |
 | `skin-dark.css` | Premium Dark Slate | `Atkinson Hyperlegible Next` (Google Fonts) | `Fira Code` (Google Fonts) | Visible, dim slate | Bold sans, near-white | Sky `#38bdf8` | Sky `#38bdf8` |
-| `skin-editorial.css` | Minimalist Focus — no chrome | `Goudy Bookletter 1911` (serif) | `Victor Mono` | **Hidden** | `Macondo` (h1–h3), Goudy (h4–h6) | Ink black | None — pure paper |
+| `skin-editorial.css` | Minimalist Focus — no chrome | `Goudy Bookletter 1911` (serif) | `Victor Mono` | Visible, soft slate | `Macondo` (h1–h3), Goudy (h4–h6) | Ink black | None — pure paper |
 | `skin-modern.css` | Modern Clean — premium | `Epunda Slab` (serif) | `JetBrains Mono` | Visible, borderless | `Saira Condensed` (sans) | Zinc 900 | `#115e59` teal |
 | `skin-academic.css` | Classic LaTeX Booktabs | `Source Serif 4` (serif) | `Courier Prime` | Visible, soft slate | Serif, booktabs tables | Oxblood `#7a2226` | Oxblood `#7a2226` |
 | `skin-starter.css` ⭐ | Modern Georgia — base (**bundled default**) | `Georgia` (serif) | System monospace | Visible, soft slate | System sans, bold | Slate 900 | Slate 600 |
@@ -1022,7 +1022,7 @@ A quick lookup of the assets that each shipping theme overrides or extends.
 | **External `@import`** | Google Fonts | Google Fonts | Google Fonts | Google Fonts | Google Fonts | Google Fonts + jsDelivr | **None** |
 | **Body font** | Atkinson + system | Atkinson + system | Atkinson + system | Goudy Bookletter 1911 | Epunda Slab + system | Computer Modern Serif | Configurable |
 | **Mono font** | Fira Code | Fira Code | Fira Code | Victor Mono | JetBrains Mono | Computer Modern Typewriter | Configurable |
-| **Gutter visible?** | Yes | Yes | Yes | **No** (`display: none`) | Yes | Yes | Yes |
+| **Gutter visible?** | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
 | **Caret color** | Slate 900 | Rust `#cc4a0a` | Sky `#38bdf8` | Ink black | Zinc 900 | Oxblood `#7a2226` | Slate 900 |
 | **Selection color** | Slate 18% | Indigo 15% | Sky 35% | Slate 18% | Teal 15% | Oxblood 22% | Slate 18% |
 | **Blockquote treatment** | Left bar | Rust left bar | Slate left bar | Curly quote `::before` | Teal left bar | Muted left bar | Left bar |
@@ -1031,7 +1031,7 @@ A quick lookup of the assets that each shipping theme overrides or extends.
 | **Image borders** | 1 px slate, 12 px radius | Same | Same | Same | No border, 8px radius | No border | Same |
 | **Component blockquote** | Slate left bar | Rust left bar | Slate left bar | Curly quote | Teal left bar | Muted left bar | Left bar |
 | **Math fallback colors** | Inherits from base | Inherits from base | Inherits from base | Light slate | Light zinc | Inherits from base | Inherits from base |
-| **Hidden gutter padding** | n/a | n/a | n/a | `0 8px` | n/a | n/a | n/a |
+| **Hidden gutter padding** | n/a | n/a | n/a | n/a | n/a | n/a | n/a |
 | **Raw editor override** | n/a | n/a | n/a | Victor Mono 14 px / lh 2 | n/a | n/a | n/a |
 
 When you build a new theme, picking a "donor" from this table gets you 80% of the way there.

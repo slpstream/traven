@@ -23,16 +23,25 @@
 }
 
 .cm-content {
-  padding: 0 8px !important;
+  padding: 0 24px !important;
 }
 
 .cm-editor .cm-line {
   padding: 0 !important;
 }
 
-/* Invisible Gutter (Plain paper style) */
+/* Gutter & Line numbers - Victor Mono, borderless, clean layout */
 .cm-gutters {
-  display: none !important;
+  background-color: transparent !important;
+  border-right: none !important;
+  color: #94a3b8 !important;
+  font-family: 'Victor Mono', monospace !important;
+  font-size: 0.82em !important;
+  opacity: 0.7;
+}
+
+.cm-gutterElement {
+  padding: 0 16px 0 8px !important;
 }
 
 /* Active line highlighting */
@@ -42,6 +51,23 @@
 
 .cm-activeLineGutter {
   background-color: transparent !important;
+  color: #1a1a1a !important;
+  font-weight: 600;
+  opacity: 1;
+}
+
+/* Scoped Dark Mode overrides for Gutters */
+.cm-editor.cm-wysiwym-dark .cm-gutters {
+  background-color: transparent !important;
+  border-right: none !important;
+  color: #475569 !important;
+}
+
+.cm-editor.cm-wysiwym-dark .cm-activeLineGutter {
+  background-color: transparent !important;
+  color: #cbd5e1 !important;
+  font-weight: 600;
+  opacity: 1;
 }
 
 /* Selection highlight - clean neutral slate tint */

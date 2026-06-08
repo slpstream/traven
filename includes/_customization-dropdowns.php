@@ -107,6 +107,46 @@ if ($demo_files) {
     asort($demos);
 }
 
+if (!function_exists("format_content_name")) {
+    function format_content_name($filename)
+    {
+        $name = pathinfo($filename, PATHINFO_FILENAME);
+        if (strpos($name, "markdown-") === 0) {
+            $name = substr($name, 9);
+        }
+        $name = str_replace("-", " ", $name);
+        return ucwords($name);
+    }
+}
+
+// Generate content options
+$content_options_html = "  <option value=\"\">Page Default</option>\n";
+
+// 1. Showcase files in docs/demo/
+$demo_md_files = glob($base_dir . "/docs/demo/*.md");
+if ($demo_md_files) {
+    $content_options_html .= "  <optgroup label=\"Showcase Content\">\n";
+    foreach ($demo_md_files as $file) {
+        $val = "docs/demo/" . basename($file);
+        $label = format_content_name($file);
+        $content_options_html .= "    <option value=\"{$val}\">{$label}</option>\n";
+    }
+    $content_options_html .= "  </optgroup>\n";
+}
+
+// 2. Documentation files in docs/
+$docs_md_files = glob($base_dir . "/docs/*.md");
+if ($docs_md_files) {
+    $content_options_html .= "  <optgroup label=\"Documentation (Dogfooding)\">\n";
+    foreach ($docs_md_files as $file) {
+        $val = "docs/" . basename($file);
+        $label = format_content_name($file);
+        $content_options_html .= "    <option value=\"{$val}\">{$label}</option>\n";
+    }
+    $content_options_html .= "  </optgroup>\n";
+}
+
+
 // Fallback to defaults if glob failed or directories are empty
 if (empty($skins)) {
     $skins = [
@@ -157,30 +197,33 @@ foreach ($demos as $value => $label) {
 
 $customization_dropdowns_html =
     '
-<select id="skin-select" class="nav-btn btn-skin-select" style="padding: 6px 12px; font-family: inherit; font-size: 0.9em; cursor: pointer; margin-right: 8px;">
+<select id="skin-select" class="nav-btn btn-skin-select" style="padding: 5px 10px; font-family: inherit; font-size: 0.72em; cursor: pointer; margin-right: 8px;">
 ' .
     $skin_options_html .
     '</select>
-<select id="toolbar-select" class="nav-btn btn-toolbar-select" style="padding: 6px 12px; font-family: inherit; font-size: 0.9em; cursor: pointer; margin-right: 8px;">
+<select id="toolbar-select" class="nav-btn btn-toolbar-select" style="padding: 5px 10px; font-family: inherit; font-size: 0.72em; cursor: pointer; margin-right: 8px;">
 ' .
     $toolbar_options_html .
     '</select>
-<select id="theme-select" class="nav-btn btn-theme-select" style="display: none; padding: 6px 12px; font-family: inherit; font-size: 0.9em; cursor: pointer; margin-right: 8px;">
+<select id="theme-select" class="nav-btn btn-theme-select" style="display: none; padding: 5px 10px; font-family: inherit; font-size: 0.72em; cursor: pointer; margin-right: 8px;">
   <option value="light">Light Editor Theme</option>
   <option value="dark">Dark Editor Theme</option>
 </select>
-<label class="vim-toggle-container" style="display: inline-flex; align-items: center; gap: 8px; font-family: inherit; font-size: 0.85em; font-weight: 600; color: var(--text-secondary); cursor: pointer; user-select: none; margin-right: 8px; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border-color); background-color: #fafafa; transition: all 0.2s; box-sizing: border-box; height: 35px; vertical-align: middle;">
-  <span style="letter-spacing: 0.01em;">Vim Keybindings</span>
-  <div class="vim-switch" style="position: relative; width: 28px; height: 16px; background-color: #cbd5e1; border-radius: 10px; transition: background-color 0.2s; flex-shrink: 0;">
-    <input type="checkbox" id="vim-checkbox" style="opacity: 0; width: 0; height: 0; position: absolute; margin: 0;">
-    <span class="vim-switch-handle" style="position: absolute; top: 2px; left: 2px; width: 12px; height: 12px; background-color: white; border-radius: 50%; transition: transform 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.15);"></span>
-  </div>
-</label>
-<select id="demo-select" class="nav-btn btn-demo-select" style="padding: 6px 12px; font-family: inherit; font-size: 0.9em; cursor: pointer; margin-right: 8px;">
+<select id="content-select" class="nav-btn btn-content-select" style="padding: 5px 10px; font-family: inherit; font-size: 0.72em; cursor: pointer; margin-right: 8px;">
+' .
+    $content_options_html .
+    '</select>
+<select id="demo-select" class="nav-btn btn-demo-select" style="padding: 5px 10px; font-family: inherit; font-size: 0.72em; cursor: pointer; margin-right: 8px;">
 ' .
     $demo_options_html .
     '</select>
-<a href="https://github.com/slpstream/traven/tree/main/docs" target="_blank" class="nav-btn" style="margin-right: 8px;">Docs</a>
+<label class="vim-toggle-container" style="display: inline-flex; align-items: center; gap: 8px; font-family: inherit; font-size: 0.68em; font-weight: 600; color: var(--text-secondary); cursor: pointer; user-select: none; margin-right: 8px; padding: 5px 10px; border-radius: 6px; border: 1px solid var(--border-color); background-color: #fafafa; transition: all 0.2s; box-sizing: border-box; height: 28px; vertical-align: middle;">
+  <span style="letter-spacing: 0.01em;">Vim</span>
+  <div class="vim-switch" style="position: relative; width: 22px; height: 12px; background-color: #cbd5e1; border-radius: 10px; transition: background-color 0.2s; flex-shrink: 0;">
+    <input type="checkbox" id="vim-checkbox" style="opacity: 0; width: 0; height: 0; position: absolute; margin: 0;">
+    <span class="vim-switch-handle" style="position: absolute; top: 1px; left: 1px; width: 10px; height: 10px; background-color: white; border-radius: 50%; transition: transform 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.15);"></span>
+  </div>
+</label>
 <a href="https://github.com/slpstream/traven" target="_blank" class="nav-btn">GitHub</a>
 <script>
 (function() {
@@ -299,7 +342,7 @@ $customization_dropdowns_html =
       if (switchBg && handle) {
         if (checked) {
           switchBg.style.backgroundColor = "var(--accent)";
-          handle.style.transform = "translateX(12px)";
+          handle.style.transform = "translateX(10px)";
         } else {
           switchBg.style.backgroundColor = "#cbd5e1";
           handle.style.transform = "translateX(0)";
@@ -315,6 +358,57 @@ $customization_dropdowns_html =
       updateSwitchUI(val);
       if (window.editor && typeof window.editor.setVimMode === "function") {
         window.editor.setVimMode(val);
+      }
+    });
+  }
+
+  // Handle Content Swapping
+  const contentSelect = document.getElementById("content-select");
+  if (contentSelect) {
+    let originalContent = null;
+
+    contentSelect.addEventListener("change", async (e) => {
+      const val = e.target.value;
+      const editor = window.editor;
+      const webComponentEl = document.querySelector("traven-editor");
+
+      if (originalContent === null) {
+        if (editor) {
+          originalContent = editor.getValue();
+        } else if (webComponentEl) {
+          originalContent = webComponentEl.value;
+        }
+      }
+
+      let newContent;
+      if (!val) {
+        newContent = originalContent;
+      } else {
+        try {
+          const res = await fetch(val);
+          if (!res.ok) throw new Error("Failed to fetch content file");
+          newContent = await res.text();
+          
+          // Strip YAML frontmatter if present
+          if (newContent.startsWith("---\n") || newContent.startsWith("---\r\n")) {
+            const endIdx = newContent.indexOf("\n---\n", 4);
+            const rEndIdx = newContent.indexOf("\r\n---\r\n", 4);
+            if (endIdx !== -1) {
+              newContent = newContent.substring(endIdx + 5);
+            } else if (rEndIdx !== -1) {
+              newContent = newContent.substring(rEndIdx + 7);
+            }
+          }
+        } catch (err) {
+          console.error(err);
+          return;
+        }
+      }
+
+      if (editor && typeof editor.setValue === "function") {
+        editor.setValue(newContent);
+      } else if (webComponentEl) {
+        webComponentEl.value = newContent;
       }
     });
   }
