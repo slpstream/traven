@@ -1789,7 +1789,8 @@ export const wysiwymField = StateField.define({
   },
   update(decorations, tr) {
     const focusChanged = tr.effects.some(e => e.is(setFocusEffect));
-    if (tr.docChanged || tr.selection || focusChanged) {
+    const treeChanged = syntaxTree(tr.state) !== syntaxTree(tr.startState);
+    if (tr.docChanged || tr.selection || focusChanged || treeChanged) {
       return buildWysiwymDecorations(tr.state);
     }
     return decorations.map(tr.changes);

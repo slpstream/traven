@@ -3,7 +3,9 @@
 
 ### Faded black-and-white postcards bring back memories of old Sanremo — a sun-gilded slip of Liguria where a consumptive tsarina found solace beneath the palms and built a seafront promenade named in imperial honor.
 
-[image src="https://traven.dev/img/promenadesanremo.jpg" align="fullbleed" size="full" alt="Postcards from Sanremo, 1920s" caption="Riviera dei Fiori · Sanremo · Passeggiata Imperatrice · c. 1920s"]
+[image src="https://traven.dev/img/promenadesanremo.jpg" align="fullbleed" size="full"]
+
+---
 
 *By Elspeth Marlowe · June 6, 2026*
 

@@ -227,7 +227,13 @@ export class TravenEditor {
           link.id = "traven-core-styles";
           link.rel = "stylesheet";
           link.href = cssUrl;
-          document.head.appendChild(link);
+          
+          const existingSkin = document.getElementById("editor-skin-link");
+          if (existingSkin) {
+            existingSkin.before(link);
+          } else {
+            document.head.insertBefore(link, document.head.firstChild);
+          }
         } catch (e) {
           console.warn(
             "Traven: Could not auto-inject CSS. If styling looks broken, manually <link> dist/traven.css",

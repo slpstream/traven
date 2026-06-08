@@ -226,7 +226,13 @@ $customization_dropdowns_html =
           linkEl = document.createElement("link");
           linkEl.id = "editor-skin-link";
           linkEl.rel = "stylesheet";
-          document.head.appendChild(linkEl);
+          
+          const coreStyles = document.getElementById("traven-core-styles");
+          if (coreStyles) {
+            coreStyles.after(linkEl);
+          } else {
+            document.head.appendChild(linkEl);
+          }
         }
         linkEl.href = pathPrefix + value + ".css";
       }

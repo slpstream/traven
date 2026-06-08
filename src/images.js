@@ -144,7 +144,7 @@ function buildImageDecorations(state) {
   for (const { from, to, deco } of collected) {
     builder.add(from, to, deco);
   }
-  return builder.finish();
+  return /** @type {any} */ (builder.finish());
 }
 
 export const imageDecorationField = StateField.define({
@@ -153,7 +153,8 @@ export const imageDecorationField = StateField.define({
   },
   update(decorations, tr) {
     const focusChanged = tr.effects.some(e => e.is(setFocusEffect));
-    if (tr.docChanged || tr.selection || focusChanged) {
+    const treeChanged = syntaxTree(tr.state) !== syntaxTree(tr.startState);
+    if (tr.docChanged || tr.selection || focusChanged || treeChanged) {
       return buildImageDecorations(tr.state);
     }
     return decorations.map(tr.changes);
