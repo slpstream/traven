@@ -29,8 +29,8 @@ if ($isPost) {
   <meta name="description" content="A dynamic typography customization environment for Traven Editor utilizing the skin-custom.css parameterized overlay.">
 
   <!-- Core stylesheets -->
-  <link rel="stylesheet" href="assets/skins/skin-custom.css" id="editor-skin-link">
-  <link rel="stylesheet" href="assets/toolbars/toolbar-default.css" id="editor-toolbar-link">
+  <link rel="stylesheet" href="packages/core/assets/skins/skin-custom.css" id="editor-skin-link">
+  <link rel="stylesheet" href="packages/core/assets/toolbars/toolbar-default.css" id="editor-toolbar-link">
 
   <style>
     /* Premium Design Theme System */
@@ -408,7 +408,7 @@ if ($isPost) {
   <div class="container">
     <!-- Branding -->
     <a href="index.php" class="brand-link" title="Return to Traven homepage">
-      <img src="assets/images/traven.png" alt="Traven Logo">
+      <img src="packages/core/assets/images/traven.png" alt="Traven Logo">
     </a>
 
     <!-- Controls Panel: Preset -->
@@ -534,7 +534,7 @@ if ($isPost) {
 
   <!-- Script Modules initialization -->
   <script type="module">
-    import { TravenEditor, DEFAULT_TOOLBAR } from "./dist/traven.js";
+    import { TravenEditor, DEFAULT_TOOLBAR } from "./packages/core/dist/traven.js";
 
     // Setup Mermaid globally
     TravenEditor.configureMermaid(true);

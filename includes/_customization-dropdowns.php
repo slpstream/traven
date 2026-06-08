@@ -255,8 +255,8 @@ $customization_dropdowns_html =
     });
   }
 
-  applySkinSelection(skinSelect, "traven-selected-skin", "assets/skins/");
-  applySelection(toolbarSelect, toolbarLink, "traven-selected-toolbar", "assets/toolbars/");
+  applySkinSelection(skinSelect, "traven-selected-skin", "packages/core/assets/skins/");
+  applySelection(toolbarSelect, toolbarLink, "traven-selected-toolbar", "packages/core/assets/toolbars/");
 
   // Handle Theme Selection
   const savedTheme = localStorage.getItem("traven-selected-theme") || "light";

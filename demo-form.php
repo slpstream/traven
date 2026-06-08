@@ -12,8 +12,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,700;1,400;1,700&family=Fira+Code:wght@400..700&family=Mozilla+Headline:wght@700;800;900&display=swap" rel="stylesheet">
 
 
-  <link rel="stylesheet" href="assets/toolbars/toolbar-default.css" id="editor-toolbar-link">
-  <link rel="stylesheet" href="assets/css/demo.css">
+  <link rel="stylesheet" href="packages/core/assets/toolbars/toolbar-default.css" id="editor-toolbar-link">
+  <link rel="stylesheet" href="packages/core/assets/css/demo.css">
 </head>
 
 <body class="form-demo">
@@ -104,7 +104,7 @@
   </main>
 
   <script type="module">
-    import { TravenEditor, DEFAULT_TOOLBAR } from "./dist/traven.js";
+    import { TravenEditor, DEFAULT_TOOLBAR } from "./packages/core/dist/traven.js";
 
     // Raw starting document (loaded from database)
     const initialRawFile = `---
@@ -223,7 +223,7 @@ Try modifying the inputs in the form or editing the body text here to see how th
     document.getElementById("toolbar-select")?.addEventListener("change", (e) => {
       const toolbarLink = document.getElementById("editor-toolbar-link");
       if (toolbarLink) {
-        toolbarLink.href = "assets/toolbars/" + e.target.value + ".css";
+        toolbarLink.href = "packages/core/assets/toolbars/" + e.target.value + ".css";
       }
     });
 

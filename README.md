@@ -24,7 +24,7 @@
 
 ```html
 <!-- Include the editor with just a single line of code: -->
-<script type="module" src="https://cdn.jsdelivr.net/gh/slpstream/traven/dist/traven.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@freedomware/traven@latest/dist/traven.js"></script>
 ```
 
 **Traven Editor** is a non-brittle WYSIWYM (What You See Is What You Mean) Markdown editor for embedding directly into custom CMS systems, administrative dashboards, web forms and apps. Built on the **CodeMirror 6** editing engine, Traven delivers a high-fidelity editing experience while outputting clean, raw Markdown.
@@ -82,7 +82,7 @@ Drop the editor module from the CDN into your page (the core styles and structur
 </form>
 
 <!-- Load the module once in your page footer -->
-<script type="module" src="https://cdn.jsdelivr.net/gh/slpstream/traven/dist/traven.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@freedomware/traven@latest/dist/traven.js"></script>
 ```
 
 > [!NOTE]

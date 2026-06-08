@@ -193,7 +193,7 @@ if ($isPost) {
     </main>
 
     <!-- Load the Traven Editor Web Component module -->
-    <script type="module" src="dist/traven.js"></script>
+    <script type="module" src="packages/core/dist/traven.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const toggleBtn = document.getElementById("btn-toggle-toolbar");

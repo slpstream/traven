@@ -11,10 +11,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Goudy+Bookletter+1911&family=Macondo&family=Victor+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 
   <!-- Core Editor Styles -->
-  <link rel="stylesheet" href="dist/traven.css" id="traven-core-styles">
+  <link rel="stylesheet" href="packages/core/dist/traven.css" id="traven-core-styles">
 
-  <link rel="stylesheet" href="assets/skins/skin-editorial.css" id="editor-skin-link">
-  <link rel="stylesheet" href="assets/toolbars/toolbar-expandable.css?v=1.0.1" id="editor-toolbar-link">
+  <link rel="stylesheet" href="packages/core/assets/skins/skin-editorial.css" id="editor-skin-link">
+  <link rel="stylesheet" href="packages/core/assets/toolbars/toolbar-expandable.css?v=1.0.1" id="editor-toolbar-link">
 
   <style>
     /* Reset & Base distraction-free styles */
@@ -264,7 +264,7 @@
 
   <!-- Return to traven.dev wordmark -->
   <a href="index.php" class="write-brand" title="Return to Traven homepage">
-    <img src="assets/images/traven.png" alt="Traven logo">
+    <img src="packages/core/assets/images/traven.png" alt="Traven logo">
   </a>
 
   <div class="write-container">
@@ -294,7 +294,7 @@
   </div>
 
   <script type="module">
-    import { TravenEditor, DEFAULT_TOOLBAR } from "./dist/traven.js";
+    import { TravenEditor, DEFAULT_TOOLBAR } from "./packages/core/dist/traven.js";
 
     // Enable Mermaid rendering support
     TravenEditor.configureMermaid(true);

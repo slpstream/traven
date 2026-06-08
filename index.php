@@ -486,7 +486,7 @@
   <header>
     <a href="index.php" class="brand">
       <div class="brand-logo">
-        <?php readfile("assets/images/traven-wordmark.svg"); ?>
+        <?php readfile("packages/core/assets/images/traven-wordmark.svg"); ?>
       </div>
     </a>
     <div class="header-nav">
@@ -671,7 +671,7 @@
 
   <footer>
     <div class="opensource-logo">
-      <?php readfile("assets/images/opensource-light.svg"); ?>
+      <?php readfile("packages/core/assets/images/opensource-light.svg"); ?>
     </div>
     <div>&copy; 2026 SLPStream / Freedomware. Open source MIT licensed.</div>
   </footer>

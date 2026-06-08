@@ -222,7 +222,7 @@ if ($isPost) {
 
     <!-- Load the Traven Editor Web Component module -->
     <script type="module">
-        import { TravenEditor } from "./dist/traven.js";
+        import { TravenEditor } from "./packages/core/dist/traven.js";
 
         document.addEventListener("DOMContentLoaded", () => {
             // Enable Mermaid rendering support
@@ -250,7 +250,7 @@ if ($isPost) {
                         skinLink.rel = "stylesheet";
                         document.head.appendChild(skinLink);
                     }
-                    skinLink.href = `assets/skins/${selectedSkin}.css`;
+                    skinLink.href = `packages/core/assets/skins/${selectedSkin}.css`;
                 }
             });
 
