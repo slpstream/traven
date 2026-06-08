@@ -39,8 +39,8 @@ if (!function_exists("format_demo_name")) {
 
 // Locate paths relative to the current file
 $base_dir = dirname(__DIR__);
-$skins_dir = $base_dir . "/assets/skins";
-$toolbars_dir = $base_dir . "/assets/toolbars";
+$skins_dir = $base_dir . "/packages/core/assets/skins";
+$toolbars_dir = $base_dir . "/packages/core/assets/toolbars";
 
 // Discover skins
 $skins = [];
