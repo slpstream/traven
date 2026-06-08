@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
-import { TravenEditor } from 'traven';
+import { TravenEditor } from '@freedomware/traven';
 
 export const Traven = forwardRef(({ 
   defaultValue = "", 

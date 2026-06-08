@@ -1,5 +1,5 @@
 {
-  "name": "@traven/svelte",
+  "name": "@freedomware/traven-svelte",
   "version": "0.1.0",
   "type": "module",
   "main": "dist/index.js",
@@ -21,7 +21,7 @@
   },
   "peerDependencies": {
     "svelte": "^4.0.0 || ^5.0.0",
-    "traven": "*"
+    "@freedomware/traven": "*"
   },
   "devDependencies": {
     "@sveltejs/package": "^2.3.0",

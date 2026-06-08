@@ -1,5 +1,5 @@
 {
-  "name": "@traven/vue",
+  "name": "@freedomware/traven-vue",
   "version": "0.1.0",
   "type": "module",
   "main": "dist/traven-vue.umd.js",
@@ -20,7 +20,7 @@
   },
   "peerDependencies": {
     "vue": "^3.2.0",
-    "traven": "*"
+    "@freedomware/traven": "*"
   },
   "devDependencies": {
     "vue": "^3.3.0",

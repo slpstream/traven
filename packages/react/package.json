@@ -1,5 +1,5 @@
 {
-  "name": "@traven/react",
+  "name": "@freedomware/traven-react",
   "version": "0.1.0",
   "type": "module",
   "main": "dist/index.cjs",
@@ -22,7 +22,7 @@
   "peerDependencies": {
     "react": ">=16.8.0",
     "react-dom": ">=16.8.0",
-    "traven": "*"
+    "@freedomware/traven": "*"
   },
   "devDependencies": {
     "react": "^18.2.0",

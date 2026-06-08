@@ -4,7 +4,7 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue';
-import { TravenEditor } from 'traven';
+import { TravenEditor } from '@freedomware/traven';
 
 const props = defineProps({
   defaultValue: { type: String, default: '' },

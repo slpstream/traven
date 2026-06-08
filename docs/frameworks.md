@@ -2,14 +2,14 @@
 
 Traven is framework-agnostic by design, but comes with wrappers for React, Vue, and Svelte to make integration seamless. These wrappers provide native component APIs while ensuring the core editor remains zero-dependency.
 
-## React (`@traven/react`)
+## React (`@freedomware/traven-react`)
 
 The React wrapper provides a `Traven` component that integrates smoothly with React's lifecycle and handles Strict Mode cleanly.
 
 ### Installation
 
 ```bash
-npm install @traven/react traven
+npm install @freedomware/traven-react traven
 ```
 
 ### Usage
@@ -18,10 +18,10 @@ The wrapper is implemented as an **uncontrolled component**. Use `defaultValue` 
 
 ```jsx
 import React, { useRef } from 'react';
-import { Traven } from '@traven/react';
+import { Traven } from '@freedomware/traven-react';
 
 // Optional: Import core Traven CSS
-import 'traven/assets/skins/skin-starter.css';
+import '@freedomware/traven/assets/skins/skin-starter.css';
 
 export default function App() {
   const editorRef = useRef(null);
@@ -49,14 +49,14 @@ export default function App() {
 }
 ```
 
-## Vue (`@traven/vue`)
+## Vue (`@freedomware/traven-vue`)
 
 The Vue wrapper provides a standard component that integrates cleanly with the Vue 3 Composition API.
 
 ### Installation
 
 ```bash
-npm install @traven/vue traven
+npm install @freedomware/traven-vue traven
 ```
 
 ### Usage
@@ -78,8 +78,8 @@ Similar to React, the Vue wrapper is uncontrolled. You pass a `defaultValue` and
 
 <script setup>
 import { ref } from 'vue';
-import { Traven } from '@traven/vue';
-import 'traven/assets/skins/skin-starter.css';
+import { Traven } from '@freedomware/traven-vue';
+import '@freedomware/traven/assets/skins/skin-starter.css';
 
 const editor = ref(null);
 const initialContent = '# Hello Vue\n\nStart typing...';
@@ -101,14 +101,14 @@ function save() {
 </script>
 ```
 
-## Svelte (`@traven/svelte`)
+## Svelte (`@freedomware/traven-svelte`)
 
 The Svelte wrapper provides a native Svelte component for rendering Traven.
 
 ### Installation
 
 ```bash
-npm install @traven/svelte traven
+npm install @freedomware/traven-svelte traven
 ```
 
 ### Usage
@@ -117,8 +117,8 @@ Pass `defaultValue` and bind to the component instance to call `getValue()` when
 
 ```svelte
 <script>
-  import { Traven } from '@traven/svelte';
-  import 'traven/assets/skins/skin-starter.css';
+  import { Traven } from '@freedomware/traven-svelte';
+  import '@freedomware/traven/assets/skins/skin-starter.css';
 
   let editor;
   let initialContent = '# Hello Svelte\n\nStart typing...';

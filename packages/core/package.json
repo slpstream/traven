@@ -1,5 +1,5 @@
 {
-  "name": "traven",
+  "name": "@freedomware/traven",
   "version": "0.2.7",
   "description": "Embeddable MIT-licensed WYSIWYM Markdown Editor built on CodeMirror 6",
   "license": "MIT",
