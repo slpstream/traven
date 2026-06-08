@@ -1,5 +1,11 @@
 # @freedomware/traven
 
+## 0.2.9
+
+### Patch Changes
+
+- f053fb1: Fix inline math and comparison operators rendering in table, component, and figure widgets in WYSIWYM mode.
+
 ## 0.2.8
 
 ### Patch Changes
