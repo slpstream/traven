@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/images/traven.png" alt="Traven Editor" width="400">
+  <img src="packages/core/assets/images/traven.png" alt="Traven Editor" width="400">
 </p>
 
 <p align="center">
@@ -32,7 +32,7 @@
 Traven is highly modular and straightforward to customize or extend. If you need a powerful, flexible and mostly unopinionated Markdown editor that adapts to the layout, theme, and behavior of an existing project, its theming and configuration options and decoupled styling make integration fast and easy.
 
 <p align="center">
-  <img src="assets/images/travenworkspace.png" alt="Traven Editor Workspace" width="75%" style="border: 1px solid #ddd; border-radius: 6px;">
+  <img src="packages/core/assets/images/travenworkspace.png" alt="Traven Editor Workspace" width="75%" style="border: 1px solid #ddd; border-radius: 6px;">
 </p>
 
 ### Live Demos
