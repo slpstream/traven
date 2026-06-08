@@ -8,5 +8,8 @@
     "build": "npm run build --workspaces",
     "test": "npm run test --workspaces",
     "publish-packages": "changeset publish"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.31.0"
   }
 }
