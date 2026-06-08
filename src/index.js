@@ -2328,6 +2328,8 @@ export class TravenEditorElement extends HTMLElement {
       const tbAttr = this.getAttribute("toolbar");
       if (tbAttr === "false") {
         options.toolbar = false;
+      } else if (tbAttr === "true" || tbAttr === "default" || tbAttr === "") {
+        options.toolbar = DEFAULT_TOOLBAR;
       } else {
         options.toolbar = tbAttr
           .split(",")

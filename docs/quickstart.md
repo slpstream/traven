@@ -1,22 +1,25 @@
 # Quick Start
 
-Add Traven to a PHP form in three steps.
+Add Traven to a PHP form or regular HTML page in three steps.
 
 ---
 
 ### Step 1 — Replace your textarea
 
-Inside your form, swap `<textarea>` for `<traven-editor>`. Keep the same `name` attribute, nothing else changes.
+Inside your form, swap `<textarea>` for `<traven-editor>`. To show the editor with the default toolbar, add the `toolbar` attribute.
 
 ```html
 <form action="save.php" method="POST">
 
   <!-- Before: <textarea name="content">Write something...</textarea> -->
-  <traven-editor name="content">Write something...</traven-editor>
+  <traven-editor name="content" toolbar>Write something...</traven-editor>
 
   <button type="submit">Save</button>
 </form>
 ```
+
+> [!NOTE]
+> Displaying Traven without a toolbar is supported by design. If you want a minimalist writing space without a toolbar, simply remove the `toolbar` attribute from `<traven-editor>`. You can also customize the available actions by passing a comma-separated list of tool names (e.g., `toolbar="bold, italic, link, image"`).
 
 ---
 

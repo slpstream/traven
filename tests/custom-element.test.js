@@ -102,12 +102,33 @@ describe("TravenEditorElement (Web Component)", () => {
     el1.setAttribute("toolbar", "false");
     document.body.appendChild(el1);
     // There shouldn't be a toolbar rendered in the DOM for this editor
-    expect(el1.querySelector(".traven-toolbar")).toBeNull();
+    expect(el1.querySelector(".traven-toolbar-container")).toBeNull();
 
     const el2 = document.createElement("traven-editor");
     el2.setAttribute("toolbar", "bold, italic");
     document.body.appendChild(el2);
     // Just a basic check that it didn't crash and parsed something
     expect(el2.editor).toBeDefined();
+
+    // Verify boolean attribute (empty string) enables the default toolbar
+    const el3 = document.createElement("traven-editor");
+    el3.setAttribute("toolbar", "");
+    document.body.appendChild(el3);
+    expect(el3.editor).toBeDefined();
+    expect(el3.querySelector(".traven-toolbar-container")).not.toBeNull();
+
+    // Verify toolbar="true" enables the default toolbar
+    const el4 = document.createElement("traven-editor");
+    el4.setAttribute("toolbar", "true");
+    document.body.appendChild(el4);
+    expect(el4.editor).toBeDefined();
+    expect(el4.querySelector(".traven-toolbar-container")).not.toBeNull();
+
+    // Verify toolbar="default" enables the default toolbar
+    const el5 = document.createElement("traven-editor");
+    el5.setAttribute("toolbar", "default");
+    document.body.appendChild(el5);
+    expect(el5.editor).toBeDefined();
+    expect(el5.querySelector(".traven-toolbar-container")).not.toBeNull();
   });
 });

@@ -77,7 +77,7 @@ Traven is a framework-agnostic editor with zero peer dependencies. It can be int
 Drop the editor module from the CDN into your page (the core styles and structural skin are auto-injected), and use the custom `<traven-editor>` tag:
 ```html
 <form action="/submit" method="POST">
-  <traven-editor name="body"># Hello Traven via CDN</traven-editor>
+  <traven-editor name="body" toolbar># Hello Traven via CDN</traven-editor>
   <button type="submit">Save</button>
 </form>
 
