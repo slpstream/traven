@@ -104,7 +104,7 @@ export function configureKatex(options) {
 
 export function ensureKatex() {
   if (typeof window === "undefined") return Promise.resolve(null);
-  if (window.katex) return Promise.resolve(window.katex);
+  if (window["katex"]) return Promise.resolve(window["katex"]);
   
   if (!katexConfig.enabled) {
     return Promise.resolve(null);
@@ -125,10 +125,10 @@ export function ensureKatex() {
     if (katexConfig.js) {
       const existingScript = document.querySelector(`script[src="${katexConfig.js}"]`);
       if (existingScript) {
-        if (window.katex) {
-          resolve(window.katex);
+        if (window["katex"]) {
+          resolve(window["katex"]);
         } else {
-          existingScript.addEventListener("load", () => resolve(window.katex));
+          existingScript.addEventListener("load", () => resolve(window["katex"]));
           existingScript.addEventListener("error", () => resolve(null));
         }
         return;
@@ -136,7 +136,7 @@ export function ensureKatex() {
 
       const script = document.createElement("script");
       script.src = katexConfig.js;
-      script.onload = () => resolve(window.katex);
+      script.onload = () => resolve(window["katex"]);
       script.onerror = () => resolve(null);
       document.head.appendChild(script);
     } else {

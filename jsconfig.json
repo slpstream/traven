@@ -8,5 +8,5 @@
     "resolveJsonModule": true,
     "maxNodeModuleJsDepth": 2
   },
-  "include": ["src/**/*"]
+  "include": ["packages/*/src/**/*"]
 }

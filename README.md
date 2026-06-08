@@ -91,6 +91,10 @@ Drop the editor module from the CDN into your page (the core styles and structur
 
 Check out alternative toolbar layouts, custom themes and skins, and detailed configuration options in the **[Installation & Setup Guide](docs/installation-setup.md)**.
 
+#### Framework Wrappers (React, Vue, Svelte)
+
+If you are building a Single Page Application, Traven provides official lightweight wrappers for React, Vue, and Svelte. See the **[Framework Wrappers Guide](docs/frameworks.md)** for installation instructions and component examples.
+
 ---
 
 ### API Reference
