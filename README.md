@@ -41,6 +41,8 @@ Try Traven in your browser with **[Live Previews](https://traven.dev)**—a coll
 
 Mix and match options, tweak settings, and explore how Traven adapts to any web environment without breaking a sweat. All demos use the same core codebase, so what you see is exactly what you get when you integrate Traven into your own project.
 
+For a fast, hands-on integration, check out the **[Quick Start Guide](docs/quickstart.md)** to add Traven to a PHP form in just three steps.
+
 ---
 
 ## Key Features

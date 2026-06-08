@@ -1,6 +1,6 @@
 # Traven Editor — Developer Knowledgebase
 
-This document serves as a reference for developer onboarding and technical context as we continue polishing and expanding the Traven WYSIWYM Markdown Editor.
+This document serves as a reference for developer onboarding and technical context for developers wanting to customize or expand the Traven WYSIWYM Markdown Editor.
 
 ---
 
@@ -415,7 +415,7 @@ When converting or adapting a normal CSS stylesheet from a standard HTML website
   }
   ```
 
-For the complete guide to runtime font customization using CSS custom properties — including dynamic Google Fonts loading, static overrides, and extending font roles beyond the default three — see **[Custom Typography](dev/custom-typography.md)**.
+For the complete guide to runtime font customization using CSS custom properties — including dynamic Google Fonts loading, static overrides, and extending font roles beyond the default three — see **[Custom Typography](custom-typography.md)**.
 
 ---
 

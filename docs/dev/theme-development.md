@@ -62,9 +62,9 @@ graph TD
 
 ---
 
-## 2. The seven shipping skins, side by side
+## 2. The eight shipping skins, side by side
 
-All seven skins live in `assets/skins/` and are auto-discovered by the customization dropdown (`includes/_customization-dropdowns.php`); any new file you add to that directory shows up in the demo page's skin picker with no further wiring.
+All eight skins live in `assets/skins/` and are auto-discovered by the customization dropdown (`includes/_customization-dropdowns.php`); any new file you add to that directory shows up in the demo page's skin picker with no further wiring.
 
 | Skin | Design intent | Body font | Mono font | Gutter | Headings | Caret | Accent |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -968,6 +968,7 @@ That said, some themes load web fonts from Google Fonts. The default posture is:
 | `skin-colorful.css` | Google Fonts CDN | Remove or replace the `@import url(...Google Fonts...)` at the top of the file with `@import url('/path/to/your/local-fonts.css');`. |
 | `skin-editorial.css` | Google Fonts CDN | Same. |
 | `skin-modern.css` | Google Fonts CDN | Same. |
+| `skin-academic.css` | Google Fonts & jsDelivr (GitHub CDN) | Replace the `@import` urls at the top of the file with local paths. |
 | `skin-custom.css` | None | Statically inherits local system fallback font stacks. Dynamics font injection is driven entirely by client-side JS on the host page. |
 
 If you ship a custom skin, you decide whether to `@import` from a CDN. The recommended pattern for a privacy-respecting theme is the same as the dark/default skin: use a system font stack in the CSS, and let the host page load self-hosted fonts via `<link rel="preload">` tags so that CodeMirror's first measurement cache is correct.
@@ -1016,22 +1017,22 @@ You can sanity-check a finished skin without writing tests:
 
 A quick lookup of the assets that each shipping theme overrides or extends.
 
-| Concern | `skin-light` | `skin-colorful` | `skin-dark` | `skin-editorial` | `skin-modern` | `skin-custom` |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **External `@import`** | Google Fonts | Google Fonts | Google Fonts | Google Fonts | Google Fonts | **None** |
-| **Body font** | Atkinson + system | Atkinson + system | Atkinson + system | Goudy Bookletter 1911 | Epunda Slab + system | Configurable |
-| **Mono font** | Fira Code | Fira Code | Fira Code | Victor Mono | JetBrains Mono | Configurable |
-| **Gutter visible?** | Yes | Yes | Yes | **No** (`display: none`) | Yes | Yes |
-| **Caret color** | Slate 900 | Rust `#cc4a0a` | Sky `#38bdf8` | Ink black | Zinc 900 | Slate 900 |
-| **Selection color** | Slate 18% | Indigo 15% | Sky 35% | Slate 18% | Teal 15% | Slate 18% |
-| **Blockquote treatment** | Left bar | Rust left bar | Slate left bar | Curly quote `::before` | Teal left bar | Left bar |
-| **Pullquote treatment** | Top/bottom rules | Top/bottom rust rules | Top/bottom slate rules | Wavy SVG lines | Top/bottom teal rules | Top/bottom rules |
-| **Info / Warning cards** | Soft rounded | Soft tinted | Slate variants | Hand-drawn border-radius | Teal / Orange borders | Soft rounded |
-| **Image borders** | 1 px slate, 12 px radius | Same | Same | Same | No border, 8px radius | Same |
-| **Component blockquote** | Slate left bar | Rust left bar | Slate left bar | Curly quote | Teal left bar | Left bar |
-| **Math fallback colors** | Inherits from base | Inherits from base | Inherits from base | Light slate | Light zinc | Inherits from base |
-| **Hidden gutter padding** | n/a | n/a | n/a | `0 8px` | n/a | n/a |
-| **Raw editor override** | n/a | n/a | n/a | Victor Mono 14 px / lh 2 | n/a | n/a |
+| Concern | `skin-light` | `skin-colorful` | `skin-dark` | `skin-editorial` | `skin-modern` | `skin-academic` | `skin-custom` |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **External `@import`** | Google Fonts | Google Fonts | Google Fonts | Google Fonts | Google Fonts | Google Fonts + jsDelivr | **None** |
+| **Body font** | Atkinson + system | Atkinson + system | Atkinson + system | Goudy Bookletter 1911 | Epunda Slab + system | Computer Modern Serif | Configurable |
+| **Mono font** | Fira Code | Fira Code | Fira Code | Victor Mono | JetBrains Mono | Computer Modern Typewriter | Configurable |
+| **Gutter visible?** | Yes | Yes | Yes | **No** (`display: none`) | Yes | Yes | Yes |
+| **Caret color** | Slate 900 | Rust `#cc4a0a` | Sky `#38bdf8` | Ink black | Zinc 900 | Oxblood `#7a2226` | Slate 900 |
+| **Selection color** | Slate 18% | Indigo 15% | Sky 35% | Slate 18% | Teal 15% | Oxblood 22% | Slate 18% |
+| **Blockquote treatment** | Left bar | Rust left bar | Slate left bar | Curly quote `::before` | Teal left bar | Muted left bar | Left bar |
+| **Pullquote treatment** | Top/bottom rules | Top/bottom rust rules | Top/bottom slate rules | Wavy SVG lines | Top/bottom teal rules | Top/bottom rules | Top/bottom rules |
+| **Info / Warning cards** | Soft rounded | Soft tinted | Slate variants | Hand-drawn border-radius | Teal / Orange borders | Clean left-border | Soft rounded |
+| **Image borders** | 1 px slate, 12 px radius | Same | Same | Same | No border, 8px radius | No border | Same |
+| **Component blockquote** | Slate left bar | Rust left bar | Slate left bar | Curly quote | Teal left bar | Muted left bar | Left bar |
+| **Math fallback colors** | Inherits from base | Inherits from base | Inherits from base | Light slate | Light zinc | Inherits from base | Inherits from base |
+| **Hidden gutter padding** | n/a | n/a | n/a | `0 8px` | n/a | n/a | n/a |
+| **Raw editor override** | n/a | n/a | n/a | Victor Mono 14 px / lh 2 | n/a | n/a | n/a |
 
 When you build a new theme, picking a "donor" from this table gets you 80% of the way there.
 
@@ -1057,4 +1058,4 @@ When you build a new theme, picking a "donor" from this table gets you 80% of th
 * `../installation-setup.md` — how to wire the editor into a host page.
 * `../api-reference.md` — full constructor options and instance methods (notably `setTheme()`, `setVimMode()`, `getUploadHandler()`).
 * `../shortcodestyles.css` — the canonical copy-paste cheat sheet for every shortcode's HTML output and CSS variables, kept in sync with the cheat sheet summary in [§6](#6-shortcode-markup-reference-cheat-sheet).
-* `../knowledgebase.md` §2 and §6 — the engineering rules behind this guide (CodeMirror 6 pitfalls, dark-mode parity tips, list-parsing constraints). Read this if you plan to extend the editor itself.
+* `knowledgebase.md` §2 and §6 — the engineering rules behind this guide (CodeMirror 6 pitfalls, dark-mode parity tips, list-parsing constraints). Read this if you plan to extend the editor itself.
