@@ -78,15 +78,20 @@ function buildDropdown(parent, key, tool, editor, displayShortcut) {
   dropdownWrapper.className = "toolbar-dropdown";
   dropdownWrapper.id = `traven-${key}-dropdown`;
 
+  const triggerId = `traven-${key}-trigger`;
+  const menuId = `traven-${key}-menu`;
+
   const trigger = document.createElement("button");
   trigger.type = "button";
   trigger.className = `toolbar-btn btn-${key}`;
+  trigger.id = triggerId;
   
   const titleText = displayShortcut ? `${tool.title} (${displayShortcut})` : tool.title;
   trigger.setAttribute("title", titleText);
   trigger.setAttribute("aria-label", tool.title);
-  trigger.setAttribute("aria-haspopup", "true");
+  trigger.setAttribute("aria-haspopup", "menu");
   trigger.setAttribute("aria-expanded", "false");
+  trigger.setAttribute("aria-controls", menuId);
 
   trigger.innerHTML = `
     ${tool.icon}
@@ -97,7 +102,9 @@ function buildDropdown(parent, key, tool, editor, displayShortcut) {
 
   const menu = document.createElement("div");
   menu.className = "toolbar-dropdown-menu";
+  menu.id = menuId;
   menu.setAttribute("role", "menu");
+  menu.setAttribute("aria-labelledby", triggerId);
 
   if (tool.children) {
     tool.children.forEach((child) => {
@@ -134,6 +141,12 @@ function buildDropdown(parent, key, tool, editor, displayShortcut) {
           } else {
             items[currentIndex - 1].focus();
           }
+        } else if (e.key === "Home") {
+          e.preventDefault();
+          items[0].focus();
+        } else if (e.key === "End") {
+          e.preventDefault();
+          items[items.length - 1].focus();
         } else if (e.key === "Escape") {
           e.preventDefault();
           dropdownWrapper.classList.remove("is-open");

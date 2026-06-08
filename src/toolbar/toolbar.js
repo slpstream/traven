@@ -16,6 +16,8 @@ export function buildToolbar(editor, config, keybindings = {}) {
   container.className = "traven-toolbar-container";
   container.setAttribute("role", "toolbar");
   container.setAttribute("aria-label", "Editor formatting toolbar");
+  const toolbarId = `traven-toolbar-${Math.random().toString(36).substring(2, 9)}`;
+  container.id = toolbarId;
 
   config.forEach((key) => {
     if (key === "|") {
@@ -35,6 +37,7 @@ export function buildToolbar(editor, config, keybindings = {}) {
   toggleBtn.className = "toolbar-btn btn-expand-toggle";
   toggleBtn.setAttribute("title", "Toggle Expand Toolbar");
   toggleBtn.setAttribute("aria-label", "Toggle Expand Toolbar");
+  toggleBtn.setAttribute("aria-controls", toolbarId);
   toggleBtn.innerHTML = `
     <svg class="icon-collapsed" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
       <rect width="256" height="256" fill="none"/>
@@ -63,10 +66,12 @@ export function buildToolbar(editor, config, keybindings = {}) {
   if (isExpanded) {
     container.classList.add("is-expanded");
   }
+  toggleBtn.setAttribute("aria-expanded", isExpanded ? "true" : "false");
 
   toggleBtn.addEventListener("click", (e) => {
     e.preventDefault();
     const currentlyExpanded = container.classList.toggle("is-expanded");
+    toggleBtn.setAttribute("aria-expanded", currentlyExpanded ? "true" : "false");
     try {
       localStorage.setItem("traven-toolbar-expanded", currentlyExpanded ? "true" : "false");
     } catch (err) {
@@ -74,12 +79,15 @@ export function buildToolbar(editor, config, keybindings = {}) {
     }
 
     // If collapsing and focus was on a button that gets hidden, focus the toggle button instead
+    let newFocusEl = null;
     if (!currentlyExpanded) {
       const activeEl = document.activeElement;
       if (activeEl instanceof HTMLElement && container.contains(activeEl) && activeEl !== toggleBtn && !isButtonVisible(activeEl)) {
         toggleBtn.focus();
+        newFocusEl = toggleBtn;
       }
     }
+    updateRovingTabindex(container, newFocusEl || document.activeElement);
 
     if (editor && typeof editor.getView === "function") {
       const view = editor.getView();
@@ -114,21 +122,33 @@ export function buildToolbar(editor, config, keybindings = {}) {
     return window.getComputedStyle(btn).display !== 'none';
   }
 
-  // Setup initial roving tabindex (all buttons get tabindex="0" so browser can focus the first visible one,
-  // then the focusin handler will immediately correct other buttons to "-1")
-  const mainItems = Array.from(container.querySelectorAll("button.toolbar-btn"));
-  mainItems.forEach((item) => {
-    item.setAttribute("tabindex", "0");
-  });
+  /**
+   * Updates roving tabindex. Sets target element (or first visible button) to 0, rest to -1.
+   * @param {HTMLElement} container
+   * @param {Element|null} [activeEl]
+   */
+  function updateRovingTabindex(container, activeEl = null) {
+    const items = Array.from(container.querySelectorAll("button.toolbar-btn"));
+    const visibleItems = items.filter(isButtonVisible);
+    
+    let targetEl = activeEl;
+    if (!targetEl || !visibleItems.includes(/** @type {any} */ (targetEl))) {
+      targetEl = visibleItems[0] || items[0] || null;
+    }
+
+    items.forEach((item) => {
+      item.setAttribute("tabindex", item === targetEl ? "0" : "-1");
+    });
+  }
+
+  // Setup initial roving tabindex
+  updateRovingTabindex(container);
 
   // Dynamically manage tabindex of all buttons upon focus
   container.addEventListener("focusin", (e) => {
     const target = /** @type {HTMLElement} */ (e.target);
     if (target && target.classList && target.classList.contains("toolbar-btn")) {
-      const items = Array.from(container.querySelectorAll("button.toolbar-btn"));
-      items.forEach((item) => {
-        item.setAttribute("tabindex", item === target ? "0" : "-1");
-      });
+      updateRovingTabindex(container, target);
     }
   });
 
@@ -152,7 +172,7 @@ export function buildToolbar(editor, config, keybindings = {}) {
 
     // Filter to only visible buttons
     const items = Array.from(container.querySelectorAll("button.toolbar-btn")).filter(isButtonVisible);
-    const currentIndex = items.indexOf(document.activeElement);
+    const currentIndex = items.indexOf(/** @type {any} */ (document.activeElement));
     if (currentIndex === -1) return;
 
     let nextIndex;

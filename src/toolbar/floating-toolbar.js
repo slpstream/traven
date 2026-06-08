@@ -14,27 +14,69 @@ function focusFirstBubbleButton(viewDom) {
 }
 
 function wireBubbleKeyboard(dom, editor) {
+  // Initialize tabindices for roving focus: first button is tabindex="0", rest "-1"
+  const buttons = Array.from(dom.querySelectorAll("button"));
+  buttons.forEach((btn, idx) => {
+    btn.setAttribute("tabindex", idx === 0 ? "0" : "-1");
+  });
+
   dom.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
       e.preventDefault();
       editor.focus();
       return;
     }
-    if (e.key !== "Tab") return;
-    const buttons = Array.from(dom.querySelectorAll("button")).filter(
-      (btn) => btn.getAttribute("tabindex") !== "-1"
+
+    const currentButtons = Array.from(dom.querySelectorAll("button")).filter(
+      (btn) => btn.offsetParent !== null || window.getComputedStyle(btn).display !== "none"
     );
-    if (buttons.length === 0) return;
-    const first = buttons[0];
-    const last = buttons[buttons.length - 1];
-    if (e.shiftKey && document.activeElement === first) {
-      e.preventDefault();
-      last.focus();
-    } else if (!e.shiftKey && document.activeElement === last) {
-      e.preventDefault();
-      first.focus();
+    if (currentButtons.length === 0) return;
+
+    const currentIndex = currentButtons.indexOf(/** @type {HTMLButtonElement} */ (document.activeElement));
+
+    if (e.key === "Tab") {
+      const first = currentButtons[0];
+      const last = currentButtons[currentButtons.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+      return;
+    }
+
+    let nextIndex;
+    switch (e.key) {
+      case "ArrowRight":
+        e.preventDefault();
+        nextIndex = (currentIndex + 1) % currentButtons.length;
+        updateFocus(currentIndex, nextIndex, currentButtons);
+        break;
+      case "ArrowLeft":
+        e.preventDefault();
+        nextIndex = (currentIndex - 1 + currentButtons.length) % currentButtons.length;
+        updateFocus(currentIndex, nextIndex, currentButtons);
+        break;
+      case "Home":
+        e.preventDefault();
+        updateFocus(currentIndex, 0, currentButtons);
+        break;
+      case "End":
+        e.preventDefault();
+        updateFocus(currentIndex, currentButtons.length - 1, currentButtons);
+        break;
     }
   });
+
+  function updateFocus(fromIdx, toIdx, items) {
+    if (fromIdx !== -1 && items[fromIdx]) {
+      items[fromIdx].setAttribute("tabindex", "-1");
+    }
+    items[toIdx].setAttribute("tabindex", "0");
+    items[toIdx].focus();
+  }
 }
 
 function buildBubbleFragment(editor, view, clearBubble) {
@@ -367,6 +409,13 @@ function openGutterMenu(editor, lineFrom, view) {
     buildToolButton(menu, key, editor);
   }
 
+  // Set role="menuitem" and manage tabindex for roving tabindex
+  const buttons = Array.from(menu.querySelectorAll("button"));
+  buttons.forEach((btn, idx) => {
+    btn.setAttribute("role", "menuitem");
+    btn.setAttribute("tabindex", idx === 0 ? "0" : "-1");
+  });
+
   const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
   const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
@@ -403,8 +452,40 @@ function openGutterMenu(editor, lineFrom, view) {
       e.preventDefault();
       close();
       view.focus();
+      return;
+    }
+
+    const currentButtons = Array.from(menu.querySelectorAll("button"));
+    const currentIndex = currentButtons.indexOf(/** @type {HTMLButtonElement} */ (document.activeElement));
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      const nextIndex = (currentIndex + 1) % currentButtons.length;
+      updateMenuFocus(currentIndex, nextIndex, currentButtons);
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      const nextIndex = (currentIndex - 1 + currentButtons.length) % currentButtons.length;
+      updateMenuFocus(currentIndex, nextIndex, currentButtons);
+    } else if (e.key === "Home") {
+      e.preventDefault();
+      updateMenuFocus(currentIndex, 0, currentButtons);
+    } else if (e.key === "End") {
+      e.preventDefault();
+      updateMenuFocus(currentIndex, currentButtons.length - 1, currentButtons);
+    } else if (e.key === "Tab") {
+      e.preventDefault();
+      close();
+      view.focus();
     }
   };
+
+  function updateMenuFocus(fromIdx, toIdx, items) {
+    if (fromIdx !== -1 && items[fromIdx]) {
+      items[fromIdx].setAttribute("tabindex", "-1");
+    }
+    items[toIdx].setAttribute("tabindex", "0");
+    items[toIdx].focus();
+  }
 
   menu.addEventListener("click", (e) => {
     const target = /** @type {HTMLElement} */ (e.target);
@@ -423,7 +504,14 @@ function openGutterMenu(editor, lineFrom, view) {
   }, 0);
 
   view.dispatch({ selection: { anchor: lineFrom } });
-  view.focus();
+
+  if (buttons.length > 0) {
+    queueMicrotask(() => {
+      buttons[0].focus();
+    });
+  } else {
+    view.focus();
+  }
 
   return menu;
 }

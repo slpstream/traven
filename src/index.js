@@ -206,6 +206,8 @@ export class TravenEditor {
   #customRenderer = null;
   /** @type {ComponentOption[]} */
   #components;
+  /** @type {HTMLElement|null} */
+  #announcer = null;
 
   /**
    * @param {TravenOptions} options
@@ -215,6 +217,27 @@ export class TravenEditor {
       throw new Error("TravenEditor requires a parent element option.");
     }
     this.#options = options;
+
+    // Create visually hidden screen reader announcer
+    if (typeof document !== "undefined") {
+      this.#announcer = document.createElement("div");
+      this.#announcer.className = "traven-sr-announcer";
+      this.#announcer.setAttribute("aria-live", "polite");
+      this.#announcer.setAttribute("aria-atomic", "true");
+      // Style it to be visually hidden but accessible to screen readers
+      Object.assign(this.#announcer.style, {
+        position: "absolute",
+        width: "1px",
+        height: "1px",
+        padding: "0",
+        margin: "-1px",
+        overflow: "hidden",
+        clip: "rect(0, 0, 0, 0)",
+        whiteSpace: "nowrap",
+        border: "0",
+      });
+      options.element.appendChild(this.#announcer);
+    }
 
     if (options.autoLoadStyles !== false) {
       if (
@@ -601,6 +624,7 @@ export class TravenEditor {
         ),
       });
     }
+    this.#announce(readOnly ? "Editor is now read only" : "Editor is now editable");
   }
 
   /**
@@ -648,6 +672,7 @@ export class TravenEditor {
         this.#rawView.dom.classList.remove("cm-wysiwym-dark");
       }
     }
+    this.#announce(`Theme changed to ${theme}`);
   }
 
   /**
@@ -664,6 +689,7 @@ export class TravenEditor {
         effects: vimCompartment.reconfigure(extension),
       });
     }
+    this.#announce(enabled ? "Vim keybindings enabled" : "Vim keybindings disabled");
   }
 
   /**
@@ -946,6 +972,8 @@ export class TravenEditor {
     const container =
       this.#view.dom.closest(".editor-wrapper") || this.#view.dom.parentElement;
     container.classList.toggle("is-fullscreen");
+    const isFullscreen = container.classList.contains("is-fullscreen");
+    this.#announce(isFullscreen ? "Fullscreen enabled" : "Fullscreen disabled");
     // Reflow CM's coordinate measurements after layout change
     this.#view.requestMeasure();
     this.#view.focus();
@@ -1399,6 +1427,21 @@ export class TravenEditor {
   #trigger(event, value) {
     if (this.#listeners[event]) {
       this.#listeners[event].forEach((cb) => cb(value));
+    }
+  }
+
+  /**
+   * Screen reader announcer helper.
+   * @param {string} msg
+   */
+  #announce(msg) {
+    if (this.#announcer) {
+      this.#announcer.textContent = "";
+      setTimeout(() => {
+        if (this.#announcer) {
+          this.#announcer.textContent = msg;
+        }
+      }, 50);
     }
   }
 
