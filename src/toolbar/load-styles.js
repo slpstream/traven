@@ -16,7 +16,8 @@ export function loadStyles() {
         const rules = sheet.cssRules || sheet.rules;
         if (rules) {
           for (const rule of rules) {
-            if (rule.selectorText && rule.selectorText.includes(".traven-slim-rail")) {
+            const styleRule = /** @type {CSSStyleRule} */ (rule);
+            if (styleRule.selectorText && styleRule.selectorText.includes(".traven-slim-rail")) {
               stylesExist = true;
               break;
             }
@@ -37,6 +38,6 @@ export function loadStyles() {
   const link = document.createElement("link");
   link.id = "traven-floating-styles";
   link.rel = "stylesheet";
-  link.href = "assets/toolbars/toolbar-floating.css";
+  link.href = new URL("../assets/toolbars/toolbar-floating.css", import.meta.url).href;
   document.head.appendChild(link);
 }

@@ -254,7 +254,7 @@ export class TravenEditor {
       const url =
         typeof options.componentsUrl === "string"
           ? options.componentsUrl
-          : "assets/components.json";
+          : new URL("../assets/components.json", import.meta.url).href;
       fetch(url)
         .then((res) => {
           if (!res.ok) {
