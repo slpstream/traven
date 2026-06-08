@@ -1476,7 +1476,7 @@ export class TravenEditor {
         }
       },
     });
-    return frontmatterTo > 0
+    return (frontmatterTo > 0 && frontmatterTo <= md.length)
       ? md.slice(frontmatterTo).replace(/^\r?\n/, "")
       : md;
   }
@@ -1486,9 +1486,9 @@ export class TravenEditor {
    * @param {string} md
    * @returns {string}
    */
-  #fallbackRender(md) {
+  #fallbackRender(md, isTopLevel = true) {
     // 1. Strip YAML frontmatter if present
-    let content = this.#stripFrontmatter(md);
+    let content = isTopLevel ? this.#stripFrontmatter(md) : md;
 
     // Extract fenced code blocks to avoid splitting them on empty lines or parsing inline elements inside
     // Also extract mermaid diagrams so they can be rendered synchronously if mermaid is available
@@ -1508,11 +1508,11 @@ export class TravenEditor {
         if (lang === "mermaid") {
           const mermaidIndex = mermaidBlocks.length;
           mermaidBlocks.push(renderMermaidSync(code));
-          return `\n\nMERMAIDBLOCKPLACEHOLDER${mermaidIndex}\n\n`;
+          return `\n\nMERMAIDBLOCKPLACEHOLDERZ${mermaidIndex}Z\n\n`;
         }
 
         codeBlocks.push(`<pre><code${classAttr}>${escapedCode}</code></pre>`);
-        return `\n\nCODEBLOCKPLACEHOLDER${index}\n\n`;
+        return `\n\nCODEBLOCKPLACEHOLDERZ${index}Z\n\n`;
       },
     );
 
@@ -1521,7 +1521,7 @@ export class TravenEditor {
     content = content.replace(/(`[^`\n]+`)/g, (match) => {
       const index = inlineCodePlaceholders.length;
       inlineCodePlaceholders.push(match);
-      return `INLINECODEPLACEHOLDER${index}`;
+      return `INLINECODEPLACEHOLDERZ${index}Z`;
     });
 
     // Extract component shortcodes to protect them and compile recursively
@@ -1578,7 +1578,7 @@ export class TravenEditor {
             compName = "blockquote";
           }
 
-          const compiledBody = this.#fallbackRender(body);
+          const compiledBody = this.#fallbackRender(body, false);
 
           let rendered = "";
           if (compName === "blockquote") {
@@ -1631,9 +1631,9 @@ export class TravenEditor {
 
           componentPlaceholders.push(rendered);
           if (compName === "highlight") {
-            return `INLINE-PLACEHOLDER-INDEX-${index}`;
+            return `INLINEZPLACEHOLDERZINDEXZ${index}Z`;
           }
-          return `\n\nCOMPONENT-PLACEHOLDER-INDEX-${index}\n\n`;
+          return `\n\nCOMPONENTZPLACEHOLDERZINDEXZ${index}Z\n\n`;
         },
       );
 
@@ -1660,11 +1660,11 @@ export class TravenEditor {
           const size = attrs.size || "medium";
           const customClass = attrs.class ? ` ${attrs.class}` : "";
 
-          const compiledBody = this.#fallbackRender(body);
+          const compiledBody = this.#fallbackRender(body, false);
           const rendered = `<figure class="traven-figure align-${align} size-${size}${customClass}">${compiledBody}${caption ? `<figcaption class="traven-figure-caption">${caption}</figcaption>` : ""}</figure>`;
 
           componentPlaceholders.push(rendered);
-          return `\n\nCOMPONENT-PLACEHOLDER-INDEX-${index}\n\n`;
+          return `\n\nCOMPONENTZPLACEHOLDERZINDEXZ${index}Z\n\n`;
         },
       );
     } while (content !== prevContent);
@@ -1686,7 +1686,7 @@ export class TravenEditor {
           rendered = `<div class="katex-display-fallback">$$${math}$$</div>`;
         }
         mathBlocks.push({ rendered, isDisplay: true });
-        return `\n\nMATHBLOCKPLACEHOLDER${index}\n\n`;
+        return `\n\nMATHBLOCKPLACEHOLDERZ${index}Z\n\n`;
       },
     );
 
@@ -1705,7 +1705,7 @@ export class TravenEditor {
           rendered = `<span class="katex-inline-fallback">$${math}$</span>`;
         }
         mathBlocks.push({ rendered, isDisplay: false });
-        return `MATHBLOCKPLACEHOLDER${index}`;
+        return `MATHBLOCKPLACEHOLDERZ${index}Z`;
       },
     );
 
@@ -2164,7 +2164,7 @@ export class TravenEditor {
     content = content.replace(/<[^>]+>/g, (match) => {
       const index = htmlTagPlaceholders.length;
       htmlTagPlaceholders.push(match);
-      return `HTMLTAGPLACEHOLDER${index}`;
+      return `HTMLTAGPLACEHOLDERZ${index}Z`;
     });
 
     content = content.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
@@ -2176,13 +2176,13 @@ export class TravenEditor {
     content = content.replace(/`(.*?)`/g, "<code>$1</code>");
 
     // Restore HTML tags
-    content = content.replace(/HTMLTAGPLACEHOLDER(\d+)/g, (match, index) => {
+    content = content.replace(/HTMLTAGPLACEHOLDERZ(\d+)Z/g, (match, index) => {
       return htmlTagPlaceholders[parseInt(index, 10)];
     });
 
     // Restore inline code spans and escape their contents
-    content = content.replace(/INLINECODEPLACEHOLDER(\d+)/g, (match, index) => {
-      const rawCodeWithBackticks = inlineCodePlaceholders[parseInt(index)];
+    content = content.replace(/INLINECODEPLACEHOLDERZ(\d+)Z/g, (match, index) => {
+      const rawCodeWithBackticks = inlineCodePlaceholders[parseInt(index, 10)];
       const code = rawCodeWithBackticks.slice(1, -1); // remove backticks
       const escapedCode = code
         .replace(/&/g, "&amp;")
@@ -2198,25 +2198,25 @@ export class TravenEditor {
       if (!trimmed) return "";
 
       // If it's a code block placeholder, don't wrap in <p>
-      if (trimmed.startsWith("CODEBLOCKPLACEHOLDER")) {
+      if (trimmed.startsWith("CODEBLOCKPLACEHOLDERZ")) {
         return trimmed;
       }
 
       // If it's a display math placeholder, don't wrap in <p>
-      if (trimmed.startsWith("MATHBLOCKPLACEHOLDER")) {
-        const idx = parseInt(trimmed.substring("MATHBLOCKPLACEHOLDER".length));
+      if (trimmed.startsWith("MATHBLOCKPLACEHOLDERZ")) {
+        const idx = parseInt(trimmed.substring("MATHBLOCKPLACEHOLDERZ".length), 10);
         if (mathBlocks[idx] && mathBlocks[idx].isDisplay) {
           return trimmed;
         }
       }
 
       // If it's a mermaid block placeholder, don't wrap in <p>
-      if (trimmed.startsWith("MERMAIDBLOCKPLACEHOLDER")) {
+      if (trimmed.startsWith("MERMAIDBLOCKPLACEHOLDERZ")) {
         return trimmed;
       }
 
       // If it's a component placeholder, don't wrap in <p>
-      if (trimmed.startsWith("COMPONENT-PLACEHOLDER-INDEX-")) {
+      if (trimmed.startsWith("COMPONENTZPLACEHOLDERZINDEXZ")) {
         return trimmed;
       }
 
@@ -2232,38 +2232,29 @@ export class TravenEditor {
     content = htmlBlocks.filter(Boolean).join("\n");
 
     // Restore math blocks
-    for (let i = 0; i < mathBlocks.length; i++) {
-      content = content.replace(
-        `MATHBLOCKPLACEHOLDER${i}`,
-        () => mathBlocks[i].rendered,
-      );
-    }
+    content = content.replace(/MATHBLOCKPLACEHOLDERZ(\d+)Z/g, (match, index) => {
+      return mathBlocks[parseInt(index, 10)].rendered;
+    });
 
     // Restore fenced code blocks
-    for (let i = 0; i < codeBlocks.length; i++) {
-      content = content.replace(
-        `CODEBLOCKPLACEHOLDER${i}`,
-        () => codeBlocks[i],
-      );
-    }
+    content = content.replace(/CODEBLOCKPLACEHOLDERZ(\d+)Z/g, (match, index) => {
+      return codeBlocks[parseInt(index, 10)];
+    });
 
     // Restore mermaid diagram blocks
-    for (let i = 0; i < mermaidBlocks.length; i++) {
-      content = content.replace(
-        `MERMAIDBLOCKPLACEHOLDER${i}`,
-        () => mermaidBlocks[i],
-      );
-    }
+    content = content.replace(/MERMAIDBLOCKPLACEHOLDERZ(\d+)Z/g, (match, index) => {
+      return mermaidBlocks[parseInt(index, 10)];
+    });
 
     // Restore component placeholders
     let restored;
     do {
       restored = false;
       content = content.replace(
-        /(?:COMPONENT|INLINE)-PLACEHOLDER-INDEX-(\d+)/g,
+        /(?:COMPONENTZPLACEHOLDERZINDEXZ|INLINEZPLACEHOLDERZINDEXZ)(\d+)Z/g,
         (match, index) => {
           restored = true;
-          return componentPlaceholders[parseInt(index)];
+          return componentPlaceholders[parseInt(index, 10)];
         },
       );
     } while (restored);

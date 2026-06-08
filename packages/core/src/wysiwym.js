@@ -75,6 +75,90 @@ function escapeHtml(text) {
     .replace(/>/g, "&gt;");
 }
 
+function renderInlineMarkdown(text) {
+  if (!text) return "";
+
+  // Protect math blocks first (before any HTML escaping!)
+  const mathBlocks = [];
+  let html = text;
+  
+  // 1. Display math $$...$$
+  html = html.replace(/(?<!\\)\$\$([\s\S]*?)(?<!\\)\$\$/g, (match, math) => {
+    const index = mathBlocks.length;
+    let rendered = "";
+    const katex = typeof window !== "undefined" ? window["katex"] : null;
+    if (katex) {
+      try {
+        rendered = katex.renderToString(math, {
+          displayMode: true,
+          throwOnError: false
+        });
+      } catch (e) {
+        rendered = `<div class="katex-display-fallback">$$${math}$$</div>`;
+      }
+    } else {
+      rendered = `<div class="katex-display-fallback">$$${math}$$</div>`;
+    }
+    mathBlocks.push(rendered);
+    return `MATHSPANXPLACEHOLDERX${index}`;
+  });
+
+  // 2. Inline math $...$
+  html = html.replace(/(?<!\\)\$((?!\s)[^\$\n\r]+?(?<!\s)(?<!\\))\$/g, (match, math) => {
+    const index = mathBlocks.length;
+    let rendered = "";
+    const katex = typeof window !== "undefined" ? window["katex"] : null;
+    if (katex) {
+      try {
+        rendered = katex.renderToString(math, {
+          displayMode: false,
+          throwOnError: false
+        });
+      } catch (e) {
+        rendered = `<span class="katex-inline-fallback">$${math}$</span>`;
+      }
+    } else {
+      rendered = `<span class="katex-inline-fallback">$${math}$</span>`;
+    }
+    mathBlocks.push(rendered);
+    return `MATHSPANXPLACEHOLDERX${index}`;
+  });
+
+  // Now escape HTML characters in the remaining non-math text to prevent XSS
+  html = html
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+
+  // Protect inline code spans first to prevent formatting parsing inside them
+  const codeSpans = [];
+  html = html.replace(/`(.*?)`/g, (match, code) => {
+    const index = codeSpans.length;
+    codeSpans.push(`<code>${code}</code>`);
+    return `CODESPANXPLACEHOLDERX${index}`;
+  });
+
+  html = html.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, src) => `<img src="${sanitizeUrl(src)}" alt="${alt}" style="max-width: 100%; height: auto; display: inline-block;">`);
+  html = html.replace(/\[(.*?)\]\((.*?)\)/g, (match, text, url) => `<a href="${sanitizeUrl(url)}" target="_blank">${text}</a>`);
+  html = html.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+  html = html.replace(/\*(.*?)\*/g, "<em>$1</em>");
+  html = html.replace(/__(.*?)__/g, "<strong>$1</strong>");
+  html = html.replace(/_(.*?)_/g, "<em>$1</em>");
+  html = html.replace(/==(.*?)==/g, '<span class="cm-wysiwym-highlight">$1</span>');
+
+  // Restore inline code spans
+  html = html.replace(/CODESPANXPLACEHOLDERX(\d+)/g, (match, index) => {
+    return codeSpans[parseInt(index, 10)];
+  });
+
+  // Restore math blocks
+  html = html.replace(/MATHSPANXPLACEHOLDERX(\d+)/g, (match, index) => {
+    return mathBlocks[parseInt(index, 10)];
+  });
+
+  return html;
+}
+
 class MermaidWidget extends WidgetType {
   /**
    * @param {string} code
@@ -215,39 +299,7 @@ class TableWidget extends WidgetType {
 
     const table = document.createElement("table");
 
-    // Pure function helper to convert basic inline Markdown to HTML inside cells
-    const renderInlineMarkdown = (text) => {
-      if (!text) return "";
-      // Escape HTML characters to prevent XSS
-      let html = text
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;");
-
-      // Protect inline code spans first to prevent formatting parsing inside them
-      const codeSpans = [];
-      html = html.replace(/`(.*?)`/g, (match, code) => {
-        const index = codeSpans.length;
-        codeSpans.push(`<code>${code}</code>`);
-        return `CODESPANXPLACEHOLDERX${index}`;
-      });
-
-      // Convert inline elements (images, links, bold, italic, highlight)
-      html = html.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, src) => `<img src="${sanitizeUrl(src)}" alt="${alt}" style="max-width: 100%; height: auto; display: inline-block;">`);
-      html = html.replace(/\[(.*?)\]\((.*?)\)/g, (match, text, url) => `<a href="${sanitizeUrl(url)}" target="_blank">${text}</a>`);
-      html = html.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
-      html = html.replace(/\*(.*?)\*/g, "<em>$1</em>");
-      html = html.replace(/__(.*?)__/g, "<strong>$1</strong>");
-      html = html.replace(/_(.*?)_/g, "<em>$1</em>");
-      html = html.replace(/==(.*?)==/g, '<span class="cm-wysiwym-highlight">$1</span>');
-
-      // Restore inline code spans
-      html = html.replace(/CODESPANXPLACEHOLDERX(\d+)/g, (match, index) => {
-        return codeSpans[parseInt(index, 10)];
-      });
-
-      return html;
-    };
+    // We use the shared renderInlineMarkdown helper from the module level
 
 
     // Header
@@ -714,36 +766,7 @@ class ComponentShortcodeWidget extends WidgetType {
     editIcon.addEventListener("click", openEditModal);
     container.addEventListener("mousedown", openEditModal);
 
-    const renderInlineMarkdown = (text) => {
-      if (!text) return "";
-      let html = text
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;");
-
-      // Protect inline code spans first to prevent formatting parsing inside them
-      const codeSpans = [];
-      html = html.replace(/`(.*?)`/g, (match, code) => {
-        const index = codeSpans.length;
-        codeSpans.push(`<code>${code}</code>`);
-        return `CODESPANXPLACEHOLDERX${index}`;
-      });
-
-      html = html.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, src) => `<img src="${sanitizeUrl(src)}" alt="${alt}" style="max-width: 100%; height: auto; display: inline-block;">`);
-      html = html.replace(/\[(.*?)\]\((.*?)\)/g, (match, text, url) => `<a href="${sanitizeUrl(url)}" target="_blank">${text}</a>`);
-      html = html.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
-      html = html.replace(/\*(.*?)\*/g, "<em>$1</em>");
-      html = html.replace(/__(.*?)__/g, "<strong>$1</strong>");
-      html = html.replace(/_(.*?)_/g, "<em>$1</em>");
-      html = html.replace(/==(.*?)==/g, '<span class="cm-wysiwym-highlight">$1</span>');
-
-      // Restore inline code spans
-      html = html.replace(/CODESPANXPLACEHOLDERX(\d+)/g, (match, index) => {
-        return codeSpans[parseInt(index, 10)];
-      });
-
-      return html;
-    };
+    // We use the shared renderInlineMarkdown helper from the module level
 
     const contentLines = this.bodyText.split(/\r?\n/).map(line => line.trim()).filter(line => line.length > 0);
     const bodyContainer = document.createElement("div");
@@ -866,36 +889,7 @@ class FigureShortcodeWidget extends WidgetType {
       });
     }
 
-    const renderInlineMarkdown = (text) => {
-      if (!text) return "";
-      let html = text
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;");
-
-      // Protect inline code spans first to prevent formatting parsing inside them
-      const codeSpans = [];
-      html = html.replace(/`(.*?)`/g, (match, code) => {
-        const index = codeSpans.length;
-        codeSpans.push(`<code>${code}</code>`);
-        return `CODESPANXPLACEHOLDERX${index}`;
-      });
-
-      html = html.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, src) => `<img src="${sanitizeUrl(src)}" alt="${alt}" style="max-width: 100%; height: auto; display: inline-block;">`);
-      html = html.replace(/\[(.*?)\]\((.*?)\)/g, (match, text, url) => `<a href="${sanitizeUrl(url)}" target="_blank">${text}</a>`);
-      html = html.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
-      html = html.replace(/\*(.*?)\*/g, "<em>$1</em>");
-      html = html.replace(/__(.*?)__/g, "<strong>$1</strong>");
-      html = html.replace(/_(.*?)_/g, "<em>$1</em>");
-      html = html.replace(/==(.*?)==/g, '<span class="cm-wysiwym-highlight">$1</span>');
-
-      // Restore inline code spans
-      html = html.replace(/CODESPANXPLACEHOLDERX(\d+)/g, (match, index) => {
-        return codeSpans[parseInt(index, 10)];
-      });
-
-      return html;
-    };
+    // We use the shared renderInlineMarkdown helper from the module level
 
     const contentLines = this.bodyText.split(/\r?\n/).map(line => line.trim()).filter(line => line.length > 0);
     const bodyContainer = document.createElement("div");
