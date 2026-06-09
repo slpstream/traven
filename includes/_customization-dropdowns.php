@@ -115,7 +115,9 @@ if (!function_exists("format_content_name")) {
             $name = substr($name, 9);
         }
         $name = str_replace("-", " ", $name);
-        return ucwords($name);
+                // Override: any standalone "php" word should be uppercase "PHP"
+                $name = preg_replace_callback('/\bphp\b/i', fn() => 'PHP', $name);
+                return ucwords($name);
     }
 }
 
@@ -269,7 +271,7 @@ $customization_dropdowns_html =
           linkEl = document.createElement("link");
           linkEl.id = "editor-skin-link";
           linkEl.rel = "stylesheet";
-          
+
           const coreStyles = document.getElementById("traven-core-styles");
           if (coreStyles) {
             coreStyles.after(linkEl);
@@ -388,7 +390,7 @@ $customization_dropdowns_html =
           const res = await fetch(val);
           if (!res.ok) throw new Error("Failed to fetch content file");
           newContent = await res.text();
-          
+
           // Strip YAML frontmatter if present
           if (newContent.startsWith("---\n") || newContent.startsWith("---\r\n")) {
             const endIdx = newContent.indexOf("\n---\n", 4);

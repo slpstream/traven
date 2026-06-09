@@ -1,6 +1,5 @@
 <?php
-// Step 3 — Read it in PHP
-$content = $_POST['content'] ?? 'Write something...';
+$content = $_POST['content'] ?? '**Unstyled and minimal, edit this text and write anything here...** The toolbar above is the full set: you can exclude it, or configure it to show only the buttons you need, or you can mix-n-match between 3 toolbars. There is the toolbar you see here, a Medium-like bubble bar that is context aware, and an insert toolbar that appears in the gutter. Use none, or any combination of the three.';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -40,7 +39,6 @@ $content = $_POST['content'] ?? 'Write something...';
 </head>
 <body>
 
-  <h1>Traven Minimal Demo</h1>
 
   <!-- Step 1 — Replace your textarea -->
   <form action="" method="POST">

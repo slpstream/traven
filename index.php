@@ -229,7 +229,7 @@
     /* Grid layout for demos matching website styling but with tags */
     .demo-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 30px;
       width: 100%;
       margin-bottom: 60px;
@@ -490,7 +490,7 @@
       </div>
     </a>
     <div class="header-nav">
-      <a href="docs/README.md" class="nav-link">Docs</a>
+      <a href="https://github.com/slpstream/traven/tree/main/docs" class="nav-link">Docs</a>
       <a href="https://github.com/slpstream/traven" target="_blank" class="github-button">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
           stroke-linecap="round" stroke-linejoin="round">
@@ -506,82 +506,13 @@
       <span class="badge">Developer Sandbox</span>
       <h1>Traven Integration Playground</h1>
       <div class="hero-divider"></div>
-      <p>Welcome to the local development dashboard. Use this playground to explore, test, and adapt Traven Editor's various styling, metadata management, and presentation configuration modes.</p>
+      <p>Use this playground to explore, test, and adapt Traven Editor's various styling, metadata management, and presentation configuration modes.</p>
     </div>
 
 
+    <h2 class="section-title"><span>5</span> Customizable Demos</h2>
     <div class="demo-grid">
-      <!-- Card 1: Inline YAML -->
-      <a href="demo-inline.php" class="demo-card">
-        <div class="card-top">
-          <div class="card-meta">
-            <div class="card-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-              </svg>
-            </div>
-          </div>
-          <div class="card-title">Inline YAML Demo</div>
-          <div class="card-desc">Edit both the document body and the YAML frontmatter inside a unified, syntax-highlighted workspace. Ideal for direct file manipulations.</div>
-        </div>
-        <div class="card-cta">
-          Launch Demo
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-            <polyline points="12 5 19 12 12 19"></polyline>
-          </svg>
-        </div>
-      </a>
-
-      <!-- Card 2: Form Managed -->
-      <a href="demo-form.php" class="demo-card">
-        <div class="card-top">
-          <div class="card-meta">
-            <div class="card-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                <line x1="9" y1="3" x2="9" y2="21"></line>
-              </svg>
-            </div>
-          </div>
-          <div class="card-title">Form-Managed Metadata</div>
-          <div class="card-desc">The recommended CMS integration pattern. Separates metadata fields (title, author, status) into UI inputs while auto-syncing the full output file.</div>
-        </div>
-        <div class="card-cta">
-          Launch Demo
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-            <polyline points="12 5 19 12 12 19"></polyline>
-          </svg>
-        </div>
-      </a>
-
-      <!-- Card 3: Hybrid Demo -->
-      <a href="demo-hybrid.php" class="demo-card">
-        <div class="card-top">
-          <div class="card-meta">
-            <div class="card-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                <line x1="3" y1="9" x2="21" y2="9"></line>
-                <line x1="12" y1="9" x2="12" y2="21"></line>
-              </svg>
-            </div>
-          </div>
-          <div class="card-title">Hybrid Editing Demo</div>
-          <div class="card-desc">Manage frontmatter metadata through form fields on top, and edit the Markdown body using side-by-side syncing editors below.</div>
-        </div>
-        <div class="card-cta">
-          Launch Demo
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-            <polyline points="12 5 19 12 12 19"></polyline>
-          </svg>
-        </div>
-      </a>
-
-      <!-- Card 4: Unified Demo -->
+      <!-- Card: Unified -->
       <a href="demo-unified.php" class="demo-card">
         <div class="card-top">
           <div class="card-meta">
@@ -594,10 +525,9 @@
             </div>
           </div>
           <div class="card-title">Unified Editing Demo</div>
-          <div class="card-desc">Single-card developer layout. Switch between WYSIWYM and raw Markdown in a single editor instance with a tabbed layout.</div>
+          <div class="card-desc">WYSIWYM/Markdown editor with live HTML preview.</div>
         </div>
         <div class="card-cta">
-          Launch Demo
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <line x1="5" y1="12" x2="19" y2="12"></line>
             <polyline points="12 5 19 12 12 19"></polyline>
@@ -605,7 +535,101 @@
         </div>
       </a>
 
-      <!-- Card 5: Distraction-Free Write -->
+      <!-- Card: Toolbar Controls -->
+      <a href="demo-toolbars.php" class="demo-card">
+        <div class="card-top">
+          <div class="card-meta">
+            <div class="card-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="3" rx="1"></rect>
+                <rect x="3" y="10.5" width="18" height="3" rx="1"></rect>
+                <rect x="3" y="18" width="18" height="3" rx="1"></rect>
+              </svg>
+            </div>
+          </div>
+          <div class="card-title">Toolbar Controls Demo</div>
+          <div class="card-desc">Toggle three toolbar formats independently.</div>
+        </div>
+        <div class="card-cta">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </div>
+      </a>
+
+      <!-- Card: Inline YAML -->
+      <a href="demo-inline.php" class="demo-card">
+        <div class="card-top">
+          <div class="card-meta">
+            <div class="card-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+              </svg>
+            </div>
+          </div>
+          <div class="card-title">Inline YAML Demo</div>
+          <div class="card-desc">Bidirectional synced editing of body and frontmatter.</div>
+        </div>
+        <div class="card-cta">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </div>
+      </a>
+
+      <!-- Card: Form-Managed Metadata -->
+      <a href="demo-form.php" class="demo-card">
+        <div class="card-top">
+          <div class="card-meta">
+            <div class="card-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="9" y1="3" x2="9" y2="21"></line>
+              </svg>
+            </div>
+          </div>
+          <div class="card-title">Form-Managed Metadata Demo</div>
+          <div class="card-desc">YAML/Markdown split: form fields above, editor below.</div>
+        </div>
+        <div class="card-cta">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </div>
+      </a>
+
+      <!-- Card: Hybrid -->
+      <a href="demo-hybrid.php" class="demo-card">
+        <div class="card-top">
+          <div class="card-meta">
+            <div class="card-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="3" y1="9" x2="21" y2="9"></line>
+                <line x1="12" y1="9" x2="12" y2="21"></line>
+              </svg>
+            </div>
+          </div>
+          <div class="card-title">Hybrid Editing Demo</div>
+          <div class="card-desc">YAML/Markdown split with bidirectional synced editing.</div>
+        </div>
+        <div class="card-cta">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </div>
+      </a>
+    </div>
+
+
+    <h2 class="section-title"><span>2</span> Standalone Demos</h2>
+    <div class="demo-grid">
+      <!-- Card: Distraction-Free Write -->
       <a href="demo-editorial.php" class="demo-card">
         <div class="card-top">
           <div class="card-meta">
@@ -616,11 +640,10 @@
               </svg>
             </div>
           </div>
-          <div class="card-title">Distraction-Free Write</div>
-          <div class="card-desc">A minimal, focus-driven environment. Features a floating toolbar, serif typography, hidden gutters, and an optional toolbar toggle.</div>
+          <div class="card-title">Distraction-Free Write Demo</div>
+          <div class="card-desc">Distraction-free writing surface with live HTML preview.</div>
         </div>
         <div class="card-cta">
-          Launch Demo
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <line x1="5" y1="12" x2="19" y2="12"></line>
             <polyline points="12 5 19 12 12 19"></polyline>
@@ -628,7 +651,7 @@
         </div>
       </a>
 
-      <!-- Card 6: Dynamic Typography -->
+      <!-- Card: Dynamic Typography -->
       <a href="demo-typography.php" class="demo-card">
         <div class="card-top">
           <div class="card-meta">
@@ -638,11 +661,90 @@
               </svg>
             </div>
           </div>
-          <div class="card-title">Dynamic Typography</div>
-          <div class="card-desc">Real-time customizable typography sandbox. Dynamically configure and pair Display, Body, and Monospace fonts using the skin-custom.css parameterized overlay.</div>
+          <div class="card-title">Dynamic Typography Demo</div>
+          <div class="card-desc">Live typeface hotswapping for Display, Body, and Mono.</div>
         </div>
         <div class="card-cta">
-          Launch Demo
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </div>
+      </a>
+    </div>
+
+
+    <h2 class="section-title"><span>3</span> Base Demos</h2>
+    <div class="demo-grid">
+      <!-- Card: Custom -->
+      <a href="demo-custom.php" class="demo-card">
+        <div class="card-top">
+          <div class="card-meta">
+            <div class="card-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="4" y1="21" x2="4" y2="14"></line>
+                <line x1="4" y1="10" x2="4" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12" y2="3"></line>
+                <line x1="20" y1="21" x2="20" y2="16"></line>
+                <line x1="20" y1="12" x2="20" y2="3"></line>
+                <line x1="1" y1="14" x2="7" y2="14"></line>
+                <line x1="9" y1="8" x2="15" y2="8"></line>
+                <line x1="17" y1="16" x2="23" y2="16"></line>
+              </svg>
+            </div>
+          </div>
+          <div class="card-title">Custom Demo</div>
+          <div class="card-desc">Out-of-the-box demo: toggle toolbar, swap skins.</div>
+        </div>
+        <div class="card-cta">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </div>
+      </a>
+
+      <!-- Card: Minimal -->
+      <a href="demo-minimal.php" class="demo-card">
+        <div class="card-top">
+          <div class="card-meta">
+            <div class="card-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="8" y1="6" x2="21" y2="6"></line>
+                <line x1="8" y1="12" x2="21" y2="12"></line>
+                <line x1="8" y1="18" x2="21" y2="18"></line>
+                <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                <line x1="3" y1="18" x2="3.01" y2="18"></line>
+              </svg>
+            </div>
+          </div>
+          <div class="card-title">Minimal Demo</div>
+          <div class="card-desc">Minimalist, barebones embed example.</div>
+        </div>
+        <div class="card-cta">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </div>
+      </a>
+
+      <!-- Card: Quickstart -->
+      <a href="demo-quickstart.php" class="demo-card">
+        <div class="card-top">
+          <div class="card-meta">
+            <div class="card-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
+            </div>
+          </div>
+          <div class="card-title">Quickstart Demo</div>
+          <div class="card-desc">Minimum code to embed Traven (from quickstart.md).</div>
+        </div>
+        <div class="card-cta">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <line x1="5" y1="12" x2="19" y2="12"></line>
             <polyline points="12 5 19 12 12 19"></polyline>

@@ -172,7 +172,6 @@ if ($isPost) {
 <body>
 
     <main>
-        <h1 id="demo-page-title">Traven — Custom Out-of-the-Box Demo</h1>
         <p class="lead">
             This page mounts the default custom element <code>&lt;traven-editor&gt;</code> inside a standard HTML form and lets you choose a custom editor skin.
         </p>
