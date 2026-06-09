@@ -32,6 +32,5 @@ For quickly testing changes, prototyping, or sharing intermediate progress witho
 <script type="module" src="https://cdn.jsdelivr.net/gh/slpstream/traven@main/packages/core/dist/traven.js"></script>
 ```
 
-> [!WARNING]
-> The `@main` branch target is for contributors and development environments only. Because it points directly to the latest commits, a bad push could break the editor experience. Never use `@main` in production deployments or user-facing Quick Starts.
+> WARNING: The `@main` branch target is for contributors and development environments only. Because it points directly to the latest commits, a bad push could break the editor experience. Never use `@main` in production deployments or user-facing Quick Starts.
 

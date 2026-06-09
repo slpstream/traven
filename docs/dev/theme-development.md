@@ -57,8 +57,7 @@ graph TD
 3. **Raw editor scope (`.raw-editor-mount`)** — optional split-pane that shows raw Markdown source. Most themes restyle the raw pane to use a monospace font.
 4. **Dark mode** — controlled by the `.cm-wysiwym-dark` class on the editor host node (and the preview container, when present). See [§7](#7-dark-mode) for details.
 
-> [!IMPORTANT]
-> A complete theme styles **both** the editor and the preview. If a heading looks right in the live editor but cropped in the preview, or vice-versa, the writer will assume the theme is broken.
+> IMPORTANT: A complete theme styles **both** the editor and the preview. If a heading looks right in the live editor but cropped in the preview, or vice-versa, the writer will assume the theme is broken.
 
 ---
 
@@ -68,13 +67,13 @@ All eight skins live in `packages/core/assets/skins/` and are auto-discovered by
 
 | Skin | Design intent | Body font | Mono font | Gutter | Headings | Caret | Accent |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| `skin-starter.css` ⭐ | Modern Georgia — base (**bundled default**) | `Georgia` (serif) | System monospace | Visible, soft slate | System sans, bold | Slate 900 | Slate 600 |
 | `skin-light.css` | Neutral Slate — baseline | `Atkinson Hyperlegible Next` (Google Fonts) | `Fira Code` (Google Fonts) | Visible, soft slate | Bold sans, tight | Slate 900 | Slate 600 |
 | `skin-colorful.css` | Warm Rust — expressive | `Atkinson Hyperlegible Next` (Google Fonts) | `Fira Code` (Google Fonts) | Visible, indigo active | Bold sans, bright rust caret | `#cc4a0a` rust | `#3b82f6` indigo |
 | `skin-dark.css` | Premium Dark Slate | `Atkinson Hyperlegible Next` (Google Fonts) | `Fira Code` (Google Fonts) | Visible, dim slate | Bold sans, near-white | Sky `#38bdf8` | Sky `#38bdf8` |
 | `skin-editorial.css` | Minimalist Focus — no chrome | `Goudy Bookletter 1911` (serif) | `Victor Mono` | Visible, soft slate | `Macondo` (h1–h3), Goudy (h4–h6) | Ink black | None — pure paper |
 | `skin-modern.css` | Modern Clean — premium | `Epunda Slab` (serif) | `JetBrains Mono` | Visible, borderless | `Saira Condensed` (sans) | Zinc 900 | `#115e59` teal |
 | `skin-academic.css` | Classic LaTeX Booktabs | `Source Serif 4` (serif) | `Courier Prime` | Visible, soft slate | Serif, booktabs tables | Oxblood `#7a2226` | Oxblood `#7a2226` |
-| `skin-starter.css` ⭐ | Modern Georgia — base (**bundled default**) | `Georgia` (serif) | System monospace | Visible, soft slate | System sans, bold | Slate 900 | Slate 600 |
 | `skin-custom.css` | Dynamic parameterized fonts | Configurable via `--traven-font-body` | Configurable via `--traven-font-mono` | Inherits starter | Configurable via `--traven-font-display` | Slate 900 | Slate 600 |
 
 Other dimensions worth knowing:
@@ -259,8 +258,7 @@ Every shortcode accepts `align="left|right|center|fullbleed"` and `size="small|m
 .size-full   { width: 100%; }
 ```
 
-> [!WARNING]
-> Inside the **editor**, alignment uses auto-margins (e.g. `margin: 0 auto 0 0 !important`). Inside the **preview**, you may use `float: left/right`. Mixing them up breaks CodeMirror's coordinate mapping. See [§4.4](#44-no-floats-or-vertical-margins-in-the-editor) for the full rule.
+> WARNING: Inside the **editor**, alignment uses auto-margins (e.g. `margin: 0 auto 0 0 !important`). Inside the **preview**, you may use `float: left/right`. Mixing them up breaks CodeMirror's coordinate mapping. See [§4.4](#44-no-floats-or-vertical-margins-in-the-editor) for the full rule.
 
 ### 3.4 Modal dialog scope
 

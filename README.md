@@ -32,7 +32,54 @@
 Traven is highly modular and straightforward to customize or extend. If you need a powerful, flexible and mostly unopinionated Markdown editor that adapts to the layout, theme, and behavior of an existing project, its theming and configuration options and decoupled styling make integration fast and easy.
 
 <p align="center">
-  <img src="packages/core/assets/images/travenworkspace.png" alt="Traven Editor Workspace" width="75%" style="border: 1px solid #ddd; border-radius: 6px;">
+  <img src="https://traven.dev/img/workspacemain.jpg" alt="Main Preview" width="100%">
+</p>
+<table align="center">
+  <tr>
+    <td>
+      <a href="https://traven.dev/img/workspace1.jpg" target="_blank">
+        <img src="https://traven.dev/img/workspace1.jpg" alt="Thumbnail 1" width="150"/>
+      </a>
+    </td>
+    <td>
+      <a href="https://traven.dev/img/workspace2.jpg" target="_blank">
+        <img src="https://traven.dev/img/workspace2.jpg" alt="Thumbnail 2" width="150"/>
+      </a>
+    </td>
+    <td>
+      <a href="https://traven.dev/img/workspace3.jpg" target="_blank">
+        <img src="https://traven.dev/img/workspace3.jpg" alt="Thumbnail 3" width="150"/>
+      </a>
+    </td>
+    <td>
+      <a href="https://traven.dev/img/workspace4.jpg" target="_blank">
+        <img src="https://traven.dev/img/workspace4.jpg" alt="Thumbnail 4" width="150"/>
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a href="https://traven.dev/img/workspace5.jpg" target="_blank">
+        <img src="https://traven.dev/img/workspace5.jpg" alt="Thumbnail 5" width="150"/>
+      </a>
+    </td>
+    <td>
+      <a href="https://traven.dev/img/workspace6.jpg" target="_blank">
+        <img src="https://traven.dev/img/workspace6.jpg" alt="Thumbnail 6" width="150"/>
+      </a>
+    </td>
+    <td>
+      <a href="https://traven.dev/img/workspace7.jpg" target="_blank">
+        <img src="https://traven.dev/img/workspace7.jpg" alt="Thumbnail 7" width="150"/>
+      </a>
+    </td>
+    <td>
+      <a href="https://traven.dev/img/workspace8.jpg" target="_blank">
+        <img src="https://traven.dev/img/workspace8.jpg" alt="Thumbnail 8" width="150"/>
+      </a>
+    </td>
+  </tr>
+</table>
 </p>
 
 ### Live Demos
@@ -85,11 +132,16 @@ Drop the editor module from the CDN into your page (the core styles and structur
 <script type="module" src="https://cdn.jsdelivr.net/npm/@freedomware/traven@latest/dist/traven.js"></script>
 ```
 
+From zero to hero: Get up and running with Traven in a matter of minutes, no coding required.
+
+- **[Quick Start](docs/quickstart.md)** — Add Traven to a PHP form or HTML page in three steps: replace your `<textarea>`, load one script, and read the submission in PHP. The fastest path from zero to a working rich-text editor.
+- **[Cheat Sheet](docs/cheatsheet.md)** — A comprehensive quick reference covering the 5-minute setup walkthrough, every configuration attribute, the full toolbar button catalog, skins, and common toolbar presets.
+- **[Common Configurations](docs/common-configurations.md)** — Eight ready-made recipes for the most common use cases: minimal comment boxes, blog post editors, CMS admin panels, three-pane WYSIWYM/Raw/Preview editors, code-heavy documentation editors, read-only previews, split-screen raw sync, and toolbar configurations. Each is a complete, copy-pasteable HTML file.
+
 > [!NOTE]
 > **Strict CSP Environments:** If your project enforces a strict Content Security Policy that forbids dynamic stylesheet injection (`style-src 'self'`), you can disable the CSS auto-injection by passing `autoLoadStyles: false` in the constructor options, and manually add the `<link rel="stylesheet" href=".../dist/traven.css">` to your `<head>`.
 
-
-Check out alternative toolbar layouts, custom themes and skins, and detailed configuration options in the **[Installation & Setup Guide](docs/installation-setup.md)**.
+For a deeper dive, check out alternative toolbar layouts, custom themes and skins, and detailed configuration options in the **[Installation & Setup Guide](docs/installation-setup.md)**.
 
 #### Framework Wrappers (React, Vue, Svelte)
 

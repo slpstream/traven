@@ -2,8 +2,7 @@
 
 Traven's typography is controlled entirely through CSS custom properties. This means you can change the fonts used in the editor — headings, body text, and code blocks — at any time, from any framework, without calling a dedicated API method.
 
-> [!NOTE]
-> Traven intentionally does not provide a `setFonts()` method. Font selection is a **skin/theme concern**, not an editor concern. The CSS custom property pattern keeps font roles open for extension — any skin can define its own variables (e.g. `--traven-font-caption`) without requiring changes to the editor core.
+> Note: Traven intentionally does not provide a `setFonts()` method. Font selection is a **skin/theme concern**, not an editor concern. The CSS custom property pattern keeps font roles open for extension — any skin can define its own variables (e.g. `--traven-font-caption`) without requiring changes to the editor core.
 
 ---
 

@@ -337,8 +337,7 @@ Traven has **three toolbar layouts** you can pick from with the `toolbar-mode` a
 <traven-editor name="body" toolbar toolbar-mode="hybrid">   <!-- Everything at once -->
 ```
 
-> [!NOTE]
-> On phones (touch + small viewport), Traven automatically falls back to `"static"` mode no matter what you set, so the buttons stay reachable with a thumb.
+> NOTE: On phones (touch + small viewport), Traven automatically falls back to `"static"` mode no matter what you set, so the buttons stay reachable with a thumb.
 
 ---
 

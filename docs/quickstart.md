@@ -18,8 +18,7 @@ Inside your form, swap `<textarea>` for `<traven-editor>`. To show the editor wi
 </form>
 ```
 
-> [!NOTE]
-> Displaying Traven without a toolbar is supported by design. If you want a minimalist writing space without a toolbar, simply remove the `toolbar` attribute from `<traven-editor>`. You can also customize the available actions by passing a comma-separated list of tool names (e.g., `toolbar="bold, italic, link, image"`).
+> NOTE: Displaying Traven without a toolbar is supported by design. If you want a minimalist writing space without a toolbar, simply remove the `toolbar` attribute from `<traven-editor>`. You can also customize the available actions by passing a comma-separated list of tool names (e.g., `toolbar="bold, italic, link, image"`).
 
 ---
 
