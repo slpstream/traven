@@ -29,7 +29,7 @@ To view the included integration demos, serve the project files on a local PHP-c
 For quickly testing changes, prototyping, or sharing intermediate progress without building or hosting files locally, you can load the code directly from the `main` branch:
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/gh/slpstream/traven@main/dist/traven.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/gh/slpstream/traven@main/packages/core/dist/traven.js"></script>
 ```
 
 > [!WARNING]

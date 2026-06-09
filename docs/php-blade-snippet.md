@@ -29,7 +29,7 @@ class AppServiceProvider extends ServiceProvider
 
         // @travenScripts
         Blade::directive('travenScripts', function () {
-            return '<script type="module" src="https://cdn.jsdelivr.net/gh/slpstream/traven@v0.2.7/dist/traven.js"></script>';
+            return '<script type="module" src="https://cdn.jsdelivr.net/npm/@freedomware/traven@0.2.9/dist/traven.js"></script>';
         });
     }
 }

@@ -59,7 +59,7 @@ Load the tags and use them alongside a standard `ModelForm`:
 
 {% block scripts %}
 <!-- Load the Traven bundle once per page -->
-<script type="module" src="https://cdn.jsdelivr.net/gh/slpstream/traven@v0.2.7/dist/traven.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@freedomware/traven@0.2.9/dist/traven.js"></script>
 {% endblock %}
 ```
 

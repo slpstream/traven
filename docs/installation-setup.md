@@ -27,19 +27,18 @@ You can load Traven directly from the jsDelivr CDN without hosting any local ass
 
   <!-- Parent container for mounting -->
   <div class="editor-container">
-    <traven-editor name="body" line-numbers>
+    <traven-editor name="body" toolbar>
       # Hello Traven via CDN
 
       Edit **this bold text** to see delimiters appear!
     </traven-editor>
   </div>
-
-  <script type="module" src="https://cdn.jsdelivr.net/gh/slpstream/traven@v0.2.9/dist/traven.js"></script>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@freedomware/traven@0.2.9/dist/traven.js"></script>
 </body>
 </html>
 ```
 
-> **Production Best Practice**: For production environments, it is highly recommended to pin the script URL to a specific version tag (e.g., `@v0.2.9`) rather than omitting it, and to check the changelog before upgrading. This guarantees that future library updates do not introduce breaking behavior to your deployed application.
+> **Production Best Practice**: For production environments, it is highly recommended to pin the script URL to a specific version tag (e.g., `@0.2.9`) rather than omitting it, and to check the changelog before upgrading. This guarantees that future library updates do not introduce breaking behavior to your deployed application.
 
 ## 2. Direct Include (Local Assets)
 
@@ -56,7 +55,7 @@ If you prefer to host files locally, copy `dist/traven.js` and `dist/traven.css`
 
   <!-- Parent containers for mounting -->
   <div class="editor-container">
-    <traven-editor name="body" line-numbers>
+    <traven-editor name="body" toolbar line-numbers>
       # Hello Traven
 
       Edit **this bold text** to see delimiters appear!
