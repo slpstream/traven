@@ -43,33 +43,8 @@ Since these settings are contained entirely within modular CSS theme files, they
 
 ---
 
-## Sample themes
+## Skins & Privacy
 
-Traven supports customizable layout skins. Each skin handles asset loading depending on developer preferences:
+Traven ships with eight skins. Of these, **two make zero external network calls** — `skin-starter.css` (the built-in default) and `skin-custom.css` (the parameterized overlay). The remaining six load fonts from Google Fonts or BitMaks by default. None of these external calls transmit user data; they only fetch font files.
 
-### Light Skin (`skin-light.css`)
-This is the light theme skin.
-* **Default Behavior:** It imports Atkinson Hyperlegible Next and Fira Code from the Google Fonts CDN via an `@import` at the top of the file.
-* **Self-Hosting Option:** To make this theme 100% offline-ready, replace the Google Fonts `@import` at the top of `skin-light.css` with `@import url('/path/to/your/local-fonts.css');` (and provide your own binary files).
-
-### Colorful Skin (`skin-colorful.css`)
-This is a sample alternative theme skin.
-* **Default Behavior:** It imports Atkinson Hyperlegible Next and Fira Code from the Google Fonts CDN for quick visual polish out-of-the-box.
-* **Self-Hosting Option:** To make this theme 100% offline-ready, replace the Google Fonts import at the top of `skin-colorful.css` with `@import url('/path/to/your/local-fonts.css');` (and provide your own binary files).
-
-### Dark Skin (`skin-dark.css`)
-This is a premium dark theme skin.
-* **Default Behavior:** It imports Atkinson Hyperlegible Next and Fira Code from the Google Fonts CDN via an `@import` at the top of the file.
-* **Self-Hosting Option:** To make this theme 100% offline-ready, replace the Google Fonts `@import` at the top of `skin-dark.css` with `@import url('/path/to/your/local-fonts.css');` (and provide your own binary files).
-
-### Starter Skin (`skin-starter.css`)
-This is a barebones starter theme skin.
-* **No Network Footprint:** It does not link or import any external fonts or styles.
-* **Fallback Behavior:** It uses your local system font stack by default (rendering Georgia/Times for the body, and system monospace for code blocks).
-* **Self-Hosting Option:** To use custom fonts with this theme, provide your own font files and stylesheet (e.g., `@import url('/path/to/your/fonts/fonts.css');` at the top of `skin-starter.css` or link it in your HTML).
-
-### Custom Skin (`skin-custom.css`)
-This is a parameterized custom font theme.
-* **No Network Footprint:** The CSS stylesheet itself is completely static and makes no external calls.
-* **Fully Host-Configurable:** Font families are mapped using CSS variables. The hosting application has full control over how fonts are loaded (e.g., Google Fonts, self-hosted font assets, or local system fallbacks).
-* **Self-Hosting / Privacy Option:** When no JavaScript overrides are present, the theme falls back to local system fonts (mirroring `skin-starter.css` behavior). Developers can configure dynamic font loaders to point directly to self-hosted assets to keep the layout 100% offline.
+If your deployment requires 100% offline operation, replace the `@import` rule at the top of any skin file with a local reference to self-hosted font files. See the full list of all eight skins, their fonts, and self-hosting instructions in [Skins](skins.md).

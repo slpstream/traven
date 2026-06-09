@@ -101,7 +101,7 @@ async function performAutoSave(content) {
 // 3. Initialize the debounced auto-save function
 const debouncedAutoSave = debounce(performAutoSave, 2000);
 
-// 4. Instanitate Traven and bind the onChange callback
+// 4. Instantiate Traven and bind the onChange callback
 const editor = new TravenEditor({
   element: document.getElementById("editor"),
   onChange: (content) => {
@@ -121,7 +121,141 @@ function updateStatusIndicator(message, isError = false) {
 
 ---
 
-## 4. Summary of API Hooks
+## 4. Complete Round-Trip: Load → Edit → Save
+
+The most common integration question is: *"How do I load existing content from my database, let the user edit it, and save it back?"* Below is a complete, self-contained recipe showing every step in the lifecycle.
+
+### The Full Flow
+
+```mermaid
+graph LR
+    A[1. Fetch markdown from server] --> B[2. Initialize editor with initialValue]
+    B --> C[3. User edits content]
+    C --> D[4. User presses Ctrl+S]
+    D --> E[5. POST markdown back to server]
+    E --> F[6. Server stores in database]
+```
+
+### HTML Page
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Edit Post</title>
+  <meta name="csrf-token" content="YOUR_CSRF_TOKEN">
+</head>
+<body>
+
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+    <h1>Editing: <span id="post-title"></span></h1>
+    <span id="save-status" style="color: #64748b; font-size: 0.9em;">Ready</span>
+  </div>
+
+  <div id="editor-mount"></div>
+
+  <script type="module">
+    import { TravenEditor, DEFAULT_TOOLBAR } from "https://cdn.jsdelivr.net/npm/@freedomware/traven@latest/dist/traven.js";
+
+    // ─── Step 1: Fetch existing content from your API ───
+    const postId = new URLSearchParams(window.location.search).get("id");
+    const response = await fetch(`/api/posts/${postId}`);
+    const post = await response.json();
+
+    // Populate the page title
+    document.getElementById("post-title").textContent = post.title;
+
+    // ─── Step 2: Initialize the editor with the loaded content ───
+    const editor = new TravenEditor({
+      element: document.getElementById("editor-mount"),
+      initialValue: post.content,          // ← loaded from database
+      toolbar: DEFAULT_TOOLBAR,
+      // ─── Step 3: Intercept manual save (Ctrl+S / Cmd+S) ───
+      onSave: async (markdown) => {
+        const statusEl = document.getElementById("save-status");
+        statusEl.textContent = "Saving...";
+        statusEl.style.color = "#64748b";
+
+        try {
+          // ─── Step 4: POST the updated markdown back to your API ───
+          const res = await fetch(`/api/posts/${postId}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({ content: markdown })
+          });
+
+          if (res.ok) {
+            statusEl.textContent = "Saved";
+            statusEl.style.color = "#22c55e";
+          } else {
+            statusEl.textContent = "Save failed";
+            statusEl.style.color = "#ef4444";
+          }
+        } catch (err) {
+          statusEl.textContent = "Connection lost";
+          statusEl.style.color = "#ef4444";
+        }
+      }
+    });
+  </script>
+</body>
+</html>
+```
+
+### Server Endpoint (Express.js example)
+
+Any backend works — the pattern is identical in PHP, Django, Rails, etc. The key is that the API returns `content` as a raw Markdown string on GET, and accepts it back on PUT:
+
+```javascript
+// GET /api/posts/:id  →  Load
+app.get("/api/posts/:id", async (req, res) => {
+  const post = await db.posts.findById(req.params.id);
+  res.json({ title: post.title, content: post.body_markdown });
+});
+
+// PUT /api/posts/:id  →  Save
+app.put("/api/posts/:id", async (req, res) => {
+  await db.posts.update(req.params.id, {
+    body_markdown: req.body.content   // ← raw Markdown string from Traven
+  });
+  res.json({ ok: true });
+});
+```
+
+### PHP Equivalent (No Framework)
+
+If you are using plain PHP without a JavaScript API layer, Traven submits through a standard HTML `<form>` just like a `<textarea>`. No `fetch()` needed:
+
+```html
+<form action="save-post.php" method="POST">
+  <input type="hidden" name="post_id" value="42">
+  <traven-editor name="content" toolbar><?php echo htmlspecialchars($existingMarkdown); ?></traven-editor>
+  <button type="submit">Save</button>
+</form>
+
+<script type="module" src="https://cdn.jsdelivr.net/npm/@freedomware/traven@latest/dist/traven.js"></script>
+```
+
+```php
+<?php
+// save-post.php
+$postId = $_POST['post_id'];
+$markdown = $_POST['content'];  // ← raw Markdown, just like a textarea
+
+// Store in database...
+$stmt = $pdo->prepare("UPDATE posts SET body_markdown = ? WHERE id = ?");
+$stmt->execute([$markdown, $postId]);
+
+header("Location: /edit-post.php?id=" . $postId);
+```
+
+---
+
+## 5. Summary of API Hooks
 
 | Method / Option | Hook Type | Trigger Description |
 | :--- | :--- | :--- |

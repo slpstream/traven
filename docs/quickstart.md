@@ -51,3 +51,5 @@ Traven submits like a standard textarea, so nothing in your existing PHP needs t
 You now have a working Rich Text editor, ready to go. From here you can stack on additional attributes (like `line-numbers`, `theme="dark"`, `toolbar-mode="floating"`, `vim-mode`, `read-only`, `auto-load-styles="false"`) or trim the `toolbar` button set so the toolbars show only the buttons you need, rather than the full set which is often too much and can be overwhelming for your users.
 
 For a complete reference of every option you can put on `<traven-editor>`, including the full list of toolbar button keys and what each one does, check out the **[Cheat Sheet](cheatsheet.md)** ...and if you want to extend the toolbar and add your own custom buttons, the dev-docs show how that is easy, too.
+
+Ready-made configurations for blogs, CMS dashboards, documentation editors, and more: **[Common Configurations](common-configurations.md)**.

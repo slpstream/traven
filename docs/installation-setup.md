@@ -14,6 +14,8 @@ While `<traven-editor>` acts as a highly portable drop-in editor, keep these tem
 *   **Style Encapsulation:** The core styles (`dist/traven.css`) are injected globally. If your host page uses `!important` tags on universally scoped selectors like `body`, or conflicts with CodeMirror's `cm-*` classes, you may experience layout bleed. True CSS isolation requires a Shadow DOM adapter (on roadmap).
 *   **Modal Positioning:** Rich tool modals (like the image uploader) currently append to `document.body` with fixed positioning. If your embed context involves ancestors with `transform` or `filter` properties, the modal positioning can be incorrect. In these setups, prefer `toolbar-mode="static"`.
 
+If you run into either of these issues, see [Troubleshooting](troubleshooting.md) for workarounds and fixes.
+
 You can load Traven directly from the jsDelivr CDN without hosting any local assets:
 
 ```html

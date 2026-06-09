@@ -84,7 +84,7 @@ To maintain consistent styling between the editor's WYSIWYM mode and the HTML pr
 
 > [!NOTE]
 > The preview container is assigned the CSS class `.traven-preview`.
-> All theme styles (like `skin-light.css`, `skin-beginner.css`, and the dark-mode theme) target elements within `.traven-preview`. As long as your custom renderer produces standard semantic HTML elements (e.g., `<h1>`, `<p>`, `<blockquote>`), it will inherit the layout, typography, colors, and borders of the active skin automatically.
+> All theme styles (like `skin-starter.css`, `skin-light.css`, and the dark-mode theme) target elements within `.traven-preview`. As long as your custom renderer produces standard semantic HTML elements (e.g., `<h1>`, `<p>`, `<blockquote>`), it will inherit the layout, typography, colors, and borders of the active skin automatically.
 
 ---
 

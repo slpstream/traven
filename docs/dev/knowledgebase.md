@@ -10,7 +10,7 @@ Traven is designed to be a lightweight, framework-agnostic editor component. It 
 
 * **[package.json](file:///home/user/Desktop/refactor/traven/package.json)**: Bundler settings (`esbuild`), script pipelines (`npm run build`/`watch`), and versioned CodeMirror 6 packages.
 * **[src/index.js](file:///home/user/Desktop/refactor/traven/src/index.js)**: Public API surface exposed via the `TravenEditor` class (mounts CodeMirror, encapsulates state lifecycle, inserts snippets, and fires events).
-* **[packages/core/assets/skins/](file:///home/user/Desktop/refactor/traven/packages/core/assets/skins/)**: Decoupled stylesheets (`skin-light.css`, `skin-colorful.css`, and `skin-dark.css`) containing editor visual theme configurations that require no rebuilds.
+* **[packages/core/assets/skins/](file:///home/user/Desktop/refactor/traven/packages/core/assets/skins/)**: Decoupled stylesheets (`skin-starter.css`, `skin-light.css`, `skin-colorful.css`, `skin-dark.css`, `skin-editorial.css`, `skin-modern.css`, `skin-academic.css`, `skin-custom.css`) containing editor visual theme configurations that require no rebuilds.
 * **[packages/core/assets/toolbars/toolbar-default.css](file:///home/user/Desktop/refactor/traven/packages/core/assets/toolbars/toolbar-default.css)**: Decoupled toolbar presentation stylesheet, letting users skin and toggle toolbar buttons independently.
 * **[src/toolbar/](file:///home/user/Desktop/refactor/traven/src/toolbar/)**: Modular toolbar components (`toolbar.js`, `tools.js`, `modal.js`) handling dynamic generation, accessibility behaviors, modals, and actions.
 * **[src/wysiwym.js](file:///home/user/Desktop/refactor/traven/src/wysiwym.js)**: Core decoration state machine mapping markdown parser nodes to collapsed replacement decorations.
