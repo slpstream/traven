@@ -38,44 +38,44 @@ Traven is highly modular and straightforward to customize or extend. If you need
   <tr>
     <td>
       <a href="https://traven.dev/img/workspace1.jpg" target="_blank">
-        <img src="https://traven.dev/img/workspace1.jpg" alt="Thumbnail 1" width="180"/>
+        <img src="https://traven.dev/img/workspace1.jpg" alt="Thumbnail 1" width="190"/>
       </a>
     </td>
     <td>
       <a href="https://traven.dev/img/workspace2.jpg" target="_blank">
-        <img src="https://traven.dev/img/workspace2.jpg" alt="Thumbnail 2" width="180"/>
+        <img src="https://traven.dev/img/workspace2.jpg" alt="Thumbnail 2" width="190"/>
       </a>
     </td>
     <td>
       <a href="https://traven.dev/img/workspace3.jpg" target="_blank">
-        <img src="https://traven.dev/img/workspace3.jpg" alt="Thumbnail 3" width="180"/>
+        <img src="https://traven.dev/img/workspace3.jpg" alt="Thumbnail 3" width="190"/>
       </a>
     </td>
     <td>
       <a href="https://traven.dev/img/workspace4.jpg" target="_blank">
-        <img src="https://traven.dev/img/workspace4.jpg" alt="Thumbnail 4" width="180"/>
+        <img src="https://traven.dev/img/workspace4.jpg" alt="Thumbnail 4" width="190"/>
       </a>
     </td>
   </tr>
   <tr>
     <td>
       <a href="https://traven.dev/img/workspace5.jpg" target="_blank">
-        <img src="https://traven.dev/img/workspace5.jpg" alt="Thumbnail 5" width="180"/>
+        <img src="https://traven.dev/img/workspace5.jpg" alt="Thumbnail 5" width="190"/>
       </a>
     </td>
     <td>
       <a href="https://traven.dev/img/workspace6.jpg" target="_blank">
-        <img src="https://traven.dev/img/workspace6.jpg" alt="Thumbnail 6" width="180"/>
+        <img src="https://traven.dev/img/workspace6.jpg" alt="Thumbnail 6" width="190"/>
       </a>
     </td>
     <td>
       <a href="https://traven.dev/img/workspace7.jpg" target="_blank">
-        <img src="https://traven.dev/img/workspace7.jpg" alt="Thumbnail 7" width="180"/>
+        <img src="https://traven.dev/img/workspace7.jpg" alt="Thumbnail 7" width="190"/>
       </a>
     </td>
     <td>
       <a href="https://traven.dev/img/workspace8.jpg" target="_blank">
-        <img src="https://traven.dev/img/workspace8.jpg" alt="Thumbnail 8" width="180"/>
+        <img src="https://traven.dev/img/workspace8.jpg" alt="Thumbnail 8" width="190"/>
       </a>
     </td>
   </tr>
