@@ -32,7 +32,7 @@
 Traven is highly modular and straightforward to customize or extend. If you need a powerful, flexible and mostly unopinionated Markdown editor that adapts to the layout, theme, and behavior of an existing project, its theming and configuration options and decoupled styling make integration fast and easy.
 
 <p align="center">
-  <img src="https://traven.dev/img/workspacemain.jpg" alt="Main Preview" width="100%">
+  <img src="https://traven.dev/img/workspacehero.jpg" alt="Main Preview" width="100%">
 </p>
 <table align="center">
   <tr>
