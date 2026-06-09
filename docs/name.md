@@ -8,7 +8,9 @@ B. Traven was an anonymous author who wrote about ordinary people fighting syste
 
 For a privacy-first and preferably local/selfhosted WYSIWYM editor that is made to be embedded anywhere full-featured Markdown editing is required, the name is right. It is for developers who prefer to selfhost because they understand what ownership actually means in practice, but for the sake of convenience it is also available via CDN.
 
-Traven is infra plumbing that is built to work anonymously in the background and just do its job. It belongs to everyone: MIT licensed, so use it freely.
+Traven is infra-plumbing that is built to work anonymously in the background and just do its job. 
+
+The code belongs to everyone: MIT licensed, so use it freely.
 
 
 

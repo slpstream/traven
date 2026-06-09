@@ -2,7 +2,13 @@
 
 Traven is framework-agnostic by design, but comes with wrappers for React, Vue, and Svelte to make integration seamless. These wrappers provide native component APIs while ensuring the core editor remains zero-dependency.
 
-## React (`@freedomware/traven-react`)
+Developers can just run `npm install @freedomware/traven-react` and drop the editor right into their apps. 
+
+Meanwhile, anyone using raw HTML or PHP can just paste a single `cdn.jsdelivr.net` `<script>` tag from Traven's README into their code, and it will effortlessly pull the exact same core bundle.
+
+## React 
+
+#### `@freedomware/traven-react`
 
 The React wrapper provides a `Traven` component that integrates smoothly with React's lifecycle and handles Strict Mode cleanly.
 
@@ -49,7 +55,9 @@ export default function App() {
 }
 ```
 
-## Vue (`@freedomware/traven-vue`)
+## Vue 
+
+#### `@freedomware/traven-vue`
 
 The Vue wrapper provides a standard component that integrates cleanly with the Vue 3 Composition API.
 
@@ -101,7 +109,9 @@ function save() {
 </script>
 ```
 
-## Svelte (`@freedomware/traven-svelte`)
+## Svelte 
+
+#### `@freedomware/traven-svelte`
 
 The Svelte wrapper provides a native Svelte component for rendering Traven.
 
@@ -139,3 +149,24 @@ Pass `defaultValue` and bind to the component instance to call `getValue()` when
   <button on:click={handleSubmit}>Submit</button>
 </div>
 ```
+
+## No Framework?
+
+Even easier! Traven is a single-line **drop-in for PHP/Python projects**
+
+Other editors (like Quill, TipTap, ProseMirror) all implicitly assume you are in a Node/React/Webpack world. Traven does not assume that.
+ 
+To hit the ground running, here are some examples to cut and paste:
+* [Traven working inside a Laravel Blade template](laravel-snippet.md)
+* [Traven in a Django form](django-snippet.md)
+* [Traven embedded in a plain PHP page](plain-php-snippet.md)
+
+Replace a `<textarea>` with a full rich-text-editor in five seconds. One line is all it takes:
+[Quick Start Guide](quickstart.md)
+
+
+
+
+
+
+
