@@ -15,7 +15,7 @@ The React wrapper provides a `Traven` component that integrates smoothly with Re
 ### Installation
 
 ```bash
-npm install @freedomware/traven-react traven
+npm install @freedomware/traven-react @freedomware/traven
 ```
 
 ### Usage
@@ -64,7 +64,7 @@ The Vue wrapper provides a standard component that integrates cleanly with the V
 ### Installation
 
 ```bash
-npm install @freedomware/traven-vue traven
+npm install @freedomware/traven-vue @freedomware/traven
 ```
 
 ### Usage
@@ -118,7 +118,7 @@ The Svelte wrapper provides a native Svelte component for rendering Traven.
 ### Installation
 
 ```bash
-npm install @freedomware/traven-svelte traven
+npm install @freedomware/traven-svelte @freedomware/traven
 ```
 
 ### Usage

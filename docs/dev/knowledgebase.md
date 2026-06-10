@@ -8,14 +8,14 @@ This document serves as a reference for developer onboarding and technical conte
 
 Traven is designed to be a lightweight, framework-agnostic editor component. It is compiled to standard ES Modules (ESM) with zero runtime peer-dependencies:
 
-* **[package.json](file:///home/user/Desktop/refactor/traven/package.json)**: Bundler settings (`esbuild`), script pipelines (`npm run build`/`watch`), and versioned CodeMirror 6 packages.
-* **[src/index.js](file:///home/user/Desktop/refactor/traven/src/index.js)**: Public API surface exposed via the `TravenEditor` class (mounts CodeMirror, encapsulates state lifecycle, inserts snippets, and fires events).
-* **[packages/core/assets/skins/](file:///home/user/Desktop/refactor/traven/packages/core/assets/skins/)**: Decoupled stylesheets (`skin-starter.css`, `skin-light.css`, `skin-colorful.css`, `skin-dark.css`, `skin-editorial.css`, `skin-modern.css`, `skin-academic.css`, `skin-custom.css`) containing editor visual theme configurations that require no rebuilds.
-* **[packages/core/assets/toolbars/toolbar-default.css](file:///home/user/Desktop/refactor/traven/packages/core/assets/toolbars/toolbar-default.css)**: Decoupled toolbar presentation stylesheet, letting users skin and toggle toolbar buttons independently.
-* **[src/toolbar/](file:///home/user/Desktop/refactor/traven/src/toolbar/)**: Modular toolbar components (`toolbar.js`, `tools.js`, `modal.js`) handling dynamic generation, accessibility behaviors, modals, and actions.
-* **[src/wysiwym.js](file:///home/user/Desktop/refactor/traven/src/wysiwym.js)**: Core decoration state machine mapping markdown parser nodes to collapsed replacement decorations.
-* **[src/delimiter-skip.js](file:///home/user/Desktop/refactor/traven/src/delimiter-skip.js)**: Arrow-key keyboard hook checking if cursors are on boundaries of folded syntax blocks to skip them.
-* **[src/images.js](file:///home/user/Desktop/refactor/traven/src/images.js)**: Drag-and-drop/paste optimistic file uploader mapping state adjustments.
+* **[package.json](../../package.json)**: Bundler settings (`esbuild`), script pipelines (`npm run build`/`watch`), and versioned CodeMirror 6 packages.
+* **[packages/core/src/index.js](../../packages/core/src/index.js)**: Public API surface exposed via the `TravenEditor` class (mounts CodeMirror, encapsulates state lifecycle, inserts snippets, and fires events).
+* **[packages/core/assets/skins/](../../packages/core/assets/skins/)**: Decoupled stylesheets (`skin-starter.css`, `skin-light.css`, `skin-colorful.css`, `skin-dark.css`, `skin-editorial.css`, `skin-modern.css`, `skin-academic.css`, `skin-custom.css`) containing editor visual theme configurations that require no rebuilds.
+* **[packages/core/assets/toolbars/toolbar-default.css](../../packages/core/assets/toolbars/toolbar-default.css)**: Decoupled toolbar presentation stylesheet, letting users skin and toggle toolbar buttons independently.
+* **[packages/core/src/toolbar/](../../packages/core/src/toolbar/)**: Modular toolbar components (`toolbar.js`, `tools.js`, `modal.js`) handling dynamic generation, accessibility behaviors, modals, and actions.
+* **[packages/core/src/wysiwym.js](../../packages/core/src/wysiwym.js)**: Core decoration state machine mapping markdown parser nodes to collapsed replacement decorations.
+* **[packages/core/src/delimiter-skip.js](../../packages/core/src/delimiter-skip.js)**: Arrow-key keyboard hook checking if cursors are on boundaries of folded syntax blocks to skip them.
+* **[packages/core/src/images.js](../../packages/core/src/images.js)**: Drag-and-drop/paste optimistic file uploader mapping state adjustments.
 
 ---
 
@@ -424,10 +424,10 @@ For the complete guide to runtime font customization using CSS custom properties
 To protect host applications from Cross-Site Scripting (XSS) when rendering user-submitted Markdown as HTML, Traven includes an input sanitization pipeline.
 
 ### A. Fallback HTML Escaping
-Traven's fallback Markdown-to-HTML parser (`#fallbackRender` in `src/index.js`) automatically encodes all raw HTML tags (such as `<script>`, `<iframe`, etc.) into escaped characters (`&lt;`, `&gt;`, `&amp;`) before parsing block/inline elements. This ensures that any direct HTML injection renders visually as plain text in the browser.
+Traven's fallback Markdown-to-HTML parser (`#fallbackRender` in `packages/core/src/TravenEditor.js`) automatically encodes all raw HTML tags (such as `<script>`, `<iframe`, etc.) into escaped characters (`&lt;`, `&gt;`, `&amp;`) before parsing block/inline elements. This ensures that any direct HTML injection renders visually as plain text in the browser.
 
-### B. Reusable URL Sanitizer (`src/security.js`)
-To protect against URI-based XSS attacks—specifically through Markdown links `[click](javascript:...)` or images `![alt](javascript:...)`—Traven isolates its URL sanitization logic inside [src/security.js](file:///home/user/Desktop/refactor/traven/src/security.js).
+### B. Reusable URL Sanitizer (`packages/core/src/security.js`)
+To protect against URI-based XSS attacks—specifically through Markdown links `[click](javascript:...)` or images `![alt](javascript:...)`—Traven isolates its URL sanitization logic inside [packages/core/src/security.js](../../packages/core/src/security.js).
 
 * **Mechanism**: The exported `sanitizeUrl(url)` function normalizes input URLs by resolving HTML entity encodings (e.g. `j&#97;vascript:`) and percent encodings (e.g. `java%0ascript:`). It blocks dangerous URI schemes like `javascript:`, `data:`, and `vbscript:`, replacing them with `about:blank`.
 * **Allowed Schemes**: The function explicitly allows safe protocols (`http:`, `https:`, `mailto:`, `tel:`), relative paths (e.g., `/about`), hashtag anchors (e.g., `#id`), and raw blog slugs (e.g., `my-slug-name`), ensuring users have complete freedom for local and internal routing.

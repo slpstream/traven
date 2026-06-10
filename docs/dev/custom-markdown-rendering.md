@@ -33,7 +33,7 @@ To configure a custom renderer, initialize the editor and call `registerRenderer
 [Marked](https://marked.js.org/) is a fast, lightweight Markdown compiler.
 
 ```javascript
-import { TravenEditor } from "traven-editor";
+import { TravenEditor } from "@freedomware/traven";
 import { marked } from "marked";
 
 // Initialize Traven
@@ -56,7 +56,7 @@ editor.registerRenderer((markdown) => {
 [markdown-it](https://github.com/markdown-it/markdown-it) is a highly configurable, pluggable Markdown parser.
 
 ```javascript
-import { TravenEditor } from "traven-editor";
+import { TravenEditor } from "@freedomware/traven";
 import markdownIt from "markdown-it";
 
 const md = markdownIt({

@@ -10,18 +10,18 @@ Integrating custom shortcodes follows the established decoupling between editor 
 
 ```mermaid
 graph TD
-    Source[Raw Markdown Text] -->|1. Parse| RegExp[wysiwym.js Regex Engine]
-    RegExp -->|2. Detect Bounds| StateField[CodeMirror StateField]
-    StateField -->|3. Cursor Check| Decorator[Interactive Decorator]
+    Source[Raw Markdown Text] -->|1. Parse| Lezer[Lezer Markdown Parser]
+    Lezer -->|2. Generate AST| AST[Abstract Syntax Tree Nodes]
+    AST -->|3. Cursor Check| Decorator[wysiwym.js Interactive Decorator]
     Decorator -->|Active Cursor: Show Code| Text[Raw Text Rendering]
     Decorator -->|Inactive Cursor: Hide Code| Widget[Replace Widget Injection]
     Widget -->|4. Render DOM| DOM[Shortcode Preview DOM]
     DOM -->|5. Apply Skin| CSS[packages/core/assets/skins/*.css]
 ```
 
-### A. Parser Logic (`src/wysiwym.js`)
-* **Detection & AST Mapping**: Standard Markdown syntax trees (via `@lezer/markdown`) do not recognize custom shortcodes, parsing them as normal paragraphs. `wysiwym.js` will scan the document using structured regular expressions to identify shortcode blocks.
-* **State Management**: It will track if the cursor is currently inside a shortcode's range.
+### A. Parser Logic (`packages/core/src/wysiwym.js`)
+* **Detection & AST Mapping**: Standard Markdown syntax trees (via `@lezer/markdown`) do not recognize custom shortcodes. Traven extends the Lezer parser with grammar extensions (e.g. `src/shortcode-parser.js`) to parse them into first-class AST nodes. `wysiwym.js` then traverses these AST nodes to identify shortcode blocks.
+* **State Management**: It tracks if the cursor is currently inside a shortcode's range.
 * **Interactive Hiding**: When the cursor is outside, it collapses the shortcode syntax markers using `Decoration.replace({})` and mounts a CodeMirror replacement `WidgetType`. When the cursor enters the shortcode, the raw source string is instantly revealed for editing.
 
 ### B. Rich Previews (`src/widgets/*.js`)

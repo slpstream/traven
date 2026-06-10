@@ -21,7 +21,7 @@ npm install @codemirror/language-data
 Import the `languages` array and pass it when instantiating the editor. CodeMirror will automatically load and parse syntax highlighting for over 100 languages.
 
 ```javascript
-import { TravenEditor } from "traven";
+import { TravenEditor } from "@freedomware/traven";
 import { languages } from "@codemirror/language-data";
 
 const editor = new TravenEditor({
@@ -80,7 +80,7 @@ Here is an example using Prism via CDN:
 If you register a custom Markdown compiler (such as `marked` or `markdown-it`) using `editor.registerRenderer(renderFn)`, you can configure it with pre-built or built-in highlighters:
 
 ```javascript
-import { TravenEditor } from "traven";
+import { TravenEditor } from "@freedomware/traven";
 import markdownIt from "markdown-it";
 import hljs from "highlight.js";
 

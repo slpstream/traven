@@ -167,7 +167,7 @@ To learn more about CSS class listings, custom skin configurations, and toolbar 
 ### Custom Shortcodes Architecture
 
 Traven supports extending standard Markdown with custom shortcodes. By default, it comes with rich, interactive WYSIWYM widgets and semantic HTML compilers for `[image]`, `[video]`, `[audio]`, `[figure]`, and `[component]` layouts.
-The technical blueprint, widget rendering lifecycles, and syntax extension details are covered in the **[Custom Shortcodes Architecture Guide](docs/dev/shortcodes-architecture.md)**.
+The technical blueprint, widget rendering lifecycles, and syntax extension details are covered in the **[Custom Shortcodes Architecture Guide](docs/dev/building-custom-shortcodes.md)**.
 
 ### Development
 

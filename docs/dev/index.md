@@ -6,7 +6,7 @@ These guides are for developers who want to dig deeper and extend, customize, or
 
 ## Getting Started
 
-- **[Development](development.md)** — The development workflow for compiling, building, testing, and running Traven locally. Covers `npm run build`, `npm run test`, `npm run watch`, running the PHP demo pages, and the `@main` CDN development target.
+- **[Development](development.md)** — The development workflow for compiling, building, testing, and running Traven locally. Covers `npm run build`, `npm run test`, `npm run watch`, running the PHP demo pages, and the `@latest` CDN development target.
 - **[Knowledgebase](knowledgebase.md)** — A deep technical reference of internal findings: CodeMirror 6 pitfalls (block decorations, RangeSetBuilder, character width caching), sandboxed resizing rules, toolbar button customization, all runtime APIs and extension hooks, CSS theming parity tips, security and input sanitization, LaTeX internals, and the floating/hybrid toolbar architecture.
 
 ---

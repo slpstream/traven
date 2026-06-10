@@ -30,6 +30,14 @@ Initializes a new editor instance.
 | `readOnly` | `boolean` | `false` | Enables read-only mode for both primary and secondary editor panes. |
 | `keybindings` | `object` | `{}` | Key-value pairs overriding default tool keybindings (e.g. `{ bold: "Ctrl-Shift-b" }`). |
 | `katex` | `boolean \| string \| object` | `false` | Configures KaTeX loading. If `false` (default), only uses local preloaded `window.katex`. If `true`, loads from JSDelivr CDN. If a string or object, defines custom self-hosted paths (e.g. `{ js: "path/to/katex.js", css: "path/to/katex.css" }`). |
+| `components` | `Array<string \| object>` | *(Default presets)* | Pre-defined custom component schemas. |
+| `componentsUrl` | `string \| boolean` | `"assets/components.json"` | Path/URL to load custom component schemas, or `false` to disable. |
+| `toolbarMode` | `"static" \| "floating" \| "hybrid"` | `"static"` | Presentation layout mode for the toolbar. |
+| `bubbleHotkey` | `string` | `"Mod-."` | Keyboard hotkey to open the selection bubble. |
+| `gutterHotkey` | `string` | `"Mod-Shift-Enter"` | Keyboard hotkey to open the gutter plus menu. |
+| `bubbleAppearDelay`| `number` | `200` | Delay in ms between selection and selection bubble appearance. |
+| `autoLoadStyles` | `boolean` | `true` | Auto-inject core CSS from CDN/local bundle. Set to `false` for strict CSP environments. |
+| `codeLanguages` | `Array` | `null` | CodeMirror LanguageDescription array to enable syntax highlighting in fenced code blocks. |
 
 ---
 
@@ -128,6 +136,14 @@ editor.on("statsUpdate", (stats) => {
 });
 ```
 
+### `getUploadHandler()`
+Returns the configured image upload handler, or `null` if not configured.
+*   **Returns:** `(file: File) => Promise<string>` or `null`
+
+### `getComponents()`
+Returns the list of currently registered component schemas.
+*   **Returns:** `Array<string | object>`
+
 ### `destroy()`
 Cleans up event listeners and destroys CodeMirror instances.
 
@@ -178,6 +194,28 @@ Toggles or applies a heading level (`1` to `6`) prefix to the active line. Pass 
 ### `insertBlockquote()`
 Converts the active selection or line into a markdown blockquote block (`> `).
 
+### `insertDateTime()`
+Inserts the current date and time string at the cursor.
+
 ### `insertList(type)`
 Converts the active selection or line into a list of the specified type.
 *   **Parameters:** `type` (`"ul" | "ol" | "task"`)
+
+---
+
+## Static Methods
+
+### `TravenEditor.configureMermaid(options)`
+Configures Mermaid diagram loading globally.
+*   **Parameters:**
+    *   `options` (`boolean | string | object`):
+        *   `true`: Enable Mermaid loading from standard CDN (v11.4.0).
+        *   `string`: Enable with a custom CDN script URL.
+        *   `object`: Configuration object containing optional `js` URL property.
+        *   `false`: Disable Mermaid.
+
+### `TravenEditor.initMermaid(container)`
+Scans the specified container element and renders any uninitialized Mermaid diagrams.
+*   **Parameters:**
+    *   `container` (`HTMLElement`): The DOM container element to scan.
+*   **Returns:** `Promise<void>`
