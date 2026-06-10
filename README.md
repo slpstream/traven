@@ -32,49 +32,51 @@
 Traven is highly modular and straightforward to customize or extend. If you need a powerful, flexible and mostly unopinionated Markdown editor that adapts to the layout, theme, and behavior of an existing project, its theming and configuration options and decoupled styling make integration fast and easy.
 
 <p align="center">
+ <a href="https://traven.dev/index.php?img=workspace0" target="_blank">
   <img src="https://traven.dev/img/workspacehero.jpg" alt="Main Preview" width="100%">
+ </a>
 </p>
 <table align="center">
   <tr>
     <td>
-      <a href="https://traven.dev/img/workspace1.jpg" target="_blank">
+      <a href="https://traven.dev/index.php?img=workspace1" target="_blank">
         <img src="https://traven.dev/img/workspace1.jpg" alt="Thumbnail 1" width="190"/>
       </a>
     </td>
     <td>
-      <a href="https://traven.dev/img/workspace2.jpg" target="_blank">
+      <a href="https://traven.dev/index.php?img=workspace2" target="_blank">
         <img src="https://traven.dev/img/workspace2.jpg" alt="Thumbnail 2" width="190"/>
       </a>
     </td>
     <td>
-      <a href="https://traven.dev/img/workspace3.jpg" target="_blank">
+      <a href="https://traven.dev/index.php?img=workspace3" target="_blank">
         <img src="https://traven.dev/img/workspace3.jpg" alt="Thumbnail 3" width="190"/>
       </a>
     </td>
     <td>
-      <a href="https://traven.dev/img/workspace4.jpg" target="_blank">
+      <a href="https://traven.dev/index.php?img=workspace4" target="_blank">
         <img src="https://traven.dev/img/workspace4.jpg" alt="Thumbnail 4" width="190"/>
       </a>
     </td>
   </tr>
   <tr>
     <td>
-      <a href="https://traven.dev/img/workspace5.jpg" target="_blank">
+      <a href="https://traven.dev/index.php?img=workspace5" target="_blank">
         <img src="https://traven.dev/img/workspace5.jpg" alt="Thumbnail 5" width="190"/>
       </a>
     </td>
     <td>
-      <a href="https://traven.dev/img/workspace6.jpg" target="_blank">
+      <a href="https://traven.dev/index.php?img=workspace6" target="_blank">
         <img src="https://traven.dev/img/workspace6.jpg" alt="Thumbnail 6" width="190"/>
       </a>
     </td>
     <td>
-      <a href="https://traven.dev/img/workspace7.jpg" target="_blank">
+      <a href="https://traven.dev/index.php?img=workspace7" target="_blank">
         <img src="https://traven.dev/img/workspace7.jpg" alt="Thumbnail 7" width="190"/>
       </a>
     </td>
     <td>
-      <a href="https://traven.dev/img/workspace8.jpg" target="_blank">
+      <a href="https://traven.dev/index.php" target="_blank">
         <img src="https://traven.dev/img/workspace8.jpg" alt="Thumbnail 8" width="190"/>
       </a>
     </td>
