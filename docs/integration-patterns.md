@@ -1,11 +1,11 @@
 # Integration Patterns
 
-Traven supports two main options for handling YAML Frontmatter metadata (e.g. `title`, `tags`):
+Regardless of whether you are integrating via the declarative `<traven-editor>` Web Component or the programmatic `new TravenEditor` JS API (see [Host Integration Guide](integration.md)), Traven supports two main approaches for handling YAML Frontmatter metadata (e.g., `title`, `tags`):
 
 ## Approach A: Freeform Editing (Inline)
 
 Useful for markdown-first environments (like Obsidian or wikis) where authors prefer typing raw YAML manually.
-*   **Usage**: Pass the raw file directly into `TravenEditor`. The editor automatically highlights the frontmatter boundaries `---`, styles the keys, and collapses them when focus is lost.
+*   **Usage**: Pass the raw file directly into the editor (either as the `<traven-editor>` inner HTML/text content, or as the `initialValue` option in the programmatic `TravenEditor` class constructor). The editor automatically highlights the frontmatter boundaries `---`, styles the keys, and collapses them when focus is lost.
 
 ## Approach B: Structured Forms (Split-Before / Join-After) — *Recommended for CMSs*
 

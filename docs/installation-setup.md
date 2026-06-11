@@ -80,3 +80,13 @@ To accommodate this, you can disable the auto-injection by passing `autoLoadStyl
 <traven-editor name="body" auto-load-styles="false"># Hello Traven</traven-editor>
 <script type="module" src="./dist/traven.js"></script>
 ```
+
+---
+
+### Next Steps
+
+Now that you have loaded Traven, choose how to integrate it:
+* **For standard server-rendered forms:** Use the declarative `<traven-editor>` Web Component.
+* **For client-side reactive frameworks (Alpine.js, Vue, React, Svelte):** Use the programmatic `new TravenEditor` JavaScript API.
+
+For a full breakdown of these options, see the **[Host Integration Guide](integration.md)**.

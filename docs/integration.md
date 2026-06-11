@@ -4,7 +4,24 @@ Recommended practices for integrating the Traven editor into host applications, 
 
 ---
 
-## 1. YAML Frontmatter & Metadata Management
+## 1. Choosing Your API: Web Component vs. Programmatic JS
+
+Traven provides two equally supported APIs to integrate the editor depending on your application's architecture:
+
+### A. The `<traven-editor>` Web Component (Declarative)
+* **Best for:** Server-rendered forms (PHP, Django, Laravel, Rails) and quick drop-in static HTML pages.
+* **How it works:** Loading `traven.js` automatically registers the `<traven-editor>` custom element. You write it directly in your HTML templates, and it behaves exactly like a native `<textarea>`, utilizing `formAssociated` properties to seamlessly submit its value with your forms.
+
+### B. The `TravenEditor` Class (Programmatic)
+* **Best for:** Client-side reactive frameworks (Alpine.js, React, Vue, Svelte) and advanced JS integrations requiring fine-grained lifecycle or event handling.
+* **How it works:** You instantiate the class in JavaScript with `new TravenEditor({ element, ... })`. This allows you to mount the editor inside any generic HTML container (like a `<div>`) and reactively bind to its callbacks (such as `onChange` or `onSave`).
+
+
+> **NOTE:** Under the hood, the `<traven-editor>` Web Component is just a wrapper around the `TravenEditor` JavaScript class. You can choose whichever API fits best with your host environment.
+
+---
+
+## 2. YAML Frontmatter & Metadata Management
 
 Writers often use YAML frontmatter blocks at the beginning of Markdown files to manage structured metadata (e.g. titles, tags, publish dates, authors). 
 
@@ -114,7 +131,7 @@ By decoupling the structured data from the editor, you maintain clean architectu
 
 ---
 
-## 2. Server-Side Framework Forms (PHP, Django, Laravel)
+## 3. Server-Side Framework Forms (PHP, Django, Laravel)
 
 Traven's `<traven-editor>` Web Component is specifically designed to work natively inside standard HTML forms without requiring any JavaScript glue code. 
 
