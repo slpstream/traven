@@ -28,7 +28,7 @@ class ImageWidget extends WidgetType {
     img.draggable = false;
 
     container.appendChild(img);
-    
+
     const captionText = this.alt && this.alt.toLowerCase() !== "image" ? this.alt : "";
     if (captionText) {
       const caption = document.createElement("div");
@@ -108,35 +108,35 @@ function buildImageDecorations(state) {
     from: 0,
     to: state.doc.length,
     enter(node) {
-        if (node.name === "Image") {
-          const isCursorInside = cursorHead > node.from && cursorHead < node.to;
-          if (!isCursorInside) {
-            const nodeText = state.sliceDoc(node.from, node.to);
-            const match = nodeText.match(/^!\[(.*?)\]\((.*?)\)$/);
-            if (match) {
-              const alt = match[1];
-              const url = match[2];
+      if (node.name === "Image") {
+        const isCursorInside = cursorHead > node.from && cursorHead < node.to;
+        if (!isCursorInside) {
+          const nodeText = state.sliceDoc(node.from, node.to);
+          const match = nodeText.match(/^!\[(.*?)\]\((.*?)\)$/);
+          if (match) {
+            const alt = match[1];
+            const url = match[2];
 
-              const isUploading = !url || alt.startsWith("Uploading") || url.startsWith("Uploading");
-              if (isUploading) {
-                const fileName = alt.replace("Uploading ", "").replace("...", "") || "file";
-                collected.push({
-                  from: node.from,
-                  to: node.to,
-                  deco: Decoration.replace({ widget: new UploadingWidget(fileName), block: true })
-                });
-              } else {
-                collected.push({
-                  from: node.from,
-                  to: node.to,
-                  deco: Decoration.replace({ widget: new ImageWidget(url, alt, node.from, node.to), block: true })
-                });
-              }
+            const isUploading = !url || alt.startsWith("Uploading") || url.startsWith("Uploading");
+            if (isUploading) {
+              const fileName = alt.replace("Uploading ", "").replace("...", "") || "file";
+              collected.push({
+                from: node.from,
+                to: node.to,
+                deco: Decoration.replace({ widget: new UploadingWidget(fileName), block: true })
+              });
+            } else {
+              collected.push({
+                from: node.from,
+                to: node.to,
+                deco: Decoration.replace({ widget: new ImageWidget(url, alt, node.from, node.to), block: true })
+              });
             }
           }
         }
       }
-    });
+    }
+  });
 
   collected.sort((a, b) => a.from - b.from || b.to - a.to);
 
@@ -210,13 +210,13 @@ async function handleOptimisticUpload(
   }
 }
 
-export function imageHandlerExtension(
-  uploadFn
-) {
+export function imageHandlerExtension() {
   return EditorView.domEventHandlers({
     drop(event, view) {
+      const editor = viewToEditor.get(view);
+      const uploadFn = editor?.getUploadHandler ? editor.getUploadHandler() : null;
       const files = event.dataTransfer?.files;
-      if (files && files.length > 0 && files[0].type.startsWith("image/")) {
+      if (files && files.length > 0 && files[0].type.startsWith("image/") && uploadFn) {
         event.preventDefault();
         const coords = { x: event.clientX, y: event.clientY };
         const dropPos = view.posAtCoords(coords) ?? view.state.selection.main.head;
@@ -227,8 +227,10 @@ export function imageHandlerExtension(
     },
 
     paste(event, view) {
+      const editor = viewToEditor.get(view);
+      const uploadFn = editor?.getUploadHandler ? editor.getUploadHandler() : null;
       const items = event.clipboardData?.items;
-      if (items) {
+      if (items && uploadFn) {
         for (const item of items) {
           if (item.type.startsWith("image/")) {
             event.preventDefault();

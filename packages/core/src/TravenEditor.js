@@ -378,7 +378,7 @@ export class TravenEditor {
       }),
 
       // Optimistic image upload and drop/paste handling
-      imageHandlerExtension(options.onUploadImage),
+      imageHandlerExtension(),
 
       // Search panel (provides Ctrl+F keybinding and search UI)
       search(),
@@ -1374,7 +1374,8 @@ export class TravenEditor {
    * @returns {function(File): Promise<string> | null}
    */
   getUploadHandler() {
-    return this.#options.onUploadImage || null;
+    // @ts-ignore
+    return this.onUploadImage || this.#options.onUploadImage || this.#options.element?.onUploadImage || null;
   }
 
   /**

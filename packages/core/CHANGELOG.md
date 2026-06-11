@@ -1,5 +1,11 @@
 # @freedomware/traven
 
+## 0.2.10
+
+### Patch Changes
+
+- Fixed dynamic resolution of onUploadImage handler for TravenEditorElement.
+
 ## 0.2.9
 
 ### Patch Changes
