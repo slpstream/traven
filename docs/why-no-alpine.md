@@ -31,8 +31,6 @@ As shown in our demos (like `demo-form.php`), syncing Traven with parent page fo
 
 If your application uses Alpine.js, integrating it with Traven is extremely straightforward. You can easily wrap Traven's initialization and hook it directly into Alpine's reactive store or `x-data` context:
 
-> **NOTE:** Unlike standard server-rendered forms that use the declarative `<traven-editor>` Web Component (as shown in the [Quick Start](quickstart.md)), client-side reactive environments like Alpine.js are best integrated using Traven's programmatic `new TravenEditor` class API on a container element.
-
 ```html
 <div x-data="{ markdownContent: '' }">
   <!-- Mount the editor -->
@@ -50,3 +48,5 @@ If your application uses Alpine.js, integrating it with Traven is extremely stra
 ```
 
 We love Alpine for application state and UI, and we encourage you to use it *around* Traven — we just want to make sure Traven stays out of your way!
+
+> **NOTE:** Unlike standard server-rendered forms that use the declarative `<traven-editor>` Web Component (as shown in the [Quick Start](quickstart.md) guide), client-side reactive environments like Alpine.js are best integrated using Traven's programmatic `new TravenEditor` class API on a container element.
