@@ -10,27 +10,30 @@ $submittedContent = '';
 $isPost = $_SERVER['REQUEST_METHOD'] === 'POST';
 
 if ($isPost) {
-    $submittedContent = $_POST['editor_content'] ?? '';
-    if (!empty(trim($submittedContent))) {
-        $message = "Success: Content saved! Received " . strlen($submittedContent) . " characters.";
-    } else {
-        $message = "Warning: Content was empty.";
-    }
+  $submittedContent = $_POST['editor_content'] ?? '';
+  if (!empty(trim($submittedContent))) {
+    $message = "Success: Content saved! Received " . strlen($submittedContent) . " characters.";
+  } else {
+    $message = "Warning: Content was empty.";
+  }
 } else {
-    $submittedContent = "# LIVE HOT-SWAPPING OF FONTS\n\nWelcome to the Traven Typography sandbox! This page allows you to customize the fonts used in the editor and HTML preview in real-time.\n\nUse the dropdown selectors above to pair different Display (headings/components), Body (paragraphs), and Monospace (code/frontmatter) typefaces.\n\n## Custom Shortcode Elements\n\nNotice how the Display font affects headings, captions, and shortcodes like pullquotes:\n\n[pullquote]“Design is not just what it looks like and feels like. Design is how it works.” — Steve Jobs[/pullquote]\n\nAnd how the Mono font applies to inline code like `const version = '0.2.5';` and code blocks:\n\n```js\n// Code blocks look best with mono fonts like this one.\nfunction greet(user) {\n  return `Hello, \${user}!`;\n}\n```\n\n[component name=\"info\"]This info card is also styled using the Display font for its header structure but inherits the Body typeface for content consistency.[/component]\n\nTry selecting different combinations and feel free to submit this form or view the static HTML preview!";
+  $submittedContent = "# LIVE HOT-SWAPPING OF FONTS\n\nWelcome to the Traven Typography sandbox! This page allows you to customize the fonts used in the editor and HTML preview in real-time.\n\nUse the dropdown selectors above to pair different Display (headings/components), Body (paragraphs), and Monospace (code/frontmatter) typefaces.\n\n## Custom Shortcode Elements\n\nNotice how the Display font affects headings, captions, and shortcodes like pullquotes:\n\n[pullquote]“Design is not just what it looks like and feels like. Design is how it works.” — Steve Jobs[/pullquote]\n\nAnd how the Mono font applies to inline code like `const version = '0.2.5';` and code blocks:\n\n```js\n// Code blocks look best with mono fonts like this one.\nfunction greet(user) {\n  return `Hello, \${user}!`;\n}\n```\n\n[component name=\"info\"]This info card is also styled using the Display font for its header structure but inherits the Body typeface for content consistency.[/component]\n\nTry selecting different combinations and feel free to submit this form or view the static HTML preview!";
 }
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Traven Editor — Parameterized Typography Demo</title>
-  <meta name="description" content="A dynamic typography customization environment for Traven Editor utilizing the skin-custom.css parameterized overlay.">
+  <meta name="description"
+    content="A dynamic typography customization environment for Traven Editor utilizing the skin-custom.css parameterized overlay.">
 
   <!-- Core stylesheets -->
   <link rel="stylesheet" href="packages/core/assets/skins/skin-custom.css" id="editor-skin-link">
   <link rel="stylesheet" href="packages/core/assets/toolbars/toolbar-default.css" id="editor-toolbar-link">
+  <link rel="stylesheet" href="packages/core/assets/css/demo.css">
 
   <style>
     /* Premium Design Theme System */
@@ -42,12 +45,13 @@ if ($isPost) {
       --accent-color: #0f172a;
       --border-color: #cbd5e1;
       --shadow-premium: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 1px 3px 0 rgba(0, 0, 0, 0.01);
-      
+
       /* Active font families default to variables defined in skin-custom.css */
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
     body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
       background: var(--bg-gradient);
       color: var(--text-main);
       margin: 0;
@@ -298,14 +302,21 @@ if ($isPost) {
 
     /* Editor Wrapper & Mounts */
     .editor-wrapper {
-      width: 100%;
-      min-height: 450px;
-      display: flex;
-      flex-direction: column;
-      position: relative;
+      width: 100% !important;
+      min-height: 450px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      position: relative !important;
+      border: none !important;
+      border-radius: 0 !important;
+      margin: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
     }
 
-    .editor-mount, .raw-editor-mount, .html-preview-mount {
+    .editor-mount,
+    .raw-editor-mount,
+    .html-preview-mount {
       width: 100%;
       outline: none;
       box-sizing: border-box;
@@ -397,19 +408,25 @@ if ($isPost) {
     }
   </style>
 </head>
+
 <body>
+
+  <?php
+  $hide_skin_select = true;
+  include "includes/_customization-dropdowns.php";
+  $header_nav_html = $customization_dropdowns_html;
+  include "includes/_header.php";
+  ?>
 
   <!-- Toast Notification -->
   <div id="save-toast" class="toast-notification">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
     <span>Content Saved Successfully</span>
   </div>
 
   <div class="container">
-    <!-- Branding -->
-    <a href="index.php" class="brand-link" title="Return to Traven homepage">
-      <img src="packages/core/assets/images/traven.png" alt="Traven Logo">
-    </a>
 
     <!-- Controls Panel: Preset -->
     <div class="control-panel">
@@ -507,7 +524,13 @@ if ($isPost) {
           </div>
           <div>
             <button type="button" class="copy-btn" id="copy-btn" title="Copy Content">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><polyline points="168 168 216 168 216 40 88 40 88 88" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><rect x="40" y="88" width="128" height="128" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+                <rect width="256" height="256" fill="none" />
+                <polyline points="168 168 216 168 216 40 88 40 88 88" fill="none" stroke="currentColor"
+                  stroke-linecap="round" stroke-linejoin="round" stroke-width="16" />
+                <rect x="40" y="88" width="128" height="128" fill="none" stroke="currentColor" stroke-linecap="round"
+                  stroke-linejoin="round" stroke-width="16" />
+              </svg>
             </button>
           </div>
         </div>
@@ -515,7 +538,8 @@ if ($isPost) {
         <div class="editor-wrapper mode-wysiwym">
           <div id="editor" class="editor-mount"></div>
           <div id="raw-editor" class="raw-editor-mount"></div>
-          <div id="html-preview" class="html-preview-mount traven-preview" style="padding: 24px 32px; overflow-y: auto; height: 100%; box-sizing: border-box;"></div>
+          <div id="html-preview" class="html-preview-mount traven-preview"
+            style="padding: 24px 32px; overflow-y: auto; height: 100%; box-sizing: border-box;"></div>
         </div>
 
         <div class="action-row">
@@ -543,31 +567,31 @@ if ($isPost) {
     const FONT_CATALOG = {
       display: [
         { name: "System Sans (Default)", css: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif', gfonts: null },
-        { name: "Science Gothic",        css: "'Science Gothic', sans-serif",            gfonts: "Science+Gothic:wght@700;900" },
-        { name: "Macondo",               css: "'Macondo', cursive",                      gfonts: "Macondo" },
-        { name: "Playfair Display",      css: "'Playfair Display', serif",               gfonts: "Playfair+Display:wght@700;900" },
-        { name: "Oswald",                css: "'Oswald', sans-serif",                    gfonts: "Oswald:wght@700" },
-        { name: "Outfit",                css: "'Outfit', sans-serif",                    gfonts: "Outfit:wght@700;800;900" },
-        { name: "Special Elite",         css: "'Special Elite', cursive",                gfonts: "Special+Elite" },
-        { name: "Comic Relief",          css: "'Comic Relief', cursive",                 gfonts: "Comic+Relief" },
-        { name: "Courier Prime",         css: "'Courier Prime', monospace",              gfonts: "Courier+Prime:ital,wght@0,400;0,700;1,400;1,700" }
+        { name: "Science Gothic", css: "'Science Gothic', sans-serif", gfonts: "Science+Gothic:wght@700;900" },
+        { name: "Macondo", css: "'Macondo', cursive", gfonts: "Macondo" },
+        { name: "Playfair Display", css: "'Playfair Display', serif", gfonts: "Playfair+Display:wght@700;900" },
+        { name: "Oswald", css: "'Oswald', sans-serif", gfonts: "Oswald:wght@700" },
+        { name: "Outfit", css: "'Outfit', sans-serif", gfonts: "Outfit:wght@700;800;900" },
+        { name: "Special Elite", css: "'Special Elite', cursive", gfonts: "Special+Elite" },
+        { name: "Comic Relief", css: "'Comic Relief', cursive", gfonts: "Comic+Relief" },
+        { name: "Courier Prime", css: "'Courier Prime', monospace", gfonts: "Courier+Prime:ital,wght@0,400;0,700;1,400;1,700" }
       ],
       body: [
-        { name: "Georgia (Default)",     css: 'Georgia, Cambria, "Times New Roman", Times, serif', gfonts: null },
-        { name: "Epunda Slab",           css: "'Epunda Slab', Georgia, serif",           gfonts: "Epunda+Slab:ital,wght@0,400;0,700;1,400;1,700" },
-        { name: "Rajdhani",              css: "'Rajdhani', sans-serif",                  gfonts: "Rajdhani:wght@500;600;700" },
-        { name: "Goudy Bookletter 1911",  css: "'Goudy Bookletter 1911', serif",          gfonts: "Goudy+Bookletter+1911" },
-        { name: "Inter",                 css: "'Inter', sans-serif",                     gfonts: "Inter:wght@400;600;700" },
-        { name: "Libre Baskerville",     css: "'Libre Baskerville', serif",              gfonts: "Libre+Baskerville:ital,wght@0,400;0,700;1,400" },
-        { name: "Comic Relief",          css: "'Comic Relief', cursive",                 gfonts: "Comic+Relief" },
-        { name: "Courier Prime",         css: "'Courier Prime', monospace",              gfonts: "Courier+Prime:ital,wght@0,400;0,700;1,400;1,700" }
+        { name: "Georgia (Default)", css: 'Georgia, Cambria, "Times New Roman", Times, serif', gfonts: null },
+        { name: "Epunda Slab", css: "'Epunda Slab', Georgia, serif", gfonts: "Epunda+Slab:ital,wght@0,400;0,700;1,400;1,700" },
+        { name: "Rajdhani", css: "'Rajdhani', sans-serif", gfonts: "Rajdhani:wght@500;600;700" },
+        { name: "Goudy Bookletter 1911", css: "'Goudy Bookletter 1911', serif", gfonts: "Goudy+Bookletter+1911" },
+        { name: "Inter", css: "'Inter', sans-serif", gfonts: "Inter:wght@400;600;700" },
+        { name: "Libre Baskerville", css: "'Libre Baskerville', serif", gfonts: "Libre+Baskerville:ital,wght@0,400;0,700;1,400" },
+        { name: "Comic Relief", css: "'Comic Relief', cursive", gfonts: "Comic+Relief" },
+        { name: "Courier Prime", css: "'Courier Prime', monospace", gfonts: "Courier+Prime:ital,wght@0,400;0,700;1,400;1,700" }
       ],
       mono: [
-        { name: "System Mono (Default)",  css: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace', gfonts: null },
-        { name: "JetBrains Mono",        css: "'JetBrains Mono', monospace",             gfonts: "JetBrains+Mono:ital,wght@0,400;0,700;1,400;1,700" },
-        { name: "Share Tech Mono",       css: "'Share Tech Mono', monospace",            gfonts: "Share+Tech+Mono" },
-        { name: "Victor Mono",           css: "'Victor Mono', monospace",                gfonts: "Victor+Mono:ital,wght@0,400;0,700;1,400;1,700" },
-        { name: "Courier Prime",         css: "'Courier Prime', monospace",              gfonts: "Courier+Prime:ital,wght@0,400;0,700;1,400;1,700" }
+        { name: "System Mono (Default)", css: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace', gfonts: null },
+        { name: "JetBrains Mono", css: "'JetBrains Mono', monospace", gfonts: "JetBrains+Mono:ital,wght@0,400;0,700;1,400;1,700" },
+        { name: "Share Tech Mono", css: "'Share Tech Mono', monospace", gfonts: "Share+Tech+Mono" },
+        { name: "Victor Mono", css: "'Victor Mono', monospace", gfonts: "Victor+Mono:ital,wght@0,400;0,700;1,400;1,700" },
+        { name: "Courier Prime", css: "'Courier Prime', monospace", gfonts: "Courier+Prime:ital,wght@0,400;0,700;1,400;1,700" }
       ]
     };
 
@@ -617,15 +641,15 @@ if ($isPost) {
     }
 
     const PRESETS = {
-      default:   { display: 0, body: 0, mono: 0 },
-      scifi:     { display: 1, body: 2, mono: 2 },
-      retro:     { display: 6, body: 3, mono: 3 },
-      startup:   { display: 5, body: 4, mono: 1 },
-      literary:  { display: 3, body: 5, mono: 4 },
-      newsroom:  { display: 4, body: 1, mono: 1 },
+      default: { display: 0, body: 0, mono: 0 },
+      scifi: { display: 1, body: 2, mono: 2 },
+      retro: { display: 6, body: 3, mono: 3 },
+      startup: { display: 5, body: 4, mono: 1 },
+      literary: { display: 3, body: 5, mono: 4 },
+      newsroom: { display: 4, body: 1, mono: 1 },
       whimsical: { display: 2, body: 6, mono: 4 },
-      casual:    { display: 7, body: 4, mono: 3 },
-      typed:     { display: 8, body: 7, mono: 1 }
+      casual: { display: 7, body: 4, mono: 3 },
+      typed: { display: 8, body: 7, mono: 1 }
     };
 
     function updatePresetDropdownState() {
@@ -818,4 +842,5 @@ if ($isPost) {
     });
   </script>
 </body>
+
 </html>

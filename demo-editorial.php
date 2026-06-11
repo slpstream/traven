@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,13 +9,16 @@
   <!-- Google Fonts CDN -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Goudy+Bookletter+1911&family=Macondo&family=Victor+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Goudy+Bookletter+1911&family=Macondo&family=Victor+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,700;1,400;1,700&family=Fira+Code:wght@400..700&family=Mozilla+Headline:wght@700;800;900&display=swap"
+    rel="stylesheet">
 
   <!-- Core Editor Styles -->
   <link rel="stylesheet" href="packages/core/dist/traven.css" id="traven-core-styles">
 
   <link rel="stylesheet" href="packages/core/assets/skins/skin-editorial.css" id="editor-skin-link">
-  <link rel="stylesheet" href="packages/core/assets/toolbars/toolbar-expandable.css?v=1.0.1" id="editor-toolbar-link">
+  <link rel="stylesheet" href="packages/core/assets/toolbars/toolbar-expandable.css" id="editor-toolbar-link">
+  <link rel="stylesheet" href="packages/core/assets/css/demo.css">
 
   <style>
     /* Reset & Base distraction-free styles */
@@ -31,11 +35,20 @@
       justify-content: flex-start;
     }
 
+    header {
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    header, header * {
+      font-family: 'Atkinson Hyperlegible Next', system-ui, -apple-system, sans-serif !important;
+    }
+
     /* Clean Paper Container */
     .write-container {
       width: 100%;
       max-width: 720px;
-      margin: 80px auto 120px auto;
+      margin: 160px auto 120px auto;
       padding: 0 20px;
       box-sizing: border-box;
       position: relative;
@@ -52,31 +65,39 @@
     }
 
     .unified-tab-bar {
-      display: flex;
-      gap: 20px;
+      display: flex !important;
+      gap: 20px !important;
+      background-color: transparent !important;
+      border-radius: 0 !important;
+      padding: 0 !important;
+      border: none !important;
     }
 
     .unified-tab {
-      background: none;
-      border: none;
-      font-family: inherit;
-      font-size: 0.9em;
-      color: #94a3b8;
-      cursor: pointer;
-      padding: 4px 0;
-      transition: color 0.2s ease, border-color 0.2s ease;
-      border-bottom: 2px solid transparent;
-      font-weight: 500;
+      background: none !important;
+      border: none !important;
+      font-family: inherit !important;
+      font-size: 0.9em !important;
+      color: #94a3b8 !important;
+      cursor: pointer !important;
+      padding: 4px 0 !important;
+      transition: color 0.2s ease, border-color 0.2s ease !important;
+      border-bottom: 2px solid transparent !important;
+      font-weight: 500 !important;
+      box-shadow: none !important;
+      border-radius: 0 !important;
     }
 
     .unified-tab.is-active {
-      color: #1a1a1a;
-      border-bottom-color: #1a1a1a;
-      font-weight: 600;
+      color: #1a1a1a !important;
+      border-bottom-color: #1a1a1a !important;
+      font-weight: 600 !important;
+      background: none !important;
+      box-shadow: none !important;
     }
 
     .unified-tab:hover:not(.is-active) {
-      color: #475569;
+      color: #475569 !important;
     }
 
     .copy-btn {
@@ -102,13 +123,19 @@
 
     /* Editor Wrapper Overrides - No borders, no shadows */
     .editor-wrapper {
-      width: 100%;
-      background: transparent;
-      display: flex;
-      flex-direction: column;
+      width: 100% !important;
+      background: transparent !important;
+      display: flex !important;
+      flex-direction: column !important;
+      border: none !important;
+      border-radius: 0 !important;
+      margin: 0 !important;
+      box-shadow: none !important;
     }
 
-    .editor-mount, .raw-editor-mount, .html-preview-mount {
+    .editor-mount,
+    .raw-editor-mount,
+    .html-preview-mount {
       width: 100%;
       outline: none;
     }
@@ -138,9 +165,11 @@
     /* Fixed Centered Top Toolbar Styling - Always On in WYSIWYM Mode */
     .traven-toolbar-container {
       position: fixed !important;
-      top: 24px !important;
-      left: 50% !important;
-      transform: translateX(-50%) translateY(0) !important;
+      top: 90px !important;
+      left: 0 !important;
+      right: 0 !important;
+      margin: 0 auto !important;
+      transform: translateY(0) !important;
       z-index: 1000 !important;
       opacity: 1 !important;
       visibility: visible !important;
@@ -150,10 +179,12 @@
       border-radius: 6px !important;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
       padding: 0 !important;
+      width: max-content !important;
+      max-width: 90vw !important;
       /* Fly-in / fade transition */
       transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                  transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                  visibility 0.3s !important;
+        transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        visibility 0.3s !important;
     }
 
     /* Hide toolbar when not in WYSIWYM mode */
@@ -166,7 +197,30 @@
       opacity: 0 !important;
       visibility: hidden !important;
       pointer-events: none !important;
-      transform: translateX(-50%) translateY(-20px) !important;
+      transform: translateY(-20px) !important;
+    }
+
+    /* Tablet & Mobile responsive override: toolbar naturally flows below the header */
+    @media (max-width: 1024px) {
+      .traven-toolbar-container {
+        position: relative !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        margin: 0 auto 24px auto !important;
+        transform: none !important;
+        width: max-content !important;
+        max-width: 100% !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+        border: 1px solid var(--border-color, #e2e8f0) !important;
+        border-radius: 6px !important;
+        background-color: #ffffff !important;
+        padding: 8px 12px !important;
+      }
+      .editor-wrapper.toolbar-hidden .traven-toolbar-container {
+        display: none !important;
+        transform: none !important;
+      }
     }
 
     /* Fullscreen Mode styling overrides for distraction-free writing layout */
@@ -210,9 +264,6 @@
         position: static;
         margin: 24px auto 0 auto;
       }
-      .write-container {
-        margin-top: 40px;
-      }
     }
 
     /* Toast Notification */
@@ -250,22 +301,46 @@
       stroke: currentColor;
       stroke-width: 2.5;
       stroke-linecap: round;
-      stroke-linejoin: round;
+    }
+
+    @media (max-width: 1024px) {
+      header {
+        flex-direction: column !important;
+        gap: 12px !important;
+        padding: 12px 20px !important;
+        align-items: center !important;
+      }
+      .brand-section {
+        display: flex !important;
+        justify-content: center !important;
+        width: 100% !important;
+      }
+      .nav-links {
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+        gap: 8px !important;
+        width: 100% !important;
+      }
     }
   </style>
 </head>
+
 <body>
+
+  <?php
+  $hide_skin_select = true;
+  include "includes/_customization-dropdowns.php";
+  $header_nav_html = $customization_dropdowns_html;
+  include "includes/_header.php";
+  ?>
 
   <!-- Toast Notification element -->
   <div id="save-toast" class="save-toast">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
     <span>Saved</span>
   </div>
-
-  <!-- Return to traven.dev wordmark -->
-  <a href="index.php" class="write-brand" title="Return to Traven homepage">
-    <img src="packages/core/assets/images/traven.png" alt="Traven logo">
-  </a>
 
   <div class="write-container">
     <!-- Header with clean tabs -->
@@ -277,10 +352,22 @@
       </div>
       <div style="display: flex; gap: 12px; align-items: center;">
         <button type="button" class="copy-btn" id="toggle-toolbar-btn" title="Hide Toolbar">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><polygon points="16 104 128 168 240 104 128 40 16 104" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><polyline points="16 144 128 208 240 144" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+            <rect width="256" height="256" fill="none" />
+            <polygon points="16 104 128 168 240 104 128 40 16 104" fill="none" stroke="currentColor"
+              stroke-linecap="round" stroke-linejoin="round" stroke-width="16" />
+            <polyline points="16 144 128 208 240 144" fill="none" stroke="currentColor" stroke-linecap="round"
+              stroke-linejoin="round" stroke-width="16" />
+          </svg>
         </button>
         <button type="button" class="copy-btn" id="copy-markdown-btn" title="Copy Markdown">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><polyline points="168 168 216 168 216 40 88 40 88 88" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><rect x="40" y="88" width="128" height="128" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+            <rect width="256" height="256" fill="none" />
+            <polyline points="168 168 216 168 216 40 88 40 88 88" fill="none" stroke="currentColor"
+              stroke-linecap="round" stroke-linejoin="round" stroke-width="16" />
+            <rect x="40" y="88" width="128" height="128" fill="none" stroke="currentColor" stroke-linecap="round"
+              stroke-linejoin="round" stroke-width="16" />
+          </svg>
         </button>
       </div>
     </div>
@@ -432,7 +519,7 @@ Think of this page as an interactive sandbox, so use all the toys in the toolbar
         wysiwymTab.classList.toggle('is-active', isWysiwym);
         markdownTab.classList.toggle('is-active', isMarkdown);
         previewTab.classList.toggle('is-active', isPreview);
-        
+
         editorWrapper.classList.toggle('mode-wysiwym', isWysiwym);
         editorWrapper.classList.toggle('mode-markdown', isMarkdown);
         editorWrapper.classList.toggle('mode-preview', isPreview);
@@ -478,4 +565,5 @@ Think of this page as an interactive sandbox, so use all the toys in the toolbar
   </script>
 
 </body>
+
 </html>

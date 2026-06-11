@@ -7,6 +7,8 @@
 </head>
 <body>
 
+<a href="index.php" style="font-family: sans-serif; font-size: 0.85rem; color: #cc4a0a; text-decoration: none; display: inline-block; margin-top: 15px; margin-bottom: 5px;">&larr; Back</a>
+
 <h1>Traven Quickstart Demo</h1>
 
 <!-- Step 1 — Replace your textarea -->

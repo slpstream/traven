@@ -9,7 +9,7 @@
 
 
 
-<header>
+<header style="border-bottom: 5px solid var(--accent);">
   <div class="brand-section">
     <a href="index.php" style="display: flex; align-items: center; text-decoration: none;">
       <div class="logo-container">
@@ -21,6 +21,7 @@
     <?php if (isset($header_nav_html)): ?>
       <?php echo $header_nav_html; ?>
     <?php else: ?>
+      <a href="http://traven.dev/docs/" class="nav-btn">Docs</a>
       <a href="https://github.com/slpstream/traven" target="_blank" class="nav-btn">GitHub</a>
     <?php endif; ?>
   </div>

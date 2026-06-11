@@ -18,7 +18,7 @@ if ($isPost) {
     }
 } else {
     // Default fallback text on load
-    $submittedContent = "# Choose a Theme for Traven\n\nThis is a minimal Traven Editor instance running with zero customizations.\n\n* Edit this text to test the WYSIWYM formatting.\n* Bold or italicize words to see delimiters fade in/out.\n* Submit the form below to verify server-side integration.\n\n\n\n";
+    $submittedContent = "# Choose a Theme for Traven\n\nThis is a minimal Traven Editor instance running with zero customizations.\n\n* Edit this text to test the WYSIWYM formatting.\n* **Bold** or *italicize* words to see delimiters fade in/out.\n* Submit the form below to ==verify server-side integration.==\n\n\n\n";
 }
 ?>
 <!DOCTYPE html>
@@ -28,16 +28,27 @@ if ($isPost) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Traven Editor — Out-of-the-Box Custom Demo</title>
     <meta name="description" content="A basic PHP form demonstrating a default Traven Editor integration with zero custom configuration.">
+
+    <!-- Google Fonts CDN -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,700;1,400;1,700&family=Fira+Code:wght@400..700&family=Mozilla+Headline:wght@700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Core Styles and Default Toolbar Style -->
+    <link rel="stylesheet" href="packages/core/assets/toolbars/toolbar-default.css" id="editor-toolbar-link">
+    <link rel="stylesheet" href="packages/core/assets/css/demo.css">
+
     <style>
         /* Minimal clean page layout wrapping the editor */
-        body {
+        main {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             max-width: 800px;
             margin: 40px auto;
             padding: 0 20px;
-            background-color: #f8fafc;
-            color: #0f172a;
             line-height: 1.5;
+            flex: 1;
+            width: 100%;
+            box-sizing: border-box;
         }
         h1 {
             font-size: 2.2rem;
@@ -72,7 +83,7 @@ if ($isPost) {
             gap: 16px;
         }
         .btn-submit {
-            align-self: flex-start;
+            align-self: flex-end;
             background-color: #0f172a;
             color: #ffffff;
             border: none;
@@ -167,9 +178,19 @@ if ($isPost) {
         .btn-toggle.toggle-off .icon-toggle-off {
             display: block;
         }
+        traven-editor.hide-toolbar .traven-toolbar-container {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
+
+    <?php
+    $hide_skin_select = true;
+    include "includes/_customization-dropdowns.php";
+    $header_nav_html = $customization_dropdowns_html;
+    include "includes/_header.php";
+    ?>
 
     <main>
         <p class="lead">
@@ -254,18 +275,11 @@ if ($isPost) {
             });
 
             toggleBtn.addEventListener("click", () => {
-                const toolbarEl = editorEl.querySelector(".traven-toolbar-container");
-                if (!toolbarEl) {
-                    console.warn("Traven toolbar container not found inside editor.");
-                    return;
-                }
-
-                if (toolbarEl.style.display === "none") {
-                    toolbarEl.style.display = "flex";
-                    toggleBtn.classList.remove("toggle-off");
-                } else {
-                    toolbarEl.style.display = "none";
+                const isHidden = editorEl.classList.toggle("hide-toolbar");
+                if (isHidden) {
                     toggleBtn.classList.add("toggle-off");
+                } else {
+                    toggleBtn.classList.remove("toggle-off");
                 }
             });
         });

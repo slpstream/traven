@@ -38,11 +38,13 @@ body {
 header {
   background-color: var(--bg-card);
   border-bottom: 1px solid var(--border-color);
-  padding: 16px 40px;
+  padding: 16px 40px 16px 5px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .brand-section {
@@ -78,7 +80,7 @@ header {
 
 .nav-links {
   display: flex;
-  gap: 16px;
+  gap: 8px;
   align-items: center;
 }
 
@@ -440,6 +442,26 @@ header {
 
 .form-demo .editor-mount .cm-scroller {
   outline: none;
+}
+
+@media (max-width: 1024px) {
+  header {
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px 20px;
+    align-items: center;
+  }
+  .brand-section {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+  .nav-links {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+  }
 }
 
 @media (max-width: 768px) {

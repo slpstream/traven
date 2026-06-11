@@ -1,5 +1,5 @@
 <?php
-$content = $_POST['content'] ?? '**Unstyled and minimal, edit this text and write anything here...** The toolbar above is the full set: you can exclude it, or configure it to show only the buttons you need, or you can mix-n-match between 3 toolbars. There is the toolbar you see here, a Medium-like bubble bar that is context aware, and an insert toolbar that appears in the gutter. Use none, or any combination of the three.';
+$content = $_POST['content'] ?? '**Unstyled and minimal, edit this text and write anything here...** The toolbar above is the full set: you can exclude it, or configure it to show only the buttons you need.';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -20,7 +20,7 @@ $content = $_POST['content'] ?? '**Unstyled and minimal, edit this text and writ
       gap: 15px;
     }
     button {
-      align-self: flex-start;
+      align-self: flex-end;
       padding: 8px 16px;
       cursor: pointer;
     }
@@ -39,6 +39,7 @@ $content = $_POST['content'] ?? '**Unstyled and minimal, edit this text and writ
 </head>
 <body>
 
+<a href="index.php" style="font-family: sans-serif; font-size: 0.85rem; color: #cc4a0a; text-decoration: none; display: inline-block; margin-bottom: 15px;">&larr; Back</a>
 
   <!-- Step 1 — Replace your textarea -->
   <form action="" method="POST">

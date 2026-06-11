@@ -197,35 +197,37 @@ foreach ($demos as $value => $label) {
     $demo_options_html .= "  <option value=\"{$value}\"{$selected}>{$label}</option>\n";
 }
 
+$skin_select_html = (!isset($hide_skin_select) || !$hide_skin_select) ? '
+<select id="skin-select" class="nav-btn btn-skin-select" style="padding: 5px 10px; font-family: inherit; font-size: 0.72em; cursor: pointer;">
+' . $skin_options_html . '</select>' : '';
+
 $customization_dropdowns_html =
+    $skin_select_html .
     '
-<select id="skin-select" class="nav-btn btn-skin-select" style="padding: 5px 10px; font-family: inherit; font-size: 0.72em; cursor: pointer; margin-right: 8px;">
-' .
-    $skin_options_html .
-    '</select>
-<select id="toolbar-select" class="nav-btn btn-toolbar-select" style="padding: 5px 10px; font-family: inherit; font-size: 0.72em; cursor: pointer; margin-right: 8px;">
+<select id="toolbar-select" class="nav-btn btn-toolbar-select" style="padding: 5px 10px; font-family: inherit; font-size: 0.72em; cursor: pointer;">
 ' .
     $toolbar_options_html .
     '</select>
-<select id="theme-select" class="nav-btn btn-theme-select" style="display: none; padding: 5px 10px; font-family: inherit; font-size: 0.72em; cursor: pointer; margin-right: 8px;">
+<select id="theme-select" class="nav-btn btn-theme-select" style="display: none; padding: 5px 10px; font-family: inherit; font-size: 0.72em; cursor: pointer;">
   <option value="light">Light Editor Theme</option>
   <option value="dark">Dark Editor Theme</option>
 </select>
-<select id="content-select" class="nav-btn btn-content-select" style="padding: 5px 10px; font-family: inherit; font-size: 0.72em; cursor: pointer; margin-right: 8px;">
+<select id="content-select" class="nav-btn btn-content-select" style="padding: 5px 10px; font-family: inherit; font-size: 0.72em; cursor: pointer;">
 ' .
     $content_options_html .
     '</select>
-<select id="demo-select" class="nav-btn btn-demo-select" style="padding: 5px 10px; font-family: inherit; font-size: 0.72em; cursor: pointer; margin-right: 8px;">
+<select id="demo-select" class="nav-btn btn-demo-select" style="padding: 5px 10px; font-family: inherit; font-size: 0.72em; cursor: pointer;">
 ' .
     $demo_options_html .
     '</select>
-<label class="vim-toggle-container" style="display: inline-flex; align-items: center; gap: 8px; font-family: inherit; font-size: 0.68em; font-weight: 600; color: var(--text-secondary); cursor: pointer; user-select: none; margin-right: 8px; padding: 5px 10px; border-radius: 6px; border: 1px solid var(--border-color); background-color: #fafafa; transition: all 0.2s; box-sizing: border-box; height: 28px; vertical-align: middle;">
+<label class="vim-toggle-container" style="display: inline-flex; align-items: center; gap: 8px; font-family: inherit; font-size: 0.68em; font-weight: 600; color: var(--text-secondary); cursor: pointer; user-select: none; padding: 5px 10px; border-radius: 6px; border: 1px solid var(--border-color); background-color: #fafafa; transition: all 0.2s; box-sizing: border-box; height: 28px; vertical-align: middle;">
   <span style="letter-spacing: 0.01em;">Vim</span>
   <div class="vim-switch" style="position: relative; width: 22px; height: 12px; background-color: #cbd5e1; border-radius: 10px; transition: background-color 0.2s; flex-shrink: 0;">
     <input type="checkbox" id="vim-checkbox" style="opacity: 0; width: 0; height: 0; position: absolute; margin: 0;">
     <span class="vim-switch-handle" style="position: absolute; top: 1px; left: 1px; width: 10px; height: 10px; background-color: white; border-radius: 50%; transition: transform 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.15);"></span>
   </div>
 </label>
+<a href="http://traven.dev/docs/" class="nav-btn">Docs</a>
 <a href="https://github.com/slpstream/traven" target="_blank" class="nav-btn">GitHub</a>
 <script>
 (function() {
