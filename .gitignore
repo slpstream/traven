@@ -19,3 +19,6 @@ favicon.ico
 
 # Ignored private documents
 docs-gitignore/
+
+# Local configuration
+config.ini

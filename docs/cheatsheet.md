@@ -1,4 +1,4 @@
-# Traven Editor Cheat Sheet
+# Cheat Sheet
 
 ELI5 setup guide plus a full reference list of every option you can put next to `toolbar` and `line-numbers` on the `<traven-editor>` tag.
 
@@ -8,7 +8,7 @@ ELI5 setup guide plus a full reference list of every option you can put next to 
 
 Imagine `<textarea>` is a plain notepad. **Traven turns that notepad into a full Markdown editor** — with formatting buttons, code blocks, tables, image uploads, and a "pretty" view that hides the asterisks when you're not looking at them.
 
-You don't have to learn a framework. You don't have to build anything. You just change one tag.
+You don't have to learn a framework or build anything. You just change one tag.
 
 ### Step 1 — Find your `<textarea>`
 
@@ -451,7 +451,7 @@ For toolbar layouts (compact, expandable, etc.) the same pattern applies — see
 </traven-editor>
 ```
 
-> Just looking for the absolute minimum that'll get you off to a running start? Use the original example at the top of this file: `<traven-editor name="body" toolbar>...</traven-editor>` plus a single `<script>` tag. Everything else in this cheat sheet is **opt-in** and you can safely *ignore it all, if you don't have a specific need to customize.*
+Just looking for the absolute minimum that'll get you off to a running start? Use the original example at the top of this file: `<traven-editor name="body" toolbar>...</traven-editor>` plus a single `<script>` tag. Everything else in this cheat sheet is **opt-in** and you can safely *ignore it all, if you don't have a specific need to customize.*
 
 
 

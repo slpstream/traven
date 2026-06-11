@@ -1,6 +1,6 @@
-# Traven Editor — Host Integration Guide
+# Host Integration Guide
 
-This guide details recommended practices for integrating the Traven editor into host applications, CMS systems, and administrative interfaces.
+Recommended practices for integrating the Traven editor into host applications, CMS systems, and administrative interfaces.
 
 ---
 

@@ -1,6 +1,6 @@
-# Traven Editor — Custom Shortcodes Architecture & Blueprint
+# Custom Shortcodes Architecture & Blueprint
 
-This document outlines the technical blueprint and integration roadmap for adding custom shortcode support (e.g., `[gallery ids="1,2,3"]` or `{{ youtube id="ABC" }}`) to the Traven WYSIWYM Markdown Editor.
+Outlining the technical blueprint for adding custom shortcode support (e.g., `[gallery ids="1,2,3"]` or `[trumpet content="description"]`) to the Traven WYSIWYM Markdown Editor.
 
 ---
 

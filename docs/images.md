@@ -1,6 +1,6 @@
-# Traven Editor — Image Handling & Upload Customization Guide
+# Image Handling & Upload Customization Guide
 
-This document describes how the Traven WYSIWYM Markdown Editor handles images, and details how host application developers can customize the editor to support direct drag-and-drop, paste-to-upload, and the "Choose File" option inside the Image Modal.
+How the Traven WYSIWYM Markdown Editor handles images and how host application developers can customize the editor to support direct drag-and-drop, paste-to-upload, and the "Choose File" option inside the Image Modal.
 
 ---
 

@@ -1,6 +1,6 @@
-# Traven Editor — Manual Saving & Auto-Save Customization Guide
+# Manual Saving & Auto-Save Customization Guide
 
-This document describes how the Traven WYSIWYM Markdown Editor handles saving content. It explains how to intercept manual saving keyboard shortcuts and how to implement auto-saving patterns using change hooks.
+How Traven saves content: How to intercept manual saving keyboard shortcuts and how to implement auto-saving patterns using change hooks.
 
 ---
 
@@ -128,7 +128,7 @@ The most common integration question is: *"How do I load existing content from m
 ### The Full Flow
 
 ```mermaid
-graph LR
+graph TD
     A[1. Fetch markdown from server] --> B[2. Initialize editor with initialValue]
     B --> C[3. User edits content]
     C --> D[4. User presses Ctrl+S]

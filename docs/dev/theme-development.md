@@ -1,6 +1,6 @@
-# Traven Editor — Theme Development Guide
+# Theme Development Guide
 
-This guide is for theme designers, UI/UX designers, and front-end engineers who want to build Traven themes from scratch, customize an existing skin, or ship a Traven-aware theme for a CMS or static site.
+Guide for theme designers, UI/UX designers, and front-end engineers who want to build Traven themes from scratch, customize an existing skin, or ship a Traven-aware theme for a CMS or static site.
 
 Traven's skinning model is intentionally decoupled: themes are **plain CSS files** with no JavaScript and no build step. The editor engine and the shortcode widgets are class-driven, so every visual decision — fonts, colors, borders, spacing, alignment, and dark-mode behavior — lives in your theme. The trade-off is that the WYSIWYM (live) editor and the HTML preview share the same content but use **two different DOM scopes**, and a complete theme must style both.
 

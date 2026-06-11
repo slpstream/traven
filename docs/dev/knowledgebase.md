@@ -1,6 +1,6 @@
-# Traven Editor — Developer Knowledgebase
+# Developer Knowledgebase
 
-This document serves as a reference for developer onboarding and technical context for developers wanting to customize or expand the Traven WYSIWYM Markdown Editor.
+A reference for developer onboarding and technical context for developers wanting to customize or expand the Traven WYSIWYM Markdown Editor.
 
 ---
 

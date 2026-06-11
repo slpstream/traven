@@ -1,14 +1,10 @@
 # Architectural Decision: Why Traven Does Not Use Alpine.js
 
-First things first: **We heart Alpine.js!** ❤️ 
+First things first: We heart Alpine.js! Alpine is an incredible tool for modern web development. It delivers the declarative, reactive power of major frameworks like Vue or React at a fraction of the cost, with a beautifully simple syntax that fits directly into HTML. For building interactive websites, dashboards, and dynamic components, Alpine is often our go-to choice.
 
-Alpine is an incredible tool for modern web development. It delivers the declarative, reactive power of major frameworks like Vue or React at a fraction of the cost, with a beautifully simple syntax that fits directly into HTML. For building interactive websites, dashboards, and dynamic components, Alpine is often our go-to choice.
-
-However, when designing **Traven**—a modular, embeddable WYSIWYM Markdown editor—we made a deliberate architectural choice to exclude Alpine.js from the core bundle and its demonstration pages. 
+However, when designing Traven to be a modular, embeddable WYSIWYM Markdown editor, we made a deliberate architectural choice to exclude Alpine.js from the core bundle and its demonstration pages. 
 
 Here is why:
-
----
 
 ## 1. Bundle Size & Performance Constraints
 While Alpine is remarkably lightweight (around 15KB minified/gzipped), every kilobyte counts in an embeddable editor.
@@ -50,4 +46,4 @@ If your application uses Alpine.js, integrating it with Traven is extremely stra
 </div>
 ```
 
-We love Alpine for application state and UI, and we encourage you to use it *around* Traven—we just want to make sure Traven stays out of your way!
+We love Alpine for application state and UI, and we encourage you to use it *around* Traven — we just want to make sure Traven stays out of your way!
