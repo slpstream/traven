@@ -33,7 +33,7 @@ Traven is highly modular and straightforward to customize or extend. If you need
 
 <p align="center">
  <a href="https://traven.dev/website/comparison.php" target="_blank">
-  <img src="https://traven.dev/img/comparison-contactform2.png" alt="Before & After" width="100%">
+  <img src="https://traven.dev/img/compareform2.jpg" alt="Before & After" width="100%">
  </a>
 </p>
 
