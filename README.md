@@ -32,6 +32,20 @@
 Traven is highly modular and straightforward to customize or extend. If you need a powerful, flexible and mostly unopinionated Markdown editor that adapts to the layout, theme, and behavior of an existing project, its theming and configuration options and decoupled styling make integration fast and easy.
 
 <p align="center">
+ <a href="https://traven.dev/website/comparison.php" target="_blank">
+  <img src="https://traven.dev/img/comparison-contactform2.png" alt="Before & After" width="100%">
+ </a>
+</p>
+
+### Live Demos
+
+Try Traven in your browser with **[Live Previews](https://traven.dev)**—a collection of demo sandboxes that showcase the editor in different layouts, skins, and toolbar configurations. 
+
+Mix and match options, tweak settings, and explore how Traven adapts to any web environment without breaking a sweat. All demos use the same core codebase, so what you see is exactly what you get when you integrate Traven into your own project.
+
+For a fast, hands-on integration, check out the **[Quick Start Guide](docs/quickstart.md)** to add Traven to a PHP form in just three steps. For a friendly ELI5 setup walkthrough with a full reference list of every `<traven-editor>` attribute and every `toolbar=` button key, see the **[Cheat Sheet](docs/cheatsheet.md)**.
+
+<p align="center">
  <a href="https://traven.dev/index.php?img=workspace0" target="_blank">
   <img src="https://traven.dev/img/workspacehero.jpg" alt="Main Preview" width="100%">
  </a>
@@ -83,16 +97,6 @@ Traven is highly modular and straightforward to customize or extend. If you need
   </tr>
 </table>
 </p>
-
-### Live Demos
-
-Try Traven in your browser with **[Live Previews](https://traven.dev)**—a collection of demo sandboxes that showcase the editor in different layouts, skins, and toolbar configurations. 
-
-Mix and match options, tweak settings, and explore how Traven adapts to any web environment without breaking a sweat. All demos use the same core codebase, so what you see is exactly what you get when you integrate Traven into your own project.
-
-For a fast, hands-on integration, check out the **[Quick Start Guide](docs/quickstart.md)** to add Traven to a PHP form in just three steps. For a friendly ELI5 setup walkthrough with a full reference list of every `<traven-editor>` attribute and every `toolbar=` button key, see the **[Cheat Sheet](docs/cheatsheet.md)**.
-
----
 
 ## Key Features
 
