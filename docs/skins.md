@@ -31,11 +31,14 @@ That's it. The editor picks up the new skin immediately.
 
 All skins live in `packages/core/assets/skins/`. Here are the eight shipped skins:
 
+---
+
 <p align="center">
  <a href="https://traven.dev/docs/general/skins/" target="_blank">
   <img src="https://traven.dev/img/skn-starter.jpg" alt="Starter Skin for Traven" width="100%">
  </a>
 </p>
+
 ### `skin-starter.css` — Built-in Default
 
 The barebones starter skin, bundled directly into `dist/traven.css`. No external fonts, no network calls — pure system fonts.
@@ -48,11 +51,14 @@ The barebones starter skin, bundled directly into `dist/traven.css`. No external
 | **Network calls** | None |
 | **Best for** | Offline apps, privacy-first deployments, fast loading |
 
+---
+
 <p align="center">
  <a href="https://traven.dev/docs/general/skins/" target="_blank">
   <img src="https://traven.dev/img/skn-light.jpg" alt="Light Skin for Traven" width="100%">
  </a>
 </p>
+
 ### `skin-light.css` — Neutral Slate
 
 A clean, neutral light theme using the accessible Atkinson Hyperlegible typeface.
@@ -65,11 +71,14 @@ A clean, neutral light theme using the accessible Atkinson Hyperlegible typeface
 | **Network calls** | Google Fonts |
 | **Best for** | General-purpose editing, blogs, CMS dashboards |
 
+---
+
 <p align="center">
  <a href="https://traven.dev/docs/general/skins/" target="_blank">
   <img src="https://traven.dev/img/skn-dark.jpg" alt="Dark Skin for Traven" width="100%">
  </a>
 </p>
+
 ### `skin-dark.css` — Premium Dark Slate
 
 A dark mode companion to `skin-light.css` with sky-blue accents and the same typeface pairing.
@@ -82,11 +91,14 @@ A dark mode companion to `skin-light.css` with sky-blue accents and the same typ
 | **Network calls** | Google Fonts |
 | **Best for** | Dark mode interfaces, night editing |
 
+---
+
 <p align="center">
  <a href="https://traven.dev/docs/general/skins/" target="_blank">
   <img src="https://traven.dev/img/skn-colorful.jpg" alt="Colorful Skin for Traven" width="100%">
  </a>
 </p>
+
 ### `skin-colorful.css` — Warm Rust
 
 An expressive, warm light theme with rust and indigo accents.
@@ -99,11 +111,14 @@ An expressive, warm light theme with rust and indigo accents.
 | **Network calls** | Google Fonts |
 | **Best for** | Branded interfaces, creative sites |
 
+---
+
 <p align="center">
  <a href="https://traven.dev/docs/general/skins/" target="_blank">
   <img src="https://traven.dev/img/skn-editorial.jpg" alt="Editorial Skin for Traven" width="100%">
  </a>
 </p>
+
 ### `skin-editorial.css` — Minimalist Focus
 
 A distraction-free, paper-like feel with classic serif typography. No visible chrome.
@@ -116,11 +131,14 @@ A distraction-free, paper-like feel with classic serif typography. No visible ch
 | **Network calls** | Google Fonts |
 | **Best for** | Long-form writing, editorial content, quiet reading |
 
+---
+
 <p align="center">
  <a href="https://traven.dev/docs/general/skins/" target="_blank">
   <img src="https://traven.dev/img/skn-modern.jpg" alt="Modern Skin for Traven" width="100%">
  </a>
 </p>
+
 ### `skin-modern.css` — Teal & Slate
 
 A modern, high-contrast layout with slab serif body text and condensed sans headings.
@@ -133,11 +151,14 @@ A modern, high-contrast layout with slab serif body text and condensed sans head
 | **Network calls** | Google Fonts |
 | **Best for** | Technical blogs, developer docs, modern dashboards |
 
+---
+
 <p align="center">
  <a href="https://traven.dev/docs/general/skins/" target="_blank">
   <img src="https://traven.dev/img/skn-academic.jpg" alt="Academic Skin for Traven" width="100%">
  </a>
 </p>
+
 ### `skin-academic.css` — LaTeX Booktabs
 
 A classic academic paper aesthetic using Computer Modern fonts, evoking LaTeX typesetting.
@@ -150,11 +171,14 @@ A classic academic paper aesthetic using Computer Modern fonts, evoking LaTeX ty
 | **Network calls** | BitMaks CDN + Google Fonts |
 | **Best for** | Academic writing, research papers, LaTeX-style output |
 
+---
+
 <p align="center">
  <a href="https://traven.dev/docs/general/skins/" target="_blank">
   <img src="https://traven.dev/img/skn-custom.jpg" alt="Custom Typography Skin for Traven" width="100%">
  </a>
 </p>
+
 ### `skin-custom.css` — Runtime Parameterized
 
 A thin overlay skin designed for JavaScript-driven font switching at runtime. It defines the three `--traven-font-*` CSS custom properties with system font fallbacks and inherits all layout and color rules from `skin-starter.css`.
