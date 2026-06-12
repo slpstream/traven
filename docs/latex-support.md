@@ -15,6 +15,8 @@ Traven supports math parsing in two common formats:
     $$\sum_{i=1}^n x_i^2$$
     ```
 
+[![LaTeX Math in Traven](https://traven.dev/img/latex.png)](https://traven.dev/docs/general/latex-support/)
+
 In the editor, math delimiters collapse dynamically when the cursor leaves, replacing the LaTeX markup with a visual rendering of the equation. If KaTeX has not loaded or is unavailable, Traven displays the equations using a clean, monospaced text fallback without hitting the network.
 
 ---
