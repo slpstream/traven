@@ -8,12 +8,10 @@ Traven is framework-agnostic and has zero peer dependencies. You can easily inte
 
 ## 1. CDN Include (Quickest Setup)
 
-> **KNOWN LIMITATIONS**
-While `<traven-editor>` acts as a highly portable drop-in editor, keep these temporary constraints in mind:
-*   **Style Encapsulation:** The core styles (`dist/traven.css`) are injected globally. If your host page uses `!important` tags on universally scoped selectors like `body`, or conflicts with CodeMirror's `cm-*` classes, you may experience layout bleed. True CSS isolation requires a Shadow DOM adapter (on roadmap).
-*   **Modal Positioning:** Rich tool modals (like the image uploader) currently append to `document.body` with fixed positioning. If your embed context involves ancestors with `transform` or `filter` properties, the modal positioning can be incorrect. In these setups, prefer `toolbar-mode="static"`.
+You can load Traven directly from the jsDelivr CDN without hosting any local assets.
 
-If you run into either of these issues, see [Troubleshooting](troubleshooting.md) for workarounds and fixes.
+> [!TIP]
+> **Zero-Configuration Style Injection:** By default, Traven dynamically detects its load path via ES module URLs (`import.meta.url`) and automatically injects the corresponding core stylesheet (`traven.css`) into your document `<head>` on instantiation. You do not need to manually link any stylesheets in standard setups.
 
 You can load Traven directly from the jsDelivr CDN without hosting any local assets:
 
@@ -72,7 +70,7 @@ If you prefer to host files locally, copy `dist/traven.js` and `dist/traven.css`
 
 By default, Traven dynamically injects its core CSS (`dist/traven.css`) into the page when the editor is instantiated. If your environment enforces a strict CSP that forbids dynamic stylesheet injection (`style-src 'self'`), this will fail.
 
-To accommodate this, you can disable the auto-injection by passing `autoLoadStyles: false` in the constructor, and manually add the `<link rel="stylesheet" href="...">` tag to your document's `<head>`.
+To accommodate this, you can disable the auto-injection by passing `auto-load-styles="false"` (Web Component) or `autoLoadStyles: false` (JS class constructor), and manually add the `<link rel="stylesheet" href="...">` tag to your document's `<head>`.
 
 ```html
 <link rel="stylesheet" href="dist/traven.css">
@@ -80,6 +78,17 @@ To accommodate this, you can disable the auto-injection by passing `autoLoadStyl
 <traven-editor name="body" auto-load-styles="false"># Hello Traven</traven-editor>
 <script type="module" src="./dist/traven.js"></script>
 ```
+
+---
+
+## 4. Known Limitations & Workarounds
+
+While Traven acts as a highly portable drop-in editor, keep these temporary constraints in mind across both CDN and local setups:
+
+*   **Style Encapsulation:** The core styles (`dist/traven.css`) are injected globally. If your host page uses `!important` tags on universally scoped selectors like `body`, or conflicts with CodeMirror's `cm-*` classes, you may experience layout bleed. True CSS isolation requires a Shadow DOM adapter (currently on the roadmap).
+*   **Modal Positioning:** Rich tool modals (like the image uploader) currently append to `document.body` with fixed positioning. If your embed context involves ancestors with CSS `transform` or `filter` properties, the modal positioning can be incorrect. In these setups, prefer utilizing a static toolbar mode (`toolbar-mode="static"`).
+
+For deep-dives into these and other workarounds, check out the **[Troubleshooting Guide](troubleshooting.md)**.
 
 ---
 
