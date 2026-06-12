@@ -389,7 +389,7 @@ Toggle at runtime:
 
 ```js
 const el = document.querySelector("traven-editor");
-if (el.readOnly) el.removeAttribute("read-only");
+if (el.hasAttribute("read-only")) el.removeAttribute("read-only");
 else el.setAttribute("read-only", "");
 ```
 

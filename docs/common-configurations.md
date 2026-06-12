@@ -90,18 +90,16 @@ A full-featured content editing field with a toolbar, line numbers, an external 
     <span id="save-status">Ready</span>
   </div>
 
-  <traven-editor name="body" toolbar line-numbers>
-# My First Post
-
-Start writing here. Press **Ctrl+S** to save.
-  </traven-editor>
+  <div id="editor-mount"></div>
 
   <script type="module">
     import { TravenEditor, DEFAULT_TOOLBAR } from "https://cdn.jsdelivr.net/npm/@freedomware/traven@latest/dist/traven.js";
 
     const editor = new TravenEditor({
-      element: document.querySelector("traven-editor"),
+      element: document.getElementById("editor-mount"),
+      initialValue: `# My First Post\n\nStart writing here. Press **Ctrl+S** to save.`,
       toolbar: DEFAULT_TOOLBAR,
+      lineNumbers: true,
       onSave: async (markdown) => {
         const statusEl = document.getElementById("save-status");
         statusEl.textContent = "Saving...";
@@ -124,7 +122,7 @@ Start writing here. Press **Ctrl+S** to save.
 </html>
 ```
 
-**What's happening:** `skin-light.css` gives the editor a clean, readable look. The `onSave` callback fires when the user presses `Ctrl+S` / `Cmd+S` and POSTs the Markdown to your API. The status indicator provides feedback. Line numbers are enabled via the `line-numbers` attribute.
+**What's happening:** `skin-light.css` gives the editor a clean, readable look. The `onSave` callback fires when the user presses `Ctrl+S` / `Cmd+S` and POSTs the Markdown to your API. The status indicator provides feedback. Line numbers are enabled via the `lineNumbers: true` option.
 
 **Use case:** The standard "I have a CMS and need a content editing field" — blogs, wikis, documentation platforms.
 
@@ -492,13 +490,13 @@ The novel explores themes of:
 
     // Toggle read-only mode
     document.getElementById("btn-preview").addEventListener("click", () => {
-      editorEl.readOnly = true;
+      editorEl.setAttribute("read-only", "true");
       document.getElementById("btn-preview").classList.add("active");
       document.getElementById("btn-edit").classList.remove("active");
     });
 
     document.getElementById("btn-edit").addEventListener("click", () => {
-      editorEl.readOnly = false;
+      editorEl.removeAttribute("read-only");
       document.getElementById("btn-edit").classList.add("active");
       document.getElementById("btn-preview").classList.remove("active");
     });
@@ -607,49 +605,45 @@ Traven provides three independent toolbar layers. You can use any combination, o
 | **Selection bubble** | A Medium-like context-aware formatting bar that appears when text is selected | On |
 | **Gutter insertion menu** | A `+` icon in the editor gutter that opens an insert menu for blocks, images, and media | On |
 
-### Configuration A: All three toolbars (default)
+### Configuration A: All three toolbars
 
 ```html
-<traven-editor name="body" toolbar>Content here</traven-editor>
+<traven-editor name="body" toolbar-mode="hybrid" toolbar>Content here</traven-editor>
 ```
 
 All three toolbars are active. The main toolbar appears at the top, the selection bubble appears on text selection, and the gutter menu appears in the left margin.
 
-### Configuration B: Main toolbar only (disable bubble and gutter)
+### Configuration B: Main toolbar only (default)
 
 ```html
 <traven-editor name="body" toolbar>Content here</traven-editor>
 ```
 
-```css
-/* Hide the selection bubble and gutter menu via CSS */
-traven-editor .cm-tooltip { display: none !important; }
-traven-editor .cm-traven-gutter { display: none !important; }
-```
+By default, omitting `toolbar-mode` puts the editor into `"static"` mode. The main toolbar appears at the top, while the selection bubble and gutter insertion menu remain disabled. No CSS overrides are required.
 
 ### Configuration C: No main toolbar — bubble and gutter only
 
 ```html
-<traven-editor name="body">Content here</traven-editor>
+<traven-editor name="body" toolbar-mode="hybrid" toolbar="false">Content here</traven-editor>
 ```
 
-No `toolbar` attribute removes the main toolbar entirely. The selection bubble and gutter menu remain active, providing a clean, distraction-free writing surface with formatting available on demand.
+Setting `toolbar-mode="hybrid"` enables the floating toolbar extensions, while `toolbar="false"` disables the persistent top toolbar. This provides a clean, distraction-free writing surface with bubble and gutter formatting available on demand.
 
-### Configuration D: Floating toolbar
+### Configuration D: Floating toolbar (slim rail + bubble + gutter)
 
 ```html
-<traven-editor name="body" toolbar toolbar-mode="floating">Content here</traven-editor>
+<traven-editor name="body" toolbar-mode="floating" toolbar>Content here</traven-editor>
 ```
 
-The main toolbar floats at the top of the viewport instead of being pinned to the editor container. Useful when the editor is embedded deep in a page layout.
+The main persistent toolbar is replaced by a slim vertical control rail pinned to the side of the container, while the selection bubble and gutter insertion menu remain active.
 
-### Configuration E: Hybrid toolbar (slim rail + bubble)
+### Configuration E: Floating toolbar only (no slim rail)
 
 ```html
-<traven-editor name="body" toolbar toolbar-mode="hybrid">Content here</traven-editor>
+<traven-editor name="body" toolbar-mode="floating" toolbar="false">Content here</traven-editor>
 ```
 
-A slim control rail with essential formatting tools, combined with the selection bubble for detailed formatting. This is the Medium-style editing experience.
+Only the selection bubble and gutter insertion menu are active. This is a distraction-free editing experience where formatting controls only appear when text is selected or a new block is inserted.
 
 ### Configuration F: Custom button subset
 

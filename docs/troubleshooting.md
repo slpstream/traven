@@ -177,9 +177,9 @@ If you are using the `<traven-editor>` Web Component (which auto-initializes), t
 <!-- ✅ Correct — HTML boolean attribute -->
 <traven-editor name="body" read-only>Content</traven-editor>
 
-<!-- ✅ Correct — JavaScript property -->
+<!-- ✅ Correct — JavaScript attribute manipulation -->
 <script>
-  document.querySelector("traven-editor").readOnly = true;
+  document.querySelector("traven-editor").setAttribute("read-only", "true");
 </script>
 ```
 
