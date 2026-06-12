@@ -9,7 +9,7 @@ Writing in Traven is designed to be completely distraction-free. As you type, th
 Good writing demands clear typography. Traven fully supports all standard Markdown text formats, including:
 *   **Bold text** (`**bold**` or `__bold__`) for strong emphasis
 *   *Italicized text* (`*italic*` or `_italic_`) for emphasis
-*   Strikethrough (`~~strikethrough~~`) for corrections
+*   ~~Strikethrough~~ (`~~strikethrough~~`) for corrections
 *   `Inline code` (``inline code``) for tech terms
 *   [Hyperlinks](https://github.com) (`[link](url)`) for reference links
 
