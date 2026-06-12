@@ -33,11 +33,7 @@ All skins live in `packages/core/assets/skins/`. Here are the eight shipped skin
 
 ---
 
-<p align="center">
- <a href="https://traven.dev/docs/general/skins/" target="_blank">
-  <img src="https://traven.dev/img/skn-starter.jpg" alt="Starter Skin for Traven" width="100%">
- </a>
-</p>
+[![Starter Skin for Traven](https://traven.dev/img/skin-starter.jpg)](https://traven.dev/docs/general/skins/)
 
 ### `skin-starter.css` — Built-in Default
 
@@ -53,11 +49,7 @@ The barebones starter skin, bundled directly into `dist/traven.css`. No external
 
 ---
 
-<p align="center">
- <a href="https://traven.dev/docs/general/skins/" target="_blank">
-  <img src="https://traven.dev/img/skn-light.jpg" alt="Light Skin for Traven" width="100%">
- </a>
-</p>
+[![Light Skin for Traven](https://traven.dev/img/skin-light.jpg)](https://traven.dev/docs/general/skins/)
 
 ### `skin-light.css` — Neutral Slate
 
@@ -73,11 +65,7 @@ A clean, neutral light theme using the accessible Atkinson Hyperlegible typeface
 
 ---
 
-<p align="center">
- <a href="https://traven.dev/docs/general/skins/" target="_blank">
-  <img src="https://traven.dev/img/skn-dark.jpg" alt="Dark Skin for Traven" width="100%">
- </a>
-</p>
+[![Dark Skin for Traven](https://traven.dev/img/skin-dark.jpg)](https://traven.dev/docs/general/skins/)
 
 ### `skin-dark.css` — Premium Dark Slate
 
@@ -93,11 +81,7 @@ A dark mode companion to `skin-light.css` with sky-blue accents and the same typ
 
 ---
 
-<p align="center">
- <a href="https://traven.dev/docs/general/skins/" target="_blank">
-  <img src="https://traven.dev/img/skn-colorful.jpg" alt="Colorful Skin for Traven" width="100%">
- </a>
-</p>
+[![Colorful Skin for Traven](https://traven.dev/img/skin-colorful.jpg)](https://traven.dev/docs/general/skins/)
 
 ### `skin-colorful.css` — Warm Rust
 
@@ -113,11 +97,7 @@ An expressive, warm light theme with rust and indigo accents.
 
 ---
 
-<p align="center">
- <a href="https://traven.dev/docs/general/skins/" target="_blank">
-  <img src="https://traven.dev/img/skn-editorial.jpg" alt="Editorial Skin for Traven" width="100%">
- </a>
-</p>
+[![Editorial Skin for Traven](https://traven.dev/img/skin-editorial.jpg)](https://traven.dev/docs/general/skins/)
 
 ### `skin-editorial.css` — Minimalist Focus
 
@@ -133,11 +113,7 @@ A distraction-free, paper-like feel with classic serif typography. No visible ch
 
 ---
 
-<p align="center">
- <a href="https://traven.dev/docs/general/skins/" target="_blank">
-  <img src="https://traven.dev/img/skn-modern.jpg" alt="Modern Skin for Traven" width="100%">
- </a>
-</p>
+[![Modern Skin for Traven](https://traven.dev/img/skin-modern.jpg)](https://traven.dev/docs/general/skins/)
 
 ### `skin-modern.css` — Teal & Slate
 
@@ -153,11 +129,7 @@ A modern, high-contrast layout with slab serif body text and condensed sans head
 
 ---
 
-<p align="center">
- <a href="https://traven.dev/docs/general/skins/" target="_blank">
-  <img src="https://traven.dev/img/skn-academic.jpg" alt="Academic Skin for Traven" width="100%">
- </a>
-</p>
+[![Academic Skin for Traven](https://traven.dev/img/skin-academic.jpg)](https://traven.dev/docs/general/skins/)
 
 ### `skin-academic.css` — LaTeX Booktabs
 
@@ -173,11 +145,7 @@ A classic academic paper aesthetic using Computer Modern fonts, evoking LaTeX ty
 
 ---
 
-<p align="center">
- <a href="https://traven.dev/docs/general/skins/" target="_blank">
-  <img src="https://traven.dev/img/skn-custom.jpg" alt="Custom Typography Skin for Traven" width="100%">
- </a>
-</p>
+[![Custom Skin for Traven](https://traven.dev/img/skin-custom.jpg)](https://traven.dev/docs/general/skins/)
 
 ### `skin-custom.css` — Runtime Parameterized
 
