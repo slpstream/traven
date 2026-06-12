@@ -8,12 +8,10 @@ Traven is framework-agnostic and has zero peer dependencies. You can easily inte
 
 ## 1. CDN Include (Quickest Setup)
 
-You can load Traven directly from the jsDelivr CDN without hosting any local assets.
+You can load Traven directly from the jsDelivr CDN without hosting any local assets:
 
 > [!TIP]
 > **Zero-Configuration Style Injection:** By default, Traven dynamically detects its load path via ES module URLs (`import.meta.url`) and automatically injects the corresponding core stylesheet (`traven.css`) into your document `<head>` on instantiation. You do not need to manually link any stylesheets in standard setups.
-
-You can load Traven directly from the jsDelivr CDN without hosting any local assets:
 
 ```html
 <!DOCTYPE html>
