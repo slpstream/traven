@@ -38,6 +38,8 @@ If an upload handler is configured, the modal expands to show an interactive dra
 * **Removal**: Clicking the **"Remove"** link resets the dropzone back to the empty dropzone prompt state.
 * **Upload Trigger**: When clicking **Insert**, the editor handles the upload asynchronously, updates the insert button to "Uploading...", and automatically inserts the resolved image Markdown once completed.
 
+[![Image Upload Modal in Traven](https://traven.dev/img/imagemodal2.png)](https://traven.dev/docs/general/images/)
+
 ---
 
 ## 3. Configuring Image Uploads
@@ -110,6 +112,8 @@ const editor = new TravenEditor({
 ## 4. Drag & Drop and Clipboard Paste Support
 
 Configuring `onUploadImage` does more than enable the file picker button inside the image modal; it also registers drop and paste listeners directly in CodeMirror.
+
+[![Optimistic Drag and Drop Image Uploading in Traven](https://traven.dev/img/uploadspinner2.png)](https://traven.dev/docs/general/images/)
 
 ### How it works
 1. **Drag and Drop**: The author drags an image file from their desktop and drops it onto the editor workspace.

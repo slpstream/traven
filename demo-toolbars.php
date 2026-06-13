@@ -19,7 +19,7 @@ if ($isPost) {
     }
 } else {
     // Default fallback text on load
-    $submittedContent = "# Traven Toolbar Controls Showcase\n\nThis page allows you to toggle each of Traven's three independent toolbars dynamically using the dashboard toggle switches above.\n\n### The Three Core Toolbars:\n\n1. **Main Top Toolbar**: A persistent editor bar at the top of the container. Excellent for comprehensive formatting and structure actions.\n2. **Selection Bubble**: A Medium-style floating tooltip that automatically appears when you select text. Perfect for quick formatting of active selections.\n3. **Gutter Menu**: A margin-based block insertion button (`+`) that appears when hovering over any empty lines. Useful for adding components, figures, codeblocks, or media elements at the exact location of the click.\n\n### Try It Out:\n- Hover over an empty line to see the **Gutter Insertion (+)** indicator.\n- Select any text to trigger the **Selection Bubble**.\n- Use the toggles in the header to instantly add or remove these toolbars!";
+    $submittedContent = "# Traven Toolbar Controls Showcase\n\nThis page allows you to toggle each of Traven's three independent toolbars dynamically using the dashboard toggle switches above.\n\n### The Three Core Toolbars:\n\n1. **Main Top Toolbar**: A persistent editor bar at the top of the container. Excellent for comprehensive formatting and structure actions.\n2. **Selection Bubble**: A Medium-style floating tooltip that automatically appears when you select text. Perfect for quick formatting of active selections.\n3. **Gutter Menu**: A margin-based block insertion button (`+`) that appears when hovering over any empty lines. Useful for adding components, figures, codeblocks, or media elements at the exact location of the click.\n\n### Try It Out:\n- Hover over an empty line to see the **Gutter Insertion (+)** indicator.\n- Select any text to trigger the **Selection Bubble**.\n- Use the toggles in the header to instantly add or remove these toolbars!\n\n\n\n";
 }
 ?>
 <!DOCTYPE html>
@@ -263,7 +263,7 @@ if ($isPost) {
     <main class="demo-container">
         <div class="demo-intro">
             <p class="lead">
-                Experiment with different editor setups. Enable or disable Traven's three toolbars to find the layout that best fits your content authoring flow.
+                Experiment with different editor setups. Enable or disable Traven's 3 toolbars to find the layout that best fits your content authoring flow.
             </p>
         </div>
 
@@ -284,7 +284,7 @@ if ($isPost) {
                           <polyline points="2 17 12 22 22 17"></polyline>
                           <polyline points="2 12 12 17 22 12"></polyline>
                         </svg>
-                        Workspace Editor
+                        Toggle Toolbars On/Off
                     </div>
                     
                     <div class="demo-controls">
