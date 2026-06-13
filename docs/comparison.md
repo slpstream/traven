@@ -1,32 +1,41 @@
-# Comparing Traven
+# Comparing Traven: The Honest Guide
 
-When deciding which rich-text editor to embed in your project, it is helpful to understand the philosophy behind the tool. The web editor ecosystem is broadly divided into HTML-first editors, Block editors, and Markdown-first editors.
+When deciding which rich-text editor to embed in your project, it is helpful to understand the philosophy behind the tool. Most comparison pages read like marketing fluff. This page is different. 
+
+This is an honest, developer-to-developer comparison of what each tool is good at, where they fall short, where Traven clearly wins, and **where Traven doesn't yet win**.
 
 Traven is a **Markdown-first, WYSIWYM (What You See Is What You Mean)** editor built on CodeMirror 6. 
-
-Here is how Traven compares to other popular options on the market.
 
 ---
 
 ## HTML-First Editors
 
-HTML-first editors natively manage document state as DOM nodes or custom JSON trees (like Deltas) and output HTML. If your backend needs Markdown, you must rely on serializers to roundtrip the data.
+HTML-first editors natively manage document state as DOM nodes or custom JSON trees (like Deltas) and output HTML. If your backend needs Markdown, you must rely on brittle serializers to roundtrip the data.
 
-| Feature | Traven | TinyMCE | TipTap / ProseMirror | Quill |
+| Feature | Traven | TinyMCE & CKEditor | TipTap, ProseMirror, Lexical | Trix |
 | :--- | :--- | :--- | :--- | :--- |
-| **Primary Output** | Raw Markdown | HTML | HTML / JSON | HTML / JSON |
-| **Editing Style** | WYSIWYM | WYSIWYG | WYSIWYG | WYSIWYG |
-| **License** | MIT | Commercial / Freemium | MIT | MIT |
-| **Account Required**| No | Yes (API Key) | No | No |
+| **Output** | Raw Markdown | HTML | HTML / Custom JSON | HTML |
+| **Style** | WYSIWYM | WYSIWYG | Framework (Build-it) | WYSIWYG |
+| **License** | MIT | Commercial / GPL | MIT | MIT |
 
-### Traven vs. TipTap & ProseMirror
-TipTap is a highly respected, headless framework built on top of ProseMirror.
-* **Architecture:** ProseMirror (and by extension TipTap) is an HTML-first framework. While excellent for building rich web-based document editors, extracting clean Markdown requires wrestling with serializers that translate between HTML and Markdown. Traven is built on CodeMirror 6, treating plain text Markdown as the absolute source of truth. *(Note: ProseMirror and CodeMirror are sister projects created by the same developer, Marijn Haverbeke, but serve fundamentally different use cases).*
-* **Drop-in vs. Build-it:** TipTap is a framework requiring you to build your own UI. Traven is a drop-in web component ready in 30 seconds.
+### Traven vs. TinyMCE & CKEditor 5
+These are the industry heavyweights. They have massive plugin ecosystems and aim to replicate Microsoft Word in the browser.
+* **Where they win:** If you need deep enterprise features (like collaborative track changes, native `.docx` imports, or advanced table cell merging), they are the standard.
+* **Where they fall short:** They are bloated, heavily opinionated, and use proprietary internal data models that make extracting pure Markdown a nightmare. Furthermore, their licensing has become hostile: TinyMCE requires an API key even for the free tier, and CKEditor forces a strict GPLv2+ or expensive commercial license.
+* **Where Traven wins:** Traven is lightweight, MIT licensed, and can be fully self-hosted or loaded from a CDN. It natively speaks Markdown.
+* **Where Traven falls short:** Traven is not a Microsoft Word clone. It does not have a 15-year-old marketplace of legacy enterprise plugins.
 
-### Traven vs. TinyMCE
-TinyMCE is an industry heavyweight with a massive plugin ecosystem.
-* **License and Lock-in:** TinyMCE recently changed its licensing model. You must register for an account and embed an API key, even for the free tier. Traven is MIT licensed and can be fully self-hosted or loaded directly from a CDN.
+### Traven vs. TipTap, ProseMirror & Lexical
+Lexical (by Meta) and ProseMirror (the foundation of TipTap) are incredibly powerful headless frameworks.
+* **Where they win:** They are the absolute best choice if you are building a highly bespoke, collaborative Google Docs or Notion competitor from scratch, where every single keystroke is synced via CRDTs.
+* **Where they fall short:** They are *frameworks*, not editors. Building a functional editor with them takes weeks of wrestling with React components and custom JSON schemas.
+* **Where Traven wins:** Traven is a drop-in web component. You can add it to an HTML page in 30 seconds with zero build step. 
+
+### Traven vs. Trix
+Trix was built by Basecamp and is the default editor for the Ruby on Rails ecosystem (ActionText).
+* **Where it wins:** Unparalleled, out-of-the-box integration with Rails.
+* **Where it falls short:** It is stubbornly HTML-only. It forces its own opinionated HTML structure into your database and has absolutely zero support for Markdown.
+* **Where Traven wins:** Markdown-in, Markdown-out. Traven keeps your database clean and portable.
 
 ---
 
@@ -34,16 +43,18 @@ TinyMCE is an industry heavyweight with a massive plugin ecosystem.
 
 Block editors treat every paragraph, image, or list as a distinct data object (a "block").
 
-| Feature | Traven | Editor.js | BlockNote | Gutenberg |
+| Feature | Traven | Editor.js | BlockNote & Bard | Gutenberg |
 | :--- | :--- | :--- | :--- | :--- |
-| **Primary Output** | Raw Markdown | Clean JSON | JSON / HTML | HTML (with comments) |
-| **Document Flow** | Continuous Text | Discrete Blocks | Discrete Blocks | Discrete Blocks |
-| **License** | MIT | MIT | MPL-2.0 | GPLv2 |
+| **Output** | Raw Markdown | JSON | JSON / HTML | HTML (with comments) |
+| **Flow** | Continuous Text | Discrete Blocks | Discrete Blocks | Discrete Blocks |
+| **License**| MIT | MIT | MIT / Commercial | GPLv2 |
 
-### Traven vs. Block Editors (Editor.js, BlockNote)
-Editor.js and BlockNote are beautiful, highly respected, modern block-style editors with a very different philosophy from Traven. Gutenberg (the default WordPress editor) also falls into this category.
-* **Data Structure:** Block editors typically output clean JSON objects (or specialized HTML) rather than standard Markdown. They are a fantastic choice if you want to build a structured, block-based CMS (like Notion).
-* **Writing Flow:** Traven provides a continuous, fluid writing experience where text is just text. Block editors force content into discrete blocks, which can interrupt the flow of writing long-form text or managing seamless copy-pasting.
+### Traven vs. Block Editors (Editor.js, Gutenberg, Bard)
+Editor.js is a beautiful vanilla JS block editor. Gutenberg is the default WordPress editor. Bard is a stunning UI built for the Statamic CMS (though encumbered by commercial licensing).
+* **Where they win:** If you are building a structured CMS where the database strictly requires separating content into discrete rows (e.g., storing an image block in a different database table than a text block), block editors are the right architectural choice.
+* **Where they fall short:** They disrupt the natural flow of writing. Forcing content into discrete blocks can make copy-pasting complex text frustrating and interrupt long-form authorship.
+* **Where Traven wins:** Traven provides a fluid, continuous writing experience where text is just text. It feels like writing a document, not assembling a form.
+* **Where Traven falls short:** Traven outputs a single continuous Markdown string. It won't hand you an array of strictly parsed JSON block objects out-of-the-box.
 
 ---
 
@@ -51,20 +62,29 @@ Editor.js and BlockNote are beautiful, highly respected, modern block-style edit
 
 Markdown-first editors treat plain text as the absolute source of truth. The document is always portable.
 
-| Feature | Traven | EasyMDE / SimpleMDE | Milkdown |
-| :--- | :--- | :--- | :--- |
-| **Engine** | CodeMirror 6 | CodeMirror 5 | ProseMirror / TipTap |
-| **Editing Style** | WYSIWYM (Inline) | Split-Pane | WYSIWYM |
-| **License** | MIT | MIT | MIT |
+| Feature | Traven | EasyMDE | Milkdown | Vditor |
+| :--- | :--- | :--- | :--- | :--- |
+| **Engine** | CodeMirror 6 | CodeMirror 5 | ProseMirror | Custom |
+| **Style** | WYSIWYM (Inline)| Split-Pane | WYSIWYM | WYSIWYM / Split |
+| **License**| MIT | MIT | MIT | MIT |
 
 ### Traven vs. Milkdown
-Milkdown is a WYSIWYM Markdown editor similar to Traven, but it is built on top of ProseMirror.
-* **The Foundation:** Because Milkdown uses ProseMirror, it inherits the HTML-first internal document model. This means your Markdown is parsed into an HTML AST, edited, and then serialized back to Markdown. Traven is built directly on CodeMirror 6, which natively treats the document as a flat string of text. We believe CodeMirror 6 is the superior foundational architecture for a pure Markdown editor because it entirely eliminates the complex Markdown-HTML-Markdown roundtrip.
+Milkdown is a WYSIWYM Markdown editor similar to Traven, but built on top of ProseMirror.
+* **Where it wins:** Excellent out-of-the-box plugins and a plugin-driven architecture heavily tailored for React and Vue environments.
+* **Where it falls short:** Because Milkdown uses ProseMirror, it inherits an HTML-first internal document model. Your Markdown is parsed into an HTML AST, edited, and serialized back to Markdown. This translation roundtrip can introduce formatting artifacts and spacing issues.
+* **Where Traven wins:** Traven is built directly on CodeMirror 6, which natively treats the document as a flat string of text. Traven eliminates the brittle Markdown-HTML-Markdown roundtrip entirely.
 
 ### Traven vs. EasyMDE
 EasyMDE is the most common open-source Markdown editor.
-* **Inline vs. Split-Pane:** EasyMDE uses a split-pane approach: raw Markdown source on the left, rendered HTML on the right. Traven is a true WYSIWYM editor, rendering formatting inline as you type, providing a much cleaner authoring environment.
-* **Modern Foundation:** EasyMDE is built on the legacy CodeMirror 5 engine and requires external assets like FontAwesome. Traven is built on the highly performant CodeMirror 6 engine with zero peer dependencies.
+* **Where it wins:** If you explicitly want the classic "source code on the left, rendered view on the right" split-pane layout, it does the job reliably.
+* **Where it falls short:** It relies on the legacy CodeMirror 5 engine and requires external assets like FontAwesome. The split-pane layout increases cognitive load.
+* **Where Traven wins:** Traven uses the highly performant CodeMirror 6 engine, has zero peer dependencies, and renders formatting inline as you type, creating a much cleaner authoring environment.
+
+### Traven vs. Vditor
+Vditor is an extremely feature-rich Markdown editor that supports WYSIWYM, split-pane, and raw source modes.
+* **Where it wins:** It does absolutely everything, including native rendering of mind maps, charts, and SVN.
+* **Where it falls short:** It is incredibly bloated, loading massive chunks of code to support features most users don't need. Furthermore, its documentation and community are primarily tailored to the Chinese ecosystem, creating a barrier for Western developers.
+* **Where Traven wins:** Traven is lightweight, rigorously documented in English, and focuses strictly on doing core Markdown exceptionally well rather than trying to be a kitchen sink.
 
 ---
 
