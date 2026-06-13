@@ -37,6 +37,7 @@ export const DEFAULT_TOOLBAR: string[];
  * @property {string} [toolbarMode] - Effective mode for toolbar layout ("static" | "floating" | "hybrid").
  * @property {string} [bubbleHotkey] - Key binding to open selection bubble.
  * @property {string} [gutterHotkey] - Key binding to open gutter plus menu.
+ * @property {boolean} [gutterInserter=true] - Enable or disable the gutter block insertion sidebar. Set to false to remove the "+" gutter column that shifts content right.
  * @property {number} [bubbleAppearDelay=200] - Delay in ms between pointer settling on a stable selection and the selection bubble appearing. Set to 0 to restore the previous eager-appear behavior.
  * @property {boolean} [autoLoadStyles=true] - Auto-inject core CSS from CDN/local bundle. Set to false for strict CSP environments.
  * @property {any} [codeLanguages] - Optional CodeMirror LanguageDescription array (e.g. from @codemirror/language-data) or matching function to enable syntax highlighting in fenced code blocks without bloating the core bundle.
@@ -373,6 +374,10 @@ export type TravenOptions = {
      * - Key binding to open gutter plus menu.
      */
     gutterHotkey?: string;
+    /**
+     * - Enable or disable the gutter block insertion sidebar. Set to false to remove the "+" gutter column that shifts content right.
+     */
+    gutterInserter?: boolean;
     /**
      * - Delay in ms between pointer settling on a stable selection and the selection bubble appearing. Set to 0 to restore the previous eager-appear behavior.
      */

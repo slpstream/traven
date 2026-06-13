@@ -124,10 +124,34 @@
 }
 
 
+/* ── Gutter inserter: zero-width overlay ──
+   The gutter column itself takes no layout space.  The "+" button
+   is absolutely positioned so it floats into the .cm-content left-
+   padding zone (24 px) – visible without shifting content right. */
 
-/* Gutter `+` button */
+.cm-traven-gutter {
+  width: 0 !important;
+  min-width: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+.cm-traven-gutter .cm-gutterElement {
+  width: 0;
+  overflow: visible;
+  position: relative;
+}
+
+/* The + button overlays into the content's left padding area */
 .cm-traven-gutter .traven-gutter-plus-btn {
-  display: inline-block;
+  position: absolute;
+  /* Place it to the right of the gutter (into the content padding) */
+  left: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 16px;
   height: 16px;
   line-height: 16px;
@@ -136,8 +160,11 @@
   cursor: pointer;
   opacity: 0;
   transition: opacity 120ms ease, color 120ms ease, background-color 120ms ease;
-  color: #94a3b8; /* slate-400 (gray) */
+  color: #94a3b8;
+  /* slate-400 (gray) */
   user-select: none;
+  z-index: 2;
+  font-size: 14px;
 }
 
 /* Always display it when the cursor is on the line (active line gutter) */
@@ -149,13 +176,15 @@
 /* Hover state: turn it to a darker slate or black */
 .cm-traven-gutter .traven-gutter-plus-btn:hover {
   opacity: 1;
-  color: #0f172a; /* slate-900 (darker slate/black) */
+  color: #0f172a;
+  /* slate-900 (darker slate/black) */
   background: var(--gutter-btn-hover, rgba(0, 0, 0, 0.05));
 }
 
 /* Dark mode overrides */
 .cm-wysiwym-dark .cm-traven-gutter .traven-gutter-plus-btn {
-  color: #64748b; /* slate-500 (gray in dark mode) */
+  color: #64748b;
+  /* slate-500 (gray in dark mode) */
 }
 
 .cm-wysiwym-dark .cm-activeLineGutter .traven-gutter-plus-btn {
@@ -163,7 +192,8 @@
 }
 
 .cm-wysiwym-dark .cm-traven-gutter .traven-gutter-plus-btn:hover {
-  color: #f8fafc; /* slate-50 (light slate/white) */
+  color: #f8fafc;
+  /* slate-50 (light slate/white) */
   background: var(--gutter-btn-hover-dark, rgba(255, 255, 255, 0.08));
 }
 

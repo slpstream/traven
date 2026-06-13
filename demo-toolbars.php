@@ -185,7 +185,7 @@ if ($isPost) {
         }
 
         .btn-submit {
-            align-self: flex-start;
+            align-self: flex-end;
             background-color: #0f172a;
             color: #ffffff;
             border: none;

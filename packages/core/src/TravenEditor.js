@@ -188,6 +188,7 @@ function buildBaseSetup(options = {}) {
  * @property {string} [toolbarMode] - Effective mode for toolbar layout ("static" | "floating" | "hybrid").
  * @property {string} [bubbleHotkey] - Key binding to open selection bubble.
  * @property {string} [gutterHotkey] - Key binding to open gutter plus menu.
+ * @property {boolean} [gutterInserter=true] - Enable or disable the gutter block insertion sidebar. Set to false to remove the "+" gutter column that shifts content right.
  * @property {number} [bubbleAppearDelay=200] - Delay in ms between pointer settling on a stable selection and the selection bubble appearing. Set to 0 to restore the previous eager-appear behavior.
  * @property {boolean} [autoLoadStyles=true] - Auto-inject core CSS from CDN/local bundle. Set to false for strict CSP environments.
  * @property {any} [codeLanguages] - Optional CodeMirror LanguageDescription array (e.g. from @codemirror/language-data) or matching function to enable syntax highlighting in fenced code blocks without bloating the core bundle.
@@ -250,7 +251,7 @@ export class TravenEditor {
           link.id = "traven-core-styles";
           link.rel = "stylesheet";
           link.href = cssUrl;
-          
+
           const existingSkin = document.getElementById("editor-skin-link");
           if (existingSkin) {
             existingSkin.before(link);
@@ -299,7 +300,9 @@ export class TravenEditor {
         .catch((err) => {
           const isDefaultUrlParseError =
             !options.componentsUrl &&
-            (err instanceof TypeError || (err && err.name === "TypeError"));
+            (err instanceof TypeError ||
+              err instanceof SyntaxError ||
+              (err && (err.name === "TypeError" || err.name === "SyntaxError")));
           if (!isDefaultUrlParseError) {
             console.warn(
               `Failed to fetch component schema from ${url}. Falling back to default presets:`,
@@ -386,14 +389,16 @@ export class TravenEditor {
       // Selection bubble and gutter block insertion extensions
       ...(mode === "floating" || mode === "hybrid"
         ? [
-            selectionBubbleExtension(this, {
-              hotkey: options.bubbleHotkey || "Mod-.",
-              appearDelay: options.bubbleAppearDelay ?? 200,
-            }),
-            gutterInserterExtension(this, {
-              hotkey: options.gutterHotkey || "Mod-Shift-Enter",
-            }),
-          ]
+          selectionBubbleExtension(this, {
+            hotkey: options.bubbleHotkey || "Mod-.",
+            appearDelay: options.bubbleAppearDelay ?? 200,
+          }),
+          ...(options.gutterInserter !== false
+            ? [gutterInserterExtension(this, {
+                hotkey: options.gutterHotkey || "Mod-Shift-Enter",
+              })]
+            : []),
+        ]
         : []),
     ];
 
@@ -440,7 +445,7 @@ export class TravenEditor {
           run: () => {
             const buttonEl =
               options.element &&
-              typeof options.element.querySelector === "function"
+                typeof options.element.querySelector === "function"
                 ? options.element.querySelector(`.toolbar-btn.btn-${key}`)
                 : null;
             tool.action(this, buttonEl);
@@ -805,18 +810,18 @@ export class TravenEditor {
       selection:
         placeholder && !hadSelection
           ? {
-              anchor: range.from + lead.length + before.length,
-              head:
-                range.from + lead.length + before.length + selectedText.length,
-            }
+            anchor: range.from + lead.length + before.length,
+            head:
+              range.from + lead.length + before.length + selectedText.length,
+          }
           : {
-              anchor:
-                range.from +
-                lead.length +
-                before.length +
-                selectedText.length +
-                after.length,
-            },
+            anchor:
+              range.from +
+              lead.length +
+              before.length +
+              selectedText.length +
+              after.length,
+          },
     });
     this.#view.focus();
   }
@@ -1754,7 +1759,7 @@ export class TravenEditor {
           if (
             punc.endsWith(")") &&
             (cleanUrl.match(/\(/g) || []).length >=
-              (cleanUrl.match(/\)/g) || []).length
+            (cleanUrl.match(/\)/g) || []).length
           ) {
             // parentheses are balanced, do not strip
           } else {

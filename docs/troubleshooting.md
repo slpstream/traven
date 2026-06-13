@@ -116,11 +116,11 @@ Alternatively, remove the `transform` or `filter` property from the ancestor ele
 ```html
 <head>
   <!-- Load the CSS as a regular <link> tag instead of letting JS inject it -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@freedomware/traven@0.2.10/dist/traven.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@freedomware/traven@0.2.11/dist/traven.css">
 </head>
 <body>
   <traven-editor name="body" auto-load-styles="false">Content</traven-editor>
-  <script type="module" src="https://cdn.jsdelivr.net/npm/@freedomware/traven@0.2.10/dist/traven.js"></script>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@freedomware/traven@0.2.11/dist/traven.js"></script>
 </body>
 ```
 
