@@ -4,6 +4,8 @@ Traven supports dynamic, visual rendering of Mermaid diagrams inside both the **
 
 ---
 
+[![Mermaid support in Traven](https://traven.dev/img/mermaid1.png)](https://traven.dev/docs/general/mermaid-support/)
+
 ## 1. How Mermaid Support Works
 
 You can write diagrams using standard fenced code blocks with the `mermaid` language tag:
@@ -22,6 +24,8 @@ In the editor:
 * **Interactive Rendering**: When the cursor is outside the diagram block, the raw code is replaced with a rendered SVG diagram.
 * **Instant Edit Access**: Clicking on the diagram swaps it back to raw text so you can edit it.
 * **Fallback Mode**: If Mermaid is disabled or cannot load, it falls back to a standard syntax-highlighted code block.
+
+[![Mermaid diagrams in Traven](https://traven.dev/img/mermaid2.png)](https://traven.dev/docs/general/mermaid-support/)
 
 ---
 
