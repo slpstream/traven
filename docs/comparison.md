@@ -26,7 +26,7 @@ TipTap is a highly respected, headless framework built on top of ProseMirror.
 
 ### Traven vs. TinyMCE
 TinyMCE is an industry heavyweight with a massive plugin ecosystem.
-* **License and Lock-in:** TinyMCE recently changed its licensing model. You must register for an account and embed an API key, even for the free tier. Traven is MIT licensed and fully self-hosted.
+* **License and Lock-in:** TinyMCE recently changed its licensing model. You must register for an account and embed an API key, even for the free tier. Traven is MIT licensed and can be fully self-hosted or loaded directly from a CDN.
 
 ---
 
@@ -34,16 +34,16 @@ TinyMCE is an industry heavyweight with a massive plugin ecosystem.
 
 Block editors treat every paragraph, image, or list as a distinct data object (a "block").
 
-| Feature | Traven | Editor.js |
-| :--- | :--- | :--- |
-| **Primary Output** | Raw Markdown | Clean JSON |
-| **Document Flow** | Continuous Text | Discrete Blocks |
-| **License** | MIT | MIT |
+| Feature | Traven | Editor.js | BlockNote | Gutenberg |
+| :--- | :--- | :--- | :--- | :--- |
+| **Primary Output** | Raw Markdown | Clean JSON | JSON / HTML | HTML (with comments) |
+| **Document Flow** | Continuous Text | Discrete Blocks | Discrete Blocks | Discrete Blocks |
+| **License** | MIT | MIT | MPL-2.0 | GPLv2 |
 
-### Traven vs. Editor.js
-Editor.js is a beautiful, highly respected, modern block-style editor with a very different philosophy from Traven.
-* **Data Structure:** Editor.js outputs clean JSON objects rather than HTML or Markdown. It is a fantastic choice if you want to build a structured, block-based CMS (like Notion).
-* **Writing Flow:** Traven provides a continuous, fluid writing experience where text is just text. Editor.js forces content into discrete blocks, which can interrupt the flow of writing long-form text or managing seamless copy-pasting.
+### Traven vs. Block Editors (Editor.js, BlockNote)
+Editor.js and BlockNote are beautiful, highly respected, modern block-style editors with a very different philosophy from Traven. Gutenberg (the default WordPress editor) also falls into this category.
+* **Data Structure:** Block editors typically output clean JSON objects (or specialized HTML) rather than standard Markdown. They are a fantastic choice if you want to build a structured, block-based CMS (like Notion).
+* **Writing Flow:** Traven provides a continuous, fluid writing experience where text is just text. Block editors force content into discrete blocks, which can interrupt the flow of writing long-form text or managing seamless copy-pasting.
 
 ---
 
