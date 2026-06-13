@@ -340,6 +340,14 @@ if ($isPost) {
 
             const editorEl = document.getElementById("traven-default-instance");
             
+            // Simulate async image upload
+            const mockImageUpload = async (file) => {
+                console.log("Mock uploading file:", file.name);
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                return URL.createObjectURL(file);
+            };
+            editorEl.onUploadImage = mockImageUpload;
+
             const btnToggleMain = document.getElementById("btn-toggle-main-toolbar");
             const btnToggleBubble = document.getElementById("btn-toggle-selection-bubble");
             const btnToggleGutter = document.getElementById("btn-toggle-gutter-insertion");

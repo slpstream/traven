@@ -56,5 +56,17 @@ $content = $_POST['content'] ?? '**Unstyled and minimal, edit this text and writ
 
   <!-- Step 2 — Load Traven in 1 line -->
   <script type="module" src="https://cdn.jsdelivr.net/npm/@freedomware/traven@latest/dist/traven.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const editorEl = document.querySelector("traven-editor");
+      if (editorEl) {
+        editorEl.onUploadImage = async (file) => {
+          console.log("Mock uploading file:", file.name);
+          await new Promise(resolve => setTimeout(resolve, 1500));
+          return URL.createObjectURL(file);
+        };
+      }
+    });
+  </script>
 </body>
 </html>

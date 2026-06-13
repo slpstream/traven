@@ -251,6 +251,14 @@ if ($isPost) {
             const toggleBtn = document.getElementById("btn-toggle-toolbar");
             const editorEl = document.getElementById("traven-default-instance");
 
+            // Simulate async image upload
+            const mockImageUpload = async (file) => {
+                console.log("Mock uploading file:", file.name);
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                return URL.createObjectURL(file);
+            };
+            editorEl.onUploadImage = mockImageUpload;
+
             const skinSelector = document.getElementById("skin-selector");
 
             skinSelector.addEventListener("change", (e) => {

@@ -757,6 +757,13 @@ if ($isPost) {
       }
     }
 
+    // Simulate async image upload
+    const mockImageUpload = async (file) => {
+      console.log("Mock uploading file:", file.name);
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      return URL.createObjectURL(file);
+    };
+
     // Page initialization
     setupDropdowns();
 
@@ -766,6 +773,7 @@ if ($isPost) {
         element: document.getElementById("editor"),
         sourceElement: document.getElementById("raw-editor"),
         initialValue: initialText,
+        onUploadImage: mockImageUpload,
         toolbar: DEFAULT_TOOLBAR,
         theme: "light",
         katex: true,
