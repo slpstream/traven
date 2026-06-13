@@ -57,6 +57,8 @@ graph TD
 3. **Raw editor scope (`.raw-editor-mount`)** — optional split-pane that shows raw Markdown source. Most themes restyle the raw pane to use a monospace font.
 4. **Dark mode** — controlled by the `.cm-wysiwym-dark` class on the editor host node (and the preview container, when present). See [§7](#7-dark-mode) for details.
 
+[![Dual Scope Theming in Traven](https://traven.dev/img/traven_dual_dom_scopes_diagram.jpg)](https://traven.dev/docs/dev/theme-development/)
+
 > IMPORTANT: A complete theme styles **both** the editor and the preview. If a heading looks right in the live editor but cropped in the preview, or vice-versa, the writer will assume the theme is broken.
 
 ---
