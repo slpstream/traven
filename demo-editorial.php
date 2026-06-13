@@ -322,6 +322,11 @@
         width: 100% !important;
       }
     }
+
+    /* Hide toolbar stats */
+    .traven-toolbar-stats {
+      display: none !important;
+    }
   </style>
 </head>
 
