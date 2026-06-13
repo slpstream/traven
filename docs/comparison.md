@@ -49,8 +49,8 @@ Block editors treat every paragraph, image, or list as a distinct data object (a
 | **Flow** | Continuous Text | Discrete Blocks | Discrete Blocks | Discrete Blocks |
 | **License**| MIT | MIT | MIT / Commercial | GPLv2 |
 
-### Traven vs. Block Editors (Editor.js, Gutenberg, Bard)
-Editor.js is a beautiful vanilla JS block editor. Gutenberg is the default WordPress editor. Bard is a stunning UI built for the Statamic CMS (though encumbered by commercial licensing).
+### Traven vs. Block Editors (Editor.js, BlockNote, Gutenberg, Bard)
+Editor.js is a beautiful vanilla JS block editor. BlockNote is a highly respected modern block editor built on TipTap. Gutenberg is the default WordPress editor. Bard is a stunning UI built for the Statamic CMS (though encumbered by commercial licensing).
 * **Where they win:** If you are building a structured CMS where the database strictly requires separating content into discrete rows (e.g., storing an image block in a different database table than a text block), block editors are the right architectural choice.
 * **Where they fall short:** They disrupt the natural flow of writing. Forcing content into discrete blocks can make copy-pasting complex text frustrating and interrupt long-form authorship.
 * **Where Traven wins:** Traven provides a fluid, continuous writing experience where text is just text. It feels like writing a document, not assembling a form.
@@ -62,7 +62,7 @@ Editor.js is a beautiful vanilla JS block editor. Gutenberg is the default WordP
 
 Markdown-first editors treat plain text as the absolute source of truth. The document is always portable.
 
-| Feature | Traven | EasyMDE | Milkdown | Vditor |
+| Feature | Traven | EasyMDE & SimpleMDE | Milkdown | Vditor |
 | :--- | :--- | :--- | :--- | :--- |
 | **Engine** | CodeMirror 6 | CodeMirror 5 | ProseMirror | Custom |
 | **Style** | WYSIWYM (Inline)| Split-Pane | WYSIWYM | WYSIWYM / Split |
@@ -74,10 +74,10 @@ Milkdown is a WYSIWYM Markdown editor similar to Traven, but built on top of Pro
 * **Where it falls short:** Because Milkdown uses ProseMirror, it inherits an HTML-first internal document model. Your Markdown is parsed into an HTML AST, edited, and serialized back to Markdown. This translation roundtrip can introduce formatting artifacts and spacing issues.
 * **Where Traven wins:** Traven is built directly on CodeMirror 6, which natively treats the document as a flat string of text. Traven eliminates the brittle Markdown-HTML-Markdown roundtrip entirely.
 
-### Traven vs. EasyMDE
-EasyMDE is the most common open-source Markdown editor.
-* **Where it wins:** If you explicitly want the classic "source code on the left, rendered view on the right" split-pane layout, it does the job reliably.
-* **Where it falls short:** It relies on the legacy CodeMirror 5 engine and requires external assets like FontAwesome. The split-pane layout increases cognitive load.
+### Traven vs. EasyMDE & SimpleMDE
+EasyMDE (and its predecessor SimpleMDE) are the most common open-source Markdown editors.
+* **Where they win:** If you explicitly want the classic "source code on the left, rendered view on the right" split-pane layout, they do the job reliably.
+* **Where they fall short:** They rely on the legacy CodeMirror 5 engine and require external assets like FontAwesome. The split-pane layout increases cognitive load.
 * **Where Traven wins:** Traven uses the highly performant CodeMirror 6 engine, has zero peer dependencies, and renders formatting inline as you type, creating a much cleaner authoring environment.
 
 ### Traven vs. Vditor
