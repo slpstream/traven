@@ -17,19 +17,21 @@
   <a href="https://traven.dev">Live Demos</a> • 
   <a href="docs/quickstart.md">Quick Start</a> • 
   <a href="docs/cheatsheet.md">Cheat Sheet</a> • 
-  <a href="docs/api-reference.md">Documentation</a>
+  <a href="docs/api-reference.md">API</a> • 
+  <a href="https://traven.dev/docs/">Documentation</a>
 </p>
 
 ---
 
-Traven is a self-contained, embeddable Markdown editor that renders your content live as you type. It gives you the seamless writing experience of a desktop editor, but in a simple script you can drop into any web page. 
+Traven is a self-contained, embeddable Markdown editor that renders your content live as you type. It gives you the seamless writing experience of a desktop editor, but in a simple script you can drop into any web page:  
 
-Traven is entirely framework-agnostic. It works beautifully whether you are using a plain HTML file, a PHP template, or a complex React application. It also respects your independence: Traven doesn't rely on any frameworks, and doesn't require an API key or setting up an account. It is open-source, MIT licensed, and outputs pure Markdown.
 
 ```html
 <!-- Include the editor with just a single line of code: -->
 <script type="module" src="https://cdn.jsdelivr.net/npm/@freedomware/traven@latest/dist/traven.js"></script>
 ```
+
+Traven is entirely framework-agnostic. It works beautifully whether you are using a plain HTML file, a PHP template, or a complex React application. It also respects your independence: Traven doesn't rely on any frameworks, and doesn't require an API key or setting up an account. It is open-source, MIT licensed, and outputs pure Markdown.
 
 ---
 
