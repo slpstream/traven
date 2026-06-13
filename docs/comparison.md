@@ -1,10 +1,8 @@
-# Comparing Traven: The Honest Guide
+# Comparing Traven to Other Editor Options
 
-When deciding which rich-text editor to embed in your project, it is helpful to understand the philosophy behind the tool. Most comparison pages read like marketing fluff. This page is different. 
+When deciding which rich-text editor to embed in your project, it is helpful to understand the philosophy behind the tool. This is an honest, developer-to-developer comparison of what each tool is good at, where they fall short, where Traven clearly wins, and where Traven might not be the right fit for your project.
 
-This is an honest, developer-to-developer comparison of what each tool is good at, where they fall short, where Traven clearly wins, and **where Traven doesn't yet win**.
-
-Traven is a **Markdown-first, WYSIWYM (What You See Is What You Mean)** editor built on CodeMirror 6. 
+Traven is a **Markdown-first, WYSIWYM (What You See Is What You Mean)** editor built on the CodeMirror 6 engine. 
 
 ---
 
@@ -95,3 +93,5 @@ You should choose Traven if:
 2. You want a **seamless writing experience** without split panes or discrete blocks.
 3. You want an editor you can install with a **single `<script>` tag**.
 4. You want to own your infrastructure without relying on **third-party API keys**.
+
+
