@@ -14,6 +14,11 @@
 
   <link rel="stylesheet" href="packages/core/assets/toolbars/toolbar-default.css" id="editor-toolbar-link">
   <link rel="stylesheet" href="packages/core/assets/css/demo.css">
+  <style>
+    .traven-toolbar-stats {
+      display: none !important;
+    }
+  </style>
 </head>
 
 <body class="unified-demo">
