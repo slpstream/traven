@@ -73,3 +73,57 @@ Accessibility is built directly into Traven’s core:
 *   **Custom Renderers:** Allows developers to register custom compilation callbacks for specific tags and shortcodes, making it easy to adapt markdown exports to any CMS database scheme.
 *   **LaTeX KaTeX Integration:** Includes native folding and KaTeX rendering for math equations, both in the visual editor and the fallback HTML compile modes.
 *   **Zero Peer Dependencies:** Bundled cleanly as a standalone ES module and stylesheet, requiring zero external bundlers or node_modules to run.
+
+---
+
+## 9. Elegant Developer Experience (DX)
+
+Traven's programmatic API was designed to be as clean and declarative as possible. By instantiating the `TravenEditor` class, developers gain full control over the editor's lifecycle, events, and capabilities:
+
+### Image & Media Uploads
+Handle drag-and-drop or clipboard paste events effortlessly. When a user drops an image, Traven inserts a loading spinner optimistically. You simply provide a Promise that resolves to the final uploaded URL:
+```javascript
+const editor = new TravenEditor({
+  element: document.getElementById("editor"),
+  onUploadImage: async (file) => {
+    const formData = new FormData();
+    formData.append("image", file);
+    const response = await fetch("/api/upload", { method: "POST", body: formData });
+    const data = await response.json();
+    return data.url; // The spinner is automatically replaced with the rendered image
+  }
+});
+```
+
+### Auto-saving & State Sync
+Listen to `onChange` for continuous real-time synchronization, or use `onSave` to capture explicit user actions (like hitting `Ctrl+S` / `Cmd+S`):
+```javascript
+const editor = new TravenEditor({
+  element: document.getElementById("editor"),
+  onSave: async (markdown) => {
+    await fetch("/api/autosave", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ content: markdown })
+    });
+    console.log("Document saved!");
+  }
+});
+```
+
+### Custom Shortcode Components
+Traven allows you to extend Markdown natively. By passing a schema array, you can define custom widgets (like callouts or embeds) that integrate directly into the toolbar and render beautifully in the WYSIWYM canvas:
+```javascript
+const editor = new TravenEditor({
+  element: document.getElementById("editor"),
+  components: [
+    {
+      name: "callout",
+      attributes: [
+        { name: "type", label: "Type", type: "text", placeholder: "info / warning / danger" }
+      ]
+    }
+  ]
+});
+```
+This configuration outputs clean, parseable shortcodes (e.g., `[component name="callout" type="warning"]...[/component]`) that your backend can safely render.
