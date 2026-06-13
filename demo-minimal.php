@@ -35,6 +35,9 @@ $content = $_POST['content'] ?? '**Unstyled and minimal, edit this text and writ
       white-space: pre-wrap;
       word-wrap: break-word;
     }
+    .traven-toolbar-stats {
+      display: none !important;
+    }
   </style>
 </head>
 <body>
