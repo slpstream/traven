@@ -262,7 +262,6 @@ if ($isPost) {
 
     <main class="demo-container">
         <div class="demo-intro">
-            <h1 id="demo-page-title">Traven — Toolbar Dashboard Showcase</h1>
             <p class="lead">
                 Experiment with different editor setups. Enable or disable Traven's three toolbars to find the layout that best fits your content authoring flow.
             </p>
