@@ -774,6 +774,7 @@ if ($isPost) {
         sourceElement: document.getElementById("raw-editor"),
         initialValue: initialText,
         onUploadImage: mockImageUpload,
+        toolbarMode: "hybrid",
         toolbar: DEFAULT_TOOLBAR,
         theme: "light",
         katex: true,

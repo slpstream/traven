@@ -225,6 +225,7 @@ This demo illustrates a unified layout where:
         sourceElement: document.getElementById("raw-editor"),
         initialValue: markdown,
         onUploadImage: mockImageUpload,
+        toolbarMode: "hybrid",
         toolbar: DEFAULT_TOOLBAR,
         theme: localStorage.getItem("traven-selected-theme") || "light",
         vimMode: localStorage.getItem("traven-selected-vim") === "true",

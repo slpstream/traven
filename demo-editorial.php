@@ -436,6 +436,7 @@ Think of this page as an interactive sandbox, so use all the toys in the toolbar
         sourceElement: document.getElementById("raw-editor"),
         initialValue: initialText,
         onUploadImage: mockImageUpload,
+        toolbarMode: "hybrid",
         toolbar: DEFAULT_TOOLBAR,
         theme: "light",
         katex: true,

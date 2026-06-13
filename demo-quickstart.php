@@ -13,7 +13,7 @@
 
 <!-- Step 1 — Replace your textarea -->
 <form action="" method="POST">
-<traven-editor name="content" toolbar>
+<traven-editor name="content" toolbar-mode="hybrid" toolbar>
 Hi, I'm Traven.  I am a **Rich Text Editor** for Markdown (and more). 
 Go ahead, write something here... or *View Source* to see for yourself how little it takes to embed this editor anywhere you want
 

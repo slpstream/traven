@@ -226,7 +226,7 @@ if ($isPost) {
         <!-- Simple POST Form -->
         <form id="simple-editor-form" class="editor-form" action="" method="POST">
             <!-- No configurations/themes passed: uses starter theme and default toolbar -->
-            <traven-editor id="traven-default-instance" name="body" toolbar="undo, redo, |, bold, italic, strikethrough, highlight, code, codeblock, |, heading, |, bulletlist, numberedlist, tasklist, blockquote, hr, table, component, figure, |, datetime, search, link, image, video, audio, fullscreen, clear, uppercase, lowercase, capitalize, removeformatting, gotoline, help"><?php echo htmlspecialchars($submittedContent); ?></traven-editor>
+            <traven-editor id="traven-default-instance" name="body" toolbar-mode="hybrid" toolbar="undo, redo, |, bold, italic, strikethrough, highlight, code, codeblock, |, heading, |, bulletlist, numberedlist, tasklist, blockquote, hr, table, component, figure, |, datetime, search, link, image, video, audio, fullscreen, clear, uppercase, lowercase, capitalize, removeformatting, gotoline, help"><?php echo htmlspecialchars($submittedContent); ?></traven-editor>
             
             <button type="submit" id="btn-submit-form" class="btn-submit">Submit Form</button>
         </form>

@@ -43,7 +43,7 @@ $content = $_POST['content'] ?? '**Unstyled and minimal, edit this text and writ
 
   <!-- Step 1 — Replace your textarea -->
   <form action="" method="POST">
-    <traven-editor name="content" toolbar><?php echo htmlspecialchars($content); ?></traven-editor>
+    <traven-editor name="content" toolbar-mode="hybrid" toolbar><?php echo htmlspecialchars($content); ?></traven-editor>
     <button type="submit">Save</button>
   </form>
 
