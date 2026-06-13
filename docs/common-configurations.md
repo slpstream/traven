@@ -593,107 +593,18 @@ console.log(greeting);
 
 ---
 
-## 8. Toolbar Showcase (Bubble, Gutter, and Minimal Rails)
+## Looking for Toolbar Configurations?
 
-Traven provides three independent toolbar layers. You can use any combination, or none at all.
+Traven provides a comprehensive, dedicated guide for its toolbar system—including the selection bubble, gutter insertion menu, configuration presets, runtime JavaScript toggles, alternative stylesheets, and custom CSS overrides.
 
-### The Three Toolbars
-
-| Toolbar | Description | Default |
-|---|---|---|
-| **Main toolbar** (top rail) | The static bar at the top of the editor with formatting buttons | On (if `toolbar` attribute is present) |
-| **Selection bubble** | A Medium-like context-aware formatting bar that appears when text is selected | On |
-| **Gutter insertion menu** | A `+` icon in the editor gutter that opens an insert menu for blocks, images, and media | On |
-
-### Configuration A: All three toolbars
-
-```html
-<traven-editor name="body" toolbar-mode="hybrid" toolbar>Content here</traven-editor>
-```
-
-All three toolbars are active. The main toolbar appears at the top, the selection bubble appears on text selection, and the gutter menu appears in the left margin.
-
-### Configuration B: Main toolbar only (default)
-
-```html
-<traven-editor name="body" toolbar>Content here</traven-editor>
-```
-
-By default, omitting `toolbar-mode` puts the editor into `"static"` mode. The main toolbar appears at the top, while the selection bubble and gutter insertion menu remain disabled. No CSS overrides are required.
-
-### Configuration C: No main toolbar — bubble and gutter only
-
-```html
-<traven-editor name="body" toolbar-mode="hybrid" toolbar="false">Content here</traven-editor>
-```
-
-Setting `toolbar-mode="hybrid"` enables the floating toolbar extensions, while `toolbar="false"` disables the persistent top toolbar. This provides a clean, distraction-free writing surface with bubble and gutter formatting available on demand.
-
-### Configuration D: Floating toolbar (slim rail + bubble + gutter)
-
-```html
-<traven-editor name="body" toolbar-mode="floating" toolbar>Content here</traven-editor>
-```
-
-The main persistent toolbar is replaced by a slim vertical control rail pinned to the side of the container, while the selection bubble and gutter insertion menu remain active.
-
-### Configuration E: Floating toolbar only (no slim rail)
-
-```html
-<traven-editor name="body" toolbar-mode="floating" toolbar="false">Content here</traven-editor>
-```
-
-Only the selection bubble and gutter insertion menu are active. This is a distraction-free editing experience where formatting controls only appear when text is selected or a new block is inserted.
-
-### Configuration F: Custom button subset
-
-```html
-<traven-editor name="body" toolbar="bold, italic, link, image, |, heading, |, search">Content here</traven-editor>
-```
-
-The `|` separator creates visual dividers between button groups. Use this to show only the buttons your users actually need.
-
-### Configuration G: Vim mode + line numbers (power user)
-
-```html
-<traven-editor name="body" toolbar line-numbers vim-mode>Content here</traven-editor>
-```
-
-Full Vim keybindings (normal/visual/insert mode), line numbers, and the complete toolbar. For developers who live in their terminal.
-
-### Toggling toolbars at runtime via JavaScript
-
-You can hide and show individual toolbars by toggling CSS classes on the `<traven-editor>` element:
-
-```javascript
-const editorEl = document.querySelector("traven-editor");
-
-// Hide the main toolbar
-editorEl.classList.add("hide-main-toolbar");
-
-// Hide the selection bubble
-editorEl.classList.add("hide-selection-bubble");
-
-// Hide the gutter insertion menu
-editorEl.classList.add("hide-gutter-insertion");
-
-// Show them again by removing the classes
-editorEl.classList.remove("hide-main-toolbar");
-```
-
-This is exactly how the toolbar toggles work in Traven's own `demo-toolbars.php` demo page, with state persisted to `localStorage`.
-
-### Going further
-
-Traven does not currently ship a bottom-rail or side-rail toolbar layout. But the toolbar is rendered with semantic CSS classes (`.toolbar-btn`, `.btn-bold`, `.btn-heading`, etc.) and the MIT license invites experimentation. If you build a creative toolbar layout, the architecture supports it — let a thousand flowers bloom.
-
-**See also:** [Cheat Sheet](cheatsheet.md) for the full list of toolbar button keys, and [Customization & Styling](dev/customization-styling.md) for toolbar CSS class selectors.
+See **[Toolbars](toolbars.md)** for the complete guide.
 
 ---
 
 ## What's Next?
 
 - **[Cheat Sheet](cheatsheet.md)** — Every attribute you can put on `<traven-editor>`, in one page.
+- **[Toolbars](toolbars.md)** — Deep-dive on the three toolbar layers, configuration presets, and customization.
 - **[API Reference](api-reference.md)** — Constructor options, public methods, events, and formatting helpers.
 - **[Skins](skins.md)** — All eight shipped skins, hot-swapping, and self-hosting fonts.
 - **[Saving & Auto-Save](saving.md)** — Manual saves, debounced auto-save, and the full load→edit→save lifecycle.

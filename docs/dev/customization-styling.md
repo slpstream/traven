@@ -48,15 +48,9 @@ If using CDN integration, target the assets directly from the repository using j
 
 ## Customizing the Toolbar
 
-You can customize the toolbar layout by passing an array of tool keys to the constructor's `toolbar` option, or hide buttons using CSS overrides.
+You can customize the toolbar layout by passing an array of tool keys to the constructor's `toolbar` option, or customize it using CSS overrides and alternative stylesheets.
 
-### Available Toolbar Stylesheets
-
-Alternative pre-configured toolbar presentation sheets are available in `packages/core/assets/toolbars/` and can be loaded dynamically or statically to swap editor layouts:
-*   `toolbar-default.css`: The default clean toolbar skin, containing the full set of all available buttons.
-*   `toolbar-compact.css` / `toolbar-compact-dark.css`: Slim layouts with reduced padding.
-*   `toolbar-reduced.css` / `toolbar-reduced-dark.css`: Ultra-minimalist layouts for simplified interfaces.
-*   `toolbar-expandable.css` / `toolbar-expandable-dark.css`: A dynamic "2-in-1" toolbar that toggles between core buttons and the full set when expanded.
+For presets, runtime JavaScript class controls, and alternative toolbar stylesheets (e.g., `toolbar-compact.css`), see the dedicated **[Toolbar Guide](../toolbars.md)**.
 
 ### Toolbar Buttons & Selectors Reference
 

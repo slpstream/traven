@@ -10,7 +10,8 @@ From zero to hero: Get up and running with Traven in a matter of minutes, no cod
 
 - **[Quick Start](quickstart.md)** — Add Traven to a PHP form or HTML page in three steps: replace your `<textarea>`, load one script, and read the submission in PHP. The fastest path from zero to a working rich-text editor.
 - **[Cheat Sheet](cheatsheet.md)** — A comprehensive quick reference covering the 5-minute setup walkthrough, every configuration attribute, the full toolbar button catalog, skins, and common toolbar presets.
-- **[Common Configurations](common-configurations.md)** — Eight ready-made recipes for the most common use cases: minimal comment boxes, blog post editors, CMS admin panels, three-pane WYSIWYM/Raw/Preview editors, code-heavy documentation editors, read-only previews, split-screen raw sync, and toolbar configurations. Each is a complete, copy-pasteable HTML file.
+- **[Common Configurations](common-configurations.md)** — Seven ready-made recipes for the most common use cases: minimal comment boxes, blog post editors, CMS admin panels, three-pane WYSIWYM/Raw/Preview editors, code-heavy documentation editors, read-only previews, and split-screen raw sync. Each is a complete, copy-pasteable HTML file.
+- **[Toolbars](toolbars.md)** — A comprehensive guide to the editor's three toolbar layers (Main bar, Selection bubble, and Gutter menu), including layout presets, runtime JavaScript class toggling, alternative stylesheets, and CSS customization.
 
 ---
 

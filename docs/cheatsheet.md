@@ -430,7 +430,7 @@ The `<traven-editor>` tag itself doesn't change visual styling beyond what `them
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@freedomware/traven@0.2.10/assets/skins/skin-dark.css">
 ```
 
-For toolbar layouts (compact, expandable, etc.) the same pattern applies — see [Customization & Styling Guide](dev/customization-styling.md) for the full list.
+For toolbar layouts (compact, expandable, etc.) the same pattern applies — see the **[Toolbar Guide](toolbars.md)** for the full list.
 
 ---
 
