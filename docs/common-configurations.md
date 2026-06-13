@@ -22,6 +22,8 @@ If you try to use any of these features without loading the corresponding depend
 
 ---
 
+[![Minimal Comment Box](https://traven.dev/img/config-single.png)](https://traven.dev/docs/general/common-configurations/)
+
 ## 1. Minimal Comment Box
 
 The simplest possible integration. No toolbar, no configuration — just a rich-text textarea that submits Markdown through a standard HTML form.
@@ -238,6 +240,8 @@ This is the **body content**. The metadata above is managed by the form fields, 
 **See also:** [Host Integration Guide](integration.md) and [Integration Patterns](integration-patterns.md) for the full frontmatter management guide.
 
 ---
+
+[![Three-Pane CMS](https://traven.dev/img/config-3panes.png)](https://traven.dev/docs/general/common-configurations/)
 
 ## 4. Three-Pane CMS (WYSIWYM + Raw Markdown + HTML Preview)
 
@@ -510,6 +514,8 @@ The novel explores themes of:
 **Use case:** Content review before publishing, embedding non-editable Markdown in a public page, showing submitted form content for confirmation.
 
 ---
+
+[![Split-Screen Raw Sync](https://traven.dev/img/config-splitpane.png)](https://traven.dev/docs/general/common-configurations/)
 
 ## 7. Split-Screen Raw Sync
 
