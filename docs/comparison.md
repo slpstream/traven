@@ -80,7 +80,7 @@ Milkdown is a WYSIWYM Markdown editor similar to Traven, but built on top of Pro
 
 ### Traven vs. Vditor
 Vditor is an extremely feature-rich Markdown editor that supports WYSIWYM, split-pane, and raw source modes.
-* **Where it wins:** It does absolutely everything, including native rendering of mind maps, charts, and SVN.
+* **Where it wins:** It does absolutely everything, including native rendering of mind maps, charts, and SVG.
 * **Where it falls short:** It is incredibly bloated, loading massive chunks of code to support features most users don't need. Furthermore, its documentation and community are primarily tailored to the Chinese ecosystem, creating a barrier for Western developers.
 * **Where Traven wins:** Traven is lightweight, rigorously documented in English, and focuses strictly on doing core Markdown exceptionally well rather than trying to be a kitchen sink.
 

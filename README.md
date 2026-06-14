@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <em>"A rich-text Markdown editor you can drop into any PHP, Python, or HTML page with one <code>&lt;script&gt;</code> tag."</em><br>MIT Licensed · No API key · No account · No npm · No build step · Self-host or CDN
+  <strong>A rich-text Markdown editor you can drop into any PHP, Python, or HTML page with one <code>&lt;script&gt;</code> tag</strong><br>MIT Licensed · No API key · No account · No npm · No build step · Self-host or CDN
 </p>
 
 ```html
