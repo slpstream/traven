@@ -12,7 +12,7 @@
 
   <style>
     :root {
-      /* Light Mode Palette based on Traven CSS variables (exact match to website/index.php) */
+      /* Light Mode Palette based on Traven CSS variables (exact match to site/index.php) */
       --bg: #f8fafc;
       --card-bg: #ffffff;
       --card-border: #d8d0c8;

@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <strong>A standalone, lightweight, framework-agnostic WYSIWYM Markdown Editor in your browser</strong>
+  <strong>A standalone, lightweight, framework-agnostic WYSIWYM Markdown Editor in your browser</strong><br>MIT Licensed · No API key · No account · Self-host or CDN
 </p>
 
 <p align="center">
@@ -23,7 +23,7 @@
 
 ---
 
-Traven is a self-contained, embeddable Markdown editor that renders your content live as you type. It gives you the seamless writing experience of a desktop editor, but in a simple script you can drop into any web page:  
+Traven is a self-contained, embeddable Markdown editor that renders your content live as you type. It gives you the seamless writing experience of a desktop editor, but in a simple script you can drop into any web page: 
 
 
 ```html
@@ -42,7 +42,7 @@ Traven is a **WYSIWYM** (What You See Is What You Mean) editor. This means it hi
 Type `**bold**` and the asterisks quietly step aside, leaving only the bold text visible. Move your cursor back inside the word, and the syntax reappears so you can edit it. The underlying document remains plain, portable Markdown—no hidden HTML, and no proprietary lock-in.
 
 <p align="center">
- <a href="https://traven.dev/website/comparison.php" target="_blank">
+ <a href="https://traven.dev/site/comparison.php" target="_blank">
   <img src="https://traven.dev/img/compareform2.jpg" alt="Before & After" width="100%">
  </a>
 </p>

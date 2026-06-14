@@ -13,7 +13,7 @@ Thumbs.db
 scratch/
 
 # Marketing website (kept out of repository)
-website/
+site/
 assets/images/traven_og.jpg
 favicon.ico
 
