@@ -2,16 +2,16 @@
 
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](../LICENSE)
 
-> *"A rich-text Markdown editor you can drop into any PHP, Python, or HTML page with one `<script>` tag."*
->
-> MIT Licensed · No API key · No account · No npm · No build step · Self-host or CDN
-
-This collection of Traven Editor guides covers everything you need to integrate, configure, and customize the editor in your project. Traven has a low learning curve: You'll know most of what is important about the editor from just the first couple of guides, and the rest are either optional or for specific use-cases.
+**A rich-text Markdown editor you can drop into any PHP, Python, or HTML page with one `<script>` tag.**
 
 ```html
 <!-- Include the editor with just a single line of code: -->
 <script type="module" src="https://cdn.jsdelivr.net/npm/@freedomware/traven@latest/dist/traven.js"></script>
 ```
+
+MIT Licensed · No API key · No account · No npm · No build step · Self-host or CDN
+
+This collection of Traven Editor guides covers everything you need to integrate, configure, and customize the editor in your project. Traven has a low learning curve: You'll know most of what is important about the editor from just the first couple of guides, and the rest are either optional or for specific use-cases.
 
 ---
 
