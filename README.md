@@ -20,7 +20,7 @@
 
 <p align="center">
   <a href="https://traven.dev">Live Demos</a> • 
-  <a href="https://traven.dev/traven-vs-others.php">Compare</a> • 
+  <a href="https://traven.dev/site/traven-vs-others.php">Compare</a> • 
   <a href="docs/quickstart.md">Quick Start</a> • 
   <a href="docs/cheatsheet.md">Cheat Sheet</a> • 
   <a href="docs/api-reference.md">API</a> • 
