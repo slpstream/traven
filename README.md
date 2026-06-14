@@ -3,8 +3,13 @@
 </p>
 
 <p align="center">
-  <strong>A standalone, lightweight, framework-agnostic WYSIWYM Markdown Editor in your browser</strong><br>MIT Licensed · No API key · No account · Self-host or CDN
+  <em>"A rich-text Markdown editor you can drop into any PHP, Python, or HTML page with one <code>&lt;script&gt;</code> tag."</em><br>MIT Licensed · No API key · No account · No npm · No build step · Self-host or CDN
 </p>
+
+```html
+<!-- Include the editor with just a single line of code: -->
+<script type="module" src="https://cdn.jsdelivr.net/npm/@freedomware/traven@latest/dist/traven.js"></script>
+```
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License"></a>
@@ -23,15 +28,9 @@
 
 ---
 
-Traven is a self-contained, embeddable Markdown editor that renders your content live as you type. It gives you the seamless writing experience of a desktop editor, but in a simple script you can drop into any web page: 
+Traven is a self-contained, embeddable Markdown editor that renders your content live as you type. It gives you the seamless writing experience of a desktop editor, but in a single <code>&lt;script&gt;</code> tag you can drop into any web page.
 
-
-```html
-<!-- Include the editor with just a single line of code: -->
-<script type="module" src="https://cdn.jsdelivr.net/npm/@freedomware/traven@latest/dist/traven.js"></script>
-```
-
-Traven is entirely framework-agnostic. It works beautifully whether you are using a plain HTML file, a PHP template, or a complex React application. It also respects your independence: Traven doesn't rely on any frameworks, and doesn't require an API key or setting up an account. It is open-source, MIT licensed, and outputs pure Markdown.
+The editor is entirely framework-agnostic. It works beautifully whether you are using a plain HTML file, a PHP template, or a complex React application. It also respects your independence: Traven doesn't rely on any frameworks, and doesn't require an API key or setting up an account. It is open-source, MIT licensed, and outputs pure Markdown.
 
 ---
 
