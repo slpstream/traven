@@ -3,6 +3,9 @@ import vue from '@vitejs/plugin-vue';
 import { resolve } from 'path';
 
 export default defineConfig({
+  define: {
+    'import.meta': '{}'
+  },
   plugins: [vue()],
   build: {
     lib: {

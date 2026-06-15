@@ -2,6 +2,9 @@ import { defineConfig } from 'vite';
 import { resolve } from 'path';
 
 export default defineConfig({
+  define: {
+    'import.meta': '{}'
+  },
   build: {
     lib: {
       entry: resolve(__dirname, 'src/index.jsx'),
