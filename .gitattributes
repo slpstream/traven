@@ -4,3 +4,4 @@
 # Mark the compiled distribution files as generated to keep language stats focused on source code
 dist/traven.js linguist-generated
 dist/traven.css linguist-generated
+packages/*/dist/** linguist-generated
