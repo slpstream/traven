@@ -30,14 +30,14 @@ You can load Traven directly from the jsDelivr CDN without hosting any local ass
       Edit **this bold text** to see delimiters appear!
     </traven-editor>
   </div>
-  <script type="module" src="https://cdn.jsdelivr.net/npm/@freedomware/traven@0.2.11/dist/traven.js"></script>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@freedomware/traven@0.2.12/dist/traven.js"></script>
 </body>
 </html>
 ```
 
 *"Traven is MIT licensed and requires no API key, tracking, or account registration."*
 
-> **Production Best Practice**: For production environments, it is highly recommended to pin the script URL to a specific version tag (e.g., `@0.2.11`) rather than omitting it, and to check the changelog before upgrading. This guarantees that future library updates do not introduce breaking behavior to your deployed application.
+> **Production Best Practice**: For production environments, it is highly recommended to pin the script URL to a specific version tag (e.g., `@0.2.12`) rather than omitting it, and to check the changelog before upgrading. This guarantees that future library updates do not introduce breaking behavior to your deployed application.
 
 ## 2. Direct Include (Local Assets)
 

@@ -44,7 +44,7 @@ Drop this single `<script>` tag anywhere at the **bottom of the page** (before `
 
 **That's the whole setup.**  Seriously.  You're done. Core CSS is auto-injected by the script, so you do not need to link a separate stylesheet to get a working editor (unless you want to customize. More on that below).
 
-> **Production tip:** Replace `@latest` with a pinned version like `@0.2.11` so a future update can never silently break your site. The CDN URL stays the same forever. If you prefer, you can of course also load the `traven.js` bundle locally, from your own machine, and everything will work the same even offline.
+> **Production tip:** Replace `@latest` with a pinned version like `@0.2.12` so a future update can never silently break your site. The CDN URL stays the same forever. If you prefer, you can of course also load the `traven.js` bundle locally, from your own machine, and everything will work the same even offline.
 
 ### Optional Step 4 — Tweak it with attributes
 
@@ -70,7 +70,7 @@ Some corporate sites block the script from injecting its own CSS file. Tell Trav
 
 ```html
 <head>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@freedomware/traven@0.2.11/dist/traven.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@freedomware/traven@0.2.12/dist/traven.css">
 </head>
 ...
 <traven-editor name="body" auto-load-styles="false"># Hello</traven-editor>
@@ -101,7 +101,7 @@ Some corporate sites block the script from injecting its own CSS file. Tell Trav
     <button type="submit">Publish</button>
   </form>
 
-  <script type="module" src="https://cdn.jsdelivr.net/npm/@freedomware/traven@0.2.11/dist/traven.js"></script>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@freedomware/traven@0.2.12/dist/traven.js"></script>
 </body>
 </html>
 ```
@@ -403,7 +403,7 @@ To work around it, set `auto-load-styles="false"` and link the stylesheet yourse
 
 ```html
 <head>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@freedomware/traven@0.2.11/dist/traven.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@freedomware/traven@0.2.12/dist/traven.css">
 </head>
 ...
 <traven-editor name="body" toolbar auto-load-styles="false">...</traven-editor>
@@ -427,7 +427,7 @@ The `<traven-editor>` tag itself doesn't change visual styling beyond what `them
 | `skin-custom.css` | Fully parameterised via CSS custom properties |
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@freedomware/traven@0.2.11/assets/skins/skin-dark.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@freedomware/traven@0.2.12/assets/skins/skin-dark.css">
 ```
 
 For toolbar layouts (compact, expandable, etc.) the same pattern applies — see the **[Toolbar Guide](toolbars.md)** for the full list.

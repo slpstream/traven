@@ -41,7 +41,7 @@ If using CDN integration, target the assets directly from the repository using j
 
 ```html
 <!-- Example: Load skin-light.css via CDN (pinned version) -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@freedomware/traven@0.2.11/assets/skins/skin-light.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@freedomware/traven@0.2.12/assets/skins/skin-light.css">
 ```
 
 ---
