@@ -152,4 +152,6 @@ Traven features a native, built-in custom `[image]` shortcode supporting advance
 * **Separation of Presentation Concerns**: In fallback HTML previews and rendering (`getContentHtml()`), the shortcode compiles to a clean, semantic `<img>` element with **no inline style attributes**. Layout attributes (like width, float, margins) are mapped exclusively to class selectors (`.align-[alignment]`, `.size-[size]`, and `.traven-image-shortcode`) managed in the theme CSS/skins.
 * **Toolbar Insert Toggle**: The image insertion modal contains a sliders-icon toggle to switch between Advanced mode (inserting custom `[image]` shortcodes with fields for caption, classes, alignment, and size) and Legacy mode (inserting standard `![alt](src)` Markdown).
 * **Lezer Parser Integration**: Attributes are parsed directly using a custom inline Lezer parser (`src/shortcode-parser.js`) creating a structured AST node representation. This allows the editor to skip delimiter syntax boundaries cleanly during arrow navigation.
-```
+
+
+
