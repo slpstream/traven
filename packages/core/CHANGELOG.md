@@ -4,7 +4,7 @@
 
 ### Patch Changes
 
-- 9222457: Added robust Agent API methods (`replaceSelection`, `insertBlock`, `getMarkdownState`) optimized for LLM host integration.
+- Added robust Agent API methods (`replaceSelection`, `insertBlock`, `getMarkdownState`) optimized for LLM host integration.
 
 ## 0.2.10
 
