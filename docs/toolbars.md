@@ -37,13 +37,13 @@ Enables the floating selection bubble and gutter insertion menu, while disabling
 ```
 
 ### Configuration D: Slim rail + bubble + gutter (Floating)
-Replaces the main top toolbar with a slim vertical control rail pinned to the side of the container, while maintaining active selection bubble and gutter insertion menus.
+Replaces the main top toolbar with a slim control rail pinned to the container, while maintaining active selection bubble and gutter insertion menus.
 ```html
 <traven-editor name="body" toolbar-mode="floating" toolbar>Content here</traven-editor>
 ```
 
 ### Configuration E: Floating toolbar only (No slim rail)
-Only the selection bubble and gutter insertion menu are active, with no top rail or side rail. Formatting controls only appear when text is selected or a new block is inserted.
+Only the selection bubble and gutter insertion menu are active, with no top rail. Formatting controls only appear when text is selected or a new block is inserted.
 ```html
 <traven-editor name="body" toolbar-mode="floating" toolbar="false">Content here</traven-editor>
 ```

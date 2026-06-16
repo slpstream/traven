@@ -328,12 +328,12 @@ Traven has **three toolbar layouts** you can pick from with the `toolbar-mode` a
 | Mode | Behavior | Best for |
 | :--- | :--- | :--- |
 | `"static"` *(default)* | A full-width bar of buttons at the top of the editor. Always visible. | Forms, comment boxes, predictable UI. |
-| `"floating"` | A slim icon rail pinned to one side. The classic "Medium.com" experience. | Long-form writing, distraction-free work. |
-| `"hybrid"` | Combines both: a top bar of the most-used buttons, plus a side rail and a selection bubble that appears when text is highlighted. | Power-user dashboards, full-featured apps. |
+| `"floating"` | A slim icon rail. The classic "Medium.com" experience. | Long-form writing, distraction-free work. |
+| `"hybrid"` | Combines both: a top bar of the most-used buttons, plus a rail and a selection bubble that appears when text is highlighted. | Power-user dashboards, full-featured apps. |
 
 ```html
 <traven-editor name="body" toolbar toolbar-mode="static">  <!-- Always-on top bar -->
-<traven-editor name="body" toolbar toolbar-mode="floating"> <!-- Side rail + bubble -->
+<traven-editor name="body" toolbar toolbar-mode="floating"> <!-- Rail + bubble -->
 <traven-editor name="body" toolbar toolbar-mode="hybrid">   <!-- Everything at once -->
 ```
 
