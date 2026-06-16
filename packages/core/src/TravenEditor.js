@@ -662,6 +662,20 @@ export class TravenEditor {
   }
 
   /**
+   * Replaces the current selection with the given text.
+   * If nothing is selected, inserts at cursor position.
+   * @param {string} text - The text to insert.
+   */
+  replaceSelection(text) {
+    const range = this.#view.state.selection.main;
+    this.#view.dispatch({
+      changes: { from: range.from, to: range.to, insert: text },
+      selection: { anchor: range.from + text.length },
+    });
+    this.#view.focus();
+  }
+
+  /**
    * Sets the editor theme dynamically.
    * @param {"light" | "dark"} theme
    */
@@ -722,6 +736,36 @@ export class TravenEditor {
   getReadTime() {
     const words = this.getWordCount();
     return Math.ceil(words / 200);
+  }
+
+  /**
+   * Returns a snapshot of the current editor state optimized for external agents.
+   * Includes the full raw markdown, split frontmatter/body, current selection,
+   * cursor position, and document statistics.
+   * @returns {{ markdown: string, frontmatter: string, body: string, selection: string, cursor: { line: number, column: number }, lineCount: number, stats: { words: number, characters: number, readTime: number } }}
+   */
+  getMarkdownState() {
+    const state = this.#view.state;
+    const range = state.selection.main;
+    const cursorLine = state.doc.lineAt(range.head);
+    const { frontmatter, body } = this.#parseFrontmatter();
+
+    return {
+      markdown: state.doc.toString(),
+      frontmatter,
+      body,
+      selection: state.sliceDoc(range.from, range.to),
+      cursor: {
+        line: cursorLine.number,
+        column: range.head - cursorLine.from,
+      },
+      lineCount: state.doc.lines,
+      stats: {
+        words: this.getWordCount(),
+        characters: this.getCharacterCount(),
+        readTime: this.getReadTime(),
+      },
+    };
   }
 
   /**
@@ -1094,6 +1138,65 @@ export class TravenEditor {
   }
 
   /**
+   * Inserts a block of markdown at the specified position with proper blank-line spacing.
+   * Handles edge cases at document start/end and avoids doubling existing blank lines.
+   * @param {string} text - The markdown block to insert.
+   * @param {"before" | "after" | "start" | "end"} [position="after"] - Where to insert relative to cursor line or document bounds.
+   */
+  insertBlock(text, position = "after") {
+    const state = this.#view.state;
+    let insertPos;
+
+    if (position === "end") {
+      insertPos = state.doc.length;
+    } else if (position === "start") {
+      insertPos = 0;
+    } else if (position === "before") {
+      const line = state.doc.lineAt(state.selection.main.head);
+      insertPos = line.from;
+    } else {
+      // "after" — end of current line
+      const line = state.doc.lineAt(state.selection.main.head);
+      insertPos = line.to;
+    }
+
+    // Ensure blank-line separation from surrounding content
+    let prefix = "";
+    let suffix = "";
+
+    if (insertPos > 0) {
+      const charBefore = state.sliceDoc(insertPos - 1, insertPos);
+      if (charBefore !== "\n") {
+        prefix = "\n\n";
+      } else if (insertPos > 1) {
+        const twoBack = state.sliceDoc(insertPos - 2, insertPos - 1);
+        if (twoBack !== "\n") {
+          prefix = "\n";
+        }
+      }
+    }
+
+    if (insertPos < state.doc.length) {
+      const charAfter = state.sliceDoc(insertPos, insertPos + 1);
+      if (charAfter !== "\n") {
+        suffix = "\n\n";
+      } else if (insertPos < state.doc.length - 1) {
+        const twoAfter = state.sliceDoc(insertPos + 1, insertPos + 2);
+        if (twoAfter !== "\n") {
+          suffix = "\n";
+        }
+      }
+    }
+
+    const insertion = `${prefix}${text}${suffix}`;
+    this.#view.dispatch({
+      changes: { from: insertPos, to: insertPos, insert: insertion },
+      selection: { anchor: insertPos + insertion.length },
+    });
+    this.#view.focus();
+  }
+
+  /**
    * Inserts a standard 3x3 markdown table template, handling surrounding spacing.
    */
   insertTable() {
@@ -1449,6 +1552,49 @@ export class TravenEditor {
         }
       }, 50);
     }
+  }
+
+  /**
+   * Parses the document to extract frontmatter YAML content (without --- delimiters)
+   * and the body markdown separately, using the Lezer syntax tree.
+   * @returns {{ frontmatter: string, body: string }}
+   */
+  #parseFrontmatter() {
+    const md = this.#view.state.doc.toString();
+    const tree = syntaxTree(this.#view.state);
+    let frontmatterTo = 0;
+    tree.iterate({
+      from: 0,
+      to: Math.min(md.length, 500),
+      enter(node) {
+        if (node.name === "Frontmatter" && node.from === 0) {
+          let dashCount = 0;
+          const c = node.node.cursor();
+          if (c.firstChild()) {
+            do {
+              if (c.name === "DashLine") {
+                dashCount++;
+              }
+            } while (c.nextSibling());
+          }
+          if (dashCount >= 2) {
+            frontmatterTo = node.to;
+            return false;
+          }
+        }
+      },
+    });
+
+    if (frontmatterTo > 0 && frontmatterTo <= md.length) {
+      const raw = md.slice(0, frontmatterTo);
+      // Extract YAML content between --- delimiters, stripping the fences themselves
+      const yamlMatch = raw.match(/^---[ \t]*\r?\n([\s\S]*?)\r?\n---/);
+      const frontmatter = yamlMatch ? yamlMatch[1] : "";
+      const body = md.slice(frontmatterTo).replace(/^\r?\n/, "");
+      return { frontmatter, body };
+    }
+
+    return { frontmatter: "", body: md };
   }
 
   /**

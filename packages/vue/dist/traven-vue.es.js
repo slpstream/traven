@@ -27577,6 +27577,17 @@ var vE = class {
 			head: t
 		} }), this.#e.focus();
 	}
+	replaceSelection(e) {
+		let t = this.#e.state.selection.main;
+		this.#e.dispatch({
+			changes: {
+				from: t.from,
+				to: t.to,
+				insert: e
+			},
+			selection: { anchor: t.from + e.length }
+		}), this.#e.focus();
+	}
 	setTheme(e) {
 		e === "dark" ? (this.#e.dom.classList.add("cm-wysiwym-dark"), this.#t && this.#t.dom.classList.add("cm-wysiwym-dark")) : (this.#e.dom.classList.remove("cm-wysiwym-dark"), this.#t && this.#t.dom.classList.remove("cm-wysiwym-dark")), this.#l(`Theme changed to ${e}`);
 	}
@@ -27595,6 +27606,25 @@ var vE = class {
 		let e = this.getWordCount();
 		return Math.ceil(e / 200);
 	}
+	getMarkdownState() {
+		let e = this.#e.state, t = e.selection.main, n = e.doc.lineAt(t.head), { frontmatter: r, body: i } = this.#u();
+		return {
+			markdown: e.doc.toString(),
+			frontmatter: r,
+			body: i,
+			selection: e.sliceDoc(t.from, t.to),
+			cursor: {
+				line: n.number,
+				column: t.head - n.from
+			},
+			lineCount: e.doc.lines,
+			stats: {
+				words: this.getWordCount(),
+				characters: this.getCharacterCount(),
+				readTime: this.getReadTime()
+			}
+		};
+	}
 	static configureMermaid(e) {
 		Cx(e);
 	}
@@ -27607,7 +27637,7 @@ var vE = class {
 	}
 	getContentHtml() {
 		let e = this.getValue();
-		return this.#i ? this.#i(e) : this.#d(e);
+		return this.#i ? this.#i(e) : this.#f(e);
 	}
 	insertSnippet(e, t, n = "") {
 		let r = this.#e.state.selection.main, i = !r.empty, a = this.#e.state.sliceDoc(r.from, r.to), o = "", s = "";
@@ -27766,6 +27796,21 @@ var vE = class {
 			},
 			selection: { anchor: n + s.length + 3 }
 		}), e.focus();
+	}
+	insertBlock(e, t = "after") {
+		let n = this.#e.state, r;
+		r = t === "end" ? n.doc.length : t === "start" ? 0 : t === "before" ? n.doc.lineAt(n.selection.main.head).from : n.doc.lineAt(n.selection.main.head).to;
+		let i = "", a = "";
+		r > 0 && (n.sliceDoc(r - 1, r) === "\n" ? r > 1 && n.sliceDoc(r - 2, r - 1) !== "\n" && (i = "\n") : i = "\n\n"), r < n.doc.length && (n.sliceDoc(r, r + 1) === "\n" ? r < n.doc.length - 1 && n.sliceDoc(r + 1, r + 2) !== "\n" && (a = "\n") : a = "\n\n");
+		let o = `${i}${e}${a}`;
+		this.#e.dispatch({
+			changes: {
+				from: r,
+				to: r,
+				insert: o
+			},
+			selection: { anchor: r + o.length }
+		}), this.#e.focus();
 	}
 	insertTable() {
 		let e = this.#e, t = e.state, { from: n, to: r } = t.selection.main, i = n > 0 ? t.sliceDoc(n - 1, n) : "\n", a = n > 1 ? t.sliceDoc(n - 2, n - 1) : "\n", o = "";
@@ -27929,7 +27974,33 @@ var vE = class {
 			this.#o && (this.#o.textContent = e);
 		}, 50));
 	}
-	#u(e) {
+	#u() {
+		let e = this.#e.state.doc.toString(), t = Y(this.#e.state), n = 0;
+		if (t.iterate({
+			from: 0,
+			to: Math.min(e.length, 500),
+			enter(e) {
+				if (e.name === "Frontmatter" && e.from === 0) {
+					let t = 0, r = e.node.cursor();
+					if (r.firstChild()) do
+						r.name === "DashLine" && t++;
+					while (r.nextSibling());
+					if (t >= 2) return n = e.to, !1;
+				}
+			}
+		}), n > 0 && n <= e.length) {
+			let t = e.slice(0, n).match(/^---[ \t]*\r?\n([\s\S]*?)\r?\n---/);
+			return {
+				frontmatter: t ? t[1] : "",
+				body: e.slice(n).replace(/^\r?\n/, "")
+			};
+		}
+		return {
+			frontmatter: "",
+			body: e
+		};
+	}
+	#d(e) {
 		if (!this.#e) return e;
 		let t = Y(this.#e.state), n = 0;
 		return t.iterate({
@@ -27946,8 +28017,8 @@ var vE = class {
 			}
 		}), n > 0 && n <= e.length ? e.slice(n).replace(/^\r?\n/, "") : e;
 	}
-	#d(e, t = !0) {
-		let n = t ? this.#u(e) : e, r = [], i = [];
+	#f(e, t = !0) {
+		let n = t ? this.#d(e) : e, r = [], i = [];
 		n = n.replace(/^```[ \t]*([a-zA-Z0-9_\-]*)([^\r\n]*)\r?\n([\s\S]*?)\r?\n```\s*$/gm, (e, t, n, a) => {
 			let o = r.length, s = t ? ` class="language-${t}"` : "", c = a.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 			if (t === "mermaid") {
@@ -27981,7 +28052,7 @@ CODEBLOCKPLACEHOLDERZ${o}Z
 				for (; (c = s.exec(n)) !== null;) a[c[1]] = c[2] === void 0 ? c[3] === void 0 ? c[4] || "" : c[3] : c[2];
 				let l = a.name || "";
 				l ||= t === "quote" || t === "blockquote" ? "blockquote" : t === "pullquote" ? "pullquote" : t, l === "quote" && (l = "blockquote");
-				let u = this.#d(r, !1), d = "";
+				let u = this.#f(r, !1), d = "";
 				if (l === "blockquote") {
 					let e = a.author || "", t = a.source || "", n = "";
 					if (e || t) {
@@ -28005,7 +28076,7 @@ COMPONENTZPLACEHOLDERZINDEXZ${i}Z
 			}), n = n.replace(c, (e, t, n, r) => {
 				let i = o.length, a = {}, s = /([a-zA-Z0-9_-]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=]+))/g, c;
 				for (; (c = s.exec(n)) !== null;) a[c[1]] = c[2] === void 0 ? c[3] === void 0 ? c[4] || "" : c[3] : c[2];
-				let l = a.caption || "", u = `<figure class="traven-figure align-${a.align || "center"} size-${a.size || "medium"}${a.class ? ` ${a.class}` : ""}">${this.#d(r, !1)}${l ? `<figcaption class="traven-figure-caption">${l}</figcaption>` : ""}</figure>`;
+				let l = a.caption || "", u = `<figure class="traven-figure align-${a.align || "center"} size-${a.size || "medium"}${a.class ? ` ${a.class}` : ""}">${this.#f(r, !1)}${l ? `<figcaption class="traven-figure-caption">${l}</figcaption>` : ""}</figure>`;
 				return o.push(u), `
 
 COMPONENTZPLACEHOLDERZINDEXZ${i}Z

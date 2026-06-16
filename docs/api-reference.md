@@ -72,6 +72,10 @@ Sets the selection range in the editor and focuses it.
     *   `anchor` (`number`): The starting character index of the selection.
     *   `head` (`number`, optional): The ending character index of the selection. Defaults to `anchor`.
 
+### `replaceSelection(text)`
+Replaces the current selection with the given text. If nothing is selected, inserts the text at the current cursor position.
+*   **Parameters:** `text` (`string`)
+
 
 ### `insertSnippet(before, after, placeholder)`
 Wraps the current text selection with markdown characters. If no text is selected, inserts a formatted placeholder string.
@@ -105,6 +109,17 @@ Returns the total word count of the active document.
 ### `getReadTime()`
 Returns the estimated reading time of the active document in minutes.
 *   **Returns:** `number`
+
+### `getMarkdownState()`
+Returns a comprehensive snapshot of the current editor state optimized for external AI agents. It automatically extracts and parses YAML frontmatter without delimiters.
+*   **Returns:** `object` with the following structure:
+    *   `markdown` (`string`): The full raw document content.
+    *   `frontmatter` (`string`): The raw YAML frontmatter content, stripped of `---` delimiters.
+    *   `body` (`string`): The markdown content excluding the frontmatter block.
+    *   `selection` (`string`): The currently selected text.
+    *   `cursor` (`object`): `{ line: number, column: number }` (1-indexed line).
+    *   `lineCount` (`number`): Total number of lines.
+    *   `stats` (`object`): `{ words: number, characters: number, readTime: number }`.
 
 ### `registerRenderer(renderFn)`
 Registers a custom Markdown compilation function to render custom HTML previews.
@@ -180,6 +195,12 @@ Navigates the cursor to the specified 1-indexed line number and scrolls it into 
 
 ### `insertCodeBlock()`
 Wraps the selection in a fenced code block (`` ``` ``) with appropriate line spacing.
+
+### `insertBlock(text, position)`
+Inserts a block of markdown text at a semantic position, automatically handling leading and trailing blank-line spacing to prevent formatting collisions.
+*   **Parameters:**
+    *   `text` (`string`): The markdown content to insert.
+    *   `position` (`"before" | "after" | "start" | "end"`, optional): Where to insert the block relative to the cursor or document bounds. Defaults to `"after"`.
 
 ### `insertHR()`
 Inserts a standalone markdown horizontal rule line (`---`) at the cursor.

@@ -1982,6 +1982,242 @@ describe('FigureShortcode', () => {
   });
 });
 
+describe('Agent API', () => {
+  let container;
 
+  beforeEach(() => {
+    container = document.createElement('div');
+    document.body.appendChild(container);
+  });
 
+  describe('replaceSelection', () => {
+    it('replaces selected text with new content', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: 'Hello cruel world',
+      });
+      editor.setSelection(6, 11); // select "cruel"
+      editor.replaceSelection('beautiful');
+      expect(editor.getValue()).toBe('Hello beautiful world');
+    });
 
+    it('inserts at cursor when nothing is selected', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: 'Hello world',
+      });
+      editor.setSelection(5, 5); // cursor after "Hello"
+      editor.replaceSelection(' brave new');
+      expect(editor.getValue()).toBe('Hello brave new world');
+    });
+
+    it('replaces multi-line selection', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: 'Line one\nLine two\nLine three',
+      });
+      editor.setSelection(0, 17); // "Line one\nLine two"
+      editor.replaceSelection('Replaced');
+      expect(editor.getValue()).toBe('Replaced\nLine three');
+    });
+
+    it('places cursor at end of inserted text', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: 'ABCDEF',
+      });
+      editor.setSelection(2, 4); // select "CD"
+      editor.replaceSelection('XY');
+      // Cursor should be at position 4 (after "ABYXEF" -> "ABXYEF")
+      expect(editor.getSelection()).toBe('');
+      // Insert something at the new cursor position to verify
+      editor.replaceSelection('|');
+      expect(editor.getValue()).toBe('ABXY|EF');
+    });
+
+    it('handles empty string replacement (deletion)', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: 'Remove this part please',
+      });
+      editor.setSelection(7, 17); // select "this part "
+      editor.replaceSelection('');
+      expect(editor.getValue()).toBe('Remove please');
+    });
+  });
+
+  describe('insertBlock', () => {
+    it('inserts after current line by default', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: 'First line\nSecond line',
+      });
+      editor.setSelection(3, 3); // cursor on "First line"
+      editor.insertBlock('## New Heading');
+      expect(editor.getValue()).toBe('First line\n\n## New Heading\n\nSecond line');
+    });
+
+    it('inserts before current line', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: 'First line\nSecond line',
+      });
+      editor.setSelection(14, 14); // cursor on "Second line"
+      editor.insertBlock('Inserted before', 'before');
+      expect(editor.getValue()).toBe('First line\n\nInserted before\n\nSecond line');
+    });
+
+    it('inserts at document end', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: 'Existing content',
+      });
+      editor.insertBlock('## Appended', 'end');
+      expect(editor.getValue()).toBe('Existing content\n\n## Appended');
+    });
+
+    it('inserts at document start', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: 'Existing content',
+      });
+      editor.insertBlock('# Title', 'start');
+      expect(editor.getValue()).toBe('# Title\n\nExisting content');
+    });
+
+    it('handles insertion at the very start of an empty document', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: '',
+      });
+      editor.insertBlock('# Hello', 'start');
+      expect(editor.getValue()).toBe('# Hello');
+    });
+
+    it('handles insertion at the very end of an empty document', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: '',
+      });
+      editor.insertBlock('# Hello', 'end');
+      expect(editor.getValue()).toBe('# Hello');
+    });
+
+    it('does not double blank lines when one already exists after cursor', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: 'First line\n\nThird line',
+      });
+      editor.setSelection(3, 3); // cursor on "First line"
+      editor.insertBlock('Inserted');
+      // "First line" ends at pos 10, next char is \n, char after that is \n
+      // So there's already a blank line — should only add one \n prefix
+      expect(editor.getValue()).toBe('First line\n\nInserted\n\nThird line');
+    });
+
+    it('does not double blank lines when one already exists before insert point', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: 'First line\n\nThird line',
+      });
+      editor.setSelection(15, 15); // cursor on "Third line"
+      editor.insertBlock('Inserted', 'before');
+      expect(editor.getValue()).toBe('First line\n\nInserted\n\nThird line');
+    });
+
+    it('inserts after current line when cursor is on last line (no trailing newline)', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: 'Only line',
+      });
+      editor.setSelection(4, 4);
+      editor.insertBlock('New block');
+      expect(editor.getValue()).toBe('Only line\n\nNew block');
+    });
+
+    it('inserts a multi-line code block correctly', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: 'Some text\nMore text',
+      });
+      editor.setSelection(3, 3); // cursor on first line
+      editor.insertBlock('```js\nconsole.log("hello");\n```');
+      expect(editor.getValue()).toBe('Some text\n\n```js\nconsole.log("hello");\n```\n\nMore text');
+    });
+  });
+
+  describe('getMarkdownState', () => {
+    it('returns full state snapshot without frontmatter', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: '# Hello World\n\nSome content here.',
+      });
+      editor.setSelection(2, 7); // select "Hello"
+
+      const state = editor.getMarkdownState();
+
+      expect(state.markdown).toBe('# Hello World\n\nSome content here.');
+      expect(state.frontmatter).toBe('');
+      expect(state.body).toBe('# Hello World\n\nSome content here.');
+      expect(state.selection).toBe('Hello');
+      expect(state.cursor.line).toBe(1);
+      expect(state.lineCount).toBe(3);
+      expect(state.stats.words).toBe(6);
+      expect(state.stats.characters).toBe(33);
+      expect(state.stats.readTime).toBe(1);
+    });
+
+    it('splits frontmatter from body correctly', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: '---\ntitle: My Post\nauthor: Jane\n---\n# Heading\n\nBody text.',
+      });
+
+      const state = editor.getMarkdownState();
+
+      expect(state.markdown).toBe('---\ntitle: My Post\nauthor: Jane\n---\n# Heading\n\nBody text.');
+      expect(state.frontmatter).toBe('title: My Post\nauthor: Jane');
+      expect(state.body).toBe('# Heading\n\nBody text.');
+    });
+
+    it('returns cursor position correctly on second line', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: 'Line one\nLine two',
+      });
+      editor.setSelection(13, 13); // middle of "Line two"
+
+      const state = editor.getMarkdownState();
+
+      expect(state.cursor.line).toBe(2);
+      expect(state.cursor.column).toBe(4);
+    });
+
+    it('returns empty selection when nothing is selected', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: 'No selection here.',
+      });
+      editor.setSelection(5, 5);
+
+      const state = editor.getMarkdownState();
+
+      expect(state.selection).toBe('');
+    });
+
+    it('handles empty document', () => {
+      const editor = new TravenEditor({
+        element: container,
+        initialValue: '',
+      });
+
+      const state = editor.getMarkdownState();
+
+      expect(state.markdown).toBe('');
+      expect(state.frontmatter).toBe('');
+      expect(state.body).toBe('');
+      expect(state.lineCount).toBe(1);
+      expect(state.stats.words).toBe(0);
+    });
+  });
+});

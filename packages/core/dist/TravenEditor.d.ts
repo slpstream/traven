@@ -105,6 +105,12 @@ export class TravenEditor {
      */
     setSelection(anchor: number, head?: number): void;
     /**
+     * Replaces the current selection with the given text.
+     * If nothing is selected, inserts at cursor position.
+     * @param {string} text - The text to insert.
+     */
+    replaceSelection(text: string): void;
+    /**
      * Sets the editor theme dynamically.
      * @param {"light" | "dark"} theme
      */
@@ -129,6 +135,28 @@ export class TravenEditor {
      * @returns {number}
      */
     getReadTime(): number;
+    /**
+     * Returns a snapshot of the current editor state optimized for external agents.
+     * Includes the full raw markdown, split frontmatter/body, current selection,
+     * cursor position, and document statistics.
+     * @returns {{ markdown: string, frontmatter: string, body: string, selection: string, cursor: { line: number, column: number }, lineCount: number, stats: { words: number, characters: number, readTime: number } }}
+     */
+    getMarkdownState(): {
+        markdown: string;
+        frontmatter: string;
+        body: string;
+        selection: string;
+        cursor: {
+            line: number;
+            column: number;
+        };
+        lineCount: number;
+        stats: {
+            words: number;
+            characters: number;
+            readTime: number;
+        };
+    };
     /**
      * Registers a custom markdown rendering function.
      * @param {function(string): string} renderFn - The rendering function.
@@ -197,6 +225,13 @@ export class TravenEditor {
      * Inserts a horizontal rule, handling spacing.
      */
     insertHR(): void;
+    /**
+     * Inserts a block of markdown at the specified position with proper blank-line spacing.
+     * Handles edge cases at document start/end and avoids doubling existing blank lines.
+     * @param {string} text - The markdown block to insert.
+     * @param {"before" | "after" | "start" | "end"} [position="after"] - Where to insert relative to cursor line or document bounds.
+     */
+    insertBlock(text: string, position?: "before" | "after" | "start" | "end"): void;
     /**
      * Inserts a standard 3x3 markdown table template, handling surrounding spacing.
      */
