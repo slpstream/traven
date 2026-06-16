@@ -1,5 +1,13 @@
 # @freedomware/traven-svelte
 
+## 0.2.1
+
+### Patch Changes
+
+- 9222457: Added robust Agent API methods (`replaceSelection`, `insertBlock`, `getMarkdownState`) optimized for LLM host integration.
+- Updated dependencies [9222457]
+  - @freedomware/traven@0.2.12
+
 ## 0.2.0
 
 ### Minor Changes
