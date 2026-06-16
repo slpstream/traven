@@ -1,6 +1,6 @@
 # Cheat Sheet
 
-ELI5 setup guide plus a full reference list of every option you can put next to `toolbar` and `line-numbers` on the `<traven-editor>` tag.
+Fast and easy setup guide plus a full reference list of every option you can put next to `toolbar` and `line-numbers` on the `<traven-editor>` tag.
 
 ---
 

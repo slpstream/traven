@@ -1,6 +1,6 @@
 # Quick Start
 
-Add Traven to a PHP form or regular HTML page in three steps.
+From Zero to Done in thirty seconds: Add Traven to a PHP form or regular HTML page in three quick steps.
 
 ---
 

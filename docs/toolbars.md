@@ -1,6 +1,6 @@
 # Toolbars
 
-Traven provides a highly configurable and versatile toolbar system featuring three independent formatting layers that can be used in any combination, or disabled entirely for a distraction-free writing environment.
+Use the ready-made toolbars in any way you can mix and match, or create your own styles and combinations to fit whatever you need. Traven provides a highly configurable and versatile toolbar system featuring three independent formatting layers that can be used in any combination, or disabled entirely for a distraction-free writing environment.
 
 ---
 

@@ -36,6 +36,22 @@ The editor is entirely framework-agnostic. It works beautifully whether you are 
 
 ---
 
+## Who is this for?
+
+Traven is designed for developers building CMS systems, blog platforms, administrative dashboards, or any kind of content forms that edit styling. It is a perfect fit if:
+
+* **You want clean Markdown output:** You need your content to remain portable, readable, and perfectly formatted as raw Markdown. 
+* **You want a seamless writing experience:** You prefer an elegant inline editing experience that lets writers focus, rather than a divided split-pane view.
+* **You want easy integration:** You need an editor that can be fully integrated and styled in just a few minutes, seamlessly adapting to the layout and theme of your existing project.
+
+<p align="center">
+ <a href="https://traven.dev/index.php?img=workspace0" target="_blank">
+  <img src="https://traven.dev/img/workspacehero.jpg" alt="Main Preview" width="100%">
+ </a>
+</p>
+
+---
+
 ## What is WYSIWYM?
 
 Traven is a **WYSIWYM** (What You See Is What You Mean) editor. This means it hides Markdown syntax when you are not editing it, showing clean, styled text instead. 
@@ -50,25 +66,22 @@ Type `**bold**` and the asterisks quietly step aside, leaving only the bold text
 
 ---
 
-## Who is this for?
+## Key Features
 
-Traven is designed for developers building CMS systems, blog platforms, administrative dashboards, or any content-heavy forms. It is a perfect fit if:
+* **Dynamic Toolbars:** Choose from floating, hybrid, or static toolbar layouts, including formatting bubbles and gutter insert menus.
+* **Math & Diagrams:** Built-in, lazy-loaded support for rendering LaTeX math equations and Mermaid diagrams.
+* **Image Uploads:** Optimistic image uploads with drag-and-drop support. Audio and video supported, too.
+* **Custom Shortcodes:** Extend standard Markdown with custom, interactive WYSIWYM widgets.
+* **Bidirectional Sync:** Support for split-screen layouts where the raw Markdown and the visual editor stay perfectly in sync.
+* **Vim Mode:** Built-in Vim emulation for power users.
 
-* **You want clean Markdown output:** You need your content to remain portable, readable, and perfectly formatted as raw Markdown. 
-* **You want a seamless writing experience:** You prefer an elegant inline editing experience that lets writers focus, rather than a divided split-pane view.
-* **You want easy integration:** You need an editor that can be fully integrated and styled in just a few minutes, seamlessly adapting to the layout and theme of your existing project.
-
-<p align="center">
- <a href="https://traven.dev/index.php?img=workspace0" target="_blank">
-  <img src="https://traven.dev/img/workspacehero.jpg" alt="Main Preview" width="100%">
- </a>
-</p>
+For a complete list of features, see the **[Key Features Documentation](docs/key-features.md)**.
 
 ---
 
 ## 30-Second Install
 
-The fastest way to get Traven running is by dropping the custom HTML element into your page.
+The fastest way to get Traven running is by simply dropping the custom HTML element into your page.
 
 ```html
 <!DOCTYPE html>
@@ -93,19 +106,6 @@ The fastest way to get Traven running is by dropping the custom HTML element int
 ```
 
 For more advanced setups, you can also instantiate Traven programmatically via `new TravenEditor()`.
-
----
-
-## Key Features
-
-* **Dynamic Toolbars:** Choose from floating, hybrid, or static toolbar layouts, including formatting bubbles and gutter insert menus.
-* **Math & Diagrams:** Built-in, lazy-loaded support for rendering LaTeX math equations and Mermaid diagrams.
-* **Image Uploads:** Optimistic image uploads with drag-and-drop support. Audio and video supported, too.
-* **Custom Shortcodes:** Extend standard Markdown with custom, interactive WYSIWYM widgets.
-* **Bidirectional Sync:** Support for split-screen layouts where the raw Markdown and the visual editor stay perfectly in sync.
-* **Vim Mode:** Built-in Vim emulation for power users.
-
-For a complete breakdown of features, see the **[Key Features Documentation](docs/key-features.md)**.
 
 ---
 
