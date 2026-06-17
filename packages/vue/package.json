@@ -26,10 +26,5 @@
     "@vitejs/plugin-vue": "^6.0.7",
     "vite": "^8.0.16",
     "vue": "^3.3.0"
-  },
-  "dependencies": {
-    "esbuild": "0.28.1",
-    "svelte": "5.56.3",
-    "vitest": "4.1.8"
   }
 }

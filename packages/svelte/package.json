@@ -26,8 +26,5 @@
   "devDependencies": {
     "@sveltejs/package": "^2.3.0",
     "svelte": "^5.56.3"
-  },
-  "dependencies": {
-    "esbuild": "0.28.1"
   }
 }
