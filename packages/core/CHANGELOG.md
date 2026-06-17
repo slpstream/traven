@@ -1,5 +1,11 @@
 # @freedomware/traven
 
+## 0.2.13
+
+### Patch Changes
+
+- docs: add README files for all monorepo packages to display on the npm registry.
+
 ## 0.2.12
 
 ### Patch Changes

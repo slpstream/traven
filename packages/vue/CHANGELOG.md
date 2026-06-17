@@ -1,5 +1,13 @@
 # @freedomware/traven-vue
 
+## 0.2.2
+
+### Patch Changes
+
+- docs: add README files for all monorepo packages to display on the npm registry.
+- Updated dependencies
+  - @freedomware/traven@0.2.13
+
 ## 0.2.1
 
 ### Patch Changes
