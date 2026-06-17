@@ -1,10 +1,10 @@
-# Traven — Developer Synopsis
+# Developer Overview
 
 What Traven is, how it's built, and what it offers a developer building on top of it. This page is a standalone reference for someone who considers using and building on Traven and wants the full picture in one place.
 
 ---
 
-## 1. What Traven is
+## What Traven is
 
 Traven is an embeddable, WYSIWYM (What You See Is What You Mean) Markdown editor for the browser. The document is always a flat Markdown string — Markdown in, Markdown out, no intermediate HTML or JSON tree. Markdown syntax (e.g. `**bold**`, `# Heading`) is decorated out of sight when the cursor is elsewhere and reappears when the cursor enters the token, giving a Typora- or Obsidian-style inline editing experience without `contenteditable` fragility.
 
@@ -19,7 +19,7 @@ A developer building on Traven will almost always end up using the programmatic 
 
 ---
 
-## 2. Architecture
+## Architecture
 
 ### Engine: CodeMirror 6 + Lezer
 
@@ -61,7 +61,7 @@ Key architectural consequences:
 
 ---
 
-## 3. The two integration models
+## Two integration models
 
 ### Declarative: `<traven-editor>`
 
@@ -99,15 +99,15 @@ It integrates cleanly with reactive frameworks (React, Vue, Svelte wrappers ship
 
 ---
 
-## 4. Programmatic API reference
+## Programmatic API reference
 
-### 4.1 Construction
+### Construction
 
 ```javascript
 const editor = new TravenEditor(options);
 ```
 
-### 4.2 Options
+### Options
 
 | Option | Type | Default | Notes |
 | :--- | :--- | :--- | :--- |
@@ -138,7 +138,7 @@ const editor = new TravenEditor(options);
 | `onUploadImage` | `function` | `null` | `(file: File) => Promise<string>` — resolve to the final URL. |
 | `onStatsUpdate` | `function` | `null` | `(stats: { words, characters, readTime }) => void`. |
 
-### 4.3 Public methods
+### Public methods
 
 **Content access**
 
@@ -167,13 +167,13 @@ const editor = new TravenEditor(options);
 - `getCharacterCount()` → `number`
 - `getWordCount()` → `number`
 - `getReadTime()` → `number` (minutes)
-- `getMarkdownState()` → `object` — **the AI-friendly snapshot**, see §5.
+- `getMarkdownState()` → `object` — **the AI-friendly snapshot**, see below.
 
 **Rendering & escape hatches**
 
 - `registerRenderer(renderFn)` — register a custom `(markdown: string) => string` compilation function for HTML preview/export.
 - `getContentHtml()` → `string` — compiled HTML via the registered renderer or built-in fallback.
-- `getView()` → `EditorView` — **the raw CM6 view**, see §5.
+- `getView()` → `EditorView` — **the raw CM6 view**, see below.
 - `getUploadHandler()` → the configured upload handler or `null`.
 - `getComponents()` → `Array<string | object>` — registered component schemas.
 
@@ -181,7 +181,7 @@ const editor = new TravenEditor(options);
 
 - `on(event, callback)` — register listeners. Events: `"change"`, `"save"`, `"statsUpdate"`.
 
-### 4.4 Editing & formatting helpers
+### Editing & formatting helpers
 
 Built-in commands for programmatic text manipulation:
 
@@ -200,28 +200,28 @@ Built-in commands for programmatic text manipulation:
 - `insertDateTime()` — insert current date/time.
 - `insertList(type)` — convert selection/line to `"ul" | "ol" | "task"`.
 
-### 4.5 Static methods
+### Static methods
 
 - `TravenEditor.configureMermaid(options)` — global Mermaid config: `true` (CDN, v11.4.0), `string` (custom CDN URL), `object` (`{ js }`), or `false` to disable.
 - `TravenEditor.initMermaid(container)` → `Promise<void>` — scan a container and render uninitialized Mermaid diagrams.
 
 ---
 
-## 5. Power features / Differentiators
+## Power features / Differentiators
 
-### 5.1 WYSIWYM collapsing-syntax pipeline
+### WYSIWYM collapsing-syntax pipeline
 
 The core of the experience. `wysiwym.js` decorates Markdown syntax tokens (emphasis, headings, code, links, etc.) to hide them when the cursor isn't inside the token, and undecorates them when the cursor enters. The document model never changes — it's still the flat string — so there's no parse/edit/serialize cycle and no opportunity for roundtrip artifacts.
 
 `delimiter-skip.js` provides the keyboard navigation helpers that keep the cursor from getting stuck inside collapsed delimiters during arrow-key navigation. This is the kind of detail that separates a usable WYSIWYM editor from a frustrating one. Traven got this from Typora, so expect a similarly polished user-experience.
 
-### 5.2 Native form association
+### Native form association
 
 `<traven-editor>` uses `ElementInternals` to register as a form-associated custom element. The practical payoff: `FormData`, `<form method="POST">`, and standard form submission all work with no JavaScript on the host page. The server receives Markdown via a normal form field.
 
 This is rare. Most Markdown editors require you to instantiate, attach an `onChange` callback, write to a hidden field, or post via fetch. Traven's declarative path skips all of that.
 
-### 5.3 `getMarkdownState()` — the AI-agent hook
+### `getMarkdownState()` — the AI-agent hook
 
 ```javascript
 const state = editor.getMarkdownState();
@@ -238,15 +238,15 @@ const state = editor.getMarkdownState();
 
 This is explicitly designed for external AI agents and RAG pipelines — frontmatter is pre-parsed, the body is split out, cursor and stats are included. If you're building an AI-assisted editor (autocomplete, inline edits, summarize, etc.), this is the one call you want.
 
-### 5.4 `getView()` — the CM6 escape hatch
+### `getView()` (CM6 escape hatch)
 
 `getView()` returns the raw CodeMirror 6 `EditorView`. This means any CM6 extension — `@codemirror/autocomplete`, `@codemirror/search`, custom language support, linters, custom decorations — can be composed onto the editor. Traven isn't a sealed box; if you outgrow the built-in API, you have the full CM6 ecosystem underneath.
 
-### 5.5 Bidirectional split sync (`sourceElement`)
+### Bidirectional split sync (`sourceElement`)
 
 Pass a `sourceElement` option and Traven mounts a second, raw-editor pane that stays in sync with the WYSIWYM pane — cursor positions and edit history included, without infinite recursive event loops. This is how you build split-screen WYSIWYM/Raw layouts.
 
-### 5.6 Optimistic media uploads
+### Optimistic media uploads
 
 Drag-and-drop, clipboard paste, and file picker all flow through `onUploadImage`. When a file is dropped, Traven immediately inserts a loading spinner widget at the target position; when your handler resolves to a URL, the spinner is replaced with the rendered media. Audio and video are supported alongside images via the `[audio]`, `[video]`, and `[figure]` shortcodes.
 
@@ -261,7 +261,7 @@ new TravenEditor({
 });
 ```
 
-### 5.7 Custom shortcodes & components
+### Custom shortcodes & components
 
 Traven extends Markdown with semantic shortcodes (`[image]`, `[video]`, `[audio]`, `[figure]`, and the general `[component]` with aliases like `blockquote`, `pullquote`, `info`, `warning`, `highlight`). These parse into interactive WYSIWYM widgets inside the editing canvas and compile into clean semantic HTML on output.
 
@@ -278,7 +278,7 @@ new TravenEditor({
 
 …which produces parseable shortcodes like `[component name="callout" type="warning"]…[/component]` that your backend can render safely.
 
-### 5.8 `registerRenderer()` — custom HTML output
+### `registerRenderer()` — custom HTML output
 
 ```javascript
 editor.registerRenderer((markdown) => myCustomHtmlConverter(markdown));
@@ -287,7 +287,7 @@ const html = editor.getContentHtml();
 
 Register your own compilation function and `getContentHtml()` will use it. This is how you adapt Markdown export to any CMS database scheme or run your own sanitizer/renderer.
 
-### 5.9 Lazy-loaded extras
+### Lazy-loaded extras
 
 - **LaTeX (KaTeX)** — configurable via the `katex` option (preloaded, CDN, or self-hosted paths).
 - **Mermaid diagrams** — write as fenced code blocks, rendered as interactive SVGs in the editor. Configurable globally via `TravenEditor.configureMermaid()`.
@@ -295,29 +295,29 @@ Register your own compilation function and `getContentHtml()` will use it. This 
 
 These load on demand, not up front — keeps the initial bundle lean.
 
-### 5.10 Vim mode
+### Vim mode
 
 Built-in via `@replit/codemirror-vim`. Toggle at runtime with `setVimMode(true)` or the `vimMode` option. Normal, visual, and insert modes are emulated in both the WYSIWYM and raw panes.
 
-### 5.11 CSS framework isolation
+### CSS framework isolation
 
 All styling is scoped under `.traven-editor-wrapper`, `.cm-editor`, and `.traven-modal`. No global CSS resets are injected — safe to embed on Tailwind, Bootstrap, or custom-CSS pages without breaking the host layout. For strict CSP environments, set `autoLoadStyles: false` and ship the stylesheet yourself.
 
-### 5.12 Accessibility (A11y)
+### Accessibility (A11y)
 
 - Toolbars use `role="toolbar"`; menus use `role="menu"` with `aria-haspopup` / `aria-expanded`.
 - An internal `aria-live="polite"` announcer reads state changes (toolbar toggles, search matches) to assistive tech.
 - Modals (link, image, table insertion) trap focus while open and return it to the triggering button on close.
 
-### 5.13 Skins & toolbar modes
+### Skins & toolbar modes
 
-- **8 ready-made skins** (light, dark, editorial, modern, academic, …) — hot-swappable at runtime by changing the stylesheet `<link>`. See `docs/skins.md`.
-- **3 toolbar presentation modes** (`static`, `floating`, `hybrid`) via the `toolbarMode` option, plus a **gutter insert menu** opened with `Mod-Shift-Enter`.
-- **Selection bubble** opened with `Mod-.` for inline formatting on selected text.
+- **8 ready-made skins** (light, dark, editorial, modern, academic, …) — hot-swappable at runtime by changing the stylesheet `<link>`. You can also build your own. See `docs/skins.md`.
+- **3 toolbar presentation modes** (`static`, `floating`, `hybrid`) via the `toolbarMode` option, plus a **gutter insert menu** opened with `Mod-Shift-Enter`. Again, you can fully build your own toolbars, too.
+- **Selection bubble** opened with `Mod-.` for inline formatting on selected text. Part of the toolbar options.
 
 ---
 
-## 6. What it's optimized for
+## What it's optimized for
 
 Use Traven when:
 
@@ -330,7 +330,7 @@ Use Traven when:
 
 ---
 
-## 7. Honest constraints
+## Constraints
 
 What Traven is *not*, so you can scope correctly:
 
@@ -338,11 +338,11 @@ What Traven is *not*, so you can scope correctly:
 - **Not a block editor.** Traven outputs a single continuous Markdown string, not an array of discrete JSON block objects. If your DB schema needs blocks in separate rows, use a block editor.
 - **Not a collaborative editor.** No CRDT-based real-time multi-user editing. That's a different category of software.
 - **Not a framework.** It's a drop-in web component + class API. If you're building a bespoke editor from primitives, reach for ProseMirror or Lexical instead.
-- **Maturity.** It is new. The architecture is sound and the API is well-considered, but production adoption should account for the relative youth of the project versus incumbents with multi-year track records. Budget time to verify behavior on your edge-case documents.
+- **Maturity.** Newer than many of the editors you compare against. The architecture is sound and the API is well-considered, but production adoption should account for the relative youth of the project versus incumbents with multi-year track records. 
 
 ---
 
-## 8. Where to look next
+## Where to look next
 
 - `docs/cheatsheet.md` — full `<traven-editor>` attribute reference and toolbar button catalog.
 - `docs/common-configurations.md` — seven copy-pasteable recipes (minimal comment box, blog editor, CMS admin panel, three-pane WYSIWYM/Raw/Preview, code-heavy docs editor, read-only preview, split-screen raw sync).
@@ -364,7 +364,5 @@ What Traven is *not*, so you can scope correctly:
 - `docs/dev/custom-markdown-rendering.md` — how to replace Traven's built-in markdown engine with a custom third-party renderer (e.g., Marked or markdown-it) using the `registerRenderer` API.
 
 The packages `packages/react`, `packages/vue`, `packages/svelte` provide framework wrappers if you want a thinner integration layer than mounting the class API yourself.
-
-
 
 
