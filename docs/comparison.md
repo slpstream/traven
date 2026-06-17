@@ -86,6 +86,38 @@ Vditor is an extremely feature-rich Markdown editor that supports WYSIWYM, split
 
 ---
 
+## Code Editors
+
+Code editors are built for developers to write source code. They maintain virtual document buffers, support advanced text manipulation (like multi-cursors), and provide syntax highlighting for Markdown, but they do not render inline visual styling or rich media.
+
+| Feature | Traven | CodeMirror 6 & Monaco | ACE Editor | CodeJar |
+| :--- | :--- | :--- | :--- | :--- |
+| **UX Goal** | Distraction-free prose writing | Desktop-class code editing | Desktop-class code editing | Lightweight code snippets |
+| **Visuals** | WYSIWYM / Inline preview | Plain text (Syntax-highlighted) | Plain text (Syntax-highlighted) | Plain text (Syntax-highlighted) |
+| **Toolbars** | Built-in (Floating/Static) | None | None | None |
+| **Architecture** | High-level component | Modular engine / Desktop port | Monolithic engine | Micro wrapper (`< 2KB`) |
+
+### Traven vs. Low-Level Engines (CodeMirror 6 & Monaco)
+Monaco (the engine behind VS Code) and CodeMirror 6 are the industry standards for browser-based code editing.
+* **Where they win:** If you are building a developer-focused IDE, a developer playground, or need to support syntax highlighting for dozens of programming languages, these engines are unmatched.
+* **Where they fall short:** They are low-level layout engines, not user-facing editors. To make them usable for content authors, you must manually build toolbars, manage image upload APIs, configure formatting behavior, and implement live visual rendering.
+* **Where Traven wins:** Traven is built *on top* of CodeMirror 6. It configures the engine to behave as a seamless, visual document editor, saving you months of custom development.
+
+### Traven vs. Monolithic Code Editors (ACE Editor)
+ACE is a mature, high-performance editor that has historically been used to embed code textareas in web interfaces.
+* **Where it wins:** Like Monaco, it is highly optimized for editing raw code blocks and has a massive library of keybindings and themes.
+* **Where it falls short:** ACE is a legacy monolithic library. It has poor mobile/virtual keyboard support compared to modern engines, lacks modular packages, and provides no built-in visual helpers (toolbars, inline formatting) for prose writing.
+* **Where Traven wins:** Traven is modular, mobile-first, and provides a polished WYSIWYM experience instead of a raw code input box.
+
+### Traven vs. Micro-Editors (CodeJar)
+CodeJar is an extremely lightweight syntax-highlighting wrapper around HTML's native `contenteditable` behavior.
+* **Where it wins:** It is incredibly lightweight (< 2KB) and has zero dependencies. Perfect for simple inline code snippets or tiny CSS/JS inputs.
+* **Where it falls short:** It lacks an internal document model, making it unsuitable for large documents, complex keymaps (like Vim mode), or rich visual layouts.
+* **Where Traven wins:** Traven is built for production-grade, long-form content authoring, offering robust keymaps, document history, and visual media rendering.
+
+---
+
+
 ## Summary: When to use Traven?
 
 You should choose Traven if:
