@@ -38,6 +38,18 @@ While Traven itself remains UI-pure, the editor is nevertheless designed to work
 
 When the host's AI produces output, it flows directly into Traven via `replaceSelection()` or `insertBlock()`. When the AI needs context, it simply reads from `getMarkdownState()`, which provides a clean, JSON-serializable snapshot of the document, cursor position, and extracted frontmatter. This ensures that when developers embed Traven into headless CMSes or intelligent note-taking tools, the host's AI can interact with Traven's content seamlessly.
 
+## Is Traven AI-friendly? Can AI agents work with content created in Traven?
+
+Because Traven outputs **pure, portable Markdown stored in flat files** (not opaque database blobs), it works seamlessly with modern AI-assisted workflows:
+
+- **AI coding assistants** (Cursor, Copilot, Claude Code) can read, edit, and write your content files directly
+- **RAG pipelines** can ingest your Markdown without custom extractors
+- **Static site generators** (Astro, Next.js, Hugo, Eleventy) treat Traven content as first-class citizens
+- **Git-based workflows** — every edit is a readable diff, reviewable by humans and AI alike
+- **No vendor lock-in** — your content isn't trapped in a proprietary format or SaaS platform
+
+Traven's philosophy: **the file *is* the API.** Whether the editor is a human or an AI agent, the interface is the same — clean, readable Markdown in a file.
+
 ## So, yes: Traven is a good match for AI
 
 The future of writing software isn't about which editor has the best built-in AI gimmick. It's about which editor provides the cleanest foundation for human and artificial intelligence to collaborate. By treating Markdown as the foundation, Traven ensures that the text always remains accessible, portable, and natively fluent in the format that AI already speaks.
