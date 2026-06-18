@@ -14,6 +14,10 @@ export function cursorInRange(state: import("@codemirror/state").EditorState, fr
  * @returns {boolean}
  */
 export function selectionOverlapsRange(state: import("@codemirror/state").EditorState, from: number, to: number): boolean;
+export function getActiveFigureRanges(state: any, cursorHead: any): {
+    from: number;
+    to: number;
+}[];
 export function getListPrefixAt(state: any, pos: any): {
     type: string;
     from: any;
@@ -29,6 +33,12 @@ export function getListStrippingRanges(state: any, from: any, to: any): {
 }[];
 export function isInCodeBlock(state: any, pos: any): boolean;
 export const collapseDeco: Decoration;
+export const boldDeco: Decoration;
+export const italicDeco: Decoration;
+export const strikethroughDeco: Decoration;
+export const codeDeco: Decoration;
+export const highlightDeco: Decoration;
+export const linkDeco: Decoration;
 export const blockquoteLineDeco: Decoration;
 /** @type {import("@codemirror/state").StateEffectType<any>} */
 export const setSuppression: import("@codemirror/state").StateEffectType<any>;

@@ -60,7 +60,7 @@ class MathWidget extends WidgetType {
   }
 }
 
-function extractMermaidCode(blockText) {
+export function extractMermaidCode(blockText) {
   const lines = blockText.split(/\r?\n/);
   if (lines.length >= 2) {
     return lines.slice(1, lines.length - 1).join("\n").trim();
@@ -159,7 +159,7 @@ function renderInlineMarkdown(text) {
   return html;
 }
 
-class MermaidWidget extends WidgetType {
+export class MermaidWidget extends WidgetType {
   /**
    * @param {string} code
    * @param {number} nodeFrom
@@ -224,52 +224,6 @@ class MermaidWidget extends WidgetType {
 }
 
 
-class CheckboxWidget extends WidgetType {
-  constructor(checked, pos) {
-    super();
-    this.checked = checked;
-    this.pos = pos;
-  }
-
-  toDOM(view) {
-    const input = document.createElement("input");
-    input.type = "checkbox";
-    input.checked = this.checked;
-    input.className = "cm-wysiwym-checkbox";
-    input.setAttribute("aria-label", this.checked ? "Completed task" : "Incomplete task");
-
-    input.addEventListener("mousedown", (e) => {
-      e.preventDefault();
-      if (view.state.readOnly) return;
-
-      const marker = view.state.sliceDoc(this.pos, this.pos + 3);
-      const isChecked = /[xX]/.test(marker[1]);
-      const replacement = isChecked ? "[ ]" : "[x]";
-
-      view.dispatch({
-        changes: { from: this.pos, to: this.pos + 3, insert: replacement }
-      });
-    });
-
-    return input;
-  }
-
-  eq(other) {
-    return this.checked === other.checked;
-  }
-
-  ignoreEvent() { return false; }
-}
-
-class BulletWidget extends WidgetType {
-  toDOM() {
-    const span = document.createElement("span");
-    span.className = "cm-wysiwym-bullet";
-    span.innerHTML = "•";
-    return span;
-  }
-  eq() { return true; }
-}
 
 class TableWidget extends WidgetType {
   constructor(tableText, tableFrom) {
@@ -975,14 +929,13 @@ export function selectionOverlapsRange(state, from, to) {
 // --- Decoration Tokens ---
 
 export const collapseDeco = Decoration.replace({});
-
-// Inline styled decorations
-const boldDeco = Decoration.mark({ class: "cm-wysiwym-bold" });
-const italicDeco = Decoration.mark({ class: "cm-wysiwym-italic" });
-const codeDeco = Decoration.mark({ class: "cm-wysiwym-inline-code" });
-const strikethroughDeco = Decoration.mark({ class: "cm-wysiwym-strikethrough" });
-const highlightDeco = Decoration.mark({ class: "cm-wysiwym-highlight" });
-const linkDeco = Decoration.mark({ class: "cm-wysiwym-link-anchor" });
+// Inline styles
+export const boldDeco = Decoration.mark({ class: "cm-wysiwym-bold" });
+export const italicDeco = Decoration.mark({ class: "cm-wysiwym-italic" });
+export const strikethroughDeco = Decoration.mark({ class: "cm-wysiwym-strikethrough" });
+export const codeDeco = Decoration.mark({ class: "cm-wysiwym-inline-code" });
+export const highlightDeco = Decoration.mark({ class: "cm-wysiwym-highlight" });
+export const linkDeco = Decoration.mark({ class: "cm-wysiwym-link-anchor" });
 
 // Block/Frontmatter styled decorations
 const frontmatterLineDeco = Decoration.line({ class: "cm-wysiwym-frontmatter" });
@@ -992,16 +945,16 @@ const frontmatterActiveLineDeco = Decoration.line({ class: "cm-wysiwym-frontmatt
 export const blockquoteLineDeco = Decoration.line({ class: "cm-wysiwym-blockquote" });
 
 // Block code line styles
-const codeBlockLineDeco = Decoration.line({ class: "cm-wysiwym-codeblock-line" });
-const codeBlockLineFirstDeco = Decoration.line({ class: "cm-wysiwym-codeblock-line cm-wysiwym-codeblock-line-first" });
-const codeBlockLineLastDeco = Decoration.line({ class: "cm-wysiwym-codeblock-line cm-wysiwym-codeblock-line-last" });
-const codeBlockLineSingleDeco = Decoration.line({ class: "cm-wysiwym-codeblock-line cm-wysiwym-codeblock-line-first cm-wysiwym-codeblock-line-last" });
+export const codeBlockLineDeco = Decoration.line({ class: "cm-wysiwym-codeblock-line" });
+export const codeBlockLineFirstDeco = Decoration.line({ class: "cm-wysiwym-codeblock-line cm-wysiwym-codeblock-line-first" });
+export const codeBlockLineLastDeco = Decoration.line({ class: "cm-wysiwym-codeblock-line cm-wysiwym-codeblock-line-last" });
+export const codeBlockLineSingleDeco = Decoration.line({ class: "cm-wysiwym-codeblock-line cm-wysiwym-codeblock-line-first cm-wysiwym-codeblock-line-last" });
 
 // Table line styles
 const tableRowLineDeco = Decoration.line({ class: "cm-wysiwym-table-row" });
 
 // Collapsed fenced code line style
-const collapsedFenceLineDeco = Decoration.line({ class: "cm-wysiwym-collapsed-fence" });
+export const collapsedFenceLineDeco = Decoration.line({ class: "cm-wysiwym-collapsed-fence" });
 
 
 // --- Suppression StateField ---
@@ -1046,6 +999,22 @@ export const focusField = StateField.define({
     return value;
   }
 });
+
+export function getActiveFigureRanges(state, cursorHead) {
+  const activeFigureRanges = [];
+  const docText = state.doc.toString();
+  const figureRegex = /\[figure((?:\s+[^\]]*|=\s*(?:"[^"]*"|'[^']*'|[^\s\]]+)(?:\s+[^\]]*)?)?)\]([\s\S]*?)\[\/figure\]/g;
+  let match;
+  while ((match = figureRegex.exec(docText)) !== null) {
+    const from = match.index;
+    const to = from + match[0].length;
+    const isCursorInside = cursorHead > from && cursorHead < to;
+    if (!isCursorInside) {
+      activeFigureRanges.push({ from, to });
+    }
+  }
+  return activeFigureRanges;
+}
 
 /**
  * --- Decoration Builder ---
@@ -1104,75 +1073,6 @@ function buildWysiwymDecorations(state) {
           return false;
         }
 
-        // 1. Bold (StrongEmphasis)
-        if (node.name === "StrongEmphasis") {
-          const isCursorInside = cursorHead > node.from && cursorHead < node.to;
-          const isSuppressed = suppressed && suppressed.some(s => s.from === node.from && s.to === node.to);
-
-          if (!isCursorInside || isSuppressed) {
-            // Collapse delimiters (first 2 and last 2 characters)
-            collected.push({ from: node.from, to: node.from + 2, deco: collapseDeco });
-            collected.push({ from: node.to - 2, to: node.to, deco: collapseDeco });
-            // Style content
-            collected.push({ from: node.from + 2, to: node.to - 2, deco: boldDeco });
-          }
-        }
-
-        // 2. Italic (Emphasis)
-        if (node.name === "Emphasis") {
-          const isCursorInside = cursorHead > node.from && cursorHead < node.to;
-          const isSuppressed = suppressed && suppressed.some(s => s.from === node.from && s.to === node.to);
-
-          if (!isCursorInside || isSuppressed) {
-            // Collapse delimiters (first 1 and last 1 characters)
-            collected.push({ from: node.from, to: node.from + 1, deco: collapseDeco });
-            collected.push({ from: node.to - 1, to: node.to, deco: collapseDeco });
-            // Style content
-            collected.push({ from: node.from + 1, to: node.to - 1, deco: italicDeco });
-          }
-        }
-
-        // 2.5 Strikethrough (Strikethrough)
-        if (node.name === "Strikethrough") {
-          const isCursorInside = cursorHead > node.from && cursorHead < node.to;
-          const isSuppressed = suppressed && suppressed.some(s => s.from === node.from && s.to === node.to);
-
-          if (!isCursorInside || isSuppressed) {
-            // Collapse delimiters (first 2 and last 2 characters '~~')
-            collected.push({ from: node.from, to: node.from + 2, deco: collapseDeco });
-            collected.push({ from: node.to - 2, to: node.to, deco: collapseDeco });
-            // Style content
-            collected.push({ from: node.from + 2, to: node.to - 2, deco: strikethroughDeco });
-          }
-        }
-
-        // 2.6 Highlight (Highlight)
-        if (node.name === "Highlight") {
-          const isCursorInside = cursorHead > node.from && cursorHead < node.to;
-          const isSuppressed = suppressed && suppressed.some(s => s.from === node.from && s.to === node.to);
-
-          if (!isCursorInside || isSuppressed) {
-            // Collapse delimiters (first 2 and last 2 characters '==')
-            collected.push({ from: node.from, to: node.from + 2, deco: collapseDeco });
-            collected.push({ from: node.to - 2, to: node.to, deco: collapseDeco });
-            // Style content
-            collected.push({ from: node.from + 2, to: node.to - 2, deco: highlightDeco });
-          }
-        }
-
-        // 3. Inline Code (InlineCode)
-        if (node.name === "InlineCode") {
-          const isCursorInside = cursorHead > node.from && cursorHead < node.to;
-          
-          if (!isCursorInside) {
-            // Collapse delimiters (backticks)
-            collected.push({ from: node.from, to: node.from + 1, deco: collapseDeco });
-            collected.push({ from: node.to - 1, to: node.to, deco: collapseDeco });
-            // Style content
-            collected.push({ from: node.from + 1, to: node.to - 1, deco: codeDeco });
-          }
-        }
-
         // 3.1. Inline Math (InlineMath)
         if (node.name === "InlineMath") {
           const isCursorInside = cursorHead > node.from && cursorHead < node.to;
@@ -1206,72 +1106,7 @@ function buildWysiwymDecorations(state) {
         }
 
 
-        // 3.5. Links [text](url) / [text](url "title")
-        if (node.name === "Link") {
-          const isCursorInside = cursorHead > node.from && cursorHead < node.to;
 
-          if (!isCursorInside) {
-            // Walk child nodes to find content boundaries, collapse markers/URL/title
-            const c = node.node.cursor();
-            let firstMarkEnd = null;
-            let secondMarkStart = null;
-            let linkTitle = null;
-            let markCount = 0;
-
-            if (c.firstChild()) {
-              do {
-                if (c.name === "LinkMark") {
-                  markCount++;
-                  if (markCount === 1) firstMarkEnd = c.to;   // end of "["
-                  if (markCount === 2) secondMarkStart = c.from; // start of "]"
-                  // Collapse all bracket/paren markers
-                  collected.push({ from: c.from, to: c.to, deco: collapseDeco });
-                }
-                if (c.name === "URL") {
-                  collected.push({ from: c.from, to: c.to, deco: collapseDeco });
-                }
-                if (c.name === "LinkTitle") {
-                  // Extract title text (strip surrounding quotes)
-                  const raw = state.sliceDoc(c.from, c.to);
-                  linkTitle = raw.replace(/^["'(]|["')]$/g, "");
-                  collected.push({ from: c.from, to: c.to, deco: collapseDeco });
-                }
-              } while (c.nextSibling());
-            }
-
-            // Style the visible link text (between "[" and "]")
-            if (firstMarkEnd !== null && secondMarkStart !== null && secondMarkStart > firstMarkEnd) {
-              const deco = linkTitle
-                ? Decoration.mark({ class: "cm-wysiwym-link-anchor", attributes: { title: linkTitle } })
-                : linkDeco;
-              collected.push({ from: firstMarkEnd, to: secondMarkStart, deco });
-            }
-          }
-        }
-
-        // 3.6. Autolinks <https://url> (which is mapped to "Autolink" in CommonMark)
-        if (node.name === "Autolink") {
-          const isCursorInside = cursorHead > node.from && cursorHead < node.to;
-
-          if (!isCursorInside) {
-            // Collapse the < and > angle brackets (first and last characters)
-            collected.push({ from: node.from, to: node.from + 1, deco: collapseDeco });
-            collected.push({ from: node.to - 1, to: node.to, deco: collapseDeco });
-            // Style the URL text between the brackets
-            collected.push({ from: node.from + 1, to: node.to - 1, deco: linkDeco });
-          }
-        }
-        // Naked GFM Autolinks (which are mapped directly to "URL" under GFM parser extension)
-        if (node.name === "URL") {
-          const parent = node.node.parent;
-          const isNaked = parent && parent.name !== "Link" && parent.name !== "Image" && parent.name !== "Autolink";
-          if (isNaked) {
-            const isCursorInside = cursorHead > node.from && cursorHead < node.to;
-            if (!isCursorInside) {
-              collected.push({ from: node.from, to: node.to, deco: linkDeco });
-            }
-          }
-        }
         // 3.7. Custom ImageShortcode [image src="..." ...]
         if (node.name === "ImageShortcode") {
           const isCursorInside = cursorHead > node.from && cursorHead < node.to;
@@ -1498,40 +1333,6 @@ function buildWysiwymDecorations(state) {
         }
 
 
-        // 8.5. Task List Checkboxes (interactive)
-        if (node.name === "TaskMarker") {
-          const line = state.doc.lineAt(node.from);
-          const isCursorOnLine = cursorLine === line.number;
-          if (!isCursorOnLine) {
-            const markerText = state.sliceDoc(node.from, node.to);
-            const isChecked = /\[[xX]\]/.test(markerText);
-            collected.push({
-              from: node.from,
-              to: node.to,
-              deco: Decoration.replace({
-                widget: new CheckboxWidget(isChecked, node.from)
-              })
-            });
-          }
-        }
-
-        // 8.6. Bullet List Markers (replace '-' / '*' / '+' with a bullet point when cursor is off the line)
-        if (node.name === "ListMark") {
-          const line = state.doc.lineAt(node.from);
-          const isCursorOnLine = cursorLine === line.number;
-          if (!isCursorOnLine) {
-            const listInfo = getListPrefixAt(state, line.from);
-            if (listInfo && listInfo.type === "ul" && listInfo.from === node.from) {
-              collected.push({
-                from: node.from,
-                to: node.to,
-                deco: Decoration.replace({
-                  widget: new BulletWidget()
-                })
-              });
-            }
-          }
-        }
 
         // 9. YAML Frontmatter
         if (node.name === "Frontmatter") {
@@ -1597,97 +1398,6 @@ function buildWysiwymDecorations(state) {
           }
         }
 
-        // 10. Fenced Code / Code Block
-        if (node.name === "FencedCode" || node.name === "CodeBlock") {
-          const isCursorInside = cursorHead > node.from && cursorHead < node.to;
-
-          if (node.name === "FencedCode") {
-            const blockText = state.sliceDoc(node.from, node.to);
-            const isMermaid = blockText.trim().startsWith("```mermaid") || blockText.trim().startsWith("~~~mermaid");
-            if (isMermaid) {
-              if (!isCursorInside) {
-                const rawCode = extractMermaidCode(blockText);
-                collected.push({
-                  from: node.from,
-                  to: node.to,
-                  deco: Decoration.replace({ widget: new MermaidWidget(rawCode, node.from), block: true })
-                });
-                return false;
-              }
-            }
-          }
-
-          const startLine = state.doc.lineAt(node.from).number;
-          const endLine = state.doc.lineAt(node.to).number;
-
-          for (let i = startLine; i <= endLine; i++) {
-            // If the cursor is outside, do not decorate the first and last lines (fences are collapsed)
-            if (!isCursorInside && node.name === "FencedCode" && (i === startLine || i === endLine)) {
-              continue;
-            }
-            if (!decoratedLines.has(i)) {
-              const line = state.doc.line(i);
-              let deco = codeBlockLineDeco;
-              
-              if (node.name === "FencedCode") {
-                const contentStartLine = startLine + 1;
-                const contentEndLine = endLine - 1;
-                
-                if (contentStartLine > contentEndLine) {
-                  continue;
-                }
-                
-                if (isCursorInside) {
-                  if (startLine === endLine) {
-                    deco = codeBlockLineSingleDeco;
-                  } else if (i === startLine) {
-                    deco = codeBlockLineFirstDeco;
-                  } else if (i === endLine) {
-                    deco = codeBlockLineLastDeco;
-                  }
-                } else {
-                  if (contentStartLine === contentEndLine) {
-                    deco = codeBlockLineSingleDeco;
-                  } else if (i === contentStartLine) {
-                    deco = codeBlockLineFirstDeco;
-                  } else if (i === contentEndLine) {
-                    deco = codeBlockLineLastDeco;
-                  }
-                }
-              } else {
-                if (startLine === endLine) {
-                  deco = codeBlockLineSingleDeco;
-                } else if (i === startLine) {
-                  deco = codeBlockLineFirstDeco;
-                } else if (i === endLine) {
-                  deco = codeBlockLineLastDeco;
-                }
-              }
-              
-              collected.push({
-                from: line.from,
-                to: line.from,
-                deco: deco
-              });
-              decoratedLines.add(i);
-            }
-          }
-
-          if (!isCursorInside && node.name === "FencedCode") {
-            const startLineObj = state.doc.line(startLine);
-            const endLineObj = state.doc.line(endLine);
-            collected.push({ from: startLineObj.from, to: startLineObj.to, deco: collapseDeco });
-            collected.push({ from: endLineObj.from, to: endLineObj.to, deco: collapseDeco });
-            if (!decoratedLines.has(startLine)) {
-              collected.push({ from: startLineObj.from, to: startLineObj.from, deco: collapsedFenceLineDeco });
-              decoratedLines.add(startLine);
-            }
-            if (!decoratedLines.has(endLine)) {
-              collected.push({ from: endLineObj.from, to: endLineObj.from, deco: collapsedFenceLineDeco });
-              decoratedLines.add(endLine);
-            }
-          }
-        }
       }
     });
 

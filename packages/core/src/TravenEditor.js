@@ -52,7 +52,15 @@ import {
   getListStrippingRanges,
   isInCodeBlock,
 } from "./wysiwym.js";
-import { TravenPluginsFacet, travenViewPlugin, HeadingPlugin, HrPlugin, QuotePlugin } from "./plugins/index.js";
+import { TravenPluginsFacet, travenViewPlugin, TravenPlugin,
+  HeadingPlugin,
+  HrPlugin,
+  QuotePlugin,
+  InlinePlugin,
+  LinkPlugin,
+  ListPlugin,
+  CodePlugin
+} from "./plugins/index.js";
 import { delimiterSkipKeymap } from "./delimiter-skip.js";
 import { imageDecorationPlugin, imageHandlerExtension } from "./images.js";
 import { vim } from "@replit/codemirror-vim";
@@ -344,7 +352,15 @@ export class TravenEditor {
     ];
 
     const mdParser = /** @type {import("@lezer/markdown").MarkdownParser} */ (markdownLanguage.parser);
-    const activePlugins = [new HeadingPlugin(), new HrPlugin(), new QuotePlugin()];
+    const activePlugins = [
+      new HeadingPlugin(),
+      new HrPlugin(),
+      new QuotePlugin(),
+      new InlinePlugin(),
+      new LinkPlugin(),
+      new ListPlugin(),
+      new CodePlugin()
+    ];
     this.#renderer = new TravenRenderer(mdParser.configure(parserExtensions), activePlugins);
 
     const extensions = [

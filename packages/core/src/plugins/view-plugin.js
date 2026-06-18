@@ -1,7 +1,8 @@
 // @ts-check
 import { Facet, RangeSetBuilder, StateField } from "@codemirror/state";
 import { EditorView } from "@codemirror/view";
-import { suppressionField, focusField, setFocusEffect, cursorInRange, selectionOverlapsRange } from "../wysiwym.js";
+import { syntaxTree } from "@codemirror/language";
+import { suppressionField, focusField, setFocusEffect, cursorInRange, selectionOverlapsRange, getActiveFigureRanges } from "../wysiwym.js";
 
 /**
  * Facet to register plugins with the view plugin
@@ -35,6 +36,7 @@ function buildDecorations(state, plugins) {
       cursorHead,
       cursorLine,
       suppressed,
+      suppressedFigureRanges: getActiveFigureRanges(state, cursorHead),
     };
 
     const sortedPlugins = [...plugins].sort((a, b) => a.decorationPriority - b.decorationPriority);
@@ -70,7 +72,8 @@ export const travenViewPlugin = StateField.define({
   },
   update(decorations, tr) {
     const focusChanged = tr.effects.some(e => e.is(setFocusEffect));
-    if (tr.docChanged || tr.selection || focusChanged) {
+    const treeChanged = syntaxTree(tr.state) !== syntaxTree(tr.startState);
+    if (tr.docChanged || tr.selection || focusChanged || treeChanged) {
       return buildDecorations(tr.state, tr.state.facet(TravenPluginsFacet));
     }
     return decorations.map(tr.changes);

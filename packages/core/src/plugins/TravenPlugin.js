@@ -11,6 +11,7 @@
  * @property {number} cursorHead
  * @property {number} cursorLine
  * @property {Array<{from: number, to: number}>|null} suppressed
+ * @property {Array<{from: number, to: number}>} suppressedFigureRanges
  */
 
 /**

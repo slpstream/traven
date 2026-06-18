@@ -9,6 +9,7 @@
  * @property {number} cursorHead
  * @property {number} cursorLine
  * @property {Array<{from: number, to: number}>|null} suppressed
+ * @property {Array<{from: number, to: number}>} suppressedFigureRanges
  */
 /**
  * Context passed to plugin lifecycle methods.
@@ -75,6 +76,10 @@ export type DecorationContext = {
         from: number;
         to: number;
     }> | null;
+    suppressedFigureRanges: Array<{
+        from: number;
+        to: number;
+    }>;
 };
 /**
  * Context passed to plugin lifecycle methods.
