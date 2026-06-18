@@ -26,7 +26,7 @@ import {
   syntaxTree,
 } from "@codemirror/language";
 import { classHighlighter } from "@lezer/highlight";
-import { markdown } from "@codemirror/lang-markdown";
+import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { Strikethrough, TaskList, Table, Autolink } from "@lezer/markdown";
 import { Highlight } from "./highlight-parser.js";
 import { Shortcode } from "./shortcode-parser.js";
@@ -40,6 +40,7 @@ import {
   renderMermaidSync,
   initMermaid,
 } from "./mermaid-parser.js";
+import { TravenRenderer } from "./renderer/index.js";
 import { yamlFrontmatter } from "@codemirror/lang-yaml";
 import { undo, redo } from "@codemirror/commands";
 import { search, openSearchPanel } from "@codemirror/search";
@@ -209,6 +210,8 @@ export class TravenEditor {
   #components;
   /** @type {HTMLElement|null} */
   #announcer = null;
+  /** @type {TravenRenderer} */
+  #renderer;
 
   /**
    * @param {TravenOptions} options
@@ -324,6 +327,24 @@ export class TravenEditor {
 
     const mode = resolveToolbarMode(options);
 
+    const parserExtensions = [
+      Strikethrough,
+      TaskList,
+      Table,
+      Autolink,
+      Highlight,
+      Shortcode,
+      VideoShortcode,
+      AudioShortcode,
+      FigureShortcode,
+      ComponentShortcode,
+      MathExtension,
+      { remove: ["SetextHeading"] },
+    ];
+
+    const mdParser = /** @type {import("@lezer/markdown").MarkdownParser} */ (markdownLanguage.parser);
+    this.#renderer = new TravenRenderer(mdParser.configure(parserExtensions));
+
     const extensions = [
       ...buildBaseSetup({
         lineNumbers: showLineNumbers,
@@ -336,20 +357,7 @@ export class TravenEditor {
           ...(options.codeLanguages
             ? { codeLanguages: options.codeLanguages }
             : {}),
-          extensions: [
-            Strikethrough,
-            TaskList,
-            Table,
-            Autolink,
-            Highlight,
-            Shortcode,
-            VideoShortcode,
-            AudioShortcode,
-            FigureShortcode,
-            ComponentShortcode,
-            MathExtension,
-            { remove: ["SetextHeading"] },
-          ],
+          extensions: parserExtensions,
         }),
       }),
       wysiwymPlugin(),
@@ -813,7 +821,27 @@ export class TravenEditor {
     if (this.#customRenderer) {
       return this.#customRenderer(val);
     }
-    return this.#fallbackRender(val);
+    const fallbackHtml = this.#fallbackRender(val);
+    
+    // A/B Renderer Comparison (Phase 1.5)
+    // In development mode or locally, compare outputs and warn if they diverge
+    if (typeof process !== "undefined" && process.env.NODE_ENV !== "production") {
+      try {
+        const astHtml = this.#renderer.compile(val);
+        if (astHtml !== fallbackHtml) {
+          console.warn(
+            "[Traven] A/B Renderer Divergence Detected:\\n\\n" +
+            "AST Renderer:\\n" + astHtml +
+            "\\n\\nRegex Renderer:\\n" + fallbackHtml
+          );
+        }
+      } catch (err) {
+        console.error("[Traven] AST Renderer crashed during compile:", err);
+      }
+    }
+
+    // Return the stable fallback HTML during Phase 1.5 validation
+    return fallbackHtml;
   }
 
   /**
