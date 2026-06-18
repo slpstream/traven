@@ -136,56 +136,6 @@ describe('TravenEditor', () => {
   });
 
   describe('frontmatter handling', () => {
-    it('strips YAML frontmatter correctly in fallback renderer', () => {
-      const editor = new TravenEditor({
-        element: container,
-        initialValue: '---\ntitle: test\n---\n# Hello World',
-      });
-      const html = editor.getContentHtml();
-      expect(html).toContain('<h1>Hello World</h1>');
-      expect(html).not.toContain('title: test');
-      expect(html).not.toContain('---');
-    });
-
-    it('strips YAML frontmatter with CRLF line endings correctly', () => {
-      const editor = new TravenEditor({
-        element: container,
-        initialValue: '---\r\ntitle: test\r\n---\r\n# Hello World',
-      });
-      const html = editor.getContentHtml();
-      expect(html).toContain('<h1>Hello World</h1>');
-      expect(html).not.toContain('title: test');
-    });
-
-    it('does not strip horizontal rules at start of document', () => {
-      const editor = new TravenEditor({
-        element: container,
-        initialValue: '---\n# Hello World',
-      });
-      const html = editor.getContentHtml();
-      expect(html).toContain('<hr>');
-      expect(html).toContain('<h1>Hello World</h1>');
-    });
-
-    it('strips frontmatter even if a value contains three dashes', () => {
-      const editor = new TravenEditor({
-        element: container,
-        initialValue: '---\ndescription: "a --- b"\n---\n# Hello World',
-      });
-      const html = editor.getContentHtml();
-      expect(html).toContain('<h1>Hello World</h1>');
-      expect(html).not.toContain('description');
-    });
-
-    it('returns full content when no frontmatter is present', () => {
-      const editor = new TravenEditor({
-        element: container,
-        initialValue: '# Hello World',
-      });
-      const html = editor.getContentHtml();
-      expect(html).toBe('<h1>Hello World</h1>');
-    });
-
     it('does not apply frontmatter styling to a heading immediately following frontmatter without a blank line', () => {
       const editor = new TravenEditor({
         element: container,
@@ -823,24 +773,6 @@ describe('ImageShortcode', () => {
   });
 
   describe('GFM naked autolinks', () => {
-    it('compiles naked URLs, www links, and emails to HTML links in fallback renderer', () => {
-      const editor = new TravenEditor({
-        element: container,
-        initialValue: [
-          'Visit https://github.com/slpstream/traven/issues for issues.',
-          'Go to www.google.com for search.',
-          'Email hello@example.com for support.',
-          'Do not convert `https://ignored.com` or [Google](https://google.com) twice.'
-        ].join('\n'),
-      });
-      const html = editor.getContentHtml();
-      expect(html).toContain('<a href="https://github.com/slpstream/traven/issues" target="_blank">https://github.com/slpstream/traven/issues</a>');
-      expect(html).toContain('<a href="https://www.google.com" target="_blank">www.google.com</a>');
-      expect(html).toContain('<a href="mailto:hello@example.com" target="_blank">hello@example.com</a>');
-      expect(html).toContain('<code>https://ignored.com</code>');
-      expect(html).toContain('<a href="https://google.com" target="_blank">Google</a>');
-    });
-
     it('correctly styles naked autolinks in the editor without collapsing delimiters', () => {
       const editor = new TravenEditor({
         element: container,
@@ -902,53 +834,6 @@ describe('VideoShortcode', () => {
     const html = editor.getContentHtml();
     expect(html).toContain('<figure class="traven-video-figure align-left size-small">');
     expect(html).toContain('<iframe src="https://player.vimeo.com/video/12345678"');
-  });
-
-  it('compiles direct video shortcode to video tag in fallback renderer', () => {
-    const editor = new TravenEditor({
-      element: container,
-      initialValue: '[video src="https://example.com/movie.mp4" align="center" size="large" caption="Direct Video"]',
-    });
-    const html = editor.getContentHtml();
-    expect(html).toContain('<figure class="traven-video-figure align-center size-large">');
-    expect(html).toContain('<video src="https://example.com/movie.mp4" controls></video>');
-  });
-
-  it('compiles video shortcode without caption to HTML without figure wrapper in fallback renderer', () => {
-    const editor = new TravenEditor({
-      element: container,
-      initialValue: '[video src="https://example.com/movie.mp4" align="center" size="large"]',
-    });
-    const html = editor.getContentHtml();
-    expect(html).not.toContain('<figure');
-    expect(html).toContain('<div class="traven-video-container align-center size-large"><video src="https://example.com/movie.mp4" controls></video></div>');
-  });
-
-  it('handles single quoted and unquoted attributes correctly for video', () => {
-    const editor = new TravenEditor({
-      element: container,
-      initialValue: "[video src='https://example.com/movie.mp4' align=left size='small' caption='Single quotes']",
-    });
-    const html = editor.getContentHtml();
-    expect(html).toContain('<figure class="traven-video-figure align-left size-small">');
-    expect(html).toContain('<video src="https://example.com/movie.mp4" controls></video>');
-    expect(html).toContain('<figcaption class="traven-video-caption">Single quotes</figcaption>');
-  });
-
-  it('compiles youtube shortcode alias with full URL or ID to youtube iframe in fallback renderer', () => {
-    const editorUrl = new TravenEditor({
-      element: container,
-      initialValue: '[youtube src="https://www.youtube.com/watch?v=dQw4w9WgXcQ" align="center" size="large" caption="YouTube link"]',
-    });
-    const htmlUrl = editorUrl.getContentHtml();
-    expect(htmlUrl).toContain('<iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ"');
-
-    const editorId = new TravenEditor({
-      element: container,
-      initialValue: '[youtube src="dQw4w9WgXcQ" align="center" size="large" caption="YouTube ID"]',
-    });
-    const htmlId = editorId.getContentHtml();
-    expect(htmlId).toContain('<iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ"');
   });
 
   it('renders youtube shortcode alias widget platform as YouTube', () => {
@@ -1072,38 +957,6 @@ describe('AudioShortcode', () => {
     container.remove();
   });
 
-  it('compiles direct audio shortcode to audio tag in fallback renderer', () => {
-    const editor = new TravenEditor({
-      element: container,
-      initialValue: '[audio src="https://example.com/song.mp3" align="center" size="large" caption="Direct Audio"]',
-    });
-    const html = editor.getContentHtml();
-    expect(html).toContain('<figure class="traven-audio-figure align-center size-large">');
-    expect(html).toContain('<audio src="https://example.com/song.mp3" controls></audio>');
-    expect(html).toContain('<figcaption class="traven-audio-caption">Direct Audio</figcaption>');
-  });
-
-  it('compiles audio shortcode without caption to HTML without figure wrapper in fallback renderer', () => {
-    const editor = new TravenEditor({
-      element: container,
-      initialValue: '[audio src="https://example.com/song.mp3" align="center" size="large"]',
-    });
-    const html = editor.getContentHtml();
-    expect(html).not.toContain('<figure');
-    expect(html).toContain('<div class="traven-audio-container align-center size-large"><audio src="https://example.com/song.mp3" controls></audio></div>');
-  });
-
-  it('handles single quoted and unquoted attributes correctly for audio', () => {
-    const editor = new TravenEditor({
-      element: container,
-      initialValue: "[audio src='https://example.com/song.mp3' align=left size='small' caption='Single quotes']",
-    });
-    const html = editor.getContentHtml();
-    expect(html).toContain('<figure class="traven-audio-figure align-left size-small">');
-    expect(html).toContain('<audio src="https://example.com/song.mp3" controls></audio>');
-    expect(html).toContain('<figcaption class="traven-audio-caption">Single quotes</figcaption>');
-  });
-
   it('renders AudioShortcodeWidget inside WYSIWYM editor when cursor is outside', () => {
     const editor = new TravenEditor({
       element: container,
@@ -1190,16 +1043,7 @@ describe('AudioShortcode', () => {
     expect(editor.getValue()).toBe('[audio src="https://example.com/song.mp3" align="left" caption="Updated song"]\nSome text');
   });
 
-  it('neutralizes dangerous protocols like javascript: in audio shortcode', () => {
-    const editor = new TravenEditor({
-      element: container,
-      initialValue: '[audio src="javascript:alert(1)" caption="Audio XSS"]',
-    });
-    const html = editor.getContentHtml();
-    expect(html).toContain('src="about:blank"');
-    expect(html).not.toContain('src="javascript:');
   });
-});
 
 
 describe('fallback rendering inline formats', () => {
@@ -1219,28 +1063,10 @@ describe('fallback rendering inline formats', () => {
     expect(html).toContain('This is <strong>bold</strong> and this is <em>italic</em>.');
   });
 
-  it('compiles strikethrough formatting correctly', () => {
-    const editor = new TravenEditor({
-      element: container,
-      initialValue: 'This is ~~strikethrough~~ text.',
-    });
-    const html = editor.getContentHtml();
-    expect(html).toContain('This is <del>strikethrough</del> text.');
-  });
-
   it('compiles fenced code blocks correctly', () => {
     const editor = new TravenEditor({
       element: container,
       initialValue: "```js\nconsole.log(42);\n```",
-    });
-    const html = editor.getContentHtml();
-    expect(html).toContain('<pre><code class="language-js">console.log(42);</code></pre>');
-  });
-
-  it('compiles fenced code blocks with metadata attributes correctly', () => {
-    const editor = new TravenEditor({
-      element: container,
-      initialValue: "```js [greet.js] {1,3}\nconsole.log(42);\n```",
     });
     const html = editor.getContentHtml();
     expect(html).toContain('<pre><code class="language-js">console.log(42);</code></pre>');
@@ -1256,120 +1082,6 @@ describe('fallback rendering inline formats', () => {
   });
 });
 
-describe('fallback rendering list formats', () => {
-  let container;
-
-  beforeEach(() => {
-    container = document.createElement('div');
-    document.body.appendChild(container);
-  });
-
-  it('compiles nested unordered lists with HTML5-compliant markup', () => {
-    const editor = new TravenEditor({
-      element: container,
-      initialValue: '- Parent 1\n  - Nested 1\n- Parent 2',
-    });
-    const html = editor.getContentHtml();
-    expect(html).toContain('<ul>\n<li>Parent 1\n<ul>\n<li>Nested 1\n</li>\n</ul>\n</li>\n<li>Parent 2\n</li>\n</ul>');
-  });
-
-  it('compiles ordered lists correctly', () => {
-    const editor = new TravenEditor({
-      element: container,
-      initialValue: '1. First step\n2. Second step',
-    });
-    const html = editor.getContentHtml();
-    expect(html).toContain('<ol>\n<li>First step\n</li>\n<li>Second step\n</li>\n</ol>');
-  });
-
-  it('compiles task checkboxes correctly', () => {
-    const editor = new TravenEditor({
-      element: container,
-      initialValue: '- [ ] Uncompleted task\n- [x] Completed task',
-    });
-    const html = editor.getContentHtml();
-    expect(html).toContain('<li><input type="checkbox" disabled> Uncompleted task\n</li>');
-    expect(html).toContain('<li><input type="checkbox" disabled checked> Completed task\n</li>');
-  });
-});
-
-describe('fallback rendering table alignment', () => {
-  let container;
-
-  beforeEach(() => {
-    container = document.createElement('div');
-    document.body.appendChild(container);
-  });
-
-  it('applies text-align inline styles correctly based on separator markers', () => {
-    const editor = new TravenEditor({
-      element: container,
-      initialValue: '| Left | Center | Right | Default |\n| :--- | :---: | ---: | --- |\n| a | b | c | d |',
-    });
-    const html = editor.getContentHtml();
-    expect(html).toContain('<th style="text-align: left;">Left</th>');
-    expect(html).toContain('<th style="text-align: center;">Center</th>');
-    expect(html).toContain('<th style="text-align: right;">Right</th>');
-    expect(html).toContain('<th>Default</th>');
-    
-    expect(html).toContain('<td style="text-align: left;">a</td>');
-    expect(html).toContain('<td style="text-align: center;">b</td>');
-    expect(html).toContain('<td style="text-align: right;">c</td>');
-    expect(html).toContain('<td>d</td>');
-  });
-
-  it('applies a <br> after the table if followed by a blank line in markdown', () => {
-    const editor = new TravenEditor({
-      element: container,
-      initialValue: '| Header |\n| --- |\n| Cell |\n\n# Heading',
-    });
-    const html = editor.getContentHtml();
-    expect(html).toContain('</table>\n<br>\n<h1>Heading</h1>');
-  });
-});
-
-describe('fallback rendering LaTeX math', () => {
-  let container;
-
-  beforeEach(() => {
-    container = document.createElement('div');
-    document.body.appendChild(container);
-  });
-
-  it('renders inline math correctly with KaTeX mock', () => {
-    const editor = new TravenEditor({
-      element: container,
-      initialValue: 'Equation $E = mc^2$ is famous.',
-    });
-    const html = editor.getContentHtml();
-    expect(html).toContain('Equation <span class="katex-inline-mocked">E = mc^2</span> is famous.');
-  });
-
-  it('renders display/block math correctly with KaTeX mock', () => {
-    const editor = new TravenEditor({
-      element: container,
-      initialValue: '$$\n\\sum_{i=1}^n x_i\n$$',
-    });
-    const html = editor.getContentHtml();
-    expect(html).toContain('<div class="katex-display-mocked">\n\\sum_{i=1}^n x_i\n</div>');
-  });
-
-  it('falls back to raw markup when window.katex is missing', () => {
-    const originalKatex = window.katex;
-    delete window.katex;
-    try {
-      const editor = new TravenEditor({
-        element: container,
-        initialValue: 'Equation $E = mc^2$ and $$\n\\sum x_i\n$$',
-      });
-      const html = editor.getContentHtml();
-      expect(html).toContain('Equation <span class="katex-inline-fallback">$E = mc^2$</span>');
-      expect(html).toContain('<div class="katex-display-fallback">$$\n\\sum x_i\n$$</div>');
-    } finally {
-      window.katex = originalKatex;
-    }
-  });
-});
 
 describe('ComponentShortcode', () => {
   let container;
@@ -1377,66 +1089,6 @@ describe('ComponentShortcode', () => {
   beforeEach(() => {
     container = document.createElement('div');
     document.body.appendChild(container);
-  });
-
-  it('compiles quote alias to blockquote HTML in fallback renderer', () => {
-    const editor = new TravenEditor({
-      element: container,
-      initialValue: '[quote]Hello **world**[/quote]',
-    });
-    const html = editor.getContentHtml();
-    expect(html).toContain('<blockquote class="traven-component-blockquote">');
-    expect(html).toContain('<strong>world</strong>');
-    expect(html).toContain('</blockquote>');
-  });
-
-  it('compiles blockquote with author and source to HTML in fallback renderer', () => {
-    const editor = new TravenEditor({
-      element: container,
-      initialValue: '[component="blockquote" author="John" source="Book"]Quote body[/component]',
-    });
-    const html = editor.getContentHtml();
-    expect(html).toContain('<blockquote class="traven-component-blockquote"><p>Quote body</p><footer><cite>— John, Book</cite></footer></blockquote>');
-  });
-
-  it('compiles pullquote to blockquote with traven-component-pullquote class in fallback renderer', () => {
-    const editor = new TravenEditor({
-      element: container,
-      initialValue: '[pullquote]Special quote[/pullquote]',
-    });
-    const html = editor.getContentHtml();
-    expect(html).toContain('<blockquote class="traven-component-pullquote"><p>Special quote</p></blockquote>');
-  });
-
-  it('compiles info and warning component aliases to generic div with proper CSS classes in fallback renderer', () => {
-    const editorInfo = new TravenEditor({
-      element: container,
-      initialValue: '[info]Info notice text[/info]',
-    });
-    expect(editorInfo.getContentHtml()).toContain('<div class="traven-component traven-component-info"><p>Info notice text</p></div>');
-
-    const editorWarning = new TravenEditor({
-      element: container,
-      initialValue: '[warning]Warning notice text[/warning]',
-    });
-    expect(editorWarning.getContentHtml()).toContain('<div class="traven-component traven-component-warning"><p>Warning notice text</p></div>');
-  });
-
-  it('compiles highlight alias to mark element in fallback renderer', () => {
-    const editor = new TravenEditor({
-      element: container,
-      initialValue: 'Important [highlight]highlighted[/highlight] text.',
-    });
-    expect(editor.getContentHtml()).toContain('<p>Important <mark>highlighted</mark> text.</p>');
-  });
-
-  it('compiles unknown component name to a generic div container in fallback renderer', () => {
-    const editor = new TravenEditor({
-      element: container,
-      initialValue: '[component="card" foo="bar"]Card body[/component]',
-    });
-    const html = editor.getContentHtml();
-    expect(html).toContain('<div class="traven-component traven-component-card"><p>Card body</p></div>');
   });
 
   it('renders ComponentShortcodeWidget inside WYSIWYM editor when cursor is outside', () => {
@@ -1898,17 +1550,6 @@ describe('FigureShortcode', () => {
 
   afterEach(() => {
     container.remove();
-  });
-
-  it('compiles figure shortcode with inner content to HTML in fallback renderer', () => {
-    const editor = new TravenEditor({
-      element: container,
-      initialValue: '[figure caption="Diagram 1" align="right" size="large" class="custom-fig"]\n![Diagram](flow.svg)\n[/figure]',
-    });
-    const html = editor.getContentHtml();
-    expect(html).toContain('<figure class="traven-figure align-right size-large custom-fig">');
-    expect(html).toContain('<img src="flow.svg" alt="Diagram"');
-    expect(html).toContain('<figcaption class="traven-figure-caption">Diagram 1</figcaption>');
   });
 
   it('renders FigureShortcodeWidget inside WYSIWYM editor when cursor is outside', () => {

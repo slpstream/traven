@@ -276,6 +276,7 @@ export class TravenEditor {
      */
     on(event: "change" | "save" | "statsUpdate", callback: (arg0: any) => void): void;
     /**
+    /**
      * Destroy the editor instance and clean up listeners.
      */
     destroy(): void;

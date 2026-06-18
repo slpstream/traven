@@ -132,14 +132,14 @@ export function defaultNodeRenderer(node, childrenHtml, docText) {
       const finalHref = isEmail ? `mailto:${url}` : href;
       return `<a href="${sanitizeUrl(finalHref)}" target="_blank" rel="noopener noreferrer">${escapeHtml(url)}</a>`;
     }
-    case "MathDisplay": {
+    case "BlockMath": {
       const math = docText.slice(node.from + 2, node.to - 2);
       if (typeof window !== "undefined" && window["katex"]) {
         return window["katex"].renderToString(math, { displayMode: true, throwOnError: false }) + "\n";
       }
       return `<div class="katex-display-fallback">$$${escapeHtml(math)}$$</div>\n`;
     }
-    case "MathInline": {
+    case "InlineMath": {
       const math = docText.slice(node.from + 1, node.to - 1);
       if (typeof window !== "undefined" && window["katex"]) {
         return window["katex"].renderToString(math, { displayMode: false, throwOnError: false });
@@ -240,6 +240,7 @@ export function defaultNodeRenderer(node, childrenHtml, docText) {
  * @returns {Record<string, string>}
  */
 function parseShortcodeAttrs(raw) {
+  /** @type {Record<string, string>} */
   const attrs = {};
   const attrRegex = /([a-zA-Z0-9_-]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s\]]+))/g;
   let m;
