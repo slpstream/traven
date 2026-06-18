@@ -20874,57 +20874,6 @@ function Pw(e) {
 					})
 				});
 			}
-			if (n.name === "FencedCode" || n.name === "CodeBlock") {
-				let i = r > n.from && r < n.to;
-				if (n.name === "FencedCode") {
-					let r = e.sliceDoc(n.from, n.to);
-					if ((r.trim().startsWith("```mermaid") || r.trim().startsWith("~~~mermaid")) && !i) {
-						let e = ew(r);
-						return t.push({
-							from: n.from,
-							to: n.to,
-							deco: V.replace({
-								widget: new rw(e, n.from),
-								block: !0
-							})
-						}), !1;
-					}
-				}
-				let o = e.doc.lineAt(n.from).number, s = e.doc.lineAt(n.to).number;
-				for (let r = o; r <= s; r++) if (!(!i && n.name === "FencedCode" && (r === o || r === s)) && !a.has(r)) {
-					let c = e.doc.line(r), l = Sw;
-					if (n.name === "FencedCode") {
-						let e = o + 1, t = s - 1;
-						if (e > t) continue;
-						i ? o === s ? l = Tw : r === o ? l = Cw : r === s && (l = ww) : e === t ? l = Tw : r === e ? l = Cw : r === t && (l = ww);
-					} else o === s ? l = Tw : r === o ? l = Cw : r === s && (l = ww);
-					t.push({
-						from: c.from,
-						to: c.from,
-						deco: l
-					}), a.add(r);
-				}
-				if (!i && n.name === "FencedCode") {
-					let n = e.doc.line(o), r = e.doc.line(s);
-					t.push({
-						from: n.from,
-						to: n.to,
-						deco: fw
-					}), t.push({
-						from: r.from,
-						to: r.to,
-						deco: fw
-					}), a.has(o) || (t.push({
-						from: n.from,
-						to: n.from,
-						deco: Dw
-					}), a.add(o)), a.has(s) || (t.push({
-						from: r.from,
-						to: r.from,
-						deco: Dw
-					}), a.add(s));
-				}
-			}
 		}
 	}), t.sort((e, t) => {
 		if (e.from !== t.from) return e.from - t.from;
@@ -21393,8 +21342,71 @@ var Ww = Ce.define({
 	renderToHTML(e, t, n) {
 		return null;
 	}
+}, nT = class extends Vw {
+	name = "code";
+	requiredNodes = ["FencedCode", "CodeBlock"];
+	decorationPriority = 100;
+	buildDecorations(e) {
+		let { state: t, decorations: n, cursorHead: r } = e, i = /* @__PURE__ */ new Set();
+		Y(t).iterate({ enter(e) {
+			if (e.name === "FencedCode" || e.name === "CodeBlock") {
+				let a = r > e.from && r < e.to;
+				if (e.name === "FencedCode") {
+					let r = t.sliceDoc(e.from, e.to);
+					if ((r.trim().startsWith("```mermaid") || r.trim().startsWith("~~~mermaid")) && !a) {
+						let t = ew(r);
+						return n.push({
+							from: e.from,
+							to: e.to,
+							deco: V.replace({
+								widget: new rw(t, e.from),
+								block: !0
+							})
+						}), !1;
+					}
+				}
+				let o = t.doc.lineAt(e.from).number, s = t.doc.lineAt(e.to).number;
+				for (let r = o; r <= s; r++) if (!(!a && e.name === "FencedCode" && (r === o || r === s)) && !i.has(r)) {
+					let c = t.doc.line(r), l = Sw;
+					if (e.name === "FencedCode") {
+						let e = o + 1, t = s - 1;
+						if (e > t) continue;
+						a ? o === s ? l = Tw : r === o ? l = Cw : r === s && (l = ww) : e === t ? l = Tw : r === e ? l = Cw : r === t && (l = ww);
+					} else o === s ? l = Tw : r === o ? l = Cw : r === s && (l = ww);
+					n.push({
+						from: c.from,
+						to: c.from,
+						deco: l
+					}), i.add(r);
+				}
+				if (!a && e.name === "FencedCode") {
+					let e = t.doc.line(o), r = t.doc.line(s);
+					n.push({
+						from: e.from,
+						to: e.to,
+						deco: fw
+					}), n.push({
+						from: r.from,
+						to: r.to,
+						deco: fw
+					}), i.has(o) || (n.push({
+						from: e.from,
+						to: e.from,
+						deco: Dw
+					}), i.add(o)), i.has(s) || (n.push({
+						from: r.from,
+						to: r.from,
+						deco: Dw
+					}), i.add(s));
+				}
+			}
+		} });
+	}
+	renderToHTML(e, t, n) {
+		return null;
+	}
 };
-function nT(e, t, n) {
+function rT(e, t, n) {
 	let r = null;
 	return Y(e).iterate({
 		from: Math.max(0, t - 6),
@@ -21640,10 +21652,10 @@ function nT(e, t, n) {
 		}
 	}), r;
 }
-function rT(e, t) {
+function iT(e, t) {
 	let { state: n } = e, r = n.selection.main.head, i = r, a = [];
 	for (let e = 0; e < 5; e++) {
-		let e = nT(n, i, t);
+		let e = rT(n, i, t);
 		if (!e || e.target === i) break;
 		i = e.target, e.suppressRange && a.push(e.suppressRange);
 	}
@@ -21654,20 +21666,20 @@ function rT(e, t) {
 		effects: o
 	}), !0;
 }
-function iT() {
+function aT() {
 	return Ro.of([{
 		key: "ArrowRight",
 		run(e) {
-			return rT(e, "right");
+			return iT(e, "right");
 		}
 	}, {
 		key: "ArrowLeft",
 		run(e) {
-			return rT(e, "left");
+			return iT(e, "left");
 		}
 	}]);
 }
-var aT = class e extends Qt {
+var oT = class e extends Qt {
 	constructor(e, t, n, r) {
 		super(), this.url = e, this.alt = t, this.nodeFrom = n, this.nodeTo = r;
 	}
@@ -21703,7 +21715,7 @@ var aT = class e extends Qt {
 	ignoreEvent() {
 		return !1;
 	}
-}, oT = class e extends Qt {
+}, sT = class e extends Qt {
 	constructor(e) {
 		super(), this.fileName = e;
 	}
@@ -21730,7 +21742,7 @@ var aT = class e extends Qt {
 		return t instanceof e && t.fileName === this.fileName;
 	}
 };
-function sT(e) {
+function cT(e) {
 	let t = [], n = e.field(Mw, !1) ? e.selection.main.head : -1;
 	Y(e).iterate({
 		from: 0,
@@ -21746,7 +21758,7 @@ function sT(e) {
 							from: r.from,
 							to: r.to,
 							deco: V.replace({
-								widget: new oT(n),
+								widget: new sT(n),
 								block: !0
 							})
 						});
@@ -21754,7 +21766,7 @@ function sT(e) {
 						from: r.from,
 						to: r.to,
 						deco: V.replace({
-							widget: new aT(i, e, r.from, r.to),
+							widget: new oT(i, e, r.from, r.to),
 							block: !0
 						})
 					});
@@ -21766,17 +21778,17 @@ function sT(e) {
 	for (let { from: e, to: n, deco: i } of t) r.add(e, n, i);
 	return r.finish();
 }
-var cT = Ce.define({
+var lT = Ce.define({
 	create(e) {
-		return sT(e);
+		return cT(e);
 	},
 	update(e, t) {
 		let n = t.effects.some((e) => e.is(jw)), r = Y(t.state) !== Y(t.startState);
-		return t.docChanged || t.selection || n || r ? sT(t.state) : e.map(t.changes);
+		return t.docChanged || t.selection || n || r ? cT(t.state) : e.map(t.changes);
 	},
 	provide: (e) => U.decorations.from(e)
-}), lT = () => [cT];
-async function uT(e, t, n, r) {
+}), uT = () => [lT];
+async function dT(e, t, n, r) {
 	if (!r) return;
 	let i = `[image alt="Uploading ${e.name}..."]`;
 	n.dispatch({ changes: {
@@ -21799,7 +21811,7 @@ async function uT(e, t, n, r) {
 		} }), console.error("Image upload failed:", e);
 	}
 }
-function dT() {
+function fT() {
 	return U.domEventHandlers({
 		drop(e, t) {
 			let n = QC.get(t), r = n?.getUploadHandler ? n.getUploadHandler() : null, i = e.dataTransfer?.files;
@@ -21809,7 +21821,7 @@ function dT() {
 					x: e.clientX,
 					y: e.clientY
 				}, a = t.posAtCoords(n) ?? t.state.selection.main.head;
-				return uT(i[0], a, t, r), !0;
+				return dT(i[0], a, t, r), !0;
 			}
 			return !1;
 		},
@@ -21821,7 +21833,7 @@ function dT() {
 					let i = n.getAsFile();
 					if (i) {
 						let e = t.state.selection.main.head;
-						return uT(i, e, t, r), !0;
+						return dT(i, e, t, r), !0;
 					}
 				}
 			}
@@ -21829,7 +21841,7 @@ function dT() {
 		}
 	});
 }
-function fT(e) {
+function pT(e) {
 	var t = e.Pos;
 	function n(e, t, n) {
 		if (t.line === n.line && t.ch >= n.ch - 1) {
@@ -26251,32 +26263,32 @@ function fT(e) {
 	}
 	return ae(), A;
 }
-function pT(e, t) {
+function mT(e, t) {
 	var n = t.ch, r = t.line + 1;
 	r < 1 && (r = 1, n = 0), r > e.lines && (r = e.lines, n = Number.MAX_VALUE);
 	var i = e.line(r);
 	return Math.min(i.from + Math.max(0, n), i.to);
 }
-function mT(e, t) {
+function hT(e, t) {
 	let n = e.lineAt(t);
 	return {
 		line: n.number - 1,
 		ch: t - n.from
 	};
 }
-var hT = class {
+var gT = class {
 	constructor(e, t) {
 		this.line = e, this.ch = t;
 	}
 };
-function gT(e, t, n) {
+function _T(e, t, n) {
 	if (e.addEventListener) e.addEventListener(t, n, !1);
 	else {
 		var r = e._handlers ||= {};
 		r[t] = (r[t] || []).concat(n);
 	}
 }
-function _T(e, t, n) {
+function vT(e, t, n) {
 	if (e.removeEventListener) e.removeEventListener(t, n, !1);
 	else {
 		var r = e._handlers, i = r && r[t];
@@ -26286,20 +26298,20 @@ function _T(e, t, n) {
 		}
 	}
 }
-function vT(e, t, ...n) {
+function yT(e, t, ...n) {
 	var r = e._handlers?.[t];
 	if (r) for (var i = 0; i < r.length; ++i) r[i](...n);
 }
-function yT(e, ...t) {
+function bT(e, ...t) {
 	if (e) for (var n = 0; n < e.length; ++n) e[n](...t);
 }
-var bT;
+var xT;
 try {
-	bT = /* @__PURE__ */ RegExp("[\\w\\p{Alphabetic}\\p{Number}_]", "u");
+	xT = /* @__PURE__ */ RegExp("[\\w\\p{Alphabetic}\\p{Number}_]", "u");
 } catch {
-	bT = /[\w]/;
+	xT = /[\w]/;
 }
-function xT(e, t) {
+function ST(e, t) {
 	var n = e.cm6;
 	if (!n.state.readOnly) {
 		var r = "input.type.compose";
@@ -26314,12 +26326,12 @@ function xT(e, t) {
 		return n.dispatch(t);
 	}
 }
-function ST(e, t) {
+function CT(e, t) {
 	e.curOp && (e.curOp.$changeStart = void 0), (t ? af : of)(e.cm6);
 	let n = e.curOp?.$changeStart;
 	n != null && e.cm6.dispatch({ selection: { anchor: n } });
 }
-var CT = {
+var wT = {
 	Left: (e) => Vo(e.cm6, { key: "Left" }, "editor"),
 	Right: (e) => Vo(e.cm6, { key: "Right" }, "editor"),
 	Up: (e) => Vo(e.cm6, { key: "Up" }, "editor"),
@@ -26328,31 +26340,31 @@ var CT = {
 	Delete: (e) => Vo(e.cm6, { key: "Delete" }, "editor")
 }, $ = class e {
 	openDialog(e, t, n) {
-		return kT(this, e, t, n);
+		return AT(this, e, t, n);
 	}
 	openNotification(e, t) {
-		return ET(this, e, t);
+		return DT(this, e, t);
 	}
 	constructor(e) {
 		this.state = {}, this.marks = Object.create(null), this.$mid = 0, this.options = {}, this._handlers = {}, this.$lastChangeEndOffset = 0, this.virtualSelection = null, this.cm6 = e, this.onChange = this.onChange.bind(this), this.onSelectionChange = this.onSelectionChange.bind(this);
 	}
 	on(e, t) {
-		gT(this, e, t);
-	}
-	off(e, t) {
 		_T(this, e, t);
 	}
+	off(e, t) {
+		vT(this, e, t);
+	}
 	signal(e, t, n) {
-		vT(this, e, t, n);
+		yT(this, e, t, n);
 	}
 	indexFromPos(e) {
-		return pT(this.cm6.state.doc, e);
-	}
-	posFromIndex(e) {
 		return mT(this.cm6.state.doc, e);
 	}
+	posFromIndex(e) {
+		return hT(this.cm6.state.doc, e);
+	}
 	foldCode(e) {
-		let t = this.cm6, n = t.state.selection.ranges, r = this.cm6.state.doc, i = pT(r, e), a = j.create([j.range(i, i)], 0).ranges;
+		let t = this.cm6, n = t.state.selection.ranges, r = this.cm6.state.doc, i = mT(r, e), a = j.create([j.range(i, i)], 0).ranges;
 		t.state.selection.ranges = a, Ju(t), t.state.selection.ranges = n;
 	}
 	firstLine() {
@@ -26366,7 +26378,7 @@ var CT = {
 	}
 	setCursor(e, t) {
 		typeof e == "object" && (t = e.ch, e = e.line);
-		var n = pT(this.cm6.state.doc, {
+		var n = mT(this.cm6.state.doc, {
 			line: e,
 			ch: t || 0
 		});
@@ -26380,13 +26392,13 @@ var CT = {
 	listSelections() {
 		var e = this.cm6.state.doc;
 		return this.cm6.state.selection.ranges.map((t) => ({
-			anchor: mT(e, t.anchor),
-			head: mT(e, t.head)
+			anchor: hT(e, t.anchor),
+			head: hT(e, t.head)
 		}));
 	}
 	setSelections(e, t) {
 		var n = this.cm6.state.doc, r = e.map((e) => {
-			var t = pT(n, e.head), r = pT(n, e.anchor);
+			var t = mT(n, e.head), r = mT(n, e.anchor);
 			return t == r ? j.cursor(t, 1) : j.range(r, t);
 		});
 		this.cm6.dispatch({ selection: j.create(r, t) });
@@ -26404,7 +26416,7 @@ var CT = {
 	getLineHandle(e) {
 		return this.$lineHandleChanges ||= [], {
 			row: e,
-			index: this.indexFromPos(new hT(e, 0))
+			index: this.indexFromPos(new gT(e, 0))
 		};
 	}
 	getLineNumber(e) {
@@ -26419,19 +26431,19 @@ var CT = {
 	}
 	getRange(e, t) {
 		var n = this.cm6.state.doc;
-		return this.cm6.state.sliceDoc(pT(n, e), pT(n, t));
+		return this.cm6.state.sliceDoc(mT(n, e), mT(n, t));
 	}
 	replaceRange(e, t, n, r) {
 		n ||= t;
-		var i = this.cm6.state.doc, a = pT(i, t), o = pT(i, n);
-		xT(this, { changes: {
+		var i = this.cm6.state.doc, a = mT(i, t), o = mT(i, n);
+		ST(this, { changes: {
 			from: a,
 			to: o,
 			insert: e
 		} });
 	}
 	replaceSelection(e) {
-		xT(this, this.cm6.state.replaceSelection(e));
+		ST(this, this.cm6.state.replaceSelection(e));
 	}
 	replaceSelections(e) {
 		var t = this.cm6.state.selection.ranges.map((t, n) => ({
@@ -26439,7 +26451,7 @@ var CT = {
 			to: t.to,
 			insert: e[n] || ""
 		}));
-		xT(this, { changes: t });
+		ST(this, { changes: t });
 	}
 	getSelection() {
 		return this.getSelections().join("\n");
@@ -26458,7 +26470,7 @@ var CT = {
 		var t = this.cm6.state.doc, n = e.ch, r = e.line + 1;
 		r < 1 && (r = 1, n = 0), r > t.lines && (r = t.lines, n = Number.MAX_VALUE);
 		var i = t.line(r);
-		return n = Math.min(Math.max(0, n), i.to - i.from), new hT(r - 1, n);
+		return n = Math.min(Math.max(0, n), i.to - i.from), new gT(r - 1, n);
 	}
 	getValue() {
 		return this.cm6.state.doc.toString();
@@ -26484,11 +26496,11 @@ var CT = {
 		return this.cm6.defaultLineHeight;
 	}
 	findMatchingBracket(e, t) {
-		var n = this.cm6.state, r = pT(n.doc, e), i = Od(n, r + 1, -1);
-		return i && i.end ? { to: mT(n.doc, i.end.from) } : (i = Od(n, r, 1), i && i.end ? { to: mT(n.doc, i.end.from) } : { to: void 0 });
+		var n = this.cm6.state, r = mT(n.doc, e), i = Od(n, r + 1, -1);
+		return i && i.end ? { to: hT(n.doc, i.end.from) } : (i = Od(n, r, 1), i && i.end ? { to: hT(n.doc, i.end.from) } : { to: void 0 });
 	}
 	scanForBracket(e, t, n, r) {
-		return MT(this, e, t, n, r);
+		return NT(this, e, t, n, r);
 	}
 	indentLine(e, t) {
 		t ? this.indentMore() : this.indentLess();
@@ -26510,7 +26522,7 @@ var CT = {
 	}
 	setBookmark(e, t) {
 		var n = t?.insertLeft ? 1 : -1, r = this.indexFromPos(e);
-		return new IT(this, r, n);
+		return new LT(this, r, n);
 	}
 	addOverlay({ query: e }) {
 		let t = new XS({
@@ -26533,7 +26545,7 @@ var CT = {
 	getSearchCursor(e, t) {
 		var n = this, r = null, i = null, a = !1;
 		t.ch ??= Number.MAX_VALUE;
-		var o = pT(n.cm6.state.doc, t), s = e.source.replace(/(\\.|{(?:\d+(?:,\d*)?|,\d+)})|[{}]/g, function(e, t) {
+		var o = mT(n.cm6.state.doc, t), s = e.source.replace(/(\\.|{(?:\d+(?:,\d*)?|,\d+)})|[{}]/g, function(e, t) {
 			return t || "\\" + e;
 		});
 		function c(t, n = 0, r = t.length) {
@@ -26565,8 +26577,8 @@ var CT = {
 			find: function(e) {
 				var t = n.cm6.state.doc;
 				return r = e ? d(0, r ? a ? r.to - 1 : r.from : o) : l(r ? a ? r.to + 1 : r.to : o), i = r && {
-					from: mT(t, r.from),
-					to: mT(t, r.to),
+					from: hT(t, r.from),
+					to: hT(t, r.to),
 					match: r.match
 				}, a = r ? r.from == r.to : !1, r && r.match;
 			},
@@ -26577,11 +26589,11 @@ var CT = {
 				return i?.to;
 			},
 			replace: function(e) {
-				r && (xT(n, { changes: {
+				r && (ST(n, { changes: {
 					from: r.from,
 					to: r.to,
 					insert: e
-				} }), r.to = r.from + e.length, i && (i.to = mT(n.cm6.state.doc, r.to)));
+				} }), r.to = r.from + e.length, i && (i.to = hT(n.cm6.state.doc, r.to)));
 			},
 			get match() {
 				return i && i.match;
@@ -26589,13 +26601,13 @@ var CT = {
 		};
 	}
 	findPosV(e, t, n, r) {
-		let { cm6: i } = this, a = i.state.doc, o = n == "page" ? i.dom.clientHeight : 0, s = pT(a, e), c = j.cursor(s, 1, void 0, r), l = Math.round(Math.abs(t));
+		let { cm6: i } = this, a = i.state.doc, o = n == "page" ? i.dom.clientHeight : 0, s = mT(a, e), c = j.cursor(s, 1, void 0, r), l = Math.round(Math.abs(t));
 		for (let e = 0; e < l; e++) n == "page" ? c = i.moveVertically(c, t > 0, o) : n == "line" && (c = i.moveVertically(c, t > 0));
-		let u = mT(a, c.head);
+		let u = hT(a, c.head);
 		return (t < 0 && c.head == 0 && r != 0 && e.line == 0 && e.ch != 0 || t > 0 && c.head == a.length && u.ch != r && e.line == u.line) && (u.hitSide = !0), u;
 	}
 	charCoords(e, t) {
-		var n = this.cm6.contentDOM.getBoundingClientRect(), r = pT(this.cm6.state.doc, e), i = this.cm6.coordsAtPos(r), a = -n.top;
+		var n = this.cm6.contentDOM.getBoundingClientRect(), r = mT(this.cm6.state.doc, e), i = this.cm6.coordsAtPos(r), a = -n.top;
 		return {
 			left: (i?.left || 0) - n.left,
 			top: (i?.top || 0) + a,
@@ -26607,7 +26619,7 @@ var CT = {
 			x: e.left + n.left,
 			y: e.top + n.top
 		}) || 0;
-		return mT(this.cm6.state.doc, r);
+		return hT(this.cm6.state.doc, r);
 	}
 	getScrollInfo() {
 		var e = this.cm6.scrollDOM;
@@ -26676,7 +26688,7 @@ var CT = {
 	}
 	onBeforeEndOperation() {
 		var e = this.curOp, t = !1;
-		e && (e.change && yT(e.changeHandlers, this, e.change), e && e.cursorActivity && (yT(e.cursorActivityHandlers, this, null), e.isVimOp && (t = !0)), this.curOp = null), t && this.scrollIntoView();
+		e && (e.change && bT(e.changeHandlers, this, e.change), e && e.cursorActivity && (bT(e.cursorActivityHandlers, this, null), e.isVimOp && (t = !0)), this.curOp = null), t && this.scrollIntoView();
 	}
 	moveH(e, t) {
 		if (t == "char") {
@@ -26738,23 +26750,23 @@ var CT = {
 		this.cm6.dispatch({ selection: this.virtualSelection }), this.virtualSelection = null;
 	}
 	hardWrap(e) {
-		return LT(this, e);
+		return RT(this, e);
 	}
 };
-$.isMac = typeof navigator < "u" && /Mac/.test(navigator.platform), $.Pos = hT, $.StringStream = Md, $.commands = {
+$.isMac = typeof navigator < "u" && /Mac/.test(navigator.platform), $.Pos = gT, $.StringStream = Md, $.commands = {
 	cursorCharLeft: function(e) {
 		kf(e.cm6);
 	},
 	redo: function(e) {
-		ST(e, !1);
+		CT(e, !1);
 	},
 	undo: function(e) {
-		ST(e, !0);
+		CT(e, !0);
 	},
 	newlineAndIndent: function(e) {
 		tm({
 			state: e.cm6.state,
-			dispatch: (t) => xT(e, t)
+			dispatch: (t) => ST(e, t)
 		});
 	},
 	indentAuto: function(e) {
@@ -26763,8 +26775,8 @@ $.isMac = typeof navigator < "u" && /Mac/.test(navigator.platform), $.Pos = hT, 
 	newlineAndIndentContinueComment: void 0,
 	save: void 0
 }, $.isWordChar = function(e) {
-	return bT.test(e);
-}, $.keys = CT, $.addClass = function(e, t) {}, $.rmClass = function(e, t) {}, $.e_preventDefault = function(e) {
+	return xT.test(e);
+}, $.keys = wT, $.addClass = function(e, t) {}, $.rmClass = function(e, t) {}, $.e_preventDefault = function(e) {
 	e.preventDefault();
 }, $.e_stop = function(e) {
 	var t, n;
@@ -26772,40 +26784,40 @@ $.isMac = typeof navigator < "u" && /Mac/.test(navigator.platform), $.Pos = hT, 
 }, $.lookupKey = function(e, t, n) {
 	var r = $.keys[e];
 	!r && /^Arrow/.test(e) && (r = $.keys[e.slice(5)]), r && n(r);
-}, $.on = gT, $.off = _T, $.signal = vT, $.findMatchingTag = NT, $.findEnclosingTag = PT, $.keyName = void 0;
-function wT(e, t, n) {
+}, $.on = _T, $.off = vT, $.signal = yT, $.findMatchingTag = PT, $.findEnclosingTag = FT, $.keyName = void 0;
+function TT(e, t, n) {
 	var r = document.createElement("div");
 	return r.appendChild(t), r;
 }
-function TT(e, t) {
+function ET(e, t) {
 	e.state.currentNotificationClose && e.state.currentNotificationClose(), e.state.currentNotificationClose = t;
 }
-function ET(e, t, n) {
-	TT(e, s);
-	var r = wT(e, t, n && n.bottom), i = !1, a, o = n && typeof n.duration < "u" ? n.duration : 5e3;
+function DT(e, t, n) {
+	ET(e, s);
+	var r = TT(e, t, n && n.bottom), i = !1, a, o = n && typeof n.duration < "u" ? n.duration : 5e3;
 	function s() {
-		i || (i = !0, clearTimeout(a), r.remove(), OT(e, r));
+		i || (i = !0, clearTimeout(a), r.remove(), kT(e, r));
 	}
 	return r.onclick = function(e) {
 		e.preventDefault(), s();
-	}, DT(e, r), o && (a = setTimeout(s, o)), s;
+	}, OT(e, r), o && (a = setTimeout(s, o)), s;
 }
-function DT(e, t) {
+function OT(e, t) {
 	var n = e.state.dialog;
 	e.state.dialog = t, t.style.flex = "1", t && n !== t && (n && n.contains(document.activeElement) && e.focus(), n && n.parentElement ? n.parentElement.replaceChild(t, n) : n && n.remove(), $.signal(e, "dialog"));
 }
-function OT(e, t) {
+function kT(e, t) {
 	e.state.dialog == t && (e.state.dialog = null, $.signal(e, "dialog"));
 }
-function kT(e, t, n, r) {
-	r ||= {}, TT(e, void 0);
-	var i = wT(e, t, r.bottom), a = !1;
-	DT(e, i);
+function AT(e, t, n, r) {
+	r ||= {}, ET(e, void 0);
+	var i = TT(e, t, r.bottom), a = !1;
+	OT(e, i);
 	function o(t) {
 		if (typeof t == "string") s.value = t;
 		else {
 			if (a) return;
-			a = !0, OT(e, i), e.state.dialog || e.focus(), r.onClose && r.onClose(i);
+			a = !0, kT(e, i), e.state.dialog || e.focus(), r.onClose && r.onClose(i);
 		}
 	}
 	var s = i.getElementsByTagName("input")[0];
@@ -26821,7 +26833,7 @@ function kT(e, t, n, r) {
 		});
 	}), s.focus()), o;
 }
-var AT = {
+var jT = {
 	"(": ")>",
 	")": "(<",
 	"[": "]>",
@@ -26831,22 +26843,22 @@ var AT = {
 	"<": ">>",
 	">": "<<"
 };
-function jT(e) {
+function MT(e) {
 	return e && e.bracketRegex || /[(){}[\]]/;
 }
-function MT(e, t, n, r, i) {
-	for (var a = i && i.maxScanLineLength || 1e4, o = i && i.maxScanLines || 1e3, s = [], c = jT(i), l = n > 0 ? Math.min(t.line + o, e.lastLine() + 1) : Math.max(e.firstLine() - 1, t.line - o), u = t.line; u != l; u += n) {
+function NT(e, t, n, r, i) {
+	for (var a = i && i.maxScanLineLength || 1e4, o = i && i.maxScanLines || 1e3, s = [], c = MT(i), l = n > 0 ? Math.min(t.line + o, e.lastLine() + 1) : Math.max(e.firstLine() - 1, t.line - o), u = t.line; u != l; u += n) {
 		var d = e.getLine(u);
 		if (d) {
 			var f = n > 0 ? 0 : d.length - 1, p = n > 0 ? d.length : -1;
 			if (!(d.length > a)) for (u == t.line && (f = t.ch - +(n < 0)); f != p; f += n) {
 				var m = d.charAt(f);
 				if (c.test(m)) {
-					var h = AT[m];
+					var h = jT[m];
 					if (h && h.charAt(1) == ">" == n > 0) s.push(m);
 					else if (s.length) s.pop();
 					else return {
-						pos: new hT(u, f),
+						pos: new gT(u, f),
 						ch: m
 					};
 				}
@@ -26855,27 +26867,27 @@ function MT(e, t, n, r, i) {
 	}
 	return u - n == (n > 0 ? e.lastLine() : e.firstLine()) ? !1 : null;
 }
-function NT(e, t) {
+function PT(e, t) {
 	return null;
 }
-function PT(e, t) {
+function FT(e, t) {
 	var n = e.cm6.state, r = e.indexFromPos(t);
 	r < n.doc.length && n.sliceDoc(r, r + 1) == "<" && r++;
 	for (var i = nu(n, r)?.resolve(r) || null; i;) {
 		if (i.firstChild?.type.name == "OpenTag" && i.lastChild?.type.name == "CloseTag") return {
-			open: FT(n.doc, i.firstChild),
-			close: FT(n.doc, i.lastChild)
+			open: IT(n.doc, i.firstChild),
+			close: IT(n.doc, i.lastChild)
 		};
 		i = i.parent;
 	}
 }
-function FT(e, t) {
+function IT(e, t) {
 	return {
-		from: mT(e, t.from),
-		to: mT(e, t.to)
+		from: hT(e, t.from),
+		to: hT(e, t.to)
 	};
 }
-var IT = class {
+var LT = class {
 	constructor(e, t, n) {
 		this.cm = e, this.id = e.$mid++, this.offset = t, this.assoc = n, e.marks[this.id] = this;
 	}
@@ -26889,21 +26901,21 @@ var IT = class {
 		this.offset != null && (this.offset = e.mapPos(this.offset, this.assoc, oe.TrackDel));
 	}
 };
-function LT(e, t) {
+function RT(e, t) {
 	for (var n = t.column || e.getOption("textwidth") || 80, r = t.allowMerge != 0, i = Math.min(t.from, t.to), a = Math.max(t.from, t.to); i <= a;) {
 		var o = e.getLine(i);
 		if (o.length > n) {
 			var s = p(o, n, 5);
 			if (s) {
 				var c = /^\s*/.exec(o)?.[0];
-				e.replaceRange("\n" + c, new hT(i, s.start), new hT(i, s.end));
+				e.replaceRange("\n" + c, new gT(i, s.start), new gT(i, s.end));
 			}
 			a++;
 		} else if (r && /\S/.test(o) && i != a) {
 			var l = e.getLine(i + 1);
 			if (l && /\S/.test(l)) {
 				var u = o.replace(/\s+$/, ""), d = l.replace(/^\s+/, ""), f = u + " " + d, s = p(f, n, 5);
-				s && s.start > u.length || f.length < n ? (e.replaceRange(" ", new hT(i, u.length), new hT(i + 1, l.length - d.length)), i--, a--) : u.length < o.length && e.replaceRange("", new hT(i, u.length), new hT(i, o.length));
+				s && s.start > u.length || f.length < n ? (e.replaceRange(" ", new gT(i, u.length), new gT(i + 1, l.length - d.length)), i--, a--) : u.length < o.length && e.replaceRange("", new gT(i, u.length), new gT(i, o.length));
 			}
 		}
 		i++;
@@ -26927,12 +26939,12 @@ function LT(e, t) {
 		}
 	}
 }
-var RT = rs || (function() {
+var zT = rs || (function() {
 	let e = { cursorBlinkRate: 1200 };
 	return function() {
 		return e;
 	};
-})(), zT = class {
+})(), BT = class {
 	constructor(e, t, n, r, i, a, o, s, c, l) {
 		this.left = e, this.top = t, this.height = n, this.fontFamily = r, this.fontSize = i, this.fontWeight = a, this.color = o, this.className = s, this.letter = c, this.partial = l;
 	}
@@ -26946,7 +26958,7 @@ var RT = rs || (function() {
 	eq(e) {
 		return this.left == e.left && this.top == e.top && this.height == e.height && this.fontFamily == e.fontFamily && this.fontSize == e.fontSize && this.fontWeight == e.fontWeight && this.color == e.color && this.className == e.className && this.letter == e.letter;
 	}
-}, BT = class {
+}, VT = class {
 	constructor(e, t) {
 		this.view = e, this.rangePieces = [], this.cursors = [], this.cm = t, this.measureReq = {
 			read: this.readPos.bind(this),
@@ -26954,11 +26966,11 @@ var RT = rs || (function() {
 		}, this.cursorLayer = e.scrollDOM.appendChild(document.createElement("div")), this.cursorLayer.className = "cm-cursorLayer cm-vimCursorLayer", this.cursorLayer.setAttribute("aria-hidden", "true"), e.requestMeasure(this.measureReq), this.setBlinkRate();
 	}
 	setBlinkRate() {
-		let e = RT(this.cm.cm6.state).cursorBlinkRate;
+		let e = zT(this.cm.cm6.state).cursorBlinkRate;
 		this.cursorLayer.style.animationDuration = e + "ms";
 	}
 	update(e) {
-		(e.selectionSet || e.geometryChanged || e.viewportChanged) && (this.view.requestMeasure(this.measureReq), this.cursorLayer.style.animationName = this.cursorLayer.style.animationName == "cm-blink" ? "cm-blink2" : "cm-blink"), VT(e) && this.setBlinkRate();
+		(e.selectionSet || e.geometryChanged || e.viewportChanged) && (this.view.requestMeasure(this.measureReq), this.cursorLayer.style.animationName = this.cursorLayer.style.animationName == "cm-blink" ? "cm-blink2" : "cm-blink"), HT(e) && this.setBlinkRate();
 	}
 	scheduleRedraw() {
 		this.view.requestMeasure(this.measureReq);
@@ -26966,7 +26978,7 @@ var RT = rs || (function() {
 	readPos() {
 		let { state: e } = this.view, t = [];
 		for (let n of e.selection.ranges) {
-			let r = n == e.selection.main, i = WT(this.cm, this.view, n, r);
+			let r = n == e.selection.main, i = GT(this.cm, this.view, n, r);
 			i && t.push(i);
 		}
 		return { cursors: t };
@@ -26985,10 +26997,10 @@ var RT = rs || (function() {
 		this.cursorLayer.remove();
 	}
 };
-function VT(e) {
-	return RT(e.startState) != RT(e.state);
+function HT(e) {
+	return zT(e.startState) != zT(e.state);
 }
-var HT = Ee.highest(U.theme({
+var UT = Ee.highest(U.theme({
 	".cm-vimMode .cm-line": {
 		"& ::selection": { backgroundColor: "transparent !important" },
 		"&::selection": { backgroundColor: "transparent !important" },
@@ -27006,14 +27018,14 @@ var HT = Ee.highest(U.theme({
 		color: "transparent !important"
 	}
 }));
-function UT(e) {
+function WT(e) {
 	let t = e.scrollDOM.getBoundingClientRect();
 	return {
 		left: (e.textDirection == Pn.LTR ? t.left : t.right - e.scrollDOM.clientWidth) - e.scrollDOM.scrollLeft * e.scaleX,
 		top: t.top - e.scrollDOM.scrollTop * e.scaleY
 	};
 }
-function WT(e, t, n, r) {
+function GT(e, t, n, r) {
 	var i, a;
 	let o = n.head, s = !1, c = 1, l = e.state.vim;
 	if (l && (!l.insertMode || e.state.overwrite)) {
@@ -27025,7 +27037,7 @@ function WT(e, t, n, r) {
 		e && /[\uDC00-\uDFFF]/.test(e) && o > 1 && (o--, e = t.state.sliceDoc(o, o + 1));
 		let n = t.coordsAtPos(o, 1);
 		if (!n) return null;
-		let s = UT(t), l = t.domAtPos(o), d = l ? l.node : t.contentDOM;
+		let s = WT(t), l = t.domAtPos(o), d = l ? l.node : t.contentDOM;
 		for (d instanceof Text && l.offset >= d.data.length && (i = d.parentElement) != null && i.nextSibling && (d = d.parentElement?.nextSibling, l = {
 			node: d,
 			offset: 0
@@ -27045,10 +27057,10 @@ function WT(e, t, n, r) {
 			u && (p = u.left - (u.left - n.left) / parseInt(f.tabSize));
 		} else /[\uD800-\uDBFF]/.test(e) && o < t.state.doc.length - 1 && (e += t.state.sliceDoc(o + 1, o + 2));
 		let h = n.bottom - n.top;
-		return new zT((p - s.left) / t.scaleX, (n.top - s.top + h * (1 - c)) / t.scaleY, h * c / t.scaleY, f.fontFamily, f.fontSize, f.fontWeight, f.color, r ? "cm-fat-cursor cm-cursor-primary" : "cm-fat-cursor cm-cursor-secondary", e, c != 1);
+		return new BT((p - s.left) / t.scaleX, (n.top - s.top + h * (1 - c)) / t.scaleY, h * c / t.scaleY, f.fontFamily, f.fontSize, f.fontWeight, f.color, r ? "cm-fat-cursor cm-cursor-primary" : "cm-fat-cursor cm-cursor-secondary", e, c != 1);
 	} else return null;
 }
-var GT = typeof navigator < "u" && /linux/i.test(navigator.platform) && / Gecko\/\d+/.exec(navigator.userAgent), KT = fT($), qT = 250, JT = U.baseTheme({
+var KT = typeof navigator < "u" && /linux/i.test(navigator.platform) && / Gecko\/\d+/.exec(navigator.userAgent), qT = pT($), JT = 250, YT = U.baseTheme({
 	".cm-vimMode .cm-cursorLayer:not(.cm-vimCursorLayer)": { display: "none" },
 	".cm-vim-panel": {
 		padding: "0px 10px",
@@ -27063,18 +27075,18 @@ var GT = typeof navigator < "u" && /linux/i.test(navigator.platform) && / Gecko\
 	},
 	"&light .cm-searchMatch": { backgroundColor: "#ffff0054" },
 	"&dark .cm-searchMatch": { backgroundColor: "#00ffff8a" }
-}), YT = xr.fromClass(class {
+}), XT = xr.fromClass(class {
 	constructor(e) {
 		this.status = "", this.query = null, this.decorations = V.none, this.waitForCopy = !1, this.lastKeydown = "", this.useNextTextInput = !1, this.compositionText = "", this.view = e;
 		let t = this.cm = new $(e);
-		KT.enterVimMode(this.cm), this.view.cm = this.cm, this.cm.state.vimPlugin = this, this.blockCursor = new BT(e, t), this.updateClass(), this.cm.on("vim-command-done", () => {
+		qT.enterVimMode(this.cm), this.view.cm = this.cm, this.cm.state.vimPlugin = this, this.blockCursor = new VT(e, t), this.updateClass(), this.cm.on("vim-command-done", () => {
 			t.state.vim && (t.state.vim.status = ""), this.blockCursor.scheduleRedraw(), this.updateStatus();
 		}), this.cm.on("vim-mode-change", (e) => {
 			t.state.vim && (t.state.vim.mode = e.mode, e.subMode && (t.state.vim.mode += " block"), t.state.vim.status = "", this.blockCursor.scheduleRedraw(), this.updateClass(), this.updateStatus());
 		}), this.cm.on("dialog", () => {
-			this.cm.state.statusbar ? this.updateStatus() : e.dispatch({ effects: QT.of(!!this.cm.state.dialog) });
+			this.cm.state.statusbar ? this.updateStatus() : e.dispatch({ effects: $T.of(!!this.cm.state.dialog) });
 		}), this.dom = document.createElement("span"), this.spacer = document.createElement("span"), this.spacer.style.flex = "1", this.statusButton = document.createElement("span"), this.statusButton.onclick = (e) => {
-			KT.handleKey(this.cm, "<Esc>", "user"), this.cm.focus();
+			qT.handleKey(this.cm, "<Esc>", "user"), this.cm.focus();
 		}, this.statusButton.style.cssText = "cursor: pointer";
 	}
 	update(e) {
@@ -27104,16 +27116,16 @@ var GT = typeof navigator < "u" && /linux/i.test(navigator.platform) && / Gecko\
 		this.dom.textContent = t.status, e.appendChild(this.dom);
 	}
 	destroy() {
-		KT.leaveVimMode(this.cm), this.updateClass(), this.blockCursor.destroy(), delete this.view.cm;
+		qT.leaveVimMode(this.cm), this.updateClass(), this.blockCursor.destroy(), delete this.view.cm;
 	}
 	highlight(e) {
 		if (this.query = e, !e) return this.decorations = V.none;
 		let { view: t } = this, n = new ct();
 		for (let r = 0, i = t.visibleRanges, a = i.length; r < a; r++) {
 			let { from: o, to: s } = i[r];
-			for (; r < a - 1 && s > i[r + 1].from - 2 * qT;) s = i[++r].to;
+			for (; r < a - 1 && s > i[r + 1].from - 2 * JT;) s = i[++r].to;
 			e.highlight(t.state, o, s, (e, t) => {
-				n.add(e, t, ZT);
+				n.add(e, t, QT);
 			});
 		}
 		return this.decorations = n.finish();
@@ -27121,7 +27133,7 @@ var GT = typeof navigator < "u" && /linux/i.test(navigator.platform) && / Gecko\
 	handleKey(e, t) {
 		let n = this.cm, r = n.state.vim;
 		if (!r) return;
-		let i = KT.vimKeyFromEvent(e, r);
+		let i = qT.vimKeyFromEvent(e, r);
 		if ($.signal(this.cm, "inputEvent", {
 			type: "handleKey",
 			key: i
@@ -27132,8 +27144,8 @@ var GT = typeof navigator < "u" && /linux/i.test(navigator.platform) && / Gecko\
 		}
 		if (i === "<C-c>" && !$.isMac && n.somethingSelected()) return this.waitForCopy = !0, !0;
 		r.status = (r.status || "") + i;
-		let a = KT.multiSelectHandleKey(n, i, "user");
-		return r = KT.maybeInitVimState_(n), !a && r.insertMode && n.state.overwrite && (e.key && e.key.length == 1 && !/\n/.test(e.key) ? (a = !0, n.overWriteSelection(e.key)) : e.key == "Backspace" && (a = !0, $.commands.cursorCharLeft(n))), a && ($.signal(this.cm, "vim-keypress", i), e.preventDefault(), e.stopPropagation(), this.blockCursor.scheduleRedraw()), this.updateStatus(), !!a;
+		let a = qT.multiSelectHandleKey(n, i, "user");
+		return r = qT.maybeInitVimState_(n), !a && r.insertMode && n.state.overwrite && (e.key && e.key.length == 1 && !/\n/.test(e.key) ? (a = !0, n.overWriteSelection(e.key)) : e.key == "Backspace" && (a = !0, $.commands.cursorCharLeft(n))), a && ($.signal(this.cm, "vim-keypress", i), e.preventDefault(), e.stopPropagation(), this.blockCursor.scheduleRedraw()), this.updateStatus(), !!a;
 	}
 }, {
 	eventHandlers: {
@@ -27141,7 +27153,7 @@ var GT = typeof navigator < "u" && /linux/i.test(navigator.platform) && / Gecko\
 			this.waitForCopy && (this.waitForCopy = !1, Promise.resolve().then(() => {
 				var e = this.cm, t = e.state.vim;
 				t && (t.insertMode ? e.setSelection(e.getCursor(), e.getCursor()) : e.operation(() => {
-					e.curOp && (e.curOp.isVimOp = !0), KT.handleKey(e, "<Esc>", "user");
+					e.curOp && (e.curOp.isVimOp = !0), qT.handleKey(e, "<Esc>", "user");
 				}));
 			}));
 		},
@@ -27162,7 +27174,7 @@ var GT = typeof navigator < "u" && /linux/i.test(navigator.platform) && / Gecko\
 		}
 	},
 	provide: () => [U.inputHandler.of((e, t, n, r) => {
-		var i, a = rE(e);
+		var i, a = iE(e);
 		if (!a) return !1;
 		var o = a.state?.vim, s = a.state.vimPlugin;
 		if (o && !o.insertMode && !((i = a.curOp) != null && i.isVimOp)) {
@@ -27187,17 +27199,17 @@ var GT = typeof navigator < "u" && /linux/i.test(navigator.platform) && / Gecko\
 					key: r,
 					preventDefault: () => {},
 					stopPropagation: () => {}
-				}), XT(e), !0;
+				}), ZT(e), !0;
 			}
 		}
 		return !1;
 	})],
 	decorations: (e) => e.decorations
 });
-function XT(e) {
+function ZT(e) {
 	var t = e.scrollDOM.parentElement;
 	if (t) {
-		if (GT) {
+		if (KT) {
 			e.contentDOM.textContent = "\0\0", e.contentDOM.dispatchEvent(new CustomEvent("compositionend"));
 			return;
 		}
@@ -27216,15 +27228,15 @@ function XT(e) {
 		e.focus(), e.contentDOM.dispatchEvent(new CustomEvent("compositionend"));
 	}
 }
-var ZT = V.mark({ class: "cm-searchMatch" }), QT = F.define(), $T = Ce.define({
+var QT = V.mark({ class: "cm-searchMatch" }), $T = F.define(), eE = Ce.define({
 	create: () => !1,
 	update(e, t) {
-		for (let n of t.effects) n.is(QT) && (e = n.value);
+		for (let n of t.effects) n.is($T) && (e = n.value);
 		return e;
 	},
-	provide: (e) => nc.from(e, (e) => e ? eE : null)
+	provide: (e) => nc.from(e, (e) => e ? tE : null)
 });
-function eE(e) {
+function tE(e) {
 	let t = document.createElement("div");
 	t.className = "cm-vim-panel";
 	let n = e.cm;
@@ -27233,24 +27245,24 @@ function eE(e) {
 		dom: t
 	};
 }
-function tE(e) {
+function nE(e) {
 	let t = document.createElement("div");
 	t.className = "cm-vim-panel";
 	let n = e.cm;
 	return n.state.statusbar = t, n.state.vimPlugin.updateStatus(), { dom: t };
 }
-function nE(e = {}) {
+function rE(e = {}) {
 	return [
-		JT,
 		YT,
-		HT,
-		e.status ? nc.of(tE) : $T
+		XT,
+		UT,
+		e.status ? nc.of(nE) : eE
 	];
 }
-function rE(e) {
+function iE(e) {
 	return e.cm || null;
 }
-var iE = [
+var aE = [
 	{
 		name: "blockquote",
 		attributes: [{
@@ -27281,16 +27293,16 @@ var iE = [
 	},
 	"warning"
 ];
-function aE() {
+function oE() {
 	if (typeof window > "u") return !1;
 	let e = typeof window.matchMedia == "function" && window.matchMedia("(pointer: coarse)").matches, t = typeof window.matchMedia == "function" && window.matchMedia("(hover: none)").matches, n = (window.innerWidth || 0) <= 768;
 	return !e && !t ? !1 : n;
 }
-function oE(e) {
+function sE(e) {
 	let t = e.toolbarMode || "static";
-	return aE() && t !== "static" ? "static" : t;
+	return oE() && t !== "static" ? "static" : t;
 }
-function sE() {
+function cE() {
 	if (typeof document > "u") return;
 	let e = !1;
 	try {
@@ -27312,7 +27324,7 @@ function sE() {
 	let t = document.createElement("link");
 	t.id = "traven-floating-styles", t.rel = "stylesheet", t.href = new URL("data:text/css;base64,LyogU2xpbSByYWlsIChmbG9hdGluZyBtb2RlKSAqLwoudHJhdmVuLXNsaW0tcmFpbCB7CiAgZGlzcGxheTogZmxleDsKICBhbGlnbi1pdGVtczogY2VudGVyOwogIGdhcDogNHB4OwogIHBhZGRpbmc6IDRweCA4cHg7CiAgYm9yZGVyLWJvdHRvbTogMXB4IHNvbGlkIHZhcigtLWFjY2VudCwgIzQ3NTU2OSk7CiAgYmFja2dyb3VuZDogdmFyKC0tcmFpbC1iZywgdHJhbnNwYXJlbnQpOwp9CgoudHJhdmVuLXJhaWwtYnRuIHsKICBkaXNwbGF5OiBpbmxpbmUtZmxleDsKICBhbGlnbi1pdGVtczogY2VudGVyOwogIGp1c3RpZnktY29udGVudDogY2VudGVyOwogIHdpZHRoOiAyOHB4OwogIGhlaWdodDogMjhweDsKICBiYWNrZ3JvdW5kOiBub25lOwogIGJvcmRlcjogMDsKICBib3JkZXItcmFkaXVzOiA0cHg7CiAgY29sb3I6IHZhcigtLXRleHQtc2Vjb25kYXJ5LCAjNDc1NTY5KTsKICBjdXJzb3I6IHBvaW50ZXI7CiAgZmxleC1zaHJpbms6IDA7CiAgdHJhbnNpdGlvbjogY29sb3IgMC4xNXMgZWFzZSwgYmFja2dyb3VuZC1jb2xvciAwLjE1cyBlYXNlOwp9CgoudHJhdmVuLXJhaWwtYnRuOmhvdmVyIHsKICBiYWNrZ3JvdW5kOiB2YXIoLS1yYWlsLWJ0bi1ob3ZlciwgcmdiYSgwLCAwLCAwLCAwLjA1KSk7CiAgY29sb3I6IHZhcigtLXRleHQtcHJpbWFyeSwgIzBmMTcyYSk7Cn0KCi50cmF2ZW4tcmFpbC1idG4gc3ZnIHsKICB3aWR0aDogMTZweDsKICBoZWlnaHQ6IDE2cHg7CiAgc3Ryb2tlOiBjdXJyZW50Q29sb3I7CiAgZGlzcGxheTogYmxvY2s7Cn0KCi50cmF2ZW4tcmFpbC1idG4gc3ZnIHJlY3Q6bm90KFtzdHJva2VdKSB7CiAgc3Ryb2tlOiBub25lOwp9CgouY20td3lzaXd5bS1kYXJrIC50cmF2ZW4tcmFpbC1idG4gewogIGNvbG9yOiB2YXIoLS10ZXh0LXNlY29uZGFyeS1kYXJrLCAjOTRhM2I4KTsKfQoKLmNtLXd5c2l3eW0tZGFyayAudHJhdmVuLXJhaWwtYnRuOmhvdmVyIHsKICBiYWNrZ3JvdW5kOiB2YXIoLS1yYWlsLWJ0bi1ob3Zlci1kYXJrLCByZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDgpKTsKICBjb2xvcjogdmFyKC0tdGV4dC1wcmltYXJ5LWRhcmssICNmOGZhZmMpOwp9CgovKiBTdGF0cyB3aWRnZXQgKi8KLnRyYXZlbi10b29sYmFyLXN0YXRzIHsKICBtYXJnaW4tbGVmdDogYXV0bzsKICBmb250LXNpemU6IDExcHg7CiAgY29sb3I6IHJnYmEoMCwgMCwgMCwgMC41KTsKICBmb250LWZhbWlseTogaW5oZXJpdDsKICB3aGl0ZS1zcGFjZTogbm93cmFwOwogIHBhZGRpbmc6IDAgOHB4OwogIGFsaWduLXNlbGY6IGNlbnRlcjsKfQoKLmNtLXd5c2l3eW0tZGFyayAudHJhdmVuLXRvb2xiYXItc3RhdHMgewogIGNvbG9yOiByZ2JhKDI1NSwgMjU1LCAyNTUsIDAuNSk7Cn0KCi8qIFNlbGVjdGlvbiBidWJibGUgKi8KLnRyYXZlbi1idWJibGUtbWVudSB7CiAgLS1idWJibGUtYmc6ICNmZmZmZmY7CiAgLS1idWJibGUtZmc6ICMxZjI5Mzc7CiAgLS1idWJibGUtYm9yZGVyOiByZ2JhKDAsIDAsIDAsIDAuMTIpOwogIGRpc3BsYXk6IGZsZXg7CiAgYWxpZ24taXRlbXM6IGNlbnRlcjsKICBnYXA6IDJweDsKICBwYWRkaW5nOiA0cHg7CiAgYmFja2dyb3VuZDogdmFyKC0tYnViYmxlLWJnKTsKICBjb2xvcjogdmFyKC0tYnViYmxlLWZnKTsKICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1idWJibGUtYm9yZGVyKTsKICBib3JkZXItcmFkaXVzOiA2cHg7CiAgYm94LXNoYWRvdzogMCAycHggOHB4IHJnYmEoMCwgMCwgMCwgMC4xMik7Cn0KCi5jbS13eXNpd3ltLWRhcmsgLnRyYXZlbi1idWJibGUtbWVudSB7CiAgLS1idWJibGUtYmc6ICMxZTI5M2I7CiAgLS1idWJibGUtZmc6ICNlMmU4ZjA7CiAgLS1idWJibGUtYm9yZGVyOiByZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMTIpOwp9CgovKiBUYWJsZXQgU3RyYXRlZ3k6IHJlbmRlciBzZWxlY3Rpb24gYnViYmxlIGFzIGEgc3RpY2t5IGJvdHRvbSBiYXIgKi8KLnRyYXZlbi1idWJibGUtbWVudS5pcy10YWJsZXQtYm90dG9tLWJhciB7CiAgcG9zaXRpb246IGZpeGVkICFpbXBvcnRhbnQ7CiAgYm90dG9tOiAwICFpbXBvcnRhbnQ7CiAgbGVmdDogMCAhaW1wb3J0YW50OwogIHJpZ2h0OiAwICFpbXBvcnRhbnQ7CiAgd2lkdGg6IDEwMCUgIWltcG9ydGFudDsKICBib3JkZXItcmFkaXVzOiAwICFpbXBvcnRhbnQ7CiAgYm9yZGVyLXRvcDogMXB4IHNvbGlkIHZhcigtLWJ1YmJsZS1ib3JkZXIsIHJnYmEoMCwgMCwgMCwgMC4xMikpICFpbXBvcnRhbnQ7CiAgYm9yZGVyLWxlZnQ6IDAgIWltcG9ydGFudDsKICBib3JkZXItcmlnaHQ6IDAgIWltcG9ydGFudDsKICBib3JkZXItYm90dG9tOiAwICFpbXBvcnRhbnQ7CiAgYm94LXNoYWRvdzogMCAtMnB4IDEwcHggcmdiYSgwLCAwLCAwLCAwLjEpICFpbXBvcnRhbnQ7CiAgei1pbmRleDogOTk5OSAhaW1wb3J0YW50OwogIGp1c3RpZnktY29udGVudDogY2VudGVyICFpbXBvcnRhbnQ7CiAgcGFkZGluZzogOHB4IDE2cHggIWltcG9ydGFudDsKICBib3gtc2l6aW5nOiBib3JkZXItYm94ICFpbXBvcnRhbnQ7Cn0KCi50cmF2ZW4tYnViYmxlLW1lbnUgLnRvb2xiYXItYnRuIHsKICB3aWR0aDogMjZweDsKICBoZWlnaHQ6IDI2cHg7Cn0KCi50cmF2ZW4tYnViYmxlLXNlcCB7CiAgZGlzcGxheTogaW5saW5lLWJsb2NrOwogIHdpZHRoOiAxcHg7CiAgaGVpZ2h0OiAxOHB4OwogIGJhY2tncm91bmQ6IHZhcigtLWJ1YmJsZS1ib3JkZXIsIHJnYmEoMCwgMCwgMCwgMC4xMikpOwogIG1hcmdpbjogMCA0cHg7CiAgYWxpZ24tc2VsZjogY2VudGVyOwogIGZsZXgtc2hyaW5rOiAwOwp9CgouY20td3lzaXd5bS1kYXJrIC50cmF2ZW4tYnViYmxlLXNlcCB7CiAgYmFja2dyb3VuZDogdmFyKC0tYnViYmxlLWJvcmRlciwgcmdiYSgyNTUsIDI1NSwgMjU1LCAwLjEyKSk7Cn0KCgovKiDilIDilIAgR3V0dGVyIGluc2VydGVyOiB6ZXJvLXdpZHRoIG92ZXJsYXkg4pSA4pSACiAgIFRoZSBndXR0ZXIgY29sdW1uIGl0c2VsZiB0YWtlcyBubyBsYXlvdXQgc3BhY2UuICBUaGUgIisiIGJ1dHRvbgogICBpcyBhYnNvbHV0ZWx5IHBvc2l0aW9uZWQgc28gaXQgZmxvYXRzIGludG8gdGhlIC5jbS1jb250ZW50IGxlZnQtCiAgIHBhZGRpbmcgem9uZSAoMjQgcHgpIOKAkyB2aXNpYmxlIHdpdGhvdXQgc2hpZnRpbmcgY29udGVudCByaWdodC4gKi8KCi5jbS10cmF2ZW4tZ3V0dGVyIHsKICB3aWR0aDogMCAhaW1wb3J0YW50OwogIG1pbi13aWR0aDogMCAhaW1wb3J0YW50OwogIHBhZGRpbmc6IDAgIWltcG9ydGFudDsKICBvdmVyZmxvdzogdmlzaWJsZSAhaW1wb3J0YW50Owp9CgouY20tdHJhdmVuLWd1dHRlciAuY20tZ3V0dGVyRWxlbWVudCB7CiAgd2lkdGg6IDA7CiAgb3ZlcmZsb3c6IHZpc2libGU7CiAgcG9zaXRpb246IHJlbGF0aXZlOwp9CgovKiBUaGUgKyBidXR0b24gb3ZlcmxheXMgaW50byB0aGUgY29udGVudCdzIGxlZnQgcGFkZGluZyBhcmVhICovCi5jbS10cmF2ZW4tZ3V0dGVyIC50cmF2ZW4tZ3V0dGVyLXBsdXMtYnRuIHsKICBwb3NpdGlvbjogYWJzb2x1dGU7CiAgLyogUGxhY2UgaXQgdG8gdGhlIHJpZ2h0IG9mIHRoZSBndXR0ZXIgKGludG8gdGhlIGNvbnRlbnQgcGFkZGluZykgKi8KICBsZWZ0OiA0cHg7CiAgdG9wOiA1MCU7CiAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKC01MCUpOwogIGRpc3BsYXk6IGZsZXg7CiAgYWxpZ24taXRlbXM6IGNlbnRlcjsKICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjsKICB3aWR0aDogMTZweDsKICBoZWlnaHQ6IDE2cHg7CiAgbGluZS1oZWlnaHQ6IDE2cHg7CiAgdGV4dC1hbGlnbjogY2VudGVyOwogIGJvcmRlci1yYWRpdXM6IDNweDsKICBjdXJzb3I6IHBvaW50ZXI7CiAgb3BhY2l0eTogMDsKICB0cmFuc2l0aW9uOiBvcGFjaXR5IDEyMG1zIGVhc2UsIGNvbG9yIDEyMG1zIGVhc2UsIGJhY2tncm91bmQtY29sb3IgMTIwbXMgZWFzZTsKICBjb2xvcjogIzk0YTNiODsKICAvKiBzbGF0ZS00MDAgKGdyYXkpICovCiAgdXNlci1zZWxlY3Q6IG5vbmU7CiAgei1pbmRleDogMjsKICBmb250LXNpemU6IDE0cHg7Cn0KCi8qIEFsd2F5cyBkaXNwbGF5IGl0IHdoZW4gdGhlIGN1cnNvciBpcyBvbiB0aGUgbGluZSAoYWN0aXZlIGxpbmUgZ3V0dGVyKSAqLwouY20tYWN0aXZlTGluZUd1dHRlciAudHJhdmVuLWd1dHRlci1wbHVzLWJ0biB7CiAgb3BhY2l0eTogMTsKICBjb2xvcjogIzk0YTNiODsKfQoKLyogSG92ZXIgc3RhdGU6IHR1cm4gaXQgdG8gYSBkYXJrZXIgc2xhdGUgb3IgYmxhY2sgKi8KLmNtLXRyYXZlbi1ndXR0ZXIgLnRyYXZlbi1ndXR0ZXItcGx1cy1idG46aG92ZXIgewogIG9wYWNpdHk6IDE7CiAgY29sb3I6ICMwZjE3MmE7CiAgLyogc2xhdGUtOTAwIChkYXJrZXIgc2xhdGUvYmxhY2spICovCiAgYmFja2dyb3VuZDogdmFyKC0tZ3V0dGVyLWJ0bi1ob3ZlciwgcmdiYSgwLCAwLCAwLCAwLjA1KSk7Cn0KCi8qIERhcmsgbW9kZSBvdmVycmlkZXMgKi8KLmNtLXd5c2l3eW0tZGFyayAuY20tdHJhdmVuLWd1dHRlciAudHJhdmVuLWd1dHRlci1wbHVzLWJ0biB7CiAgY29sb3I6ICM2NDc0OGI7CiAgLyogc2xhdGUtNTAwIChncmF5IGluIGRhcmsgbW9kZSkgKi8KfQoKLmNtLXd5c2l3eW0tZGFyayAuY20tYWN0aXZlTGluZUd1dHRlciAudHJhdmVuLWd1dHRlci1wbHVzLWJ0biB7CiAgY29sb3I6ICM2NDc0OGI7Cn0KCi5jbS13eXNpd3ltLWRhcmsgLmNtLXRyYXZlbi1ndXR0ZXIgLnRyYXZlbi1ndXR0ZXItcGx1cy1idG46aG92ZXIgewogIGNvbG9yOiAjZjhmYWZjOwogIC8qIHNsYXRlLTUwIChsaWdodCBzbGF0ZS93aGl0ZSkgKi8KICBiYWNrZ3JvdW5kOiB2YXIoLS1ndXR0ZXItYnRuLWhvdmVyLWRhcmssIHJnYmEoMjU1LCAyNTUsIDI1NSwgMC4wOCkpOwp9CgovKiBHdXR0ZXIgcG9wb3ZlciAqLwoudHJhdmVuLWd1dHRlci1tZW51IHsKICBkaXNwbGF5OiBmbGV4OwogIGZsZXgtd3JhcDogd3JhcDsKICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjsKICBnYXA6IDRweDsKICBwYWRkaW5nOiA2cHg7CiAgYmFja2dyb3VuZDogcmdiYSgyNTUsIDI1NSwgMjU1LCAwLjQpOwogIGJhY2tkcm9wLWZpbHRlcjogYmx1cigxMnB4KTsKICAtd2Via2l0LWJhY2tkcm9wLWZpbHRlcjogYmx1cigxMnB4KTsKICBib3JkZXI6IDFweCBzb2xpZCByZ2JhKDAsIDAsIDAsIDAuMDgpOwogIGJvcmRlci1yYWRpdXM6IDhweDsKICBib3gtc2hhZG93OiAwIDRweCAxNnB4IHJnYmEoMCwgMCwgMCwgMC4wOCk7CiAgei1pbmRleDogMTAwMDsKICBtYXgtaGVpZ2h0OiA2MHZoOwogIG92ZXJmbG93OiB2aXNpYmxlOwogIHdpZHRoOiAxOTJweDsKICBib3gtc2l6aW5nOiBib3JkZXItYm94Owp9CgoudHJhdmVuLWd1dHRlci1tZW51IC50b29sYmFyLWJ0biB7CiAgYmFja2dyb3VuZDogI2ZmZmZmZjsKICBib3JkZXI6IDFweCBzb2xpZCByZ2JhKDAsIDAsIDAsIDAuMDYpOwogIGJveC1zaGFkb3c6IDAgMXB4IDJweCByZ2JhKDAsIDAsIDAsIDAuMDQpOwogIGJvcmRlci1yYWRpdXM6IDZweDsKfQoKLnRyYXZlbi1ndXR0ZXItbWVudSBidXR0b24uYnRuLWhlYWRpbmcsCi50cmF2ZW4tZ3V0dGVyLW1lbnUgYnV0dG9uLmJ0bi1ibG9ja3F1b3RlIHsKICB3aWR0aDogMzJweDsKICBwYWRkaW5nOiAwOwp9CgoudHJhdmVuLWd1dHRlci1tZW51IC50b29sYmFyLWJ0bjpob3ZlciB7CiAgYmFja2dyb3VuZDogI2Y4ZmFmYzsKICBib3JkZXItY29sb3I6IHJnYmEoMCwgMCwgMCwgMC4xMik7CiAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4wOCk7Cn0KCi5jbS13eXNpd3ltLWRhcmsgLnRyYXZlbi1ndXR0ZXItbWVudSB7CiAgYmFja2dyb3VuZDogcmdiYSgzMCwgNDEsIDU5LCAwLjUpOwogIGJvcmRlci1jb2xvcjogcmdiYSgyNTUsIDI1NSwgMjU1LCAwLjA4KTsKICBib3gtc2hhZG93OiAwIDRweCAxNnB4IHJnYmEoMCwgMCwgMCwgMC4zNSk7Cn0KCi5jbS13eXNpd3ltLWRhcmsgLnRyYXZlbi1ndXR0ZXItbWVudSAudG9vbGJhci1idG4gewogIGJhY2tncm91bmQ6ICMxZTI5M2I7CiAgYm9yZGVyOiAxcHggc29saWQgcmdiYSgyNTUsIDI1NSwgMjU1LCAwLjA2KTsKICBjb2xvcjogI2UyZThmMDsKICBib3gtc2hhZG93OiAwIDFweCAycHggcmdiYSgwLCAwLCAwLCAwLjE1KTsKfQoKLmNtLXd5c2l3eW0tZGFyayAudHJhdmVuLWd1dHRlci1tZW51IC50b29sYmFyLWJ0bjpob3ZlciB7CiAgYmFja2dyb3VuZDogIzMzNDE1NTsKICBjb2xvcjogI2ZmZmZmZjsKICBib3JkZXItY29sb3I6IHJnYmEoMjU1LCAyNTUsIDI1NSwgMC4xMik7CiAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4yNSk7Cn0=", "" + {}.url).href, document.head.appendChild(t);
 }
-var cE = [
+var lE = [
 	"bold",
 	"italic",
 	"strikethrough",
@@ -27329,7 +27341,7 @@ var cE = [
 	"numberedlist",
 	"tasklist",
 	"codeblock"
-], lE = "bubble-insert", uE = [
+], uE = "bubble-insert", dE = [
 	"heading",
 	"hr",
 	"table",
@@ -27344,7 +27356,7 @@ var cE = [
 	"video",
 	"audio",
 	"figure"
-], dE = [
+], fE = [
 	"undo",
 	"redo",
 	"fullscreen",
@@ -27353,24 +27365,24 @@ var cE = [
 	"gotoline",
 	"help"
 ];
-function fE(e) {
+function pE(e) {
 	let t = typeof navigator < "u" && /Mac|iPod|iPhone|iPad/.test(navigator.platform) ? "Cmd" : "Ctrl";
 	return e.split("-").map((e) => e === "Mod" ? t : e === "Shift" ? "Shift" : e === "Alt" ? "Alt" : e.length === 1 ? e.toUpperCase() : e).join("+");
 }
-function pE(e, t = {}) {
+function mE(e, t = {}) {
 	let n = document.createElement("div");
 	n.className = "traven-slim-rail", n.setAttribute("role", "toolbar"), n.setAttribute("aria-label", "Editor global actions");
-	for (let r of dE) {
+	for (let r of fE) {
 		let i = qC[r];
 		if (!i) continue;
 		let a = document.createElement("button");
 		a.type = "button", a.className = `traven-rail-btn btn-${r}`;
-		let o = t[r], s = o === void 0 ? i.keybinding : o, c = s ? fE(s) : i.shortcut || "", l = c ? `${i.title} (${c})` : i.title;
+		let o = t[r], s = o === void 0 ? i.keybinding : o, c = s ? pE(s) : i.shortcut || "", l = c ? `${i.title} (${c})` : i.title;
 		a.setAttribute("title", l), a.setAttribute("aria-label", i.title), a.innerHTML = i.icon, a.addEventListener("click", (t) => {
 			t.preventDefault(), i.action(e, a);
 		}), n.appendChild(a);
 	}
-	let r = mE(e);
+	let r = hE(e);
 	n.appendChild(r), Array.from(n.querySelectorAll("button.traven-rail-btn")).forEach((e) => {
 		e.setAttribute("tabindex", "0");
 	}), n.addEventListener("focusin", (e) => {
@@ -27402,7 +27414,7 @@ function pE(e, t = {}) {
 	}
 	return n;
 }
-function mE(e) {
+function hE(e) {
 	let t = document.createElement("div");
 	t.className = "traven-toolbar-stats";
 	let n = (e) => {
@@ -27415,13 +27427,13 @@ function mE(e) {
 		readTime: e.getReadTime ? e.getReadTime() : 0
 	}), e.on("statsUpdate", n), t;
 }
-function hE(e) {
+function gE(e) {
 	let t = e.querySelector(".traven-bubble-menu[role='toolbar']");
 	if (!t) return;
 	let n = t.querySelector("button");
 	n && n.focus();
 }
-function gE(e, t) {
+function _E(e, t) {
 	Array.from(e.querySelectorAll("button")).forEach((e, t) => {
 		e.setAttribute("tabindex", t === 0 ? "0" : "-1");
 	}), e.addEventListener("keydown", (r) => {
@@ -27457,16 +27469,16 @@ function gE(e, t) {
 		e !== -1 && n[e] && n[e].setAttribute("tabindex", "-1"), n[t].setAttribute("tabindex", "0"), n[t].focus();
 	}
 }
-function _E(e, t, n) {
+function vE(e, t, n) {
 	let r = document.createDocumentFragment();
-	for (let t of cE) YC(r, t, e);
-	YC(r, lE, e);
+	for (let t of lE) YC(r, t, e);
+	YC(r, uE, e);
 	let i = r.lastChild;
 	return i && i.addEventListener("click", (r) => {
-		r.preventDefault(), r.stopPropagation(), vE(e, t, n);
+		r.preventDefault(), r.stopPropagation(), yE(e, t, n);
 	}), r;
 }
-function vE(e, t, n) {
+function yE(e, t, n) {
 	let r = t.state.selection.main, i = t.state.doc.lineAt(r.to).to, a = 0, o = i;
 	for (; o < t.state.doc.length && t.state.sliceDoc(o, o + 1) === "\n";) a++, o++;
 	let s = o === t.state.doc.length ? 3 : 4, c = Math.max(0, s - a), l = "\n".repeat(c), u = i + 2;
@@ -27479,10 +27491,10 @@ function vE(e, t, n) {
 		selection: { anchor: u },
 		effects: n.of(void 0)
 	}), queueMicrotask(() => {
-		wE(e, u, t);
+		TE(e, u, t);
 	});
 }
-function yE(e, t, n, r) {
+function bE(e, t, n, r) {
 	return {
 		pos: e,
 		end: t,
@@ -27490,14 +27502,14 @@ function yE(e, t, n, r) {
 		create: (e) => {
 			let t = document.createElement("div");
 			t.className = "traven-bubble-menu", typeof window < "u" && (window.matchMedia("(pointer: coarse)").matches || "ontouchstart" in window) && t.classList.add("is-tablet-bottom-bar"), t.setAttribute("role", "toolbar"), t.setAttribute("aria-label", "Text formatting");
-			let i = _E(n, e, r);
-			t.appendChild(i), gE(t, n);
+			let i = vE(n, e, r);
+			t.appendChild(i), _E(t, n);
 			let a = document.createElement("div");
 			return a.className = "traven-bubble-arrow", t.appendChild(a), { dom: t };
 		}
 	};
 }
-function bE({ appearDelay: e, setBubblePos: t, clearBubble: n }) {
+function xE({ appearDelay: e, setBubblePos: t, clearBubble: n }) {
 	return xr.fromClass(class {
 		constructor(t) {
 			this.view = t, this.dom = t.contentDOM, this.appearDelay = e, this.showTimer = null, this.lastPointerId = null, this.lastShownRange = null, this._clearRaf = null, this._onPointerDown = this._onPointerDown.bind(this), this._onPointerMove = this._onPointerMove.bind(this), this._onPointerUp = this._onPointerUp.bind(this), this.dom.addEventListener("pointerdown", this._onPointerDown, !0), this.dom.addEventListener("pointermove", this._onPointerMove, !0), this.dom.addEventListener("pointerup", this._onPointerUp, !0);
@@ -27544,7 +27556,7 @@ function bE({ appearDelay: e, setBubblePos: t, clearBubble: n }) {
 		}
 	}, { decorations: (e) => V.none });
 }
-function xE(e, t = {}) {
+function SE(e, t = {}) {
 	let n = t.hotkey || "Mod-.", r = t.appearDelay ?? 200, i = F.define(), a = F.define(), o = [Ce.define({
 		create: () => null,
 		update(e, t) {
@@ -27554,8 +27566,8 @@ function xE(e, t = {}) {
 			}
 			return e;
 		},
-		provide: (t) => Xs.from(t, (t) => t == null ? null : yE(t.from, t.to, e, a))
-	}), bE({
+		provide: (t) => Xs.from(t, (t) => t == null ? null : bE(t.from, t.to, e, a))
+	}), xE({
 		appearDelay: r,
 		setBubblePos: i,
 		clearBubble: a
@@ -27567,11 +27579,11 @@ function xE(e, t = {}) {
 			return t.empty ? !1 : (e.dispatch({ effects: i.of({
 				from: t.from,
 				to: t.to
-			}) }), queueMicrotask(() => hE(e.dom)), !0);
+			}) }), queueMicrotask(() => gE(e.dom)), !0);
 		}
 	}]))), o;
 }
-var SE = class extends rc {
+var CE = class extends rc {
 	constructor(e) {
 		super(), this.lineFrom = e;
 	}
@@ -27580,14 +27592,14 @@ var SE = class extends rc {
 		return e.className = "traven-gutter-plus-btn", e.textContent = "+", e.setAttribute("aria-hidden", "true"), e;
 	}
 };
-function CE(e) {
+function wE(e) {
 	let t = [];
 	for (let { from: n, to: r } of e.visibleRanges) {
 		let i = n;
 		for (; i <= r;) {
 			let n = e.state.doc.lineAt(i);
 			if (n.length === 0) {
-				let e = new SE(n.from);
+				let e = new CE(n.from);
 				t.push(e.range(n.from));
 			}
 			if (n.to + 1 > r) break;
@@ -27596,14 +27608,14 @@ function CE(e) {
 	}
 	return R.of(t);
 }
-function wE(e, t, n) {
+function TE(e, t, n) {
 	let r = document.querySelector(".traven-gutter-menu");
 	r && r.remove();
 	let i = n.coordsAtPos(t);
 	if (!i) return null;
 	let a = document.createElement("div");
 	a.className = "traven-gutter-menu", a.setAttribute("role", "menu"), a.setAttribute("aria-label", "Block insertion"), a.tabIndex = -1;
-	for (let t of uE) YC(a, t, e);
+	for (let t of dE) YC(a, t, e);
 	let o = Array.from(a.querySelectorAll("button"));
 	o.forEach((e, t) => {
 		e.setAttribute("role", "menuitem"), e.setAttribute("tabindex", t === 0 ? "0" : "-1");
@@ -27638,16 +27650,16 @@ function wE(e, t, n) {
 		o[0].focus();
 	}) : n.focus(), a;
 }
-function TE(e, t = {}) {
+function EE(e, t = {}) {
 	let n = t.hotkey || "Mod-Shift-Enter";
 	return [
 		Oc(),
 		cc({
 			class: "cm-traven-gutter",
-			markers: CE,
+			markers: wE,
 			domEventHandlers: {
 				mousedown(t, n, r) {
-					return r.target.classList.contains("traven-gutter-plus-btn") ? (r.preventDefault(), wE(e, n.from, t), !0) : !1;
+					return r.target.classList.contains("traven-gutter-plus-btn") ? (r.preventDefault(), TE(e, n.from, t), !0) : !1;
 				},
 				click(e, t, n) {
 					return n.target.classList.contains("traven-gutter-plus-btn") ? (n.preventDefault(), !0) : !1;
@@ -27658,14 +27670,14 @@ function TE(e, t = {}) {
 			key: n,
 			run: (t) => {
 				let n = t.state.selection.main.head;
-				return wE(e, n, t), !0;
+				return TE(e, n, t), !0;
 			}
 		}]))
 	];
 }
-sE();
-var EE = P.define(), DE = new Oe(), OE = new Oe(), kE = /* @__PURE__ */ "undo.redo.|.bold.italic.strikethrough.highlight.code.codeblock.|.heading.|.bulletlist.numberedlist.tasklist.blockquote.hr.table.component.figure.|.datetime.search.link.image.video.audio.fullscreen.clear.uppercase.lowercase.capitalize.removeformatting.gotoline.help".split(".");
-function AE(e = {}) {
+cE();
+var DE = P.define(), OE = new Oe(), kE = new Oe(), AE = /* @__PURE__ */ "undo.redo.|.bold.italic.strikethrough.highlight.code.codeblock.|.heading.|.bulletlist.numberedlist.tasklist.blockquote.hr.table.component.figure.|.datetime.search.link.image.video.audio.fullscreen.clear.uppercase.lowercase.capitalize.removeformatting.gotoline.help".split(".");
+function jE(e = {}) {
 	let t = [
 		Ss(),
 		nf(),
@@ -27686,7 +27698,7 @@ function AE(e = {}) {
 	];
 	return e.lineNumbers && (t.push(wc()), t.push(Oc())), e.foldGutter && t.push(od()), t;
 }
-var jE = class {
+var ME = class {
 	#e;
 	#t = null;
 	#n = {};
@@ -27715,7 +27727,7 @@ var jE = class {
 		} catch {
 			console.warn("Traven: Could not auto-inject CSS. If styling looks broken, manually <link> dist/traven.css");
 		}
-		if (this.#a = iE, e.components && Array.isArray(e.components) && e.components.length > 0) this.#a = e.components;
+		if (this.#a = aE, e.components && Array.isArray(e.components) && e.components.length > 0) this.#a = e.components;
 		else if (e.componentsUrl !== !1) {
 			let t = typeof e.componentsUrl == "string" ? e.componentsUrl : new URL("data:application/json;base64,WwogIHsKICAgICJuYW1lIjogImJsb2NrcXVvdGUiLAogICAgImF0dHJpYnV0ZXMiOiBbCiAgICAgIHsgIm5hbWUiOiAiYXV0aG9yIiwgInR5cGUiOiAidGV4dCIsICJsYWJlbCI6ICJBdXRob3IgTmFtZSIsICJwbGFjZWhvbGRlciI6ICJlLmcuIEphbWVzIEJhbGR3aW4iIH0sCiAgICAgIHsgIm5hbWUiOiAic291cmNlIiwgInR5cGUiOiAidGV4dCIsICJsYWJlbCI6ICJTb3VyY2UgQ2l0YXRpb24iLCAicGxhY2Vob2xkZXIiOiAiZS5nLiBUaGUgRmlyZSBOZXh0IFRpbWUiIH0KICAgIF0KICB9LAogICJwdWxscXVvdGUiLAogIHsKICAgICJuYW1lIjogImluZm8iLAogICAgImF0dHJpYnV0ZXMiOiBbCiAgICAgIHsgIm5hbWUiOiAidGl0bGUiLCAidHlwZSI6ICJ0ZXh0IiwgImxhYmVsIjogIk5vdGljZSBUaXRsZSIsICJwbGFjZWhvbGRlciI6ICJlLmcuIE5vdGUiIH0sCiAgICAgIHsgIm5hbWUiOiAiY29sbGFwc2libGUiLCAidHlwZSI6ICJib29sZWFuIiwgImxhYmVsIjogIkNvbGxhcHNpYmxlPyIgfQogICAgXQogIH0sCiAgIndhcm5pbmciCl0K", "" + {}.url).href;
 			fetch(t).then((e) => {
@@ -27728,7 +27740,7 @@ var jE = class {
 			});
 		}
 		bx(e.katex), xx();
-		let t = !!e.lineNumbers, n = !!e.sourceLineNumbers, r = e.lineWrapping !== !1, i = e.sourceLineWrapping !== !1, a = oE(e), o = [
+		let t = !!e.lineNumbers, n = !!e.sourceLineNumbers, r = e.lineWrapping !== !1, i = e.sourceLineWrapping !== !1, a = sE(e), o = [
 			Jh,
 			tg,
 			$h,
@@ -27747,16 +27759,17 @@ var jE = class {
 			new Xw(),
 			new Zw(),
 			new Qw(),
-			new tT()
+			new tT(),
+			new nT()
 		];
 		this.#s = new Px(s.configure(o), c);
 		let l = [
-			...AE({
+			...jE({
 				lineNumbers: t,
 				foldGutter: t
 			}),
 			...r ? [U.lineWrapping] : [],
-			OE.of(L.readOnly.of(!!e.readOnly)),
+			kE.of(L.readOnly.of(!!e.readOnly)),
 			LS({ content: rx({
 				...e.codeLanguages ? { codeLanguages: e.codeLanguages } : {},
 				extensions: o
@@ -27764,30 +27777,30 @@ var jE = class {
 			Hw.of(c),
 			Ww,
 			Lw(),
-			iT(),
-			lT(),
+			aT(),
+			uT(),
 			U.updateListener.of((t) => {
 				if (t.docChanged) {
 					let n = t.state.doc.toString();
-					e.onChange && e.onChange(n), this.#l("change", n), this.#t && !t.transactions.some((e) => e.annotation(EE)) && this.#t.dispatch({
+					e.onChange && e.onChange(n), this.#l("change", n), this.#t && !t.transactions.some((e) => e.annotation(DE)) && this.#t.dispatch({
 						changes: t.changes,
-						annotations: EE.of(!0)
+						annotations: DE.of(!0)
 					}), this.#c();
 				}
 			}),
-			dT(),
+			fT(),
 			YS(),
-			...a === "floating" || a === "hybrid" ? [xE(this, {
+			...a === "floating" || a === "hybrid" ? [SE(this, {
 				hotkey: e.bubbleHotkey || "Mod-.",
 				appearDelay: e.bubbleAppearDelay ?? 200
-			}), ...e.gutterInserter === !1 ? [] : [TE(this, { hotkey: e.gutterHotkey || "Mod-Shift-Enter" })]] : []
+			}), ...e.gutterInserter === !1 ? [] : [EE(this, { hotkey: e.gutterHotkey || "Mod-Shift-Enter" })]] : []
 		], u = e.caretColor || (e.theme === "dark" ? "#ffffff" : "#000000"), d = U.theme({
 			".cm-cursor": { borderLeftColor: `${u} !important` },
 			".cm-fat-cursor": { backgroundColor: `${u} !important` }
 		});
 		l.push(d);
-		let f = e.vimMode ? nE() : [];
-		l.push(DE.of(f));
+		let f = e.vimMode ? rE() : [];
+		l.push(OE.of(f));
 		let p = U.domEventHandlers({ keydown: (t) => {
 			if ((t.ctrlKey || t.metaKey) && t.key === "s") {
 				t.preventDefault();
@@ -27823,28 +27836,28 @@ var jE = class {
 			if (e.toolbar && Array.isArray(e.toolbar)) {
 				let t = ZC(this, e.toolbar, e.keybindings);
 				t.classList.add("traven-hybrid-toolbar"), e.element.prepend(t);
-				let n = mE(this);
+				let n = hE(this);
 				t.appendChild(n);
 			}
 		} else if (a === "floating" && e.toolbar !== !1) {
-			let t = pE(this, e.keybindings);
+			let t = mE(this, e.keybindings);
 			e.element.prepend(t);
 		}
 		if (e.theme === "dark" && this.#e.dom.classList.add("cm-wysiwym-dark"), e.sourceElement) {
 			let t = [
-				...AE({
+				...jE({
 					lineNumbers: n,
 					foldGutter: n
 				}),
 				...i ? [U.lineWrapping] : [],
-				OE.of(L.readOnly.of(!!e.readOnly)),
+				kE.of(L.readOnly.of(!!e.readOnly)),
 				U.updateListener.of((e) => {
-					e.docChanged && (e.transactions.some((e) => e.annotation(EE)) || this.#e.dispatch({
+					e.docChanged && (e.transactions.some((e) => e.annotation(DE)) || this.#e.dispatch({
 						changes: e.changes,
-						annotations: EE.of(!0)
+						annotations: DE.of(!0)
 					}));
 				}),
-				DE.of(e.vimMode ? nE() : [])
+				OE.of(e.vimMode ? rE() : [])
 			];
 			this.#t = new U({
 				parent: e.sourceElement,
@@ -27880,7 +27893,7 @@ var jE = class {
 		this.#e.focus();
 	}
 	setReadOnly(e) {
-		this.#e.dispatch({ effects: OE.reconfigure(L.readOnly.of(e)) }), this.#t && this.#t.dispatch({ effects: OE.reconfigure(L.readOnly.of(e)) }), this.#u(e ? "Editor is now read only" : "Editor is now editable");
+		this.#e.dispatch({ effects: kE.reconfigure(L.readOnly.of(e)) }), this.#t && this.#t.dispatch({ effects: kE.reconfigure(L.readOnly.of(e)) }), this.#u(e ? "Editor is now read only" : "Editor is now editable");
 	}
 	isReadOnly() {
 		return this.#e.state.readOnly;
@@ -27910,8 +27923,8 @@ var jE = class {
 		e === "dark" ? (this.#e.dom.classList.add("cm-wysiwym-dark"), this.#t && this.#t.dom.classList.add("cm-wysiwym-dark")) : (this.#e.dom.classList.remove("cm-wysiwym-dark"), this.#t && this.#t.dom.classList.remove("cm-wysiwym-dark")), this.#u(`Theme changed to ${e}`);
 	}
 	setVimMode(e) {
-		let t = e ? nE() : [];
-		this.#e.dispatch({ effects: DE.reconfigure(t) }), this.#t && this.#t.dispatch({ effects: DE.reconfigure(t) }), this.#u(e ? "Vim keybindings enabled" : "Vim keybindings disabled");
+		let t = e ? rE() : [];
+		this.#e.dispatch({ effects: OE.reconfigure(t) }), this.#t && this.#t.dispatch({ effects: OE.reconfigure(t) }), this.#u(e ? "Vim keybindings enabled" : "Vim keybindings disabled");
 	}
 	getCharacterCount() {
 		return this.getValue().length;
@@ -28321,7 +28334,7 @@ var jE = class {
 	destroy() {
 		QC.delete(this.#e), this.#t && (QC.delete(this.#t), this.#t.destroy()), this.#e.destroy(), this.#n = {};
 	}
-}, ME = class extends HTMLElement {
+}, NE = class extends HTMLElement {
 	static formAssociated = !0;
 	static get observedAttributes() {
 		return [
@@ -28349,9 +28362,9 @@ var jE = class {
 		};
 		if (this.hasAttribute("theme") && (n.theme = this.getAttribute("theme")), this.hasAttribute("read-only") && (n.readOnly = this.hasAttribute("read-only") && this.getAttribute("read-only") !== "false"), this.hasAttribute("vim-mode") && (n.vimMode = this.hasAttribute("vim-mode") && this.getAttribute("vim-mode") !== "false"), this.hasAttribute("toolbar-mode") && (n.toolbarMode = this.getAttribute("toolbar-mode")), this.hasAttribute("line-numbers") && (n.lineNumbers = this.hasAttribute("line-numbers") && this.getAttribute("line-numbers") !== "false"), this.hasAttribute("auto-load-styles") && (n.autoLoadStyles = this.getAttribute("auto-load-styles") !== "false"), this._codeLanguages && (n.codeLanguages = this._codeLanguages), this.hasAttribute("toolbar")) {
 			let e = this.getAttribute("toolbar");
-			e === "false" ? n.toolbar = !1 : e === "true" || e === "default" || e === "" ? n.toolbar = kE : n.toolbar = e.split(",").map((e) => e.trim()).filter(Boolean);
+			e === "false" ? n.toolbar = !1 : e === "true" || e === "default" || e === "" ? n.toolbar = AE : n.toolbar = e.split(",").map((e) => e.trim()).filter(Boolean);
 		}
-		this._editor = new jE(n), this._internals && this._internals.setFormValue && this._internals.setFormValue(e);
+		this._editor = new ME(n), this._internals && this._internals.setFormValue && this._internals.setFormValue(e);
 	}
 	disconnectedCallback() {
 		this._editor &&= (this._editor.destroy(), null);
@@ -28403,10 +28416,10 @@ var jE = class {
 		this._codeLanguages = e;
 	}
 };
-typeof window < "u" && window.customElements && !window.customElements.get("traven-editor") && window.customElements.define("traven-editor", ME);
+typeof window < "u" && window.customElements && !window.customElements.get("traven-editor") && window.customElements.define("traven-editor", NE);
 //#endregion
 //#region ../../node_modules/react/cjs/react-jsx-runtime.production.min.js
-var NE = /* @__PURE__ */ i(((e) => {
+var PE = /* @__PURE__ */ i(((e) => {
 	var t = a("react"), n = Symbol.for("react.element"), r = Symbol.for("react.fragment"), i = Object.prototype.hasOwnProperty, o = t.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.ReactCurrentOwner, s = {
 		key: !0,
 		ref: !0,
@@ -28427,7 +28440,7 @@ var NE = /* @__PURE__ */ i(((e) => {
 		};
 	}
 	e.Fragment = r, e.jsx = c, e.jsxs = c;
-})), PE = /* @__PURE__ */ i(((e) => {
+})), FE = /* @__PURE__ */ i(((e) => {
 	process.env.NODE_ENV !== "production" && (function() {
 		var t = a("react"), n = Symbol.for("react.element"), r = Symbol.for("react.portal"), i = Symbol.for("react.fragment"), o = Symbol.for("react.strict_mode"), s = Symbol.for("react.profiler"), c = Symbol.for("react.provider"), l = Symbol.for("react.context"), u = Symbol.for("react.forward_ref"), d = Symbol.for("react.suspense"), f = Symbol.for("react.suspense_list"), p = Symbol.for("react.memo"), m = Symbol.for("react.lazy"), h = Symbol.for("react.offscreen"), g = Symbol.iterator, _ = "@@iterator";
 		function v(e) {
@@ -28874,15 +28887,15 @@ var NE = /* @__PURE__ */ i(((e) => {
 		var tt = L, nt = et;
 		e.Fragment = i, e.jsx = tt, e.jsxs = nt;
 	})();
-})), FE = (/* @__PURE__ */ i(((e, t) => {
-	process.env.NODE_ENV === "production" ? t.exports = NE() : t.exports = PE();
-})))(), IE = e(({ defaultValue: e = "", onChange: i, options: a = {}, className: o }, s) => {
+})), IE = (/* @__PURE__ */ i(((e, t) => {
+	process.env.NODE_ENV === "production" ? t.exports = PE() : t.exports = FE();
+})))(), LE = e(({ defaultValue: e = "", onChange: i, options: a = {}, className: o }, s) => {
 	let c = r(null), l = r(null);
 	return n(s, () => ({
 		getValue: () => l.current?.getValue() || "",
 		getInstance: () => l.current
 	}), []), t(() => {
-		if (c.current) return c.current.innerHTML = "", l.current = new jE({
+		if (c.current) return c.current.innerHTML = "", l.current = new ME({
 			element: c.current,
 			initialValue: e,
 			onChange: (e) => i && i(e),
@@ -28890,10 +28903,10 @@ var NE = /* @__PURE__ */ i(((e) => {
 		}), () => {
 			l.current && typeof l.current.destroy == "function" && l.current.destroy();
 		};
-	}, []), /* @__PURE__ */ (0, FE.jsx)("div", {
+	}, []), /* @__PURE__ */ (0, IE.jsx)("div", {
 		ref: c,
 		className: `traven-react-wrapper ${o || ""}`
 	});
 });
 //#endregion
-export { IE as Traven };
+export { LE as Traven };

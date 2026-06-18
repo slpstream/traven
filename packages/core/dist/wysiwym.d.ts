@@ -1,3 +1,4 @@
+export function renderInlineMarkdown(text: any): any;
 /**
  * Check if cursor is within the given range
  * @param {import("@codemirror/state").EditorState} state
@@ -39,7 +40,15 @@ export const strikethroughDeco: Decoration;
 export const codeDeco: Decoration;
 export const highlightDeco: Decoration;
 export const linkDeco: Decoration;
+export const frontmatterLineDeco: Decoration;
+export const frontmatterActiveLineDeco: Decoration;
 export const blockquoteLineDeco: Decoration;
+export const codeBlockLineDeco: Decoration;
+export const codeBlockLineFirstDeco: Decoration;
+export const codeBlockLineLastDeco: Decoration;
+export const codeBlockLineSingleDeco: Decoration;
+export const tableRowLineDeco: Decoration;
+export const collapsedFenceLineDeco: Decoration;
 /** @type {import("@codemirror/state").StateEffectType<any>} */
 export const setSuppression: import("@codemirror/state").StateEffectType<any>;
 /** @type {import("@codemirror/state").StateEffectType<any>} */
@@ -48,7 +57,6 @@ export const suppressionField: StateField<any>;
 /** @type {import("@codemirror/state").StateEffectType<boolean>} */
 export const setFocusEffect: import("@codemirror/state").StateEffectType<boolean>;
 export const focusField: StateField<boolean>;
-export const wysiwymField: StateField<import("@codemirror/view").DecorationSet>;
 export function wysiwymPlugin(): (import("@codemirror/state").Extension | StateField<any>)[];
 import { Decoration } from "@codemirror/view";
 import { StateField } from "@codemirror/state";

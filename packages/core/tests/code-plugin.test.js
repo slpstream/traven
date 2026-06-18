@@ -12,7 +12,7 @@ describe('CodePlugin', () => {
     expect(plugin.requiredNodes).toContain('CodeBlock');
   });
 
-  it('short-circuits and replaces Mermaid FencedCode with MermaidWidget when cursor is outside', () => {
+  it('short-circuits and skips Mermaid FencedCode when cursor is outside', () => {
     const state = EditorState.create({
       doc: "```mermaid\ngraph TD;\nA-->B;\n```",
       extensions: [markdown()]
@@ -29,9 +29,7 @@ describe('CodePlugin', () => {
 
     plugin.buildDecorations(ctx);
 
-    expect(decorations.length).toBe(1);
-    expect(decorations[0].deco.spec.widget instanceof MermaidWidget).toBe(true);
-    expect(decorations[0].deco.spec.widget.code).toBe("graph TD;\nA-->B;");
+    expect(decorations.length).toBe(0);
   });
 
   it('decorates FencedCode lines and collapses fences when cursor is outside', () => {

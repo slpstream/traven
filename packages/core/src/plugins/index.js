@@ -8,3 +8,8 @@ export { InlinePlugin } from "./inline-plugin.js";
 export { LinkPlugin } from "./link-plugin.js";
 export { ListPlugin } from "./list-plugin.js";
 export { CodePlugin } from "./code-plugin.js";
+export { FrontmatterPlugin } from "./frontmatter-plugin.js";
+export { MathPlugin } from "./math-plugin.js";
+export { MermaidPlugin } from "./mermaid-plugin.js";
+export { TablePlugin } from "./table-plugin.js";
+export { ShortcodePlugin } from "./shortcode-plugin.js";

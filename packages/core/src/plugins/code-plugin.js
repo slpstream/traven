@@ -8,9 +8,7 @@ import {
   codeBlockLineLastDeco, 
   codeBlockLineSingleDeco,
   collapsedFenceLineDeco,
-  collapseDeco,
-  extractMermaidCode,
-  MermaidWidget
+  collapseDeco
 } from "../wysiwym.js";
 
 export class CodePlugin extends TravenPlugin {
@@ -35,12 +33,6 @@ export class CodePlugin extends TravenPlugin {
             const isMermaid = blockText.trim().startsWith("```mermaid") || blockText.trim().startsWith("~~~mermaid");
             if (isMermaid) {
               if (!isCursorInside) {
-                const rawCode = extractMermaidCode(blockText);
-                decorations.push({
-                  from: node.from,
-                  to: node.to,
-                  deco: Decoration.replace({ widget: new MermaidWidget(rawCode, node.from), block: true })
-                });
                 return false;
               }
             }
