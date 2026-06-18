@@ -15,9 +15,13 @@ export function escapeHtml(text) {
 }
 
 export class TravenRenderer {
-  /** @param {import("@lezer/markdown").MarkdownParser} parser */
-  constructor(parser) {
+  /** 
+   * @param {import("@lezer/markdown").MarkdownParser} parser 
+   * @param {import("../plugins/TravenPlugin.js").TravenPlugin[]} [plugins]
+   */
+  constructor(parser, plugins = []) {
     this.parser = parser;
+    this.plugins = plugins;
   }
 
   /**
@@ -38,6 +42,18 @@ export class TravenRenderer {
    */
   renderNode(node, docText) {
     const childrenHtml = this.renderChildren(node, docText);
+
+    // Allow plugins to override rendering
+    for (const plugin of this.plugins) {
+      if (plugin.requiredNodes.includes(node.name)) {
+        const ctx = { sliceDoc: (from, to) => docText.slice(from, to) };
+        const result = plugin.renderToHTML(node, childrenHtml, ctx);
+        if (result !== null) {
+          return result;
+        }
+      }
+    }
+
     return defaultNodeRenderer(node, childrenHtml, docText);
   }
 

@@ -223,14 +223,6 @@ class MermaidWidget extends WidgetType {
   ignoreEvent() { return false; }
 }
 
-class HRWidget extends WidgetType {
-  toDOM() {
-    const hr = document.createElement("hr");
-    hr.className = "cm-wysiwym-hr-widget";
-    return hr;
-  }
-  eq() { return true; }
-}
 
 class CheckboxWidget extends WidgetType {
   constructor(checked, pos) {
@@ -950,9 +942,39 @@ class FigureShortcodeWidget extends WidgetType {
 }
 
 
+// --- Helper Functions ---
+
+/**
+ * Check if cursor is within the given range
+ * @param {import("@codemirror/state").EditorState} state
+ * @param {number} from
+ * @param {number} to
+ * @returns {boolean}
+ */
+export function cursorInRange(state, from, to) {
+  const selection = state.selection.main;
+  return selection.from <= to && selection.to >= from;
+}
+
+/**
+ * Check if any selection overlaps with the given range
+ * @param {import("@codemirror/state").EditorState} state
+ * @param {number} from
+ * @param {number} to
+ * @returns {boolean}
+ */
+export function selectionOverlapsRange(state, from, to) {
+  for (const range of state.selection.ranges) {
+    if (range.from <= to && range.to >= from) {
+      return true;
+    }
+  }
+  return false;
+}
+
 // --- Decoration Tokens ---
 
-const collapseDeco = Decoration.replace({});
+export const collapseDeco = Decoration.replace({});
 
 // Inline styled decorations
 const boldDeco = Decoration.mark({ class: "cm-wysiwym-bold" });
@@ -966,16 +988,8 @@ const linkDeco = Decoration.mark({ class: "cm-wysiwym-link-anchor" });
 const frontmatterLineDeco = Decoration.line({ class: "cm-wysiwym-frontmatter" });
 const frontmatterActiveLineDeco = Decoration.line({ class: "cm-wysiwym-frontmatter-active" });
 
-// Heading line styles
-const h1LineDeco = Decoration.line({ class: "cm-wysiwym-h1" });
-const h2LineDeco = Decoration.line({ class: "cm-wysiwym-h2" });
-const h3LineDeco = Decoration.line({ class: "cm-wysiwym-h3" });
-const h4LineDeco = Decoration.line({ class: "cm-wysiwym-h4" });
-const h5LineDeco = Decoration.line({ class: "cm-wysiwym-h5" });
-const h6LineDeco = Decoration.line({ class: "cm-wysiwym-h6" });
-
 // Blockquote line style
-const blockquoteLineDeco = Decoration.line({ class: "cm-wysiwym-blockquote" });
+export const blockquoteLineDeco = Decoration.line({ class: "cm-wysiwym-blockquote" });
 
 // Block code line styles
 const codeBlockLineDeco = Decoration.line({ class: "cm-wysiwym-codeblock-line" });
@@ -1032,18 +1046,6 @@ export const focusField = StateField.define({
     return value;
   }
 });
-
-// --- Helper to get heading decoration ---
-function getHeadingDeco(level) {
-  switch (level) {
-    case 1: return h1LineDeco;
-    case 2: return h2LineDeco;
-    case 3: return h3LineDeco;
-    case 4: return h4LineDeco;
-    case 5: return h5LineDeco;
-    default: return h6LineDeco;
-  }
-}
 
 /**
  * --- Decoration Builder ---
@@ -1494,69 +1496,7 @@ function buildWysiwymDecorations(state) {
             return false;
           }
         }
-        // 4. Headings (ATXHeading1-6, SetextHeading1-2, etc.)
-        const headingMatch = node.name.match(/Heading([1-6])$/);
-        if (headingMatch) {
-          const level = parseInt(headingMatch[1]) || 1;
-          const line = state.doc.lineAt(node.from);
-          if (!decoratedLines.has(line.number)) {
-            collected.push({ from: line.from, to: line.from, deco: getHeadingDeco(level) });
-            decoratedLines.add(line.number);
-          }
-        }
 
-        // 5. HeaderMark (e.g. '# ', '## ') - inside ATXHeading
-        if (node.name === "HeaderMark") {
-          const parent = node.node.parent;
-          if (parent) {
-            const parentLine = state.doc.lineAt(parent.from);
-            const isCursorOnLine = cursorLine === parentLine.number;
-            if (!isCursorOnLine) {
-              let collapseTo = node.to;
-              // Also collapse any space immediately following the hashes
-              while (collapseTo < state.doc.length && state.sliceDoc(collapseTo, collapseTo + 1) === " ") {
-                collapseTo++;
-              }
-              collected.push({ from: node.from, to: collapseTo, deco: collapseDeco });
-            }
-          }
-        }
-
-        // 6. Blockquote
-        if (node.name === "Blockquote") {
-          const startLine = state.doc.lineAt(node.from).number;
-          const endLine = state.doc.lineAt(node.to).number;
-          for (let i = startLine; i <= endLine; i++) {
-            if (!decoratedLines.has(i)) {
-              const line = state.doc.line(i);
-              collected.push({ from: line.from, to: line.from, deco: blockquoteLineDeco });
-              decoratedLines.add(i);
-            }
-          }
-        }
-
-        // 7. QuoteMark ('>') inside Blockquote
-        if (node.name === "QuoteMark") {
-          const line = state.doc.lineAt(node.from);
-          const isCursorOnLine = cursorLine === line.number;
-          if (!isCursorOnLine) {
-            collected.push({ from: node.from, to: node.to, deco: collapseDeco });
-          }
-        }
-
-        // 8. Horizontal Rule
-        if (node.name === "HorizontalRule") {
-          const line = state.doc.lineAt(node.from);
-          const isCursorOnLine = cursorLine === line.number;
-          if (!isCursorOnLine) {
-            // Replace with custom HR Widget
-            collected.push({
-              from: node.from,
-              to: node.to,
-              deco: Decoration.replace({ widget: new HRWidget(), block: true })
-            });
-          }
-        }
 
         // 8.5. Task List Checkboxes (interactive)
         if (node.name === "TaskMarker") {
