@@ -2,6 +2,7 @@
 import { escapeHtml } from "./TravenRenderer.js";
 import { sanitizeUrl, parseVideoUrl } from "../security.js";
 import { renderMermaidSync } from "../mermaid-parser.js";
+import { renderInlineMarkdown } from "../wysiwym.js";
 
 /**
  * Handles rendering of standard and custom syntax nodes.
@@ -14,6 +15,7 @@ export function defaultNodeRenderer(node, childrenHtml, docText) {
   const name = node.name;
 
   // Utilities to get text of a specific child node
+  /** @param {string} childName */
   const getChildText = (childName) => {
     const child = node.getChild(childName);
     return child ? docText.slice(child.from, child.to) : "";
@@ -58,8 +60,19 @@ export function defaultNodeRenderer(node, childrenHtml, docText) {
       return `<del>${childrenHtml}</del>`;
     case "Highlight":
       return `<mark>${childrenHtml}</mark>`;
-    case "InlineCode":
-      return `<code>${escapeHtml(docText.slice(node.from + 1, node.to - 1))}</code>`;
+    case "InlineCode": {
+      let codeText = docText.slice(node.from + 1, node.to - 1);
+      let isInsideTable = false;
+      let curr = node.parent;
+      while (curr) {
+        if (curr.name === "TableCell") { isInsideTable = true; break; }
+        curr = curr.parent;
+      }
+      if (isInsideTable) {
+        codeText = codeText.replace(/\\\|/g, "|");
+      }
+      return `<code>${escapeHtml(codeText)}</code>`;
+    }
     case "FencedCode": {
       const info = getChildText("CodeInfo");
       const codeChild = node.getChild("CodeText");
@@ -134,24 +147,24 @@ export function defaultNodeRenderer(node, childrenHtml, docText) {
     }
     case "BlockMath": {
       const math = docText.slice(node.from + 2, node.to - 2);
-      if (typeof window !== "undefined" && window["katex"]) {
-        return window["katex"].renderToString(math, { displayMode: true, throwOnError: false }) + "\n";
+      if (typeof window !== "undefined" && /** @type {any} */ (window).katex) {
+        return /** @type {any} */ (window).katex.renderToString(math, { displayMode: true, throwOnError: false }) + "\n";
       }
       return `<div class="katex-display-fallback">$$${escapeHtml(math)}$$</div>\n`;
     }
     case "InlineMath": {
       const math = docText.slice(node.from + 1, node.to - 1);
-      if (typeof window !== "undefined" && window["katex"]) {
-        return window["katex"].renderToString(math, { displayMode: false, throwOnError: false });
+      if (typeof window !== "undefined" && /** @type {any} */ (window).katex) {
+        return /** @type {any} */ (window).katex.renderToString(math, { displayMode: false, throwOnError: false });
       }
       return `<span class="katex-inline-fallback">$${escapeHtml(math)}$</span>`;
     }
     case "Table":
-      return `<table>\n${childrenHtml}</table>\n`;
+      return `<table>\n${childrenHtml}</tbody>\n</table>\n`;
     case "TableHeader":
-      return `<thead>\n${childrenHtml}</thead>\n`;
+      return `<thead>\n<tr>\n${childrenHtml}</tr>\n</thead>\n<tbody>\n`;
     case "TableBody":
-      return `<tbody>\n${childrenHtml}</tbody>\n`;
+      return `${childrenHtml}`; // Handled by Table/TableHeader
     case "TableRow":
       return `<tr>\n${childrenHtml}</tr>\n`;
     case "TableCell": {
@@ -187,8 +200,17 @@ export function defaultNodeRenderer(node, childrenHtml, docText) {
       const size = attrs.size || "medium";
       const customClass = attrs.class ? ` ${attrs.class}` : "";
       
+      const tagNameChild = node.getChild("VideoShortcodeTagName");
+      const tagName = tagNameChild ? docText.slice(tagNameChild.from, tagNameChild.to).toLowerCase() : "video";
+      
       let parsed = parseVideoUrl(src);
-      // Let's assume youtube fallback logic isn't needed here for simplicity or replicate it if needed.
+      
+      if (parsed.platform === "unknown" && tagName === "youtube") {
+        parsed = { platform: "youtube", id: src };
+      } else if (parsed.platform === "unknown" && tagName === "vimeo") {
+        parsed = { platform: "vimeo", id: src };
+      }
+
       let videoHtml = "";
       if (parsed.platform === "youtube") {
         videoHtml = `<iframe src="https://www.youtube.com/embed/${parsed.id}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
@@ -204,9 +226,89 @@ export function defaultNodeRenderer(node, childrenHtml, docText) {
         return `<div class="traven-video-container align-${align} size-${size}${customClass}">${videoHtml}</div>\n`;
       }
     }
+    case "AudioShortcode": {
+      const attrs = parseShortcodeAttrs(docText.slice(node.from, node.to));
+      const src = sanitizeUrl(attrs.src || "");
+      const caption = escapeHtml(attrs.caption || "");
+      const align = attrs.align || "center";
+      const size = attrs.size || "medium";
+      const customClass = attrs.class ? ` ${attrs.class}` : "";
+      
+      const audioHtml = `<audio src="${src}" controls class="traven-audio-shortcode"></audio>`;
+      
+      if (caption) {
+        return `<figure class="traven-audio-figure align-${align} size-${size}${customClass}"><div class="traven-audio-container">${audioHtml}</div><figcaption class="traven-audio-caption">${caption}</figcaption></figure>\n`;
+      } else {
+        return `<div class="traven-audio-container align-${align} size-${size}${customClass}">${audioHtml}</div>\n`;
+      }
+    }
     case "ComponentShortcode": {
-      const raw = docText.slice(node.from, node.to);
-      return `<div class="traven-component-shortcode" data-raw="${escapeHtml(raw)}"></div>\n`; // Placeholder implementation
+      const openNode = node.getChild("ComponentShortcodeOpen");
+      const bodyNode = node.getChild("ComponentShortcodeBody");
+      
+      const openRaw = openNode ? docText.slice(openNode.from, openNode.to) : "";
+      const attrs = parseShortcodeAttrs(openRaw);
+      
+      const tagNameChild = openNode ? openNode.getChild("ComponentShortcodeTagName") : null;
+      const tagName = tagNameChild ? docText.slice(tagNameChild.from, tagNameChild.to).toLowerCase() : "";
+      
+      let compName = attrs.name || "";
+      if (!compName) {
+        if (tagName === "quote" || tagName === "blockquote") {
+          compName = "blockquote";
+        } else if (tagName === "pullquote") {
+          compName = "pullquote";
+        } else {
+          compName = tagName || "blockquote";
+        }
+      }
+      if (compName === "quote") {
+        compName = "blockquote";
+      }
+
+      const bodyText = bodyNode ? docText.slice(bodyNode.from, bodyNode.to) : "";
+      const contentLines = bodyText.split(/\r?\n/).map(line => line.trim()).filter(line => line.length > 0);
+      let bodyHtml = `<div class="component-body">\n`;
+      contentLines.forEach(line => {
+        bodyHtml += `<p>${renderInlineMarkdown(line)}</p>\n`;
+      });
+      bodyHtml += `</div>\n`;
+
+      let html = "";
+      
+      if (compName === "blockquote") {
+        html += `<blockquote class="traven-component-blockquote">\n${bodyHtml}`;
+        const author = attrs.author || "";
+        const source = attrs.source || "";
+        if (author || source) {
+          let citeText = "— ";
+          if (author && source) { citeText += `${author}, ${source}`; }
+          else { citeText += author || source; }
+          html += `<cite>${escapeHtml(citeText)}</cite>\n`;
+        }
+        html += `</blockquote>\n`;
+      } else if (compName === "pullquote") {
+        html += `<blockquote class="traven-component-pullquote">\n${bodyHtml}</blockquote>\n`;
+      } else if (compName === "highlight") {
+        let markHtml = renderInlineMarkdown(bodyText.trim().replace(/\r?\n/g, "<br>"));
+        return `<mark>${markHtml}</mark>`;
+      } else {
+        html += `<div class="traven-component traven-component-${compName}">\n`;
+        const title = attrs.title || "";
+        const collapsible = attrs.collapsible === "true";
+        const displayTitle = title || (collapsible ? (compName.charAt(0).toUpperCase() + compName.slice(1)) : "");
+
+        if (collapsible) {
+          html += `<details open>\n<summary class="component-header"><span class="component-title">${escapeHtml(displayTitle)}</span><span class="component-toggle-icon"></span></summary>\n${bodyHtml}</details>\n`;
+        } else {
+          if (displayTitle) {
+            html += `<div class="component-header"><span class="component-title">${escapeHtml(displayTitle)}</span></div>\n`;
+          }
+          html += bodyHtml;
+        }
+        html += `</div>\n`;
+      }
+      return html;
     }
     case "FigureShortcode": {
       return `<figure class="traven-figure-shortcode align-center">\n${childrenHtml}</figure>\n`;
@@ -218,6 +320,8 @@ export function defaultNodeRenderer(node, childrenHtml, docText) {
     case "ListMark":
     case "TaskMarker":
     case "EmphasisMark":
+    case "StrikethroughMark":
+    case "HighlightMark":
     case "CodeMark":
     case "CodeInfo":
     case "LinkMark":
