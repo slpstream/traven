@@ -66,6 +66,17 @@ Type `**bold**` and the asterisks quietly step aside, leaving only the bold text
 
 ---
 
+## Like Typora, but for the Browser
+
+When evaluating [the landscape](https://traven.dev/site/traven-vs-others.php) of browser-based editors, and trying to find a Markdown-first editor with the look and feel of Typora, but for embedding and using in a web browser, nothing really seemed to fit. Each category had trade-offs:
+
+* **WYSIWYG Heavyweights:** Editors like TinyMCE and CKEditor want an API key, emit HTML, and make you serialize that HTML back to Markdown lossily.
+* **Classic Split-Panes:** Tools like EasyMDE use the legacy CodeMirror 5 engine and a split-pane UX.
+* **Framework Editors:** ProseMirror, Lexical, and TipTap are frameworks, aren't Markdown-native, and are also not built to just quickly embed.
+* **AST Roundtrip Editors:** Even editors like Milkdown parse Markdown into an HTML AST and back, in a roundtrip that can be brittle and cause spacing artifacts.
+
+---
+
 ## Key Features
 
 * **Dynamic Toolbars:** Choose from floating, hybrid, or static toolbar layouts, including formatting bubbles and gutter insert menus.
@@ -170,6 +181,17 @@ Traven is highly modular and endlessly customizable. Check out the documentation
     </td>
   </tr>
 </table>
+
+---
+
+## Architecture & Deployment
+
+Traven leverages **CodeMirror 6** (the same engine Obsidian uses) and the **Web Components standard**.
+
+* **Virtual Viewport Rendering:** CM6 only mounts the visible portion of the document, so Traven easily handles 10,000+ line files without cursor stutter.
+* **Form-Associated Custom Element:** Traven registers with the browser's form submission API via `ElementInternals`. Standard `<form method="POST">` works without hidden textarea shims.
+* **CSS Framework Isolation:** All styling is scoped. Traven coexists with Tailwind, Bootstrap, or custom CSS without breaking the host page.
+* **Single-Tag Deployment:** Drop Traven into plain HTML, a PHP template, or a Django form using a single `<traven-editor>` element and CDN script.
 
 ---
 
