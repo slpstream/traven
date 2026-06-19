@@ -415,6 +415,16 @@ describe('ImageShortcode', () => {
     expect(html).toContain('<figcaption class="traven-image-caption">Single quotes</figcaption>');
   });
 
+  it('handles attributes containing quotes (both unescaped and escaped) correctly', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '[image src="https://example.com/pic.jpg" alt="The \\"beautiful\\" Ada" caption="The "beautiful" Ada"]',
+    });
+    const html = editor.getContentHtml();
+    expect(html).toContain('alt="The &quot;beautiful&quot; Ada"');
+    expect(html).toContain('<figcaption class="traven-image-caption">The "beautiful" Ada</figcaption>');
+  });
+
   it('compiles shortcode without caption to HTML without figure wrapper in fallback renderer', () => {
     const editor = new TravenEditor({
       element: container,

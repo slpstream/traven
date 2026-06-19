@@ -160,7 +160,7 @@ export const ComponentShortcode = {
       const attrEnd = openTagEnd - 1;
       const attrStr = cx.slice(attrStart, attrEnd);
 
-      const attrRegex = /\s*([a-zA-Z0-9_-]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=]+))/g;
+      const attrRegex = /\s*([a-zA-Z0-9_-]+)\s*=\s*(?:"([\s\S]*?)"(?=\s+[a-zA-Z0-9_-]+\s*=|\s*\]|\s*$)|'([\s\S]*?)'(?=\s+[a-zA-Z0-9_-]+\s*=|\s*\]|\s*$)|([^\s\]]+))/g;
       let match;
       while ((match = attrRegex.exec(attrStr)) !== null) {
         const matchStart = attrStart + match.index;

@@ -12,23 +12,13 @@ import { viewToEditor } from "./bridge.js";
 import { parseMarkdownTable, openTableModal, openImageModal, openComponentModal, openVideoModal, openAudioModal, openFigureModal } from "./toolbar/modal.js";
 import { sanitizeUrl, parseVideoUrl } from "./security.js";
 import { ensureKatex } from "./math-parser.js";
-import { ensureMermaid } from "./mermaid-parser.js";
+import { escapeHtmlAttr } from "./renderer/TravenRenderer.js";
 
 // --- Custom Widget Types ---
 
 
 
-function escapeHtml(text) {
-  if (typeof text !== "string") {
-    text = String(text);
-  }
-  return text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
+
 
 export function renderInlineMarkdown(text) {
   if (!text) return "";
@@ -95,8 +85,20 @@ export function renderInlineMarkdown(text) {
     return `CODESPANXPLACEHOLDERX${index}`;
   });
 
-  html = html.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, src) => `<img src="${sanitizeUrl(src)}" alt="${alt}" style="max-width: 100%; height: auto; display: inline-block;">`);
-  html = html.replace(/\[(.*?)\]\((.*?)\)/g, (match, text, url) => `<a href="${sanitizeUrl(url)}" target="_blank">${text}</a>`);
+  html = html.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, src) => {
+    let cleanSrc = sanitizeUrl(src);
+    if (cleanSrc.startsWith("<") && cleanSrc.endsWith(">")) {
+      cleanSrc = cleanSrc.slice(1, -1);
+    }
+    return `<img src="${escapeHtmlAttr(cleanSrc)}" alt="${alt}" style="max-width: 100%; height: auto; display: inline-block;">`;
+  });
+  html = html.replace(/\[(.*?)\]\((.*?)\)/g, (match, text, url) => {
+    let cleanUrl = sanitizeUrl(url);
+    if (cleanUrl.startsWith("<") && cleanUrl.endsWith(">")) {
+      cleanUrl = cleanUrl.slice(1, -1);
+    }
+    return `<a href="${escapeHtmlAttr(cleanUrl)}" target="_blank">${text}</a>`;
+  });
   html = html.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
   html = html.replace(/\*(.*?)\*/g, "<em>$1</em>");
   html = html.replace(/__(.*?)__/g, "<strong>$1</strong>");

@@ -59,7 +59,7 @@ export const Shortcode = {
       const attrStr = cx.slice(attrStart, attrEnd);
 
       // Regex to match attribute key-value pairs (e.g. name="value", name='value', name=value)
-      const attrRegex = /\s*([a-zA-Z0-9_-]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=]+))/g;
+      const attrRegex = /\s*([a-zA-Z0-9_-]+)\s*=\s*(?:"([\s\S]*?)"(?=\s+[a-zA-Z0-9_-]+\s*=|\s*\]|\s*$)|'([\s\S]*?)'(?=\s+[a-zA-Z0-9_-]+\s*=|\s*\]|\s*$)|([^\s\]]+))/g;
       let match;
       while ((match = attrRegex.exec(attrStr)) !== null) {
         const matchStart = attrStart + match.index;

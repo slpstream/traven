@@ -611,11 +611,12 @@ export class ShortcodePlugin extends TravenPlugin {
       const isCursorInside = cursorHead > from && cursorHead < to;
       if (!isCursorInside) {
         const attrs = {};
-        const attrRegex = /\s*([a-zA-Z0-9_-]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=]+))/g;
+        const attrRegex = /\s*([a-zA-Z0-9_-]+)\s*=\s*(?:"([\s\S]*?)"(?=\s+[a-zA-Z0-9_-]+\s*=|\s*\]|\s*$)|'([\s\S]*?)'(?=\s+[a-zA-Z0-9_-]+\s*=|\s*\]|\s*$)|([^\s\]]+))/g;
         let attrMatch;
         while ((attrMatch = attrRegex.exec(attrsStr)) !== null) {
           const name = attrMatch[1];
-          const val = attrMatch[2] !== undefined ? attrMatch[2] : (attrMatch[3] !== undefined ? attrMatch[3] : (attrMatch[4] || ""));
+          let val = attrMatch[2] !== undefined ? attrMatch[2] : (attrMatch[3] !== undefined ? attrMatch[3] : (attrMatch[4] || ""));
+          val = val.replace(/\\"/g, '"').replace(/\\'/g, "'");
           attrs[name] = val;
         }
         
@@ -656,6 +657,7 @@ export class ShortcodePlugin extends TravenPlugin {
                       if (cc.name === "ShortcodeAttributeValue") {
                         val = state.sliceDoc(cc.from, cc.to);
                         val = val.replace(/^["']|["']$/g, "");
+                        val = val.replace(/\\"/g, '"').replace(/\\'/g, "'");
                       }
                     } while (cc.nextSibling());
                   }
@@ -696,6 +698,7 @@ export class ShortcodePlugin extends TravenPlugin {
                       if (cc.name === "VideoShortcodeAttributeValue") {
                         val = state.sliceDoc(cc.from, cc.to);
                         val = val.replace(/^["']|["']$/g, "");
+                        val = val.replace(/\\"/g, '"').replace(/\\'/g, "'");
                       }
                     } while (cc.nextSibling());
                   }
@@ -743,6 +746,7 @@ export class ShortcodePlugin extends TravenPlugin {
                       if (cc.name === "AudioShortcodeAttributeValue") {
                         val = state.sliceDoc(cc.from, cc.to);
                         val = val.replace(/^["']|["']$/g, "");
+                        val = val.replace(/\\"/g, '"').replace(/\\'/g, "'");
                       }
                     } while (cc.nextSibling());
                   }
@@ -825,6 +829,7 @@ export class ShortcodePlugin extends TravenPlugin {
                             if (ccc.name === "ComponentShortcodeAttributeValue") {
                               val = state.sliceDoc(ccc.from, ccc.to);
                               val = val.replace(/^["']|["']$/g, "");
+                              val = val.replace(/\\"/g, '"').replace(/\\'/g, "'");
                             }
                           } while (ccc.nextSibling());
                         }

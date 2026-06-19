@@ -4,6 +4,12 @@
  * @returns {string}
  */
 export function escapeHtml(text: string): string;
+/**
+ * Escapes HTML entities in attribute values to prevent breakout.
+ * @param {string} text
+ * @returns {string}
+ */
+export function escapeHtmlAttr(text: string): string;
 export class TravenRenderer {
     /**
      * @param {import("@lezer/common").Parser} parser

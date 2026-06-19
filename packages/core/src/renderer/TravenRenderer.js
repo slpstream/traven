@@ -14,6 +14,21 @@ export function escapeHtml(text) {
   return text
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+/**
+ * Escapes HTML entities in attribute values to prevent breakout.
+ * @param {string} text 
+ * @returns {string}
+ */
+export function escapeHtmlAttr(text) {
+  if (typeof text !== "string") {
+    text = String(text);
+  }
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");

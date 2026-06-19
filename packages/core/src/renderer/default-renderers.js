@@ -1,5 +1,5 @@
 // @ts-check
-import { escapeHtml } from "./TravenRenderer.js";
+import { escapeHtml, escapeHtmlAttr } from "./TravenRenderer.js";
 import { sanitizeUrl, parseVideoUrl } from "../security.js";
 import { renderMermaidSync } from "../mermaid-parser.js";
 import { renderInlineMarkdown } from "../wysiwym.js";
@@ -93,12 +93,17 @@ export function defaultNodeRenderer(node, childrenHtml, docText) {
       let title = "";
       
       const urlNode = node.getChild("URL");
-      if (urlNode) url = docText.slice(urlNode.from, urlNode.to);
+      if (urlNode) {
+        url = docText.slice(urlNode.from, urlNode.to);
+        if (url.startsWith("<") && url.endsWith(">")) {
+          url = url.slice(1, -1);
+        }
+      }
       
       const titleNode = node.getChild("LinkTitle");
       if (titleNode) title = docText.slice(titleNode.from + 1, titleNode.to - 1); // strip quotes
       
-      const titleAttr = title ? ` title="${escapeHtml(title)}"` : "";
+      const titleAttr = title ? ` title="${escapeHtmlAttr(title)}"` : "";
       
       // The text content is inside the brackets, not exactly childrenHtml because childrenHtml includes the marks
       // We need just the text. Lezer markdown wraps the text inside `[...]` but it doesn't have a specific container node except its children
@@ -124,18 +129,23 @@ export function defaultNodeRenderer(node, childrenHtml, docText) {
       if (endIdx === -1) endIdx = docText.lastIndexOf("]", node.to);
       const innerText = escapeHtml(docText.slice(startIdx, endIdx));
 
-      return `<a href="${sanitizeUrl(url)}"${titleAttr} target="_blank" rel="noopener noreferrer">${innerText}</a>`;
+      return `<a href="${escapeHtmlAttr(sanitizeUrl(url))}"${titleAttr} target="_blank" rel="noopener noreferrer">${innerText}</a>`;
     }
     case "Image": {
       let url = "";
       const urlNode = node.getChild("URL");
-      if (urlNode) url = docText.slice(urlNode.from, urlNode.to);
+      if (urlNode) {
+        url = docText.slice(urlNode.from, urlNode.to);
+        if (url.startsWith("<") && url.endsWith(">")) {
+          url = url.slice(1, -1);
+        }
+      }
       
       let startIdx = docText.indexOf("[", node.from) + 1;
       let endIdx = docText.indexOf("](", startIdx);
-      const alt = escapeHtml(docText.slice(startIdx, endIdx));
+      const alt = escapeHtmlAttr(docText.slice(startIdx, endIdx));
 
-      return `<img src="${sanitizeUrl(url)}" alt="${alt}" class="traven-image-shortcode align-center size-medium">`;
+      return `<img src="${escapeHtmlAttr(sanitizeUrl(url))}" alt="${alt}" class="traven-image-shortcode align-center size-medium">`;
     }
     case "Autolink": {
       const url = docText.slice(node.from + 1, node.to - 1);
@@ -143,7 +153,7 @@ export function defaultNodeRenderer(node, childrenHtml, docText) {
       // We also handle mailto:
       const isEmail = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(url);
       const finalHref = isEmail ? `mailto:${url}` : href;
-      return `<a href="${sanitizeUrl(finalHref)}" target="_blank" rel="noopener noreferrer">${escapeHtml(url)}</a>`;
+      return `<a href="${escapeHtmlAttr(sanitizeUrl(finalHref))}" target="_blank" rel="noopener noreferrer">${escapeHtml(url)}</a>`;
     }
     case "BlockMath": {
       const math = docText.slice(node.from + 2, node.to - 2);
@@ -179,12 +189,12 @@ export function defaultNodeRenderer(node, childrenHtml, docText) {
     // Shortcodes
     case "ImageShortcode": {
       const attrs = parseShortcodeAttrs(docText.slice(node.from, node.to));
-      const src = sanitizeUrl(attrs.src || "");
+      const src = escapeHtmlAttr(sanitizeUrl(attrs.src || ""));
       const caption = escapeHtml(attrs.caption || "");
-      const alt = escapeHtml(attrs.alt || attrs.caption || "");
-      const align = attrs.align || "center";
-      const size = attrs.size || "medium";
-      const customClass = attrs.class ? ` ${attrs.class}` : "";
+      const alt = escapeHtmlAttr(attrs.alt || attrs.caption || "");
+      const align = escapeHtmlAttr(attrs.align || "center");
+      const size = escapeHtmlAttr(attrs.size || "medium");
+      const customClass = attrs.class ? ` ${escapeHtmlAttr(attrs.class)}` : "";
 
       if (caption) {
         return `<figure class="traven-image-figure align-${align} size-${size}${customClass}"><img src="${src}" alt="${alt}" class="traven-image-shortcode"><figcaption class="traven-image-caption">${caption}</figcaption></figure>\n`;
@@ -194,11 +204,11 @@ export function defaultNodeRenderer(node, childrenHtml, docText) {
     }
     case "VideoShortcode": {
       const attrs = parseShortcodeAttrs(docText.slice(node.from, node.to));
-      const src = sanitizeUrl(attrs.src || "");
+      const src = escapeHtmlAttr(sanitizeUrl(attrs.src || ""));
       const caption = escapeHtml(attrs.caption || "");
-      const align = attrs.align || "center";
-      const size = attrs.size || "medium";
-      const customClass = attrs.class ? ` ${attrs.class}` : "";
+      const align = escapeHtmlAttr(attrs.align || "center");
+      const size = escapeHtmlAttr(attrs.size || "medium");
+      const customClass = attrs.class ? ` ${escapeHtmlAttr(attrs.class)}` : "";
       
       const tagNameChild = node.getChild("VideoShortcodeTagName");
       const tagName = tagNameChild ? docText.slice(tagNameChild.from, tagNameChild.to).toLowerCase() : "video";
@@ -228,11 +238,11 @@ export function defaultNodeRenderer(node, childrenHtml, docText) {
     }
     case "AudioShortcode": {
       const attrs = parseShortcodeAttrs(docText.slice(node.from, node.to));
-      const src = sanitizeUrl(attrs.src || "");
+      const src = escapeHtmlAttr(sanitizeUrl(attrs.src || ""));
       const caption = escapeHtml(attrs.caption || "");
-      const align = attrs.align || "center";
-      const size = attrs.size || "medium";
-      const customClass = attrs.class ? ` ${attrs.class}` : "";
+      const align = escapeHtmlAttr(attrs.align || "center");
+      const size = escapeHtmlAttr(attrs.size || "medium");
+      const customClass = attrs.class ? ` ${escapeHtmlAttr(attrs.class)}` : "";
       
       const audioHtml = `<audio src="${src}" controls class="traven-audio-shortcode"></audio>`;
       
@@ -342,18 +352,18 @@ export function defaultNodeRenderer(node, childrenHtml, docText) {
   }
 }
 
-/**
- * Parses shortcode attributes from a raw shortcode string.
- * @param {string} raw 
- * @returns {Record<string, string>}
- */
 function parseShortcodeAttrs(raw) {
   /** @type {Record<string, string>} */
   const attrs = {};
-  const attrRegex = /([a-zA-Z0-9_-]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s\]]+))/g;
+  // The regex uses a lookahead to allow unescaped (and escaped) quotes inside the attribute values,
+  // matched lazily up to the next attribute definition key="..." or the shortcode end bracket ].
+  const attrRegex = /([a-zA-Z0-9_-]+)\s*=\s*(?:"([\s\S]*?)"(?=\s+[a-zA-Z0-9_-]+\s*=|\s*\])|'([\s\S]*?)'(?=\s+[a-zA-Z0-9_-]+\s*=|\s*\])|([^\s\]]+))/g;
   let m;
   while ((m = attrRegex.exec(raw)) !== null) {
-    attrs[m[1]] = m[2] !== undefined ? m[2] : m[3] !== undefined ? m[3] : m[4] || "";
+    let val = m[2] !== undefined ? m[2] : m[3] !== undefined ? m[3] : m[4] || "";
+    // Unescape backslash-escaped quotes if present
+    val = val.replace(/\\"/g, '"').replace(/\\'/g, "'");
+    attrs[m[1]] = val;
   }
   return attrs;
 }
