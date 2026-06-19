@@ -88,7 +88,12 @@ export function safeHtmlForEditor(html) {
   } catch (e) {
     console.warn("Failed to clean editor HTML preview:", e);
     // Secure fallback: return escaped HTML rather than raw HTML if DOMParser fails
-    return html.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    return html
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
   }
 }
 

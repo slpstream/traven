@@ -19,10 +19,15 @@ import { ensureMermaid } from "./mermaid-parser.js";
 
 
 function escapeHtml(text) {
+  if (typeof text !== "string") {
+    text = String(text);
+  }
   return text
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 export function renderInlineMarkdown(text) {
@@ -78,7 +83,9 @@ export function renderInlineMarkdown(text) {
   html = html
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 
   // Protect inline code spans first to prevent formatting parsing inside them
   const codeSpans = [];
