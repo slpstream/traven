@@ -6,11 +6,11 @@
 export function escapeHtml(text: string): string;
 export class TravenRenderer {
     /**
-     * @param {import("@lezer/markdown").MarkdownParser} parser
+     * @param {import("@lezer/common").Parser} parser
      * @param {import("../plugins/TravenPlugin.js").TravenPlugin[]} [plugins]
      */
-    constructor(parser: import("@lezer/markdown").MarkdownParser, plugins?: import("../plugins/TravenPlugin.js").TravenPlugin[]);
-    parser: import("@lezer/markdown").MarkdownParser;
+    constructor(parser: import("@lezer/common").Parser, plugins?: import("../plugins/TravenPlugin.js").TravenPlugin[]);
+    parser: import("@lezer/common").Parser;
     plugins: import("../plugins/TravenPlugin.js").TravenPlugin[];
     /**
      * Compiles Markdown text to HTML using the Lezer syntax tree.

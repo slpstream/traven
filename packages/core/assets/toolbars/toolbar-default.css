@@ -403,11 +403,57 @@ button.btn-blockquote {
 }
 
 /* Help Dialog Content styling */
+.help-container {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Tabs Header */
+.help-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
+  margin-bottom: 12px;
+  gap: 4px;
+}
+
+.help-tab-btn {
+  flex: 1;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 8px 12px;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.9em;
+  color: var(--text-secondary, #64748b);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: center;
+}
+
+.help-tab-btn:hover {
+  color: var(--text-primary, #0f172a);
+}
+
+.help-tab-btn.active {
+  color: var(--accent, #334155);
+  border-bottom-color: var(--accent, #334155);
+}
+
+/* Tab contents and scroll grid */
+.help-tab-content {
+  display: none;
+}
+
+.help-tab-content.active {
+  display: block;
+}
+
 .help-grid {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  max-height: 300px;
+  gap: 0; /* No gap between rows */
+  max-height: 280px;
   overflow-y: auto;
   padding-right: 4px;
 }
@@ -416,7 +462,7 @@ button.btn-blockquote {
   font-weight: 700;
   font-size: 0.9em;
   color: var(--accent, #475569);
-  margin-top: 8px;
+  margin-top: 10px;
   margin-bottom: 4px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -429,8 +475,9 @@ button.btn-blockquote {
 .help-row {
   display: flex;
   justify-content: space-between;
+  align-items: flex-start; /* Align elements to the top to support multi-line wrap cleanly */
   border-bottom: 1px dashed var(--border-color, #e2e8f0);
-  padding: 4px 0;
+  padding: 6px 0; /* Add clean vertical padding to separate elements and prevent overlaps */
 }
 
 .help-row:last-child {
@@ -439,6 +486,8 @@ button.btn-blockquote {
 
 .help-key {
   color: var(--text-primary, #0f172a);
+  font-size: 1.0em; /* Increased font size */
+  padding-top: 2px; /* Slight alignment correction with pre-wrap code value badge */
 }
 
 .help-value {
@@ -447,7 +496,55 @@ button.btn-blockquote {
   background-color: var(--bg-secondary, #f1f5f9);
   padding: 2px 6px;
   border-radius: 4px;
-  font-size: 0.85em;
+  font-size: 1.05em; /* Increased font size */
+  font-weight: 500;
+  white-space: pre-wrap; /* Correctly render multi-line code blocks */
+  word-break: break-word; /* Ensure extremely long values don't overflow the container */
+  max-width: 65%; /* Constrain value width to guarantee label visibility on wrap */
+  text-align: right;
+}
+
+/* Specific styling for Help modal overrides (tighter padding & hidden title) */
+.traven-modal-help .traven-modal-body {
+  padding: 0 16px 16px;
+}
+
+.traven-modal-help .traven-modal-title {
+  display: none;
+}
+
+.traven-modal-help .traven-modal-header {
+  padding: 8px 12px 0;
+  border-bottom: none;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.traven-modal-help .traven-modal-footer {
+  padding: 10px 16px;
+}
+
+/* Dark mode theme overrides for tabs */
+.traven-modal-overlay.cm-wysiwym-dark .help-tabs {
+  border-bottom-color: #334155;
+}
+
+.traven-modal-overlay.cm-wysiwym-dark .help-tab-btn {
+  color: #94a3b8;
+}
+
+.traven-modal-overlay.cm-wysiwym-dark .help-tab-btn:hover {
+  color: #f8fafc;
+}
+
+.traven-modal-overlay.cm-wysiwym-dark .help-tab-btn.active {
+  color: #38bdf8;
+  border-bottom-color: #38bdf8;
+}
+
+.traven-modal-overlay.cm-wysiwym-dark .help-value {
+  background-color: #0f172a;
+  color: #94a3b8;
 }
 
 /* Image Modal — Interactive Dropzone */
