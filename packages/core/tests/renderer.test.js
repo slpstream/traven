@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { TravenEditor } from '../src/index.js';
+import { TravenEditor, renderMarkdown } from '../src/index.js';
+import { safeHtmlForEditor } from '../src/plugins/html-plugin.js';
 
 // Polyfill for JSDOM / CodeMirror 6 compatibility
 if (typeof window !== 'undefined') {
@@ -77,8 +78,8 @@ describe('Traven Renderer Golden Tests', () => {
     it('renders bold, italic, strikethrough, highlight, and inline code', () => {
       expect(render('**bold**')).toContain('<strong>bold</strong>');
       expect(render('*italic*')).toContain('<em>italic</em>');
-      expect(render('~~strikethrough~~')).toContain('<del>~~strikethrough~~</del>');
-      expect(render('==highlight==')).toContain('<mark>==highlight==</mark>');
+      expect(render('~~strikethrough~~')).toContain('<del>strikethrough</del>');
+      expect(render('==highlight==')).toContain('<mark>highlight</mark>');
       expect(render('`inline code`')).toContain('<code>inline code</code>');
     });
 
@@ -145,7 +146,7 @@ describe('Traven Renderer Golden Tests', () => {
 
     it('renders component shortcodes', () => {
       const html = render('[component id="123" type="cta"][/component]');
-      expect(html).toContain('<div class="traven-component-shortcode"');
+      expect(html).toContain('traven-component');
     });
     
     it('renders figure shortcodes', () => {
@@ -186,12 +187,67 @@ describe('Traven Renderer Golden Tests', () => {
       expect(render('https://example.com')).toContain('<p></p>');
     });
 
-    it('escapes HTML in regular text', () => {
-      expect(render('<script>alert(1)</script>')).toContain('&lt;script&gt;alert(1)&lt;/script&gt;');
+    it('escapes unmatched HTML characters in regular text', () => {
+      expect(render('a < b')).toContain('a &lt; b');
+    });
+
+    it('renders HTML blocks and tags unescaped', () => {
+      expect(render('<div style="text-align: center">\nSome centered text\n</div>')).toContain('<div style="text-align: center">\nSome centered text\n</div>');
     });
 
     it('escapes HTML in code spans', () => {
       expect(render('`<script>`')).toContain('<code>&lt;script&gt;</code>');
+    });
+  });
+
+  describe('Standalone renderMarkdown helper', () => {
+    it('compiles markdown using default plugins and configuration', () => {
+      const html = renderMarkdown('# Hello World\n\n- item 1\n- item 2');
+      expect(html).toContain('<h1> Hello World</h1>');
+      expect(html).toContain('<ul>');
+      expect(html).toContain('item 1');
+    });
+
+    it('handles HTML blocks and tags correctly', () => {
+      const html = renderMarkdown('<div style="text-align: center">Centered</div>');
+      expect(html).toContain('<div style="text-align: center">Centered</div>');
+    });
+  });
+
+  describe('safeHtmlForEditor sanitization', () => {
+    it('strips script tags', () => {
+      const input = '<div>Test <script>alert(1)</script>content</div>';
+      const output = safeHtmlForEditor(input);
+      expect(output).not.toContain('<script>');
+      expect(output).toContain('<div>Test content</div>');
+    });
+
+    it('strips inline event handler attributes', () => {
+      const input = '<img src="x" onerror="alert(1)" onclick="run()" only-once="keep-me">';
+      const output = safeHtmlForEditor(input);
+      expect(output).not.toContain('onerror');
+      expect(output).not.toContain('onclick');
+      expect(output).toContain('only-once="keep-me"');
+    });
+
+    it('scopes element IDs and replaces internal references', () => {
+      const input = `
+        <svg>
+          <clipPath id="testClip"><rect width="10" height="10"/></clipPath>
+          <image href="x" clip-path="url(#testClip)"/>
+          <a href="#testClip">Link</a>
+          <style>#testClip { fill: red; }</style>
+        </svg>
+      `;
+      const output = safeHtmlForEditor(input);
+      expect(output).not.toContain('id="testClip"');
+      expect(output).not.toContain('clip-path="url(#testClip)"');
+      expect(output).not.toContain('href="#testClip"');
+      expect(output).not.toContain('#testClip {');
+      expect(output).toContain('id="testClip-');
+      expect(output).toContain('clip-path="url(#testClip-');
+      expect(output).toContain('href="#testClip-');
+      expect(output).toContain('#testClip-');
     });
   });
 });

@@ -460,3 +460,19 @@
 .traven-bubble-menu.is-tablet-bottom-bar .traven-bubble-arrow {
   display: none !important;
 }
+
+/* HTML Preview Styling */
+.cm-wysiwym-html-preview {
+  display: block;
+  width: 100%;
+  margin: 12px 0;
+  white-space: normal;
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+.cm-wysiwym-inline-html-preview {
+  display: inline;
+  white-space: normal;
+  cursor: pointer;
+}

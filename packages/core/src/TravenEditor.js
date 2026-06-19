@@ -64,7 +64,8 @@ import { TravenPluginsFacet, travenViewPlugin, TravenPlugin,
   MathPlugin,
   MermaidPlugin,
   TablePlugin,
-  ShortcodePlugin
+  ShortcodePlugin,
+  HTMLPlugin
 } from "./plugins/index.js";
 import { delimiterSkipKeymap } from "./delimiter-skip.js";
 import { imageDecorationPlugin, imageHandlerExtension } from "./images.js";
@@ -369,7 +370,8 @@ export class TravenEditor {
       new MathPlugin(),
       new MermaidPlugin(),
       new TablePlugin(),
-      new ShortcodePlugin()
+      new ShortcodePlugin(),
+      new HTMLPlugin()
     ];
     this.#renderer = new TravenRenderer(mdParser.configure(parserExtensions), activePlugins);
 

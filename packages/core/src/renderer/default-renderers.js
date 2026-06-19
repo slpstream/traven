@@ -313,6 +313,10 @@ export function defaultNodeRenderer(node, childrenHtml, docText) {
     case "FigureShortcode": {
       return `<figure class="traven-figure-shortcode align-center">\n${childrenHtml}</figure>\n`;
     }
+    case "HTMLBlock":
+      return docText.slice(node.from, node.to) + "\n";
+    case "HTMLTag":
+      return docText.slice(node.from, node.to);
 
     // Lezer structural nodes that should be ignored or fallen through
     case "HeaderMark":
