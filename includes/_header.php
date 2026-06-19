@@ -13,7 +13,7 @@
   <div class="brand-section">
     <a href="index.php" style="display: flex; align-items: center; text-decoration: none;">
       <div class="logo-container">
-        <?php readfile('packages/core/assets/images/traven-wordmark.svg'); ?>
+        <img src="packages/core/assets/images/traven.png" alt="Traven" style="height: 25px; width: auto; display: block;" />
       </div>
     </a>
   </div>

@@ -50,6 +50,67 @@ Today, Sanremo wears its history with studied nonchalance. ==The Passeggiata Imp
 **Festival di Sanremo**: Italy's premier music festival; held annually since 1951; broadcast nationally on RAI
 [/component]
 
+<a href="https://en.wikipedia.org/wiki/Italy">
+<div style="display: grid; place-items: center">
+  <svg viewBox="0 0 200 200" width="400px" xmlns="http://www.w3.org/2000/svg" aria-labelledby="t">
+    <image href="https://images.unsplash.com/photo-1549893072-4bc678117f45?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+      width="200" height="200"
+      preserveAspectRatio="xMidYMid slice"
+      clip-path="url(#blobClip)"/>
+    <clipPath id="blobClip">
+      <path d="M43.1,-68.5C56.2,-58.6,67.5,-47.3,72.3,-33.9C77.2,-20.5,75.5,-4.9,74.2,11.3C72.9,27.6,71.9,44.5,63.8,57.2C55.7,69.8,40.6,78.2,25.5,79.2C10.4,80.1,-4.7,73.6,-20.9,69.6C-37.1,65.5,-54.5,63.9,-66,54.8C-77.5,45.8,-83.2,29.3,-85.7,12.3C-88.3,-4.8,-87.7,-22.3,-79.6,-34.8C-71.5,-47.3,-55.8,-54.9,-41.3,-64.2C-26.7,-73.6,-13.4,-84.7,0.8,-86C15,-87.2,29.9,-78.5,43.1,-68.5Z"
+        transform="translate(100 100)"/>
+    </clipPath>
+    <path
+      class="blob"
+      d="M43.1,-68.5C56.2,-58.6,67.5,-47.3,72.3,-33.9C77.2,-20.5,75.5,-4.9,74.2,11.3C72.9,27.6,71.9,44.5,63.8,57.2C55.7,69.8,40.6,78.2,25.5,79.2C10.4,80.1,-4.7,73.6,-20.9,69.6C-37.1,65.5,-54.5,63.9,-66,54.8C-77.5,45.8,-83.2,29.3,-85.7,12.3C-88.3,-4.8,-87.7,-22.3,-79.6,-34.8C-71.5,-47.3,-55.8,-54.9,-41.3,-64.2C-26.7,-73.6,-13.4,-84.7,0.8,-86C15,-87.2,29.9,-78.5,43.1,-68.5Z"
+      transform="translate(100 100)"
+      fill="url(#imgFill)"
+    />
+    <path
+      id="text"
+      d="M43.1,-68.5C56.2,-58.6,67.5,-47.3,72.3,-33.9C77.2,-20.5,75.5,-4.9,74.2,11.3C72.9,27.6,71.9,44.5,63.8,57.2C55.7,69.8,40.6,78.2,25.5,79.2C10.4,80.1,-4.7,73.6,-20.9,69.6C-37.1,65.5,-54.5,63.9,-66,54.8C-77.5,45.8,-83.2,29.3,-85.7,12.3C-88.3,-4.8,-87.7,-22.3,-79.6,-34.8C-71.5,-47.3,-55.8,-54.9,-41.3,-64.2C-26.7,-73.6,-13.4,-84.7,0.8,-86C15,-87.2,29.9,-78.5,43.1,-68.5Z"
+      transform="translate(100 100)"
+      fill="none" stroke="none"
+      pathLength="100"
+    />
+    <text class="text-content" fill="currentColor">
+      <textPath href="#text" startOffset="0%">❤ VISIT ITALY ❤ VISIT ITALY ❤ VISIT ITALY ❤ VISIT ITALY
+        <animate attributeName="startOffset" from="0%" to="100%" dur="15s" repeatCount="indefinite" />
+      </textPath>
+      <textPath href="#text" startOffset="100%">❤ VISIT ITALY ❤ VISIT ITALY ❤ VISIT ITALY ❤ VISIT ITALY
+        <animate attributeName="startOffset" from="-100%" to="0%" dur="15s" repeatCount="indefinite" />
+      </textPath>
+    </text>
+  </svg>
+  <style>
+    svg{
+      max-width: 70vw;
+      max-height: 80vh;
+      aspect-ratio: 1/1;
+    }
+    svg>#blobClip{
+      transform-origin: center;
+      transition: ease-out transform .4s;
+    }
+    svg:hover>#blobClip{
+      transform: scale(1.15) translate(0%, 0%);
+    }
+    svg:hover>.text-content{
+      fill: white;
+      mix-blend-mode: overlay;
+    }
+    .text-content {
+      font: 700 10px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      fill: currentColor;
+      mix-blend-mode: normal;
+      transition: ease fill .5s;
+    }
+  </style>
+</div>
+</a>
 
 
 
