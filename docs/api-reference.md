@@ -240,3 +240,35 @@ Scans the specified container element and renders any uninitialized Mermaid diag
 *   **Parameters:**
     *   `container` (`HTMLElement`): The DOM container element to scan.
 *   **Returns:** `Promise<void>`
+
+---
+
+## Standalone Markdown Compiler API
+
+Traven provides standalone utilities for compiling Markdown directly to HTML outside of the editor environment.
+
+> [!WARNING]
+> **Security Caveat**: The standalone compiler does **not** sanitize HTML output. Since Traven supports raw HTML blocks (`HTMLBlock`) and inline tags (`HTMLTag`), any HTML inserted in the input Markdown will be rendered unescaped in the final HTML output. If you are rendering untrusted user-submitted Markdown, you must run the resulting HTML through a secure HTML sanitizer library (e.g., `DOMPurify`) before injecting it into the page.
+
+### `renderMarkdown(markdownText)`
+A convenience helper function to compile a Markdown string directly into HTML with all default Traven plugins, extensions, and shortcodes active.
+*   **Parameters:** `markdownText` (`string`): The raw Markdown text to render.
+*   **Returns:** `string` (The compiled HTML)
+*   **Frontmatter**: Automatically parses and strips YAML frontmatter metadata blocks from the compiled output.
+
+**Example:**
+```javascript
+import { renderMarkdown } from "@freedomware/traven";
+
+const html = renderMarkdown("# Hello World\n\n- Item 1\n- item 2");
+```
+
+### `new TravenRenderer(parser, plugins)`
+The core compiler class used by Traven to translate parsed Lezer syntax trees into HTML nodes.
+*   **Parameters:**
+    *   `parser` (`MarkdownParser`): A configured Lezer Markdown parser (such as the one returned by `yamlFrontmatter` wrapper).
+    *   `plugins` (`Array<TravenPlugin>`): A list of Traven plugins to allow custom render overrides.
+*   **Methods:**
+    *   `compile(markdownText)`: Compiles the Markdown text and returns a `string`.
+
+

@@ -373,7 +373,15 @@ export class TravenEditor {
       new ShortcodePlugin(),
       new HTMLPlugin()
     ];
-    this.#renderer = new TravenRenderer(mdParser.configure(parserExtensions), activePlugins);
+    const baseLang = yamlFrontmatter({
+      content: markdown({
+        ...(options.codeLanguages
+          ? { codeLanguages: options.codeLanguages }
+          : {}),
+        extensions: parserExtensions,
+      }),
+    });
+    this.#renderer = new TravenRenderer(baseLang.language.parser, activePlugins);
 
     const extensions = [
       ...buildBaseSetup({

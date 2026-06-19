@@ -67,6 +67,6 @@ export class FrontmatterPlugin extends TravenPlugin {
    * @param {any} _ctx 
    */
   renderToHTML(_node, _childrenHtml, _ctx) {
-    return null; // Fall through to default renderer
+    return ""; // Strip frontmatter from compiled HTML output
   }
 }

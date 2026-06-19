@@ -215,8 +215,9 @@ Host applications can query document size statistics at runtime or subscribe to 
 Traven features a compilation hook allowing custom renderers to generate the HTML preview:
 * **Registration**: Call `registerRenderer(renderFn)` to pass a custom Markdown-to-HTML parser function (e.g., marked, markdown-it, micromark).
 * **Usage**: `getContentHtml()` retrieves the rendered HTML of the current document.
-* **Out-of-the-Box Fallback**: If no renderer is registered, Traven falls back to `#fallbackRender(md)`, a secure, parser-assisted inline renderer that strips frontmatter metadata (via Lezer syntax tree boundaries) and parses headings, blockquotes, code, lists, linebreaks, images (`![alt](url)`), links (`[text](url)`), and inline text styling safely.
+* **Out-of-the-Box Fallback**: If no renderer is registered, Traven compiles the document using the built-in `TravenRenderer` (configured with the editor's default Lezer parser extensions and plugins). This produces semantic HTML including support for custom image, video, audio, component, figure, math, and table widgets, as well as raw HTML block/tag rendering.
 * **Preview Styling & Skin Sync**: The preview container element uses the `.traven-preview` class. Styles for headings, lists, links, blockquotes, and code elements inside `.traven-preview` are defined directly in the theme skins (e.g. `skin-light.css`, `skin-colorful.css`, `skin-dark.css`) and dark mode class triggers (`.cm-wysiwym-dark`). This ensures the Preview tab mirrors the exact visual typography, colors, and borders of the current active skin and dark/light configuration dynamically.
+
 
 ### D. Vim Keybindings Support
 Vim-mode keybindings can be toggled on-the-fly inside both the WYSIWYM and raw Markdown editor panes:
@@ -436,6 +437,24 @@ To protect against URI-based XSS attacks—specifically through Markdown links `
   import { sanitizeUrl } from "./security.js";
   
   const safeHref = sanitizeUrl(userProvidedUrl);
+  ```
+
+### C. HTML Block & Tag Rendering (WYSIWYM)
+Traven includes an `HTMLPlugin` to render raw HTML blocks (`HTMLBlock` nodes) and paired inline HTML tags (`HTMLTag` nodes) inside the editor view when the cursor is outside.
+*   **Security Trust Model**: The plugin assumes a trust model where Traven trusts the author's input model (the XSS surface is confined to what the author types, similar to a static site generator). For integrations reading untrusted content sources, a robust sanitizer (like DOMPurify) should be run at the integration boundary, not inside the core editor.
+*   **Script & Event Stripping**: To prevent code execution inside the editor's live DOM view, a helper `safeHtmlForEditor` strips out `<script>` elements and inline event attributes (matching `/^on[a-z]+$/i` such as `onerror`, `onclick`). If `DOMParser` fails, it falls back to a safely escaped string.
+*   **SVG ID Scoping**: Appending duplicate SVGs with internal references (e.g. `clipPath` and `textPath`) causes global ID collisions in the DOM (where the second SVG points to the first hidden SVG's IDs). To resolve this, Traven dynamically scopes IDs in WYSIWYM mode by appending a unique suffix (e.g. `blobClip-suffix`) and updates all corresponding references (e.g. `url(#...)`, `href="#..."`, styling attributes, and selectors within `<style>` blocks).
+*   **Stack-based Tag Matcher**: Pairs inline HTML tags using an O(n) stack-based algorithm. Only the outermost paired elements are decorated to prevent overlapping/nested decorations inside CodeMirror.
+
+### D. Standalone Compiler XSS Risks (`renderMarkdown` / `TravenRenderer`)
+* **Unsanitized HTML Output**: The standalone rendering functions (`renderMarkdown` and `TravenRenderer`) output raw unescaped HTML for `HTMLBlock` and `HTMLTag` nodes. They do **not** run the editor's live DOM-only sanitization helper (`safeHtmlForEditor`) because they compile directly to static HTML strings.
+* **Risk Mitigation**: If using Traven to compile untrusted user-submitted Markdown in a browser or server-side environment, you must pass the resulting HTML through a secure HTML sanitizer library (such as DOMPurify) before injecting it into any webpage:
+  ```javascript
+  import { renderMarkdown } from "@freedomware/traven";
+  import DOMPurify from "dompurify";
+
+  const rawHtml = renderMarkdown(untrustedMarkdownInput);
+  const safeHtml = DOMPurify.sanitize(rawHtml);
   ```
 
 ---

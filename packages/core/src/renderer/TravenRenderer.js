@@ -16,7 +16,7 @@ export function escapeHtml(text) {
 
 export class TravenRenderer {
   /** 
-   * @param {import("@lezer/markdown").MarkdownParser} parser 
+   * @param {import("@lezer/common").Parser} parser 
    * @param {import("../plugins/TravenPlugin.js").TravenPlugin[]} [plugins]
    */
   constructor(parser, plugins = []) {

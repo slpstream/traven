@@ -24,6 +24,9 @@ import {
   HTMLPlugin
 } from "./plugins/index.js";
 
+import { yamlFrontmatter } from "@codemirror/lang-yaml";
+import { markdown } from "@codemirror/lang-markdown";
+
 export { TravenEditor, DEFAULT_TOOLBAR } from "./TravenEditor.js";
 export { getCM } from "@replit/codemirror-vim";
 export { TravenEditorElement } from "./TravenEditorElement.js";
@@ -66,8 +69,10 @@ export function renderMarkdown(markdownText) {
     new HTMLPlugin()
   ];
 
-  const mdParser = /** @type {import("@lezer/markdown").MarkdownParser} */ (markdownLanguage.parser);
-  const renderer = new TravenRenderer(mdParser.configure(parserExtensions), activePlugins);
+  const baseLang = yamlFrontmatter({
+    content: markdown({ extensions: parserExtensions })
+  });
+  const renderer = new TravenRenderer(baseLang.language.parser, activePlugins);
   return renderer.compile(markdownText);
 }
 

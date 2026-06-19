@@ -212,6 +212,12 @@ describe('Traven Renderer Golden Tests', () => {
       const html = renderMarkdown('<div style="text-align: center">Centered</div>');
       expect(html).toContain('<div style="text-align: center">Centered</div>');
     });
+
+    it('strips YAML frontmatter from the compiled HTML output', () => {
+      const html = renderMarkdown('---\ntitle: Hello World\n---\n# Main Heading');
+      expect(html).not.toContain('title: Hello World');
+      expect(html).toContain('<h1> Main Heading</h1>');
+    });
   });
 
   describe('safeHtmlForEditor sanitization', () => {
