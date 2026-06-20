@@ -254,6 +254,7 @@ This table is the canonical list of every `toolbar=` value you can plug in. The 
 
 | Key | Action | Shortcut |
 | :--- | :--- | :--- |
+| `snippet` | Open the Custom Snippets manager or insertion dropdown | — |
 | `image` | Open the Insert Image modal (URL or file upload) | — |
 | `video` | Open the Insert Video modal (YouTube/Vimeo/direct) | — |
 | `audio` | Open the Insert Audio modal | — |

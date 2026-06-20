@@ -132,6 +132,8 @@ $$\sum_{i=1}^{n} i^3 = \left(\frac{n(n+1)}{2}\right)^2$$
   A bit of centered text here
 </div>
 
+which can both be a block of HTML (like the line above) or <span style="border: 1px solid; padding: 0 0.5rem;">HTML directly here</span>, inline, as shown in this sentence.
+
 # Ready to build?
 Get Traven with a **one-line include**. It is free and you can customize it with themes and toolbars that fit any look and feel that you prefer. To find out more about Traven and how to integrate the editor in your own projects, go to *[traven.dev](https://traven.dev)* and read more about how easy Traven is to embed and what else you can do with the powerful configuration options that are hidden under the hood.
 
