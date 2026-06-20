@@ -1804,6 +1804,7 @@
 /* Fallback Preview Block Component Styles */
 .traven-preview .traven-component-blockquote {
   border-left: none !important;
+  background-color: transparent !important;
   padding-top: 10px !important;
   padding-bottom: 10px !important;
   padding-left: 36px !important;
@@ -1850,10 +1851,12 @@
 
 .traven-preview .traven-component-blockquote cite {
   display: block;
+  margin-top: 4px;
   font-family: 'Goudy Bookletter 1911', Georgia, serif;
   font-size: 0.85em;
   color: #78716c;
   font-style: normal;
+  text-align: right;
 }
 
 /* Reduce spacing around blockquote components in HTML Preview to match editor */
