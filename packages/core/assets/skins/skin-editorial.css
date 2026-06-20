@@ -1012,7 +1012,8 @@
 
 /* Table widget */
 .cm-wysiwym-table-widget {
-  margin: 8px 0;
+  margin: 0 !important;
+  padding: 12px 0;
 }
 
 .cm-wysiwym-table-widget table {

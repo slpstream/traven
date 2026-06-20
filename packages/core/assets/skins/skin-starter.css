@@ -1033,34 +1033,42 @@
 }
 
 /* Component Headers (both preview and editor) */
-.traven-component-header,
+.traven-component .component-header,
 .cm-wysiwym-component-shortcode .component-header {
   font-family: var(--traven-sans-font, sans-serif);
   font-weight: 700;
   font-size: 0.85em;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  margin-bottom: 12px;
   display: flex;
   align-items: center;
   user-select: none;
 }
 
+.traven-component .component-header {
+  margin-bottom: 12px;
+}
+
+.cm-wysiwym-component-shortcode .component-header {
+  padding-bottom: 12px;
+  margin-bottom: 0 !important;
+}
+
 /* Collapsible (Details/Summary) Styling */
-summary.traven-component-header,
+summary.traven-component .component-header,
 summary.component-header {
   cursor: pointer;
   outline: none;
   list-style: none;
 }
 
-summary.traven-component-header::-webkit-details-marker,
+summary.traven-component .component-header::-webkit-details-marker,
 summary.component-header::-webkit-details-marker {
   display: none;
 }
 
 /* Custom expand/collapse indicator arrow */
-summary.traven-component-header::after,
+summary.traven-component .component-header::after,
 summary.component-header::after {
   content: "▼";
   font-size: 0.75em;
@@ -1070,13 +1078,13 @@ summary.component-header::after {
   display: inline-block;
 }
 
-details[open] summary.traven-component-header::after,
+details[open] summary.traven-component .component-header::after,
 details[open] summary.component-header::after {
   transform: rotate(-180deg);
 }
 
 /* Remove bottom margin on headers when the collapsible box is closed to center the title vertically */
-details:not([open]) .traven-component-header,
+details:not([open]) .traven-component .component-header,
 details:not([open]) .component-header {
   margin-bottom: 0 !important;
 }
