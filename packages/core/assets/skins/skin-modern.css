@@ -141,7 +141,7 @@
   font-size: 2.2em;
   font-weight: 900; /* Requested 900 weight */
   line-height: 1.0 !important;
-  padding-top: 28px !important;
+  padding-top: 24px !important;
   padding-bottom: 12px !important;
   margin: 0 !important;
 }
@@ -150,8 +150,8 @@
   font-size: 1.7em;
   font-weight: 800; /* Requested 800 weight */
   line-height: 1.05 !important;
-  padding-top: 22px !important;
-  padding-bottom: 10px !important;
+  padding-top: 24px !important;
+  padding-bottom: 12px !important;
   margin: 0 !important;
 }
 
@@ -159,8 +159,8 @@
   font-size: 1.35em;
   font-weight: 800; /* Requested 800 weight */
   line-height: 1.1 !important;
-  padding-top: 18px !important;
-  padding-bottom: 8px !important;
+  padding-top: 24px !important;
+  padding-bottom: 12px !important;
   margin: 0 !important;
 }
 
@@ -168,8 +168,8 @@
   font-size: 1.15em;
   font-weight: 800;
   line-height: 1.2 !important;
-  padding-top: 14px !important;
-  padding-bottom: 6px !important;
+  padding-top: 24px !important;
+  padding-bottom: 12px !important;
   margin: 0 !important;
 }
 
@@ -177,8 +177,8 @@
   font-size: 1.0em;
   font-weight: 800;
   line-height: 1.25 !important;
-  padding-top: 12px !important;
-  padding-bottom: 4px !important;
+  padding-top: 24px !important;
+  padding-bottom: 12px !important;
   margin: 0 !important;
 }
 
@@ -186,8 +186,8 @@
   font-size: 0.9em;
   font-weight: 800;
   line-height: 1.25 !important;
-  padding-top: 10px !important;
-  padding-bottom: 2px !important;
+  padding-top: 24px !important;
+  padding-bottom: 12px !important;
   margin: 0 !important;
 }
 
@@ -235,12 +235,22 @@
   min-height: 0.4em !important;
 }
 
-/* Reduce blank line spacing immediately after headings */
+/* Empty Line Collapse Before and After Headings to match HTML Preview spacing */
+.cm-editor .cm-line:has(br:only-child):has(+ .cm-wysiwym-h1),
+.cm-editor .cm-line:has(br:only-child):has(+ .cm-wysiwym-h2),
+.cm-editor .cm-line:has(br:only-child):has(+ .cm-wysiwym-h3),
+.cm-editor .cm-line:has(br:only-child):has(+ .cm-wysiwym-h4),
+.cm-editor .cm-line:has(br:only-child):has(+ .cm-wysiwym-h5),
+.cm-editor .cm-line:has(br:only-child):has(+ .cm-wysiwym-h6),
 .cm-editor .cm-wysiwym-h1 + .cm-line:has(br:only-child),
 .cm-editor .cm-wysiwym-h2 + .cm-line:has(br:only-child),
-.cm-editor .cm-wysiwym-h3 + .cm-line:has(br:only-child) {
-  height: 0.4em !important;
-  min-height: 0.4em !important;
+.cm-editor .cm-wysiwym-h3 + .cm-line:has(br:only-child),
+.cm-editor .cm-wysiwym-h4 + .cm-line:has(br:only-child),
+.cm-editor .cm-wysiwym-h5 + .cm-line:has(br:only-child),
+.cm-editor .cm-wysiwym-h6 + .cm-line:has(br:only-child) {
+  height: 0px !important;
+  min-height: 0px !important;
+  padding: 0 !important;
 }
 
 /* YAML Frontmatter blocks styled with monospace JetBrains Mono */
@@ -1936,6 +1946,7 @@
 /* Fallback Preview Block Component Styles */
 .traven-preview .traven-component-blockquote {
   border-left: 4px solid #0f766e !important;
+  background-color: transparent !important;
   padding-top: 10px !important;
   padding-bottom: 10px !important;
   padding-left: 18px !important;
@@ -1967,9 +1978,11 @@
 }
 .traven-preview .traven-component-blockquote cite {
   display: block;
+  margin-top: 4px;
   font-size: 0.9em;
   color: #71717a;
   font-style: normal;
+  text-align: right;
 }
 
 /* Reduce spacing around blockquote components in HTML Preview to match editor */
