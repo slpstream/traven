@@ -68,7 +68,7 @@ Type `**bold**` and the asterisks quietly step aside, leaving only the bold text
 
 ## Like Typora, but for the Browser
 
-When evaluating [the landscape](https://traven.dev/site/traven-vs-others.php) of browser-based editors, and trying to find a Markdown-first editor with the look and feel of Typora, but for embedding and using in a web browser, nothing really seemed to fit. Each category had trade-offs:
+When evaluating **[the landscape](https://traven.dev/site/traven-vs-others.php)** of browser-based editors, and trying to find a Markdown-first editor with the look and feel of Typora, but for embedding and using in a web browser, each category had trade-offs:
 
 * **WYSIWYG Heavyweights:** Editors like TinyMCE and CKEditor want an API key, emit HTML, and make you serialize that HTML back to Markdown lossily.
 * **Classic Split-Panes:** Tools like EasyMDE use the legacy CodeMirror 5 engine and a split-pane UX.

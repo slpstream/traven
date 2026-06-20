@@ -802,12 +802,16 @@
 /* Blockquotes inside Preview */
 .traven-preview blockquote:not(.traven-component-pullquote) {
   margin: 1.5em 0;
-  padding: 10px 20px;
+  padding: 10px 16px;
   border-left: 3px solid var(--traven-blockquote-border);
   color: var(--traven-blockquote-text);
   font-style: italic;
   background-color: var(--traven-code-bg);
   border-radius: 0 6px 6px 0;
+}
+
+.traven-preview blockquote p {
+  white-space: pre-line;
 }
 
 .traven-preview blockquote p:last-child {
@@ -993,7 +997,9 @@
   border-radius: 0 10px 10px 0;
 }
 
-.traven-preview .traven-component-blockquote footer {
+.traven-preview .traven-component-blockquote footer,
+.traven-preview .traven-component-blockquote cite {
+  display: block;
   margin-top: 8px;
   font-size: 0.82em;
   color: var(--traven-muted);

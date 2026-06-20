@@ -91,7 +91,14 @@ export class TravenRenderer {
     while (child) {
       // Text gaps between child nodes
       if (child.from > pos) {
-        result += escapeHtml(docText.slice(pos, child.from));
+        let escapedGap = escapeHtml(docText.slice(pos, child.from));
+        if (node.name === "Document") {
+          escapedGap = escapedGap.replace(/(\r?\n){3,}/g, (match) => {
+            const count = (match.match(/\r?\n/g) || []).length;
+            return "\n\n" + "<br>\n".repeat(count - 2);
+          });
+        }
+        result += escapedGap;
       }
       result += this.renderNode(child, docText);
       pos = child.to;
@@ -100,7 +107,14 @@ export class TravenRenderer {
 
     // Trailing text after the last child
     if (pos < node.to) {
-      result += escapeHtml(docText.slice(pos, node.to));
+      let escapedGap = escapeHtml(docText.slice(pos, node.to));
+      if (node.name === "Document") {
+        escapedGap = escapedGap.replace(/(\r?\n){3,}/g, (match) => {
+          const count = (match.match(/\r?\n/g) || []).length;
+          return "\n\n" + "<br>\n".repeat(count - 2);
+        });
+      }
+      result += escapedGap;
     }
 
     return result;

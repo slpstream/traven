@@ -117,6 +117,13 @@ CodeJar is an extremely lightweight syntax-highlighting wrapper around HTML's na
 
 ---
 
+## Other Options
+
+This comparison page doesn't cover everything. Some it doesn't include are abandoned repos (HyperMD, Toast UI Editor), others (like Froala) are strictly commercial and not good Markdown-options. But the ecosystem keeps growing. OVERTYPE is a new option which shares much of Traven's framework-agnostic philosophy, and which has on purpose decided to be ultra-minimalistic. Like Traven, it is has zero peer dependencies and is a single file that works immediately. Also like Traven, integration is simple (no build tools), works as a `<textarea>`-replacement, and is easy to understand, modify, and extend. It doesn't do tables, image uploads, diagrams, or the kind of live WYSIWYM editing that Traven has, but for minimalistic simplicity it is a valid alternative. 
+
+If you want comparisons with other options on this page, reach out and we'll give them an honest developer-to-developer evaluation right here. For a portable file format like Markdown, the more editors there are to choose from, the better. 
+
+---
 
 ## Summary: When to use Traven?
 
