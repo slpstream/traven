@@ -29,7 +29,7 @@ describe('ListPlugin', () => {
 
     plugin.buildDecorations(ctx);
 
-    expect(decorations.length).toBe(2); // 2 TaskMarker only (ListMark is type "task", so no BulletWidget)
+    expect(decorations.length).toBe(4); // 2 TaskMarker (CheckboxWidget) + 2 ListMark (HiddenBulletWidget)
     const checkboxes = decorations.filter(d => d.deco.spec.widget instanceof CheckboxWidget);
     expect(checkboxes.length).toBe(2);
     expect(checkboxes[0].deco.spec.widget.checked).toBe(true);

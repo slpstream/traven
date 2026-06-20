@@ -16757,7 +16757,29 @@ function cy(e, t = null) {
 		let e = n.getView(), { from: t, to: r } = e.state.selection.main, i = t === r ? "" : e.state.sliceDoc(t, r);
 		i && (w.value = i);
 	}
-	f && (f(), T.addEventListener("input", f));
+	f && (f(), T.addEventListener("input", f)), l.addEventListener("paste", (e) => {
+		let t = e.clipboardData || window.clipboardData;
+		if (!t) return;
+		if (t.files && t.files.length > 0) {
+			let n = t.files[0];
+			if (n.type.startsWith("image/")) {
+				if (e.preventDefault(), m) {
+					let e = new DataTransfer();
+					e.items.add(n), m.files = e.files, m.dispatchEvent(new Event("change"));
+				}
+				return;
+			}
+		}
+		let n = t.getData("text");
+		if (!n) return;
+		let r = n.trim(), i = r.match(/^!\[(.*?)\]\((.*?)\)$/), a = r.match(/<img.*?src=["'](.*?)["']/i), o = /^https?:\/\/[^\s]+$/.test(r), s = e.target;
+		if (i) e.preventDefault(), w.value = i[1], T.value = i[2], f && f();
+		else if (a) {
+			e.preventDefault(), T.value = a[1];
+			let t = r.match(/alt=["'](.*?)["']/i);
+			t && (w.value = t[1]), f && f();
+		} else o && (s === T || s !== w && s !== E && s !== k) && (e.preventDefault(), T.value = r, f && f());
+	});
 	let ee = () => {
 		let e = g.querySelector(".traven-modal-switch-track"), t = g.querySelector(".traven-modal-switch-thumb");
 		d ? (g.style.color = "var(--accent, #334155)", g.title = "Legacy Markdown", e && (e.style.backgroundColor = "#000000"), t && (t.style.transform = "translateX(18px)"), v.style.display = "", S.style.display = "flex", C.style.display = "", E.disabled = !1, D.disabled = !1, O.disabled = !1, k.disabled = !1) : (g.style.color = "var(--text-secondary, #64748b)", g.title = "Advanced Settings", e && (e.style.backgroundColor = "#cbd5e1"), t && (t.style.transform = "translateX(0)"), v.style.display = "none", S.style.display = "none", C.style.display = "none", E.disabled = !0, D.disabled = !0, O.disabled = !0, k.disabled = !0);

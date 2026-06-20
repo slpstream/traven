@@ -405,6 +405,61 @@ export function openImageModal(optionsOrEditor, triggerBtn = null) {
     urlInput.addEventListener("input", updatePreview);
   }
 
+  // Clipboard Auto-recognition: Listen for paste events on the modal
+  form.addEventListener("paste", (e) => {
+    const clipboardEvent = /** @type {ClipboardEvent} */ (e);
+    const clipboardData = clipboardEvent.clipboardData || /** @type {any} */ (window).clipboardData;
+    if (!clipboardData) return;
+
+    // 1. Check for image files pasted (e.g., from screenshots)
+    if (clipboardData.files && clipboardData.files.length > 0) {
+      const file = clipboardData.files[0];
+      if (file.type.startsWith("image/")) {
+        e.preventDefault();
+        if (fileInput) {
+          const dt = new DataTransfer();
+          dt.items.add(file);
+          fileInput.files = dt.files;
+          fileInput.dispatchEvent(new Event("change"));
+        }
+        return;
+      }
+    }
+
+    // 2. Check for text/URLs
+    const pastedText = clipboardData.getData("text");
+    if (!pastedText) return;
+    const trimmed = pastedText.trim();
+
+    const mdMatch = trimmed.match(/^!\[(.*?)\]\((.*?)\)$/);
+    const htmlMatch = trimmed.match(/<img.*?src=["'](.*?)["']/i);
+    const isUrl = /^https?:\/\/[^\s]+$/.test(trimmed);
+
+    const target = e.target;
+
+    if (mdMatch) {
+      e.preventDefault();
+      altInput.value = mdMatch[1];
+      urlInput.value = mdMatch[2];
+      if (updatePreview) updatePreview();
+    } else if (htmlMatch) {
+      e.preventDefault();
+      urlInput.value = htmlMatch[1];
+      const altMatch = trimmed.match(/alt=["'](.*?)["']/i);
+      if (altMatch) {
+        altInput.value = altMatch[1];
+      }
+      if (updatePreview) updatePreview();
+    } else if (isUrl) {
+      // If pasting a pure URL outside of specific text inputs (or inside the URL input itself)
+      if (target === urlInput || (target !== altInput && target !== captionInput && target !== classInput)) {
+        e.preventDefault();
+        urlInput.value = trimmed;
+        if (updatePreview) updatePreview();
+      }
+    }
+  });
+
   const updateToggleState = () => {
     const track = /** @type {HTMLElement|null} */ (toggleBtn.querySelector(".traven-modal-switch-track"));
     const thumb = /** @type {HTMLElement|null} */ (toggleBtn.querySelector(".traven-modal-switch-thumb"));

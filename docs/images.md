@@ -123,6 +123,13 @@ Configuring `onUploadImage` does more than enable the file picker button inside 
 
 If the upload fails, the spinner indicator is cleanly removed, and a localized error warning is logged to prevent editor state corruption.
 
+### Image Modal Clipboard Auto-recognition
+
+In addition to the editor pane hooks, the **Image Insertion Modal** itself features intelligent clipboard auto-recognition. When the modal is open, pasting content (`Ctrl+V` / `Cmd+V`) will automatically trigger the following behaviors based on the clipboard contents:
+* **Image Files**: Pasting an image file (e.g., from a screenshot tool) assigns the file directly to the interactive dropzone, preparing it for upload.
+* **Markdown/HTML Snippets**: Pasting Markdown (`![alt](url)`) or HTML (`<img src="url" alt="alt">`) automatically extracts and pre-fills the URL and Alt Text input fields.
+* **Raw URLs**: Pasting a standard web URL anywhere on the modal immediately populates the URL input and loads the thumbnail preview.
+
 ---
 
 ## 5. UI Styling Classes for Skins
