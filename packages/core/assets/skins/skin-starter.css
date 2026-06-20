@@ -250,6 +250,16 @@
   cursor: pointer;
 }
 
+.cm-editor a {
+  color: var(--traven-muted);
+  text-decoration: underline;
+}
+
+.cm-editor a:hover {
+  color: var(--traven-caret);
+}
+
+
 .cm-wysiwym-bullet {
   color: var(--traven-muted);
   font-weight: 700;
