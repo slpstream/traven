@@ -800,6 +800,15 @@
   margin-bottom: 0.25em;
 }
 
+.traven-preview .task-list-item {
+  list-style-type: none;
+}
+
+.traven-preview .task-list-item > input[type="checkbox"] {
+  margin-left: -1.4em;
+  margin-right: 0.4em;
+}
+
 .traven-preview li p {
   margin-top: 0 !important;
   margin-bottom: 0 !important;

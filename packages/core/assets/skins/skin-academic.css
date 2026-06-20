@@ -1122,3 +1122,12 @@ details:not([open]) .component-header {
   display: table;
   clear: both;
 }
+
+/* Task List styling in HTML Preview */
+.traven-preview .task-list-item {
+  list-style-type: none;
+}
+.traven-preview .task-list-item > input[type="checkbox"] {
+  margin-left: -1.4em;
+  margin-right: 0.4em;
+}

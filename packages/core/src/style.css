@@ -477,3 +477,12 @@
   white-space: normal;
   cursor: text;
 }
+
+/* Task List styling in HTML Preview */
+.cm-wysiwym-html-preview .task-list-item {
+  list-style-type: none;
+}
+.cm-wysiwym-html-preview .task-list-item > input[type="checkbox"] {
+  margin-left: -1.4em;
+  margin-right: 0.4em;
+}

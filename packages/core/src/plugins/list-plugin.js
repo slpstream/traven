@@ -51,6 +51,15 @@ export class BulletWidget extends WidgetType {
   eq() { return true; }
 }
 
+export class HiddenBulletWidget extends WidgetType {
+  toDOM() {
+    const span = document.createElement("span");
+    span.style.display = "none";
+    return span;
+  }
+  eq() { return true; }
+}
+
 export class ListPlugin extends TravenPlugin {
   name = "list";
   requiredNodes = ["TaskMarker", "ListMark"];
@@ -83,12 +92,13 @@ export class ListPlugin extends TravenPlugin {
           const isCursorOnLine = cursorLine === line.number;
           if (!isCursorOnLine) {
             const listInfo = getListPrefixAt(state, line.from);
-            if (listInfo && listInfo.type === "ul" && listInfo.from === node.from) {
+            if (listInfo && (listInfo.type === "ul" || listInfo.type === "task") && listInfo.from === node.from) {
+              const isTask = listInfo.type === "task";
               decorations.push({
                 from: node.from,
                 to: node.to,
                 deco: Decoration.replace({
-                  widget: new BulletWidget()
+                  widget: isTask ? new HiddenBulletWidget() : new BulletWidget()
                 })
               });
             }

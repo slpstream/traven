@@ -46,11 +46,13 @@ export function defaultNodeRenderer(node, childrenHtml, docText) {
       return `<ul>\n${childrenHtml}</ul>\n`;
     case "OrderedList":
       return `<ol>\n${childrenHtml}</ol>\n`;
-    case "ListItem":
-      return `<li>${childrenHtml}</li>\n`;
+    case "ListItem": {
+      const isTask = node.getChild("Task") !== null;
+      return `<li${isTask ? ' class="task-list-item"' : ''}>${childrenHtml}</li>\n`;
+    }
     case "Task": {
       const checked = getChildText("TaskMarker") === "[x]" || getChildText("TaskMarker") === "[X]";
-      return `<input type="checkbox" disabled${checked ? " checked" : ""}> `;
+      return `<input type="checkbox" disabled${checked ? " checked" : ""}>${childrenHtml}`;
     }
     case "StrongEmphasis":
       return `<strong>${childrenHtml}</strong>`;

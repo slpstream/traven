@@ -47,3 +47,12 @@
   font-family: var(--traven-font-body) !important;
   font-weight: 700 !important;
 }
+
+/* Task List styling in HTML Preview */
+.traven-preview .task-list-item {
+  list-style-type: none;
+}
+.traven-preview .task-list-item > input[type="checkbox"] {
+  margin-left: -1.4em;
+  margin-right: 0.4em;
+}

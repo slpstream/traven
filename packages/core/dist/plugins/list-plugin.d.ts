@@ -10,6 +10,10 @@ export class BulletWidget extends WidgetType {
     toDOM(): HTMLSpanElement;
     eq(): boolean;
 }
+export class HiddenBulletWidget extends WidgetType {
+    toDOM(): HTMLSpanElement;
+    eq(): boolean;
+}
 export class ListPlugin extends TravenPlugin {
     requiredNodes: string[];
     /**

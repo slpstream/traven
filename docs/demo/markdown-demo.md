@@ -30,6 +30,9 @@ You can easily structure your thoughts using bulleted or nested lists:
     *   Sub-bullet two
 3.  **Third Item**: Back to the parent list.
 
+- [x] Checkboxes are of course also possible, 
+- [ ] as are unchecked boxes, for instance in a Task List.
+
 ### Code blocks (with optional syntax highlighting)
 Code blocks are clean, readable, and support dynamic syntax highlighting. To keep the core editor bundle small, language syntax highlighting is opt-in and can be chosen when you embed the editor.
 
