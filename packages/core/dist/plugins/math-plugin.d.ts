@@ -1,7 +1,8 @@
 export class MathWidget extends WidgetType {
-    constructor(math: any, isBlock: any);
+    constructor(math: any, isBlock: any, nodeFrom: any);
     math: any;
     isBlock: any;
+    nodeFrom: any;
     toDOM(view: any): HTMLDivElement | HTMLSpanElement;
     eq(other: any): boolean;
     ignoreEvent(): boolean;

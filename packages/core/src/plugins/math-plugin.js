@@ -5,16 +5,25 @@ import { TravenPlugin } from "./TravenPlugin.js";
 import { ensureKatex } from "../math-parser.js";
 
 export class MathWidget extends WidgetType {
-  constructor(math, isBlock) {
+  constructor(math, isBlock, nodeFrom) {
     super();
     this.math = math;
     this.isBlock = isBlock;
+    this.nodeFrom = nodeFrom;
   }
 
   toDOM(view) {
     const wrapper = document.createElement(this.isBlock ? "div" : "span");
     wrapper.className = this.isBlock ? "cm-wysiwym-block-math-widget" : "cm-wysiwym-inline-math-widget";
     wrapper.style.display = this.isBlock ? "block" : "inline-block";
+
+    wrapper.addEventListener("mousedown", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      // Put cursor inside the delimiters to trigger isCursorInside
+      view.dispatch({ selection: { anchor: this.nodeFrom + (this.isBlock ? 2 : 1) } });
+      view.focus();
+    });
 
     ensureKatex().then((katex) => {
       if (katex) {
@@ -44,7 +53,7 @@ export class MathWidget extends WidgetType {
   }
 
   eq(other) {
-    return this.math === other.math && this.isBlock === other.isBlock;
+    return this.math === other.math && this.isBlock === other.isBlock && this.nodeFrom === other.nodeFrom;
   }
 
   ignoreEvent() { return false; }
@@ -77,7 +86,7 @@ export class MathPlugin extends TravenPlugin {
             decorations.push({
               from: node.from,
               to: node.to,
-              deco: Decoration.replace({ widget: new MathWidget(mathText, false) })
+              deco: Decoration.replace({ widget: new MathWidget(mathText, false, node.from) })
             });
             return false;
           }
@@ -90,7 +99,7 @@ export class MathPlugin extends TravenPlugin {
             decorations.push({
               from: node.from,
               to: node.to,
-              deco: Decoration.replace({ widget: new MathWidget(mathText, true), block: true })
+              deco: Decoration.replace({ widget: new MathWidget(mathText, true, node.from), block: true })
             });
             return false;
           }

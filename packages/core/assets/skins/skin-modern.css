@@ -2344,7 +2344,7 @@
 /* LaTeX Math Fallback Styles */
 .cm-wysiwym-inline-math-widget {
   font-family: 'JetBrains Mono', monospace !important;
-  background-color: #f4f4f5 !important;
+  background-color: transparent !important;
   color: #18181b !important;
   padding: 2px 4px !important;
   border-radius: 3px !important;
@@ -2353,7 +2353,7 @@
 
 .cm-wysiwym-block-math-widget {
   font-family: 'JetBrains Mono', monospace !important;
-  background-color: #f4f4f5 !important;
+  background-color: transparent !important;
   color: #18181b !important;
   margin: 12px auto !important;
   text-align: center !important;
@@ -2384,12 +2384,12 @@
 
 /* Dark mode math overrides */
 .cm-editor.cm-wysiwym-dark .cm-wysiwym-inline-math-widget {
-  background-color: #131924 !important;
+  background-color: transparent !important;
   color: #e4e4e7 !important;
 }
 
 .cm-editor.cm-wysiwym-dark .cm-wysiwym-block-math-widget {
-  background-color: #131924 !important;
+  background-color: transparent !important;
   color: #e4e4e7 !important;
 }
 

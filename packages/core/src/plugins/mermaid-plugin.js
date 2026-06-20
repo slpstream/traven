@@ -63,7 +63,8 @@ export class MermaidWidget extends WidgetType {
     container.addEventListener("mousedown", (e) => {
       e.preventDefault();
       e.stopPropagation();
-      view.dispatch({ selection: { anchor: this.nodeFrom } });
+      // Set anchor inside the code block delimiters to satisfy isCursorInside check
+      view.dispatch({ selection: { anchor: this.nodeFrom + 1 } });
       view.focus();
     });
 
