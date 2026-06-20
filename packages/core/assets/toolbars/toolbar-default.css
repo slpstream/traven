@@ -111,7 +111,8 @@ button.toolbar-btn {
 
 /* Wider trigger button for heading with caret */
 button.btn-heading,
-button.btn-blockquote {
+button.btn-blockquote,
+button.btn-snippet {
   width: auto;
   padding: 0 4px;
   gap: 4px;
@@ -123,7 +124,8 @@ button.btn-blockquote {
 }
 
 .form-demo button.btn-heading,
-.form-demo button.btn-blockquote {
+.form-demo button.btn-blockquote,
+.form-demo button.btn-snippet {
   width: auto;
   padding: 0 4px;
   gap: 4px;

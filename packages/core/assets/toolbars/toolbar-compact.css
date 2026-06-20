@@ -24,6 +24,7 @@
 .traven-toolbar-container .btn-removeformatting,
 .traven-toolbar-container .btn-gotoline,
 .traven-toolbar-container .btn-help,
+.traven-toolbar-container .btn-snippet,
 .traven-toolbar-container .toolbar-separator {
   display: none !important;
 }
@@ -79,7 +80,8 @@
 }
 
 .traven-toolbar-container button.btn-heading,
-.traven-toolbar-container button.btn-blockquote {
+.traven-toolbar-container button.btn-blockquote,
+.traven-toolbar-container button.btn-snippet {
   width: auto !important;
   padding: 0 8px !important;
 }

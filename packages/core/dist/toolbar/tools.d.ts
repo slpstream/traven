@@ -222,4 +222,15 @@ export const TOOL_REGISTRY: {
         icon: string;
         action: () => void;
     };
+    snippet: {
+        key: string;
+        title: string;
+        type: string;
+        icon: string;
+        getChildren: () => {
+            title: string;
+            icon: string;
+            action: (editor: any) => any;
+        }[];
+    };
 };

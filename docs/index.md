@@ -40,6 +40,7 @@ Dive deeper into the editor's built-in capabilities.
 - **[Key Features](key-features.md)** — An overview of Traven's standout features: WYSIWYM collapsing, optimistic media uploads, decoupled skins, custom shortcodes, bidirectional raw sync, Vim emulation, real-time statistics, and more.
 - **[API Reference](api-reference.md)** — A detailed reference of every constructor option, public method, event, and formatting helper available on the `TravenEditor` instance.
 - **[Saving & Auto-Save](saving.md)** — How Traven handles manual saves (`Ctrl+S`/`Cmd+S`) and how to implement debounced auto-saving with `onChange` callbacks, including a complete CMS integration recipe.
+- **[Custom Snippets](snippets.md)** — How to save, manage, and use Custom Snippets within the Traven editor toolbar. Explains adding, editing, deleting, and inserting reusable markdown text and tags.
 
 ---
 

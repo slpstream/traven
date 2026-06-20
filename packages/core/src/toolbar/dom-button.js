@@ -106,8 +106,9 @@ function buildDropdown(parent, key, tool, editor, displayShortcut) {
   menu.setAttribute("role", "menu");
   menu.setAttribute("aria-labelledby", triggerId);
 
-  if (tool.children) {
-    tool.children.forEach((child) => {
+  function renderMenuChildren(childrenArr) {
+    menu.innerHTML = "";
+    childrenArr.forEach((child) => {
       const item = document.createElement("button");
       item.type = "button";
       item.className = "toolbar-dropdown-item";
@@ -162,8 +163,25 @@ function buildDropdown(parent, key, tool, editor, displayShortcut) {
     });
   }
 
+  if (!tool.getChildren && tool.children) {
+    renderMenuChildren(tool.children);
+  }
+
   trigger.addEventListener("click", (e) => {
     e.stopPropagation();
+
+    if (tool.getChildren) {
+      const children = tool.getChildren();
+      if (children.length === 0) {
+        // Special case: empty dynamic menu, trigger an action instead if available
+        if (tool.emptyAction) {
+          tool.emptyAction(editor, trigger);
+        }
+        return;
+      }
+      renderMenuChildren(children);
+    }
+
     const isOpen = dropdownWrapper.classList.toggle("is-open");
     trigger.setAttribute("aria-expanded", isOpen ? "true" : "false");
 
@@ -183,6 +201,18 @@ function buildDropdown(parent, key, tool, editor, displayShortcut) {
     if (e.key === "ArrowDown" || e.key === "ArrowUp" || e.key === "Enter" || e.key === " ") {
       if (!isOpen) {
         e.preventDefault();
+        
+        if (tool.getChildren) {
+          const children = tool.getChildren();
+          if (children.length === 0) {
+            if (tool.emptyAction) {
+              tool.emptyAction(editor, trigger);
+            }
+            return;
+          }
+          renderMenuChildren(children);
+        }
+
         dropdownWrapper.classList.add("is-open");
         trigger.setAttribute("aria-expanded", "true");
 

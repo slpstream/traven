@@ -10,6 +10,7 @@
 .traven-toolbar-container .btn-uppercase,
 .traven-toolbar-container .btn-lowercase,
 .traven-toolbar-container .btn-capitalize,
-.traven-toolbar-container .btn-removeformatting {
+.traven-toolbar-container .btn-removeformatting,
+.traven-toolbar-container .btn-snippet {
   display: none !important;
 }

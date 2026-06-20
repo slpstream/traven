@@ -23,7 +23,8 @@
 .traven-toolbar-container:not(.is-expanded) .btn-capitalize,
 .traven-toolbar-container:not(.is-expanded) .btn-removeformatting,
 .traven-toolbar-container:not(.is-expanded) .btn-gotoline,
-.traven-toolbar-container:not(.is-expanded) .btn-help {
+.traven-toolbar-container:not(.is-expanded) .btn-help,
+.traven-toolbar-container:not(.is-expanded) .btn-snippet {
   display: none !important;
 }
 
@@ -110,7 +111,8 @@
 }
 
 .traven-toolbar-container button.btn-heading,
-.traven-toolbar-container button.btn-blockquote {
+.traven-toolbar-container button.btn-blockquote,
+.traven-toolbar-container button.btn-snippet {
   width: auto !important;
   padding: 0 8px !important;
 }

@@ -225,7 +225,8 @@
 }
 
 .traven-gutter-menu button.btn-heading,
-.traven-gutter-menu button.btn-blockquote {
+.traven-gutter-menu button.btn-blockquote,
+.traven-gutter-menu button.btn-snippet {
   width: 32px;
   padding: 0;
 }

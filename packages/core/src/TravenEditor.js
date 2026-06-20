@@ -111,6 +111,7 @@ export const DEFAULT_TOOLBAR = [
   "hr",
   "table",
   "component",
+  "snippet",
   "figure",
   "|",
   "datetime",

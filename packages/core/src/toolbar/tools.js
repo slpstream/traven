@@ -1,5 +1,6 @@
 // @ts-check
-import { openModal, openLinkModal, openImageModal, openHelpModal, openTableModal, openComponentModal, openVideoModal, openAudioModal, openFigureModal } from "./modal.js";
+import { openModal, openLinkModal, openImageModal, openHelpModal, openTableModal, openComponentModal, openVideoModal, openAudioModal, openFigureModal, openSnippetModal } from "./modal.js";
+import { getSnippets } from "./snippet-store.js";
 
 export const TOOL_REGISTRY = {
   undo: {
@@ -338,5 +339,25 @@ export const TOOL_REGISTRY = {
     title: "Insert block below",
     icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><circle cx="92" cy="60" r="12" fill="currentColor"/><circle cx="164" cy="60" r="12" fill="currentColor"/><circle cx="92" cy="128" r="12" fill="currentColor"/><circle cx="164" cy="128" r="12" fill="currentColor"/><circle cx="92" cy="196" r="12" fill="currentColor"/><circle cx="164" cy="196" r="12" fill="currentColor"/></svg>`,
     action: () => {}
+  },
+  snippet: {
+    key: "snippet",
+    title: "Custom Snippets",
+    type: "dropdown",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><line x1="80" y1="160" x2="80" y2="224" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><ellipse cx="80" cy="100" rx="32" ry="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><ellipse cx="160" cy="60" rx="32" ry="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><polyline points="16 128 80 160 240 80 191.23 55.61" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><line x1="132.19" y1="69.9" x2="101.56" y2="85.22" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><polyline points="240 80 240 144 80 224 16 192 16 128 52.19 109.9" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>`,
+    getChildren: () => {
+      const snippets = getSnippets();
+      const items = snippets.map(s => ({
+        title: s.name,
+        icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><line x1="96" y1="152" x2="160" y2="152" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><line x1="96" y1="120" x2="160" y2="120" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><path d="M160,40h40a8,8,0,0,1,8,8V216a8,8,0,0,1-8-8H56a8,8,0,0,1-8-8V48a8,8,0,0,1,8-8H96" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><path d="M88,72V64a40,40,0,0,1,80,0v8Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>`,
+        action: (editor) => editor.replaceSelection(s.content)
+      }));
+      items.push({
+        title: "Manage Snippets…",
+        icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><circle cx="128" cy="128" r="40" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><path d="M130.05,206.11c-1.34,0-2.69,0-4,0L94,224a104.61,104.61,0,0,1-34.11-19.2l-.12-36c-.71-1.12-1.38-2.25-2-3.41L25.9,147.24a99.15,99.15,0,0,1,0-38.46l31.84-18.1c.65-1.15,1.32-2.29,2-3.41l.16-36A104.58,104.58,0,0,1,94,32l32,17.89c1.34,0,2.69,0,4,0L162,32a104.61,104.61,0,0,1,34.11,19.2l.12,36c.71,1.12,1.38,2.25,2,3.41l31.85,18.14a99.15,99.15,0,0,1,0,38.46l-31.84,18.1c-.65,1.15-1.32,2.29-2,3.41l-.16,36A104.58,104.58,0,0,1,162,224Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>`,
+        action: (editor, buttonEl) => openSnippetModal({ editor, triggerElement: buttonEl })
+      });
+      return items;
+    }
   }
 };
