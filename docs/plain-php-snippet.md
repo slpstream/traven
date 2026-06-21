@@ -27,7 +27,7 @@ function traven_editor(string $name = 'body', string $initialContent = '') {
  * Renders the required Traven script tag.
  */
 function traven_scripts() {
-    echo '<script type="module" src="https://cdn.jsdelivr.net/npm/@freedomware/traven@0.2.12/dist/traven.js"></script>';
+    echo '<script type="module" src="https://cdn.jsdelivr.net/npm/@freedomware/traven@0.2.14/dist/traven.js"></script>';
 }
 ```
 
