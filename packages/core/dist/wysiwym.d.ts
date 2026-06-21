@@ -40,6 +40,8 @@ export const strikethroughDeco: Decoration;
 export const codeDeco: Decoration;
 export const highlightDeco: Decoration;
 export const linkDeco: Decoration;
+export const subscriptDeco: Decoration;
+export const superscriptDeco: Decoration;
 export const frontmatterLineDeco: Decoration;
 export const frontmatterActiveLineDeco: Decoration;
 export const blockquoteLineDeco: Decoration;

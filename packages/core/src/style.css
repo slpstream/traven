@@ -486,3 +486,14 @@
   margin-left: -1.4em;
   margin-right: 0.4em;
 }
+
+/* Subscript and Superscript styles */
+.cm-wysiwym-subscript {
+  vertical-align: sub;
+  font-size: 0.75em;
+}
+
+.cm-wysiwym-superscript {
+  vertical-align: super;
+  font-size: 0.75em;
+}

@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { InlinePlugin } from '../src/plugins/inline-plugin.js';
 import { EditorState } from '@codemirror/state';
 import { markdown } from '@codemirror/lang-markdown';
-import { Strikethrough } from '@lezer/markdown';
+import { Strikethrough, Subscript, Superscript } from '@lezer/markdown';
 import { Highlight } from '../src/highlight-parser.js';
 
 describe('InlinePlugin', () => {
@@ -14,12 +14,14 @@ describe('InlinePlugin', () => {
     expect(plugin.requiredNodes).toContain('Strikethrough');
     expect(plugin.requiredNodes).toContain('Highlight');
     expect(plugin.requiredNodes).toContain('InlineCode');
+    expect(plugin.requiredNodes).toContain('Subscript');
+    expect(plugin.requiredNodes).toContain('Superscript');
   });
 
   it('collapses delimiters and styles content when cursor is outside', () => {
     const state = EditorState.create({
-      doc: "Text with **bold**, *italic*, ~~strike~~, ==high==, and `code`.",
-      extensions: [markdown({ extensions: [Strikethrough, Highlight] })]
+      doc: "Text with **bold**, *italic*, ~~strike~~, ==high==, `code`, ~sub~, and ^super^.",
+      extensions: [markdown({ extensions: [Strikethrough, Highlight, Subscript, Superscript] })]
     });
 
     const plugin = new InlinePlugin();
@@ -36,11 +38,9 @@ describe('InlinePlugin', () => {
 
     expect(decorations.length).toBeGreaterThan(0);
     
-    // Bold: from 10 to 18 "**bold**"
-    // Bold collapse starts at 10 and ends at 12 (length 2)
     const collapses = decorations.filter(d => d.deco.spec.widget === undefined && !d.deco.spec.class);
-    // 5 nodes, 2 collapses per node = 10 collapse decos
-    expect(collapses.length).toBe(10);
+    // 7 nodes, 2 collapses per node = 14 collapse decos
+    expect(collapses.length).toBe(14);
   });
 
   it('does not collapse delimiters when cursor is inside', () => {

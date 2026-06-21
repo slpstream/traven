@@ -62,6 +62,10 @@ export function defaultNodeRenderer(node, childrenHtml, docText) {
       return `<del>${childrenHtml}</del>`;
     case "Highlight":
       return `<mark>${childrenHtml}</mark>`;
+    case "Subscript":
+      return `<sub>${childrenHtml}</sub>`;
+    case "Superscript":
+      return `<sup>${childrenHtml}</sup>`;
     case "InlineCode": {
       let codeText = docText.slice(node.from + 1, node.to - 1);
       let isInsideTable = false;
@@ -338,6 +342,8 @@ export function defaultNodeRenderer(node, childrenHtml, docText) {
     case "EmphasisMark":
     case "StrikethroughMark":
     case "HighlightMark":
+    case "SubscriptMark":
+    case "SuperscriptMark":
     case "CodeMark":
     case "CodeInfo":
     case "LinkMark":

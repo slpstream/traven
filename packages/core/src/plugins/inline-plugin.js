@@ -1,11 +1,11 @@
 // @ts-check
 import { syntaxTree } from "@codemirror/language";
 import { TravenPlugin } from "./TravenPlugin.js";
-import { collapseDeco, boldDeco, italicDeco, strikethroughDeco, highlightDeco, codeDeco } from "../wysiwym.js";
+import { collapseDeco, boldDeco, italicDeco, strikethroughDeco, highlightDeco, codeDeco, subscriptDeco, superscriptDeco } from "../wysiwym.js";
 
 export class InlinePlugin extends TravenPlugin {
   name = "inline";
-  requiredNodes = ["StrongEmphasis", "Emphasis", "Strikethrough", "Highlight", "InlineCode"];
+  requiredNodes = ["StrongEmphasis", "Emphasis", "Strikethrough", "Highlight", "InlineCode", "Subscript", "Superscript"];
   decorationPriority = 100;
 
   /**
@@ -31,12 +31,13 @@ export class InlinePlugin extends TravenPlugin {
             const deco = node.name === "StrongEmphasis" ? boldDeco : (node.name === "Strikethrough" ? strikethroughDeco : highlightDeco);
             decorations.push({ from: node.from + 2, to: node.to - 2, deco });
           }
-        } else if (node.name === "Emphasis") {
+        } else if (node.name === "Emphasis" || node.name === "Subscript" || node.name === "Superscript") {
           const isSuppressed = suppressed && suppressed.some(s => s.from === node.from && s.to === node.to);
           if (!isCursorInside || isSuppressed) {
             decorations.push({ from: node.from, to: node.from + 1, deco: collapseDeco });
             decorations.push({ from: node.to - 1, to: node.to, deco: collapseDeco });
-            decorations.push({ from: node.from + 1, to: node.to - 1, deco: italicDeco });
+            const deco = node.name === "Emphasis" ? italicDeco : (node.name === "Subscript" ? subscriptDeco : superscriptDeco);
+            decorations.push({ from: node.from + 1, to: node.to - 1, deco });
           }
         } else if (node.name === "InlineCode") {
           // InlineCode has no isSuppressed check by design
@@ -59,3 +60,4 @@ export class InlinePlugin extends TravenPlugin {
     return null; // Fall through to default renderer
   }
 }
+

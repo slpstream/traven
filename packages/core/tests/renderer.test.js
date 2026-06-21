@@ -81,6 +81,8 @@ describe('Traven Renderer Golden Tests', () => {
       expect(render('~~strikethrough~~')).toContain('<del>strikethrough</del>');
       expect(render('==highlight==')).toContain('<mark>highlight</mark>');
       expect(render('`inline code`')).toContain('<code>inline code</code>');
+      expect(render('~subscript~')).toContain('<sub>subscript</sub>');
+      expect(render('^superscript^')).toContain('<sup>superscript</sup>');
     });
 
     it('renders nested inline formatting', () => {
@@ -202,8 +204,10 @@ describe('Traven Renderer Golden Tests', () => {
 
   describe('Standalone renderMarkdown helper', () => {
     it('compiles markdown using default plugins and configuration', () => {
-      const html = renderMarkdown('# Hello World\n\n- item 1\n- item 2');
+      const html = renderMarkdown('# Hello World\n\n~sub~ and ^super^\n\n- item 1\n- item 2');
       expect(html).toContain('<h1> Hello World</h1>');
+      expect(html).toContain('<sub>sub</sub>');
+      expect(html).toContain('<sup>super</sup>');
       expect(html).toContain('<ul>');
       expect(html).toContain('item 1');
     });

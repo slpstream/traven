@@ -13,6 +13,9 @@ Good writing demands clear typography. Traven fully supports all standard Markdo
 *   `Inline code` (``inline code``) for tech terms
 *   [Hyperlinks](https://github.com) (`[link](url)`) for reference links
 
+Also supports subscript, such as the water molecule: H~2~O 
+and superscript, like Einstein's equation: E = mc^2^ 
+
 Here is a sample of how a blog post might read in an editorial layout. Notice how the headers, paragraphs, and media flow naturally together:
 
 ## The Art of Distraction-Free Writing

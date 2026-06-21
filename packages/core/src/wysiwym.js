@@ -104,6 +104,9 @@ export function renderInlineMarkdown(text) {
   html = html.replace(/__(.*?)__/g, "<strong>$1</strong>");
   html = html.replace(/_(.*?)_/g, "<em>$1</em>");
   html = html.replace(/==(.*?)==/g, '<span class="cm-wysiwym-highlight">$1</span>');
+  html = html.replace(/\^([^\^]+?)\^/g, "<sup>$1</sup>");
+  html = html.replace(/(?<!~)~([^~]+?)~(?!~)/g, "<sub>$1</sub>");
+
 
   // Restore inline code spans
   html = html.replace(/CODESPANXPLACEHOLDERX(\d+)/g, (match, index) => {
@@ -159,6 +162,9 @@ export const strikethroughDeco = Decoration.mark({ class: "cm-wysiwym-strikethro
 export const codeDeco = Decoration.mark({ class: "cm-wysiwym-inline-code" });
 export const highlightDeco = Decoration.mark({ class: "cm-wysiwym-highlight" });
 export const linkDeco = Decoration.mark({ class: "cm-wysiwym-link-anchor" });
+export const subscriptDeco = Decoration.mark({ class: "cm-wysiwym-subscript" });
+export const superscriptDeco = Decoration.mark({ class: "cm-wysiwym-superscript" });
+
 
 // Block/Frontmatter styled decorations
 export const frontmatterLineDeco = Decoration.line({ class: "cm-wysiwym-frontmatter" });

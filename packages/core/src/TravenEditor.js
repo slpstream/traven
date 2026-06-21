@@ -27,7 +27,7 @@ import {
 } from "@codemirror/language";
 import { classHighlighter } from "@lezer/highlight";
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
-import { Strikethrough, TaskList, Table, Autolink } from "@lezer/markdown";
+import { Strikethrough, TaskList, Table, Autolink, Subscript, Superscript } from "@lezer/markdown";
 import { Highlight } from "./highlight-parser.js";
 import { Shortcode } from "./shortcode-parser.js";
 import { VideoShortcode } from "./video-parser.js";
@@ -349,6 +349,8 @@ export class TravenEditor {
       Table,
       Autolink,
       Highlight,
+      Subscript,
+      Superscript,
       Shortcode,
       VideoShortcode,
       AudioShortcode,
