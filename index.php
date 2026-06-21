@@ -789,7 +789,7 @@
     <div class="opensource-logo">
       <?php readfile("packages/core/assets/images/opensource-light.svg"); ?>
     </div>
-    <div>&copy; by <a href="https://freedomware.dev/">Freedomware.dev</a> - Open source, MIT licensed.</div>
+    <div>&copy; <a href="https://freedomware.dev/">Freedomware.dev</a> - Open source, MIT licensed.</div>
   </footer>
 
 </body>

@@ -10,6 +10,50 @@ import { getSnippets, addSnippet, updateSnippet, deleteSnippet } from "./snippet
 export function openSnippetModal({ editor, triggerElement }) {
   let snippets = getSnippets();
 
+  const openSnippetAlert = (message) => {
+    openModal({
+      title: "",
+      body: message,
+      className: "traven-modal-confirm",
+      triggerElement,
+      buttons: [
+        {
+          text: "OK",
+          type: "primary",
+          onClick: (e, overlay) => {
+            overlay.querySelector(".traven-modal-close").click();
+          }
+        }
+      ]
+    });
+  };
+
+  const openSnippetConfirm = (message, onConfirm) => {
+    openModal({
+      title: "",
+      body: message,
+      className: "traven-modal-confirm",
+      triggerElement,
+      buttons: [
+        {
+          text: "Cancel",
+          type: "secondary",
+          onClick: (e, overlay) => {
+            overlay.querySelector(".traven-modal-close").click();
+          }
+        },
+        {
+          text: "OK",
+          type: "primary",
+          onClick: (e, overlay) => {
+            onConfirm();
+            overlay.querySelector(".traven-modal-close").click();
+          }
+        }
+      ]
+    });
+  };
+
   const container = document.createElement("div");
   container.className = "traven-snippet-manager";
 
@@ -19,22 +63,17 @@ export function openSnippetModal({ editor, triggerElement }) {
   const editContainer = document.createElement("div");
   editContainer.className = "traven-snippet-edit";
   editContainer.style.display = "none";
-  editContainer.style.marginTop = "20px";
-  editContainer.style.borderTop = "1px solid var(--traven-border)";
-  editContainer.style.paddingTop = "15px";
 
   // Editor fields
   const nameInput = document.createElement("input");
   nameInput.type = "text";
   nameInput.placeholder = "Snippet Name (e.g. My Signature)";
-  nameInput.className = "traven-input traven-snippet-name";
-  nameInput.style.width = "100%";
+  nameInput.className = "traven-modal-input traven-snippet-name";
   nameInput.style.marginBottom = "10px";
 
   const contentInput = document.createElement("textarea");
-  contentInput.placeholder = "Snippet Content (Markdown or plain text)";
-  contentInput.className = "traven-input traven-snippet-content";
-  contentInput.style.width = "100%";
+  contentInput.placeholder = "Snippet Content (Markdown, HTML or plain text)";
+  contentInput.className = "traven-modal-input traven-snippet-content";
   contentInput.style.minHeight = "100px";
   contentInput.style.fontFamily = "monospace";
   contentInput.style.marginBottom = "10px";
@@ -42,20 +81,20 @@ export function openSnippetModal({ editor, triggerElement }) {
 
   let editingSnippetId = null;
 
-  const saveBtn = document.createElement("button");
-  saveBtn.type = "button";
-  saveBtn.className = "traven-btn traven-btn-primary";
-  saveBtn.textContent = "Save Snippet";
-  
   const cancelEditBtn = document.createElement("button");
   cancelEditBtn.type = "button";
-  cancelEditBtn.className = "traven-btn traven-btn-secondary";
+  cancelEditBtn.className = "traven-modal-btn btn-secondary";
   cancelEditBtn.textContent = "Cancel";
-  cancelEditBtn.style.marginLeft = "10px";
+  
+  const saveBtn = document.createElement("button");
+  saveBtn.type = "button";
+  saveBtn.className = "traven-modal-btn btn-primary";
+  saveBtn.textContent = "Save Snippet";
+  saveBtn.style.marginLeft = "10px";
 
   const editActions = document.createElement("div");
-  editActions.appendChild(saveBtn);
   editActions.appendChild(cancelEditBtn);
+  editActions.appendChild(saveBtn);
 
   editContainer.appendChild(nameInput);
   editContainer.appendChild(contentInput);
@@ -71,17 +110,14 @@ export function openSnippetModal({ editor, triggerElement }) {
     } else {
       snippets.forEach(snippet => {
         const row = document.createElement("div");
-        row.style.display = "flex";
-        row.style.justifyContent = "space-between";
-        row.style.alignItems = "center";
-        row.style.padding = "8px 0";
-        row.style.borderBottom = "1px solid var(--traven-border)";
+        row.className = "traven-snippet-row";
 
         const nameSpan = document.createElement("span");
         nameSpan.textContent = snippet.name;
-        nameSpan.style.fontWeight = "600";
+        nameSpan.className = "traven-snippet-name-span";
 
         const actionsDiv = document.createElement("div");
+        actionsDiv.className = "traven-snippet-actions";
         
         const editBtn = document.createElement("button");
         editBtn.type = "button";
@@ -92,11 +128,7 @@ export function openSnippetModal({ editor, triggerElement }) {
             <path d="M92.69,216H48a8,8,0,0,1-8-8V163.31a8,8,0,0,1,2.34-5.65L165.66,34.34a8,8,0,0,1,11.31,0L221.66,79a8,8,0,0,1,0,11.31L98.34,213.66A8,8,0,0,1,92.69,216Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
             <line x1="136" y1="64" x2="192" y2="120" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
           </svg>`;
-        editBtn.className = "traven-btn-icon";
-        editBtn.style.background = "transparent";
-        editBtn.style.border = "none";
-        editBtn.style.cursor = "pointer";
-        editBtn.style.padding = "4px";
+        editBtn.className = "traven-snippet-action-btn btn-edit";
         editBtn.onclick = () => startEdit(snippet);
 
         const deleteBtn = document.createElement("button");
@@ -111,17 +143,13 @@ export function openSnippetModal({ editor, triggerElement }) {
             <path d="M200,56V208a8,8,0,0,1-8,8H64a8,8,0,0,1-8-8V56" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
             <path d="M168,56V40a16,16,0,0,0-16-16H104A16,16,0,0,0,88,40V56" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
           </svg>`;
-        deleteBtn.className = "traven-btn-icon";
-        deleteBtn.style.background = "transparent";
-        deleteBtn.style.border = "none";
-        deleteBtn.style.cursor = "pointer";
-        deleteBtn.style.padding = "4px";
+        deleteBtn.className = "traven-snippet-action-btn btn-delete";
         deleteBtn.onclick = () => {
-          if (confirm(`Delete snippet "${snippet.name}"?`)) {
+          openSnippetConfirm(`Delete snippet "${snippet.name}"?`, () => {
             deleteSnippet(snippet.id);
             snippets = getSnippets();
             renderList();
-          }
+          });
         };
 
         actionsDiv.appendChild(editBtn);
@@ -135,7 +163,7 @@ export function openSnippetModal({ editor, triggerElement }) {
 
   const addBtn = document.createElement("button");
   addBtn.type = "button";
-  addBtn.className = "traven-btn traven-btn-secondary";
+  addBtn.className = "traven-modal-btn btn-secondary";
   addBtn.textContent = "+ Add Snippet";
   addBtn.style.marginTop = "15px";
   addBtn.onclick = () => startEdit(null);
@@ -158,6 +186,10 @@ export function openSnippetModal({ editor, triggerElement }) {
     addBtn.style.display = "none";
     listContainer.style.opacity = "0.5";
     listContainer.style.pointerEvents = "none";
+    const footer = /** @type {HTMLElement|null} */ (container.closest(".traven-modal")?.querySelector(".traven-modal-footer") || null);
+    if (footer) {
+      footer.style.display = "none";
+    }
     nameInput.focus();
   }
 
@@ -167,13 +199,21 @@ export function openSnippetModal({ editor, triggerElement }) {
     addBtn.style.display = "inline-block";
     listContainer.style.opacity = "1";
     listContainer.style.pointerEvents = "auto";
+    const footer = /** @type {HTMLElement|null} */ (container.closest(".traven-modal")?.querySelector(".traven-modal-footer") || null);
+    if (footer) {
+      footer.style.display = "flex";
+    }
   }
 
   saveBtn.onclick = () => {
     const name = nameInput.value.trim();
     const content = contentInput.value;
     if (!name) {
-      alert("Snippet name is required.");
+      openSnippetAlert("Snippet name is required.");
+      return;
+    }
+    if (!content.trim()) {
+      openSnippetAlert("Snippet content is required.");
       return;
     }
     if (editingSnippetId) {

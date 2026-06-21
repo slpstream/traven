@@ -1154,3 +1154,98 @@ button.btn-snippet {
 .traven-modal-overlay.cm-wysiwym-dark .settings-tool-toggle:hover {
   background: #1e293b;
 }
+
+/* ==========================================================================
+   Snippet Manager Modal
+   ========================================================================== */
+.traven-snippet-manager {
+  display: flex;
+  flex-direction: column;
+}
+
+.traven-snippet-list {
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: 8px;
+}
+
+.traven-snippet-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 4px;
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
+  transition: background-color 0.15s ease;
+}
+
+.traven-snippet-row:hover {
+  background-color: var(--bg-hover, #f8fafc);
+}
+
+.traven-snippet-name-span {
+  font-weight: 600;
+  color: var(--text-primary, #0f172a);
+}
+
+.traven-snippet-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.traven-snippet-action-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary, #64748b);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+  padding: 0;
+}
+
+.traven-snippet-action-btn:hover {
+  background-color: var(--bg-hover, #f1f5f9);
+  color: var(--text-primary, #0f172a);
+}
+
+.traven-snippet-action-btn.btn-delete:hover {
+  background-color: #fee2e2;
+  color: #ef4444;
+}
+
+.traven-snippet-edit {
+  margin-top: 20px;
+  border-top: 1px solid var(--border-color, #e2e8f0);
+  padding-top: 15px;
+}
+
+/* Dark theme overrides */
+.traven-modal-overlay.cm-wysiwym-dark .traven-snippet-row {
+  border-bottom-color: #334155;
+}
+
+.traven-modal-overlay.cm-wysiwym-dark .traven-snippet-row:hover {
+  background-color: rgba(30, 41, 59, 0.45);
+}
+
+.traven-modal-overlay.cm-wysiwym-dark .traven-snippet-name-span {
+  color: #f8fafc;
+}
+
+.traven-modal-overlay.cm-wysiwym-dark .traven-snippet-action-btn {
+  color: #94a3b8;
+}
+
+.traven-modal-overlay.cm-wysiwym-dark .traven-snippet-action-btn:hover {
+  background-color: #334155;
+  color: #f8fafc;
+}
+
+.traven-modal-overlay.cm-wysiwym-dark .traven-snippet-action-btn.btn-delete:hover {
+  background-color: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+}

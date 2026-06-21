@@ -1,5 +1,5 @@
 <?php
-$content = $_POST['content'] ?? '**Unstyled and minimal, edit this text and write anything here...** The toolbar above is the full set: you can exclude it, or configure it to show only the buttons you need.';
+$content = $_POST['content'] ?? '**Unstyled and minimal, edit this text and write anything here...** The toolbar above is the full set: you can exclude it, or configure it to contain only the buttons you need.';
 ?>
 <!DOCTYPE html>
 <html lang="en">
