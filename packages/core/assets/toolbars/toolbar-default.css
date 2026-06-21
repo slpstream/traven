@@ -62,11 +62,7 @@ button.toolbar-btn {
 }
 
 .toolbar-separator {
-  width: 1px;
-  height: 20px;
-  background-color: var(--border-color, #e2e8f0);
-  margin: 0 4px;
-  flex-shrink: 0;
+  display: none !important;
 }
 
 .form-demo .toolbar-btn {
