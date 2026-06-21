@@ -1,5 +1,11 @@
 # @freedomware/traven
 
+## 0.2.14
+
+### Patch Changes
+
+- d3710c0: Enhance image modal advanced settings layout and defaults, implement native support for GitHub blockquote alerts, refactor custom snippets modal styling, fix fullscreen toggle in typography demo, and update dynamic toolbar configuration.
+
 ## 0.2.13
 
 ### Patch Changes
