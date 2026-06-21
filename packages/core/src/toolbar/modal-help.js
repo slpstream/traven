@@ -62,6 +62,8 @@ export function openHelpModal(editor, triggerBtn) {
           <div class="help-row"><span class="help-key">Custom Blockquote</span><span class="help-value">[blockquote author="Author" source="Source"]quote[/blockquote]</span></div>
           <div class="help-row"><span class="help-key">Pullquote</span><span class="help-value">[pullquote]text[/pullquote]</span></div>
           <div class="help-row"><span class="help-key">Inline Highlight</span><span class="help-value">[highlight]text[/highlight]</span></div>
+          <div class="help-row"><span class="help-key">GitHub Alert Note</span><span class="help-value">&gt; [!NOTE]\\n&gt; text</span></div>
+          <div class="help-row"><span class="help-key">GitHub Alert Warning</span><span class="help-value">&gt; [!WARNING]\\n&gt; text</span></div>
 
           <div class="help-section-title">Media Previews</div>
           <div class="help-row"><span class="help-key">Custom Image</span><span class="help-value">[image src="url" alt="alt" caption="caption" align="center" size="medium"]</span></div>

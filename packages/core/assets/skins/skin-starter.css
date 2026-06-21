@@ -45,6 +45,23 @@
   --traven-warning-bg: #fffbeb;
   --traven-warning-border: #fef3c7;
   --traven-warning-text: #b45309;
+
+  /* GitHub Alert Variables (Light Mode) */
+  --traven-alert-note-border: #3b82f6;
+  --traven-alert-note-bg: #eff6ff;
+  --traven-alert-note-text: #1d4ed8;
+  --traven-alert-tip-border: #22c55e;
+  --traven-alert-tip-bg: #f0fdf4;
+  --traven-alert-tip-text: #15803d;
+  --traven-alert-important-border: #8b5cf6;
+  --traven-alert-important-bg: #f5f3ff;
+  --traven-alert-important-text: #6d28d9;
+  --traven-alert-warning-border: #f59e0b;
+  --traven-alert-warning-bg: #fffbeb;
+  --traven-alert-warning-text: #b45309;
+  --traven-alert-caution-border: #ef4444;
+  --traven-alert-caution-bg: #fef2f2;
+  --traven-alert-caution-text: #b91c1c;
 }
 
 /* Dark Mode Overrides */
@@ -87,6 +104,23 @@
   --traven-warning-bg: rgba(245, 158, 11, 0.1);
   --traven-warning-border: rgba(245, 158, 11, 0.2);
   --traven-warning-text: #fbbf24;
+
+  /* GitHub Alert Variables (Dark Mode Overrides) */
+  --traven-alert-note-border: rgba(59, 130, 246, 0.4);
+  --traven-alert-note-bg: rgba(59, 130, 246, 0.1);
+  --traven-alert-note-text: #60a5fa;
+  --traven-alert-tip-border: rgba(34, 197, 94, 0.4);
+  --traven-alert-tip-bg: rgba(34, 197, 94, 0.1);
+  --traven-alert-tip-text: #4ade80;
+  --traven-alert-important-border: rgba(139, 92, 246, 0.4);
+  --traven-alert-important-bg: rgba(139, 92, 246, 0.1);
+  --traven-alert-important-text: #a78bfa;
+  --traven-alert-warning-border: rgba(245, 158, 11, 0.4);
+  --traven-alert-warning-bg: rgba(245, 158, 11, 0.1);
+  --traven-alert-warning-text: #fbbf24;
+  --traven-alert-caution-border: rgba(239, 68, 68, 0.4);
+  --traven-alert-caution-bg: rgba(239, 68, 68, 0.1);
+  --traven-alert-caution-text: #f87171;
 }
 
 /* Base System Typography Stacks */
@@ -317,6 +351,36 @@
 .cm-editor .cm-wysiwym-blockquote + .cm-wysiwym-blockquote { padding-top: 2px !important; border-radius: 0; }
 .cm-editor .cm-wysiwym-blockquote:not(:has(+ .cm-wysiwym-blockquote)) { padding-bottom: 10px !important; border-radius: 0 0 6px 0; }
 .cm-editor .cm-wysiwym-blockquote:not(:has(+ .cm-wysiwym-blockquote)):not(.cm-wysiwym-blockquote + .cm-wysiwym-blockquote) { border-radius: 0 6px 6px 0; }
+
+/* GitHub Alerts styling in editor */
+.cm-editor .cm-wysiwym-alert {
+  font-style: normal !important;
+}
+.cm-editor .cm-wysiwym-alert-note {
+  border-left-color: var(--traven-alert-note-border) !important;
+  background-color: var(--traven-alert-note-bg) !important;
+  color: var(--traven-alert-note-text) !important;
+}
+.cm-editor .cm-wysiwym-alert-tip {
+  border-left-color: var(--traven-alert-tip-border) !important;
+  background-color: var(--traven-alert-tip-bg) !important;
+  color: var(--traven-alert-tip-text) !important;
+}
+.cm-editor .cm-wysiwym-alert-important {
+  border-left-color: var(--traven-alert-important-border) !important;
+  background-color: var(--traven-alert-important-bg) !important;
+  color: var(--traven-alert-important-text) !important;
+}
+.cm-editor .cm-wysiwym-alert-warning {
+  border-left-color: var(--traven-alert-warning-border) !important;
+  background-color: var(--traven-alert-warning-bg) !important;
+  color: var(--traven-alert-warning-text) !important;
+}
+.cm-editor .cm-wysiwym-alert-caution {
+  border-left-color: var(--traven-alert-caution-border) !important;
+  background-color: var(--traven-alert-caution-bg) !important;
+  color: var(--traven-alert-caution-text) !important;
+}
 
 /* Frontmatter */
 .cm-wysiwym-frontmatter {
@@ -835,6 +899,47 @@
 
 .traven-preview blockquote p:last-child {
   margin-bottom: 0;
+}
+
+/* GitHub Alerts in Preview */
+.traven-preview .traven-alert {
+  margin: 1.5em 0;
+  padding: 12px 20px;
+  border-left: 4px solid var(--traven-blockquote-border);
+  border-radius: 0 8px 8px 0;
+  font-style: normal;
+}
+.traven-preview .traven-alert p {
+  margin-top: 0;
+  margin-bottom: 1.0em;
+}
+.traven-preview .traven-alert p:last-child {
+  margin-bottom: 0;
+}
+.traven-preview .traven-alert-note {
+  border-left-color: var(--traven-alert-note-border);
+  background-color: var(--traven-alert-note-bg);
+  color: var(--traven-alert-note-text);
+}
+.traven-preview .traven-alert-tip {
+  border-left-color: var(--traven-alert-tip-border);
+  background-color: var(--traven-alert-tip-bg);
+  color: var(--traven-alert-tip-text);
+}
+.traven-preview .traven-alert-important {
+  border-left-color: var(--traven-alert-important-border);
+  background-color: var(--traven-alert-important-bg);
+  color: var(--traven-alert-important-text);
+}
+.traven-preview .traven-alert-warning {
+  border-left-color: var(--traven-alert-warning-border);
+  background-color: var(--traven-alert-warning-bg);
+  color: var(--traven-alert-warning-text);
+}
+.traven-preview .traven-alert-caution {
+  border-left-color: var(--traven-alert-caution-border);
+  background-color: var(--traven-alert-caution-bg);
+  color: var(--traven-alert-caution-text);
 }
 
 /* Code elements inside Preview */

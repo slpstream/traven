@@ -40,8 +40,28 @@ export function defaultNodeRenderer(node, childrenHtml, docText) {
       return `<h6>${childrenHtml}</h6>\n`;
     case "HorizontalRule":
       return `<hr>\n`;
-    case "Blockquote":
+    case "Blockquote": {
+      const firstParagraphRegex = /^\s*<p>([\s\S]*?)<\/p>/i;
+      const pMatch = childrenHtml.match(firstParagraphRegex);
+      if (pMatch) {
+        const innerHtml = pMatch[0];
+        const innerContent = pMatch[1];
+        const alertTypeRegex = /^(?:\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION|INFO|DANGER)\]|<a\b[^>]*>!(NOTE|TIP|IMPORTANT|WARNING|CAUTION|INFO|DANGER)<\/a>)(?:\s|<br\/?>)*(.*)/is;
+        const alertMatch = innerContent.trim().match(alertTypeRegex);
+        if (alertMatch) {
+          let type = (alertMatch[1] || alertMatch[2]).toUpperCase();
+          if (type === "INFO") type = "NOTE";
+          if (type === "DANGER") type = "CAUTION";
+          
+          const remaining = alertMatch[3].trim();
+          const newParagraph = remaining ? `<p>${remaining}</p>` : "";
+          const newChildrenHtml = childrenHtml.replace(innerHtml, newParagraph);
+          
+          return `<div class="traven-alert traven-alert-${type.toLowerCase()}">\n${newChildrenHtml}</div>\n`;
+        }
+      }
       return `<blockquote>\n${childrenHtml}</blockquote>\n`;
+    }
     case "BulletList":
       return `<ul>\n${childrenHtml}</ul>\n`;
     case "OrderedList":
@@ -111,29 +131,10 @@ export function defaultNodeRenderer(node, childrenHtml, docText) {
       
       const titleAttr = title ? ` title="${escapeHtmlAttr(title)}"` : "";
       
-      // The text content is inside the brackets, not exactly childrenHtml because childrenHtml includes the marks
-      // We need just the text. Lezer markdown wraps the text inside `[...]` but it doesn't have a specific container node except its children
-      // The easiest way is to let the children render and just strip the `[` and `](url)`.
-      // Actually, Lezer's `Link` has `[` `]` `(` `URL` `)` etc as children.
-      // We can just filter the children that are not marks.
-      let linkText = "";
-      let child = node.firstChild;
-      while (child) {
-        if (child.name !== "LinkMark" && child.name !== "URL" && child.name !== "LinkTitle") {
-          // It's the text content of the link
-          if (child.name) {
-            // Need to recursively render it in case of bold/italic inside link
-            // For now, let's just grab the text between the first `[` and `]`
-          }
-        }
-        child = child.nextSibling;
-      }
-      
-      // Let's do a simpler approach: extract the inner content manually
-      let startIdx = docText.indexOf("[", node.from) + 1;
-      let endIdx = docText.indexOf("](", startIdx);
-      if (endIdx === -1) endIdx = docText.lastIndexOf("]", node.to);
-      const innerText = escapeHtml(docText.slice(startIdx, endIdx));
+      const nodeText = docText.slice(node.from, node.to);
+      let endIdx = nodeText.lastIndexOf("](");
+      if (endIdx === -1) endIdx = nodeText.lastIndexOf("]");
+      const innerText = escapeHtml(nodeText.slice(1, endIdx === -1 ? nodeText.length : endIdx));
 
       return `<a href="${escapeHtmlAttr(sanitizeUrl(url))}"${titleAttr} target="_blank" rel="noopener noreferrer">${innerText}</a>`;
     }
@@ -147,9 +148,10 @@ export function defaultNodeRenderer(node, childrenHtml, docText) {
         }
       }
       
-      let startIdx = docText.indexOf("[", node.from) + 1;
-      let endIdx = docText.indexOf("](", startIdx);
-      const alt = escapeHtmlAttr(docText.slice(startIdx, endIdx));
+      const nodeText = docText.slice(node.from, node.to);
+      let endIdx = nodeText.lastIndexOf("](");
+      if (endIdx === -1) endIdx = nodeText.lastIndexOf("]");
+      const alt = escapeHtmlAttr(nodeText.slice(2, endIdx === -1 ? nodeText.length : endIdx));
 
       return `<img src="${escapeHtmlAttr(sanitizeUrl(url))}" alt="${alt}" class="traven-image-shortcode align-center size-medium">`;
     }

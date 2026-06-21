@@ -63,4 +63,47 @@ describe('QuotePlugin', () => {
     const plugin = new QuotePlugin();
     expect(plugin.renderToHTML({ name: 'Blockquote' }, '', {})).toBeNull();
   });
+
+  it('collapses the entire first line when the cursor is completely outside the admonition', () => {
+    const decos = getDecorations('> [!NOTE]\n> content line 1\n> content line 2', 5);
+    
+    const entireLineCollapse = decos.find(d => d.from === 0 && d.to === 10);
+    expect(entireLineCollapse).toBeDefined();
+
+    const noteDecos = decos.filter(d => d.deco.spec.class && d.deco.spec.class.includes('cm-wysiwym-alert-note'));
+    expect(noteDecos.length).toBe(3);
+    expect(noteDecos.find(d => d.from === 0)).toBeDefined();
+  });
+
+  it('does not collapse the first line or marker at all when the cursor is inside the admonition', () => {
+    const decos = getDecorations('> [!NOTE]\n> content line 1\n> content line 2', 2);
+    
+    const entireLineCollapse = decos.find(d => d.from === 0 && d.to === 10);
+    expect(entireLineCollapse).toBeUndefined();
+
+    const markerCollapse = decos.find(d => d.from === 2 && d.to === 9);
+    expect(markerCollapse).toBeUndefined();
+
+    const quoteMarkCollapse1 = decos.find(d => d.from === 0 && d.to === 1);
+    expect(quoteMarkCollapse1).toBeUndefined();
+
+    const quoteMarkCollapse3 = decos.find(d => d.from === 27 && d.to === 28);
+    expect(quoteMarkCollapse3).toBeDefined();
+  });
+
+  it('collapses only the tag marker if there is text content on the first line and cursor is outside', () => {
+    const decos = getDecorations('> [!NOTE] content\n> line 2', 4);
+    
+    const entireLineCollapse = decos.find(d => d.from === 0 && d.to > 1 && d.deco === collapseDeco);
+    expect(entireLineCollapse).toBeUndefined();
+
+    const markerCollapse = decos.find(d => d.from === 2 && d.to === 9);
+    expect(markerCollapse).toBeDefined();
+  });
+
+  it('maps INFO to NOTE alias', () => {
+    const decos = getDecorations('> [!INFO]\n> content', 1);
+    const alertDecos = decos.filter(d => d.deco.spec.class && d.deco.spec.class.includes('cm-wysiwym-alert-note'));
+    expect(alertDecos.length).toBe(2);
+  });
 });

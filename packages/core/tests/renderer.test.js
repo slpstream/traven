@@ -68,6 +68,28 @@ describe('Traven Renderer Golden Tests', () => {
       expect(render('> Nested\n>> Blockquote')).toContain('<blockquote>\n <p>Nested</p>');
     });
 
+    it('renders blockquote alerts correctly', () => {
+      const noteHtml = render('> [!NOTE]\n> This is a note.');
+      expect(noteHtml).toContain('<div class="traven-alert traven-alert-note">');
+      expect(noteHtml).toContain('<p>This is a note.</p>');
+      expect(noteHtml).not.toContain('[!NOTE]');
+
+      const inlineAlertHtml = render('> [!TIP] Simple tip');
+      expect(inlineAlertHtml).toContain('<div class="traven-alert traven-alert-tip">');
+      expect(inlineAlertHtml).toContain('<p>Simple tip</p>');
+      expect(inlineAlertHtml).not.toContain('[!TIP]');
+
+      const aliasHtml = render('> [!DANGER]\n> Danger warning');
+      expect(aliasHtml).toContain('<div class="traven-alert traven-alert-caution">');
+      expect(aliasHtml).toContain('<p>Danger warning</p>');
+      expect(aliasHtml).not.toContain('[!DANGER]');
+
+      const multiParaHtml = render('> [!WARNING]\n> First para\n>\n> Second para');
+      expect(multiParaHtml).toContain('<div class="traven-alert traven-alert-warning">');
+      expect(multiParaHtml).toContain('<p>First para</p>');
+      expect(multiParaHtml).toContain('<p>Second para</p>');
+    });
+
     it('renders fenced code blocks', () => {
       expect(render('```\ncode block\n```')).toContain('<pre><code>code block');
       expect(render('```js\nconst x = 1;\n```')).toContain('<pre><code class="language-js">const x = 1;');
@@ -199,6 +221,12 @@ describe('Traven Renderer Golden Tests', () => {
 
     it('escapes HTML in code spans', () => {
       expect(render('`<script>`')).toContain('<code>&lt;script&gt;</code>');
+    });
+
+    it('constrains reference link parsing range locally to prevent bleeding', () => {
+      const html = render('Link [!NOTE]\n\nSome other text.');
+      expect(html).toContain('<p>Link <a href="" target="_blank" rel="noopener noreferrer">!NOTE</a></p>');
+      expect(html).toContain('<p>Some other text.</p>');
     });
   });
 

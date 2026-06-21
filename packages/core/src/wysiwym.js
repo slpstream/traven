@@ -172,6 +172,11 @@ export const frontmatterActiveLineDeco = Decoration.line({ class: "cm-wysiwym-fr
 
 // Blockquote line style
 export const blockquoteLineDeco = Decoration.line({ class: "cm-wysiwym-blockquote" });
+export const alertNoteLineDeco = Decoration.line({ class: "cm-wysiwym-blockquote cm-wysiwym-alert cm-wysiwym-alert-note" });
+export const alertTipLineDeco = Decoration.line({ class: "cm-wysiwym-blockquote cm-wysiwym-alert cm-wysiwym-alert-tip" });
+export const alertImportantLineDeco = Decoration.line({ class: "cm-wysiwym-blockquote cm-wysiwym-alert cm-wysiwym-alert-important" });
+export const alertWarningLineDeco = Decoration.line({ class: "cm-wysiwym-blockquote cm-wysiwym-alert cm-wysiwym-alert-warning" });
+export const alertCautionLineDeco = Decoration.line({ class: "cm-wysiwym-blockquote cm-wysiwym-alert cm-wysiwym-alert-caution" });
 
 // Block code line styles
 export const codeBlockLineDeco = Decoration.line({ class: "cm-wysiwym-codeblock-line" });

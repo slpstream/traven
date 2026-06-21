@@ -104,6 +104,21 @@ For the more graphic, editorial pullquotes, use `[pullquote]` to break up long b
 "Traven completely bridges the gap between pure Markdown and modern rich-text editors."
 [/pullquote]
 
+### GitHub-style Alert Callouts
+
+Alternatively, you can write native Markdown blockquotes starting with an alert marker (such as `[!NOTE]`, `[!TIP]`, `[!IMPORTANT]`, `[!WARNING]`, or `[!CAUTION]`) to render clean, responsive notifications:
+
+> [!NOTE]
+> This is a standard note alert containing helpful context. It uses a clean blue border and background tint.
+>
+> You can even write multiple paragraphs inside the same alert.
+
+> [!TIP]
+> This is a tip alert with advice for writing more efficiently.
+
+> [!WARNING]
+> This is a warning alert, calling attention to actions that could lead to configuration issues.
+
 ## Embedded Media Assets
 
 Traven makes embedding external or local media a breeze. Each media shortcode is rendered as an interactive placeholder card with inline edit controls.

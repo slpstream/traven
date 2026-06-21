@@ -62,6 +62,43 @@ Traven includes native support for a pair-tag `[component]...[/component]` short
 
 ---
 
+## GitHub Alerts (Admonitions)
+
+Traven natively supports GitHub-flavored Markdown alert blocks. These are blockquotes whose first line specifies an alert type using the `[!TYPE]` syntax:
+
+```markdown
+> [!NOTE]
+> Useful information that users should know.
+
+> [!TIP]
+> Helpful advice for doing things more quickly or easily.
+
+> [!IMPORTANT]
+> Key information users need to know to achieve their goal.
+
+> [!WARNING]
+> Urgent info that needs immediate user attention to avoid problems.
+
+> [!CAUTION]
+> Advises about risks or negative consequences of an action.
+```
+
+### Supported Alert Types & Aliases
+
+Traven supports the 5 standard GitHub alert types, mapping common alternatives as aliases:
+*   `[!NOTE]` (and alias `[!INFO]` which maps to `note`)
+*   `[!TIP]`
+*   `[!IMPORTANT]`
+*   `[!WARNING]`
+*   `[!CAUTION]` (and alias `[!DANGER]` which maps to `caution`)
+
+### Visual Presentation & Styling
+
+*   **WYSIWYM Editor**: Alert blocks are styled with an alert-colored left border, upright regular text (non-italic), and a distinct background tint corresponding to the alert type. The `[!TYPE]` tag prefix collapses out of view when the cursor is on a different line, keeping the editing canvas clean.
+*   **HTML Preview**: Compiles blockquote alerts into a `<div class="traven-alert traven-alert-[type]">...</div>` block. There are no built-in titles or icons, keeping Traven non-opinionated. Host applications can add custom icons, emojis, or titles via their CSS skin themes using pseudo-elements (e.g. `.traven-alert-note::before`).
+
+---
+
 ## Custom Shortcode Extensions
 
 Developers can also extend Traven to support other custom shortcodes using its decoupled architecture:
