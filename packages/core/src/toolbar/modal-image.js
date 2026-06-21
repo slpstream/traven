@@ -478,6 +478,10 @@ export function openImageModal(optionsOrEditor, triggerBtn = null) {
       alignSelect.disabled = false;
       sizeSelect.disabled = false;
       classInput.disabled = false;
+
+      if (layoutPicker && typeof layoutPicker.syncUI === "function") {
+        layoutPicker.syncUI();
+      }
     } else {
       toggleBtn.style.color = "var(--text-secondary, #64748b)";
       toggleBtn.title = "Advanced Settings";
@@ -553,10 +557,14 @@ export function openImageModal(optionsOrEditor, triggerBtn = null) {
       const hasAlign = attrs && attrs.hasOwnProperty("align");
       const hasSize = attrs && attrs.hasOwnProperty("size");
 
-      if (alignVal && (alignVal !== "center" || hasAlign)) {
+      const isDefaultConversion = !isAdvancedMode && alignVal === "center" && sizeVal === "medium";
+      const writeAlign = hasAlign || isDefaultConversion || (docFrom === null);
+      const writeSize = hasSize || isDefaultConversion || (docFrom === null);
+
+      if (alignVal && (alignVal !== "center" || writeAlign)) {
         attrParts.push(`align="${alignVal}"`);
       }
-      if (sizeVal && (sizeVal !== "medium" || hasSize)) {
+      if (sizeVal && (sizeVal !== "medium" || writeSize)) {
         attrParts.push(`size="${sizeVal}"`);
       }
 

@@ -8,7 +8,7 @@
  * @param {string} options.sizeId - The ID for the hidden size select element.
  * @param {string} [options.initialAlign="center"] - Initial alignment value.
  * @param {string} [options.initialSize="medium"] - Initial size value.
- * @returns {{ element: HTMLElement, alignSelect: HTMLSelectElement, sizeSelect: HTMLSelectElement }}
+ * @returns {{ element: HTMLElement, alignSelect: HTMLSelectElement, sizeSelect: HTMLSelectElement, syncUI: Function }}
  */
 export function createLayoutPicker({ alignId, sizeId, initialAlign = "center", initialSize = "medium" }) {
   // Group Row for Alignment and Size (using layout preset selector and size pills)
@@ -247,6 +247,7 @@ export function createLayoutPicker({ alignId, sizeId, initialAlign = "center", i
   return {
     element: groupRow,
     alignSelect: hiddenAlignSelect,
-    sizeSelect: hiddenSizeSelect
+    sizeSelect: hiddenSizeSelect,
+    syncUI
   };
 }
