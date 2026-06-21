@@ -462,6 +462,20 @@
       margin-top: 40px;
     }
 
+    footer a,
+    footer a:visited {
+      color: var(--accent);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      transition: color var(--transition-fast), text-decoration-color var(--transition-fast);
+    }
+
+    footer a:hover,
+    footer a:active {
+      color: #000000;
+      text-decoration-color: #000000;
+    }
+
     .opensource-logo {
       display: flex;
       align-items: center;
@@ -484,13 +498,13 @@
 <body>
 
   <header>
-    <a href="index.php" class="brand">
+    <a href="https://traven.dev/" class="brand">
       <div class="brand-logo">
         <?php readfile("packages/core/assets/images/traven-wordmark.svg"); ?>
       </div>
     </a>
     <div class="header-nav">
-      <a href="https://github.com/slpstream/traven/tree/main/docs" class="nav-link">Docs</a>
+      <a href="https://traven.dev/docs/" class="nav-link">Docs</a>
       <a href="https://github.com/slpstream/traven" target="_blank" class="github-button">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
           stroke-linecap="round" stroke-linejoin="round">
@@ -775,7 +789,7 @@
     <div class="opensource-logo">
       <?php readfile("packages/core/assets/images/opensource-light.svg"); ?>
     </div>
-    <div>&copy; 2026 SLPStream / Freedomware. Open source MIT licensed.</div>
+    <div>&copy; by <a href="https://freedomware.dev/">Freedomware.dev</a> - Open source, MIT licensed.</div>
   </footer>
 
 </body>

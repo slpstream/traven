@@ -314,6 +314,23 @@ if ($isPost) {
       box-shadow: none !important;
     }
 
+    /* Fullscreen Mode styling overrides */
+    .editor-wrapper.is-fullscreen {
+      position: fixed !important;
+      background: #ffffff !important;
+      min-height: 0 !important;
+      height: 100vh !important;
+      z-index: 9999 !important;
+    }
+
+    .editor-wrapper.is-fullscreen .editor-mount,
+    .editor-wrapper.is-fullscreen .raw-editor-mount,
+    .editor-wrapper.is-fullscreen .html-preview-mount {
+      flex: 1 !important;
+      height: 100% !important;
+      min-height: 0 !important;
+    }
+
     .editor-mount,
     .raw-editor-mount,
     .html-preview-mount {

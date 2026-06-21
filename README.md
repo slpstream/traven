@@ -75,7 +75,7 @@ When evaluating **[the landscape](https://traven.dev/site/traven-vs-others.php)*
 * **Framework Editors:** ProseMirror, Lexical, and TipTap are frameworks, aren't Markdown-native, and are also not built to just quickly embed.
 * **AST Roundtrip Editors:** Even editors like Milkdown parse Markdown into an HTML AST and back, in a roundtrip that can be brittle and cause spacing artifacts.
 
-Traven Editor solves all that.
+Traven Editor was created for the purpose of solving these constraints.
 
 ---
 

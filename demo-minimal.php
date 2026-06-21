@@ -3,6 +3,7 @@ $content = $_POST['content'] ?? '**Unstyled and minimal, edit this text and writ
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,16 +15,19 @@ $content = $_POST['content'] ?? '**Unstyled and minimal, edit this text and writ
       margin: 40px auto;
       padding: 0 20px;
     }
+
     form {
       display: flex;
       flex-direction: column;
       gap: 15px;
     }
+
     button {
       align-self: flex-end;
       padding: 8px 16px;
       cursor: pointer;
     }
+
     .preview {
       margin-top: 30px;
       padding: 15px;
@@ -31,22 +35,28 @@ $content = $_POST['content'] ?? '**Unstyled and minimal, edit this text and writ
       border: 1px solid #ddd;
       border-radius: 4px;
     }
+
     pre {
       white-space: pre-wrap;
       word-wrap: break-word;
     }
+
     .traven-toolbar-stats {
       display: none !important;
     }
   </style>
 </head>
+
 <body>
 
-<a href="index.php" style="font-family: sans-serif; font-size: 0.85rem; color: #cc4a0a; text-decoration: none; display: inline-block; margin-bottom: 15px;">&larr; Back</a>
+  <a href="index.php"
+    style="font-family: sans-serif; font-size: 0.85rem; color: #cc4a0a; text-decoration: none; display: inline-block; margin-bottom: 15px;">&larr;
+    Back</a>
 
   <!-- Step 1 — Replace your textarea -->
   <form action="" method="POST">
-    <traven-editor name="content" toolbar-mode="hybrid" toolbar><?php echo htmlspecialchars($content); ?></traven-editor>
+    <traven-editor name="content" toolbar-mode="hybrid"
+      toolbar><?php echo htmlspecialchars($content); ?></traven-editor>
     <button type="submit">Save</button>
   </form>
 
@@ -72,4 +82,5 @@ $content = $_POST['content'] ?? '**Unstyled and minimal, edit this text and writ
     });
   </script>
 </body>
+
 </html>
