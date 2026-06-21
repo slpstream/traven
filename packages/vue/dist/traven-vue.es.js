@@ -16644,7 +16644,8 @@ function sy({ alignId: e, sizeId: t, initialAlign: n = "center", initialSize: r 
 	}), y(), {
 		element: i,
 		alignSelect: a,
-		sizeSelect: o
+		sizeSelect: o,
+		syncUI: y
 	};
 }
 function cy(e, t = null) {
@@ -16782,7 +16783,7 @@ function cy(e, t = null) {
 	});
 	let ee = () => {
 		let e = g.querySelector(".traven-modal-switch-track"), t = g.querySelector(".traven-modal-switch-thumb");
-		d ? (g.style.color = "var(--accent, #334155)", g.title = "Legacy Markdown", e && (e.style.backgroundColor = "#000000"), t && (t.style.transform = "translateX(18px)"), v.style.display = "", S.style.display = "flex", C.style.display = "", E.disabled = !1, D.disabled = !1, O.disabled = !1, k.disabled = !1) : (g.style.color = "var(--text-secondary, #64748b)", g.title = "Advanced Settings", e && (e.style.backgroundColor = "#cbd5e1"), t && (t.style.transform = "translateX(0)"), v.style.display = "none", S.style.display = "none", C.style.display = "none", E.disabled = !0, D.disabled = !0, O.disabled = !0, k.disabled = !0);
+		d ? (g.style.color = "var(--accent, #334155)", g.title = "Legacy Markdown", e && (e.style.backgroundColor = "#000000"), t && (t.style.transform = "translateX(18px)"), v.style.display = "", S.style.display = "flex", C.style.display = "", E.disabled = !1, D.disabled = !1, O.disabled = !1, k.disabled = !1, x && typeof x.syncUI == "function" && x.syncUI()) : (g.style.color = "var(--text-secondary, #64748b)", g.title = "Advanced Settings", e && (e.style.backgroundColor = "#cbd5e1"), t && (t.style.transform = "translateX(0)"), v.style.display = "none", S.style.display = "none", C.style.display = "none", E.disabled = !0, D.disabled = !0, O.disabled = !0, k.disabled = !0);
 	};
 	g.addEventListener("click", (e) => {
 		e.preventDefault(), d = !d, ee();
@@ -16808,25 +16809,25 @@ function cy(e, t = null) {
 			r.focus();
 			return;
 		}
-		let s = "";
-		if (!d) s = `![${e}](${t})`;
+		let c = "";
+		if (!d) c = `![${e}](${t})`;
 		else {
-			let n = E.value.trim(), r = D.value, i = O.value, a = k.value.trim(), c = [`src="${t}"`], l = o && o.hasOwnProperty("align"), u = o && o.hasOwnProperty("size");
-			r && (r !== "center" || l) && c.push(`align="${r}"`), i && (i !== "medium" || u) && c.push(`size="${i}"`), e && e !== "image" && c.push(`alt="${e}"`), n && c.push(`caption="${n}"`), a && c.push(`class="${a}"`), s = `[image ${c.join(" ")}]`;
+			let n = E.value.trim(), r = D.value, a = O.value, l = k.value.trim(), u = [`src="${t}"`], d = o && o.hasOwnProperty("align"), f = o && o.hasOwnProperty("size"), p = !s && r === "center" && a === "medium", m = d || p || i === null, h = f || p || i === null;
+			r && (r !== "center" || m) && u.push(`align="${r}"`), a && (a !== "medium" || h) && u.push(`size="${a}"`), e && e !== "image" && u.push(`alt="${e}"`), n && u.push(`caption="${n}"`), l && u.push(`class="${l}"`), c = `[image ${u.join(" ")}]`;
 		}
 		if (i !== null) {
 			r.dispatch({ changes: {
 				from: i,
 				to: a,
-				insert: s
+				insert: c
 			} });
-			let e = i + s.length, t = r.state.doc.toString(), n = e;
+			let e = i + c.length, t = r.state.doc.toString(), n = e;
 			e < t.length && t[e] === "\n" || r.dispatch({ changes: {
 				from: e,
 				insert: "\n"
 			} }), n = e + 1, r.dispatch({ selection: { anchor: n } });
 		} else {
-			let e = r.state.selection.main, t = s + "\n";
+			let e = r.state.selection.main, t = c + "\n";
 			r.dispatch({
 				changes: {
 					from: e.from,
@@ -16929,8 +16930,10 @@ code
           <div class="help-row"><span class="help-key">Custom Blockquote</span><span class="help-value">[blockquote author="Author" source="Source"]quote[/blockquote]</span></div>
           <div class="help-row"><span class="help-key">Pullquote</span><span class="help-value">[pullquote]text[/pullquote]</span></div>
           <div class="help-row"><span class="help-key">Inline Highlight</span><span class="help-value">[highlight]text[/highlight]</span></div>
-          <div class="help-row"><span class="help-key">GitHub Alert Note</span><span class="help-value">&gt; [!NOTE]\\n&gt; text</span></div>
-          <div class="help-row"><span class="help-key">GitHub Alert Warning</span><span class="help-value">&gt; [!WARNING]\\n&gt; text</span></div>
+          <div class="help-row"><span class="help-key">GitHub Alert Note</span><span class="help-value">&gt; [!NOTE]
+&gt; text</span></div>
+          <div class="help-row"><span class="help-key">GitHub Alert Warning</span><span class="help-value">&gt; [!WARNING]
+&gt; text</span></div>
 
           <div class="help-section-title">Media Previews</div>
           <div class="help-row"><span class="help-key">Custom Image</span><span class="help-value">[image src="url" alt="alt" caption="caption" align="center" size="medium"]</span></div>
