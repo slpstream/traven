@@ -1,4 +1,10 @@
 export const TOOL_REGISTRY: {
+    settings: {
+        key: string;
+        title: string;
+        icon: string;
+        action: (editor: any, buttonEl: any) => void;
+    };
     undo: {
         key: string;
         title: string;

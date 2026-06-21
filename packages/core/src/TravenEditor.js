@@ -83,6 +83,7 @@ import {
   selectionBubbleExtension,
   gutterInserterExtension,
 } from "./toolbar/floating-toolbar.js";
+import { getEffectiveToolbar, loadToolbarConfig } from "./toolbar/toolbar-config.js";
 
 // Ensure styles are bundled
 loadStyles();
@@ -128,6 +129,7 @@ export const DEFAULT_TOOLBAR = [
   "removeformatting",
   "gotoline",
   "help",
+  "settings",
 ];
 
 /**
@@ -195,6 +197,7 @@ function buildBaseSetup(options = {}) {
  * @property {"light" | "dark"} [theme] - Visual style theme.
  * @property {string} [caretColor] - Configurable caret color override.
  * @property {Array<string>|boolean} [toolbar=false] - Toolbar configuration array or false.
+ * @property {string} [toolbarScope] - Optional localStorage scope for toolbar config persistence. Defaults to "default". Use distinct values for multi-editor pages.
  * @property {ComponentOption[]} [components] - Pre-defined custom components options array.
  * @property {string|boolean} [componentsUrl="assets/components.json"] - URL/path to load components schema, or false.
  * @property {any} [katex] - Configure/enable KaTeX math formatting option.
@@ -523,27 +526,10 @@ export class TravenEditor {
     viewToEditor.set(this.#view, this);
 
     // Render and prepend toolbar based on mode
-    if (mode === "static") {
-      if (options.toolbar && Array.isArray(options.toolbar)) {
-        const toolbarEl = buildToolbar(
-          this,
-          options.toolbar,
-          options.keybindings,
-        );
+    if (mode === "static" || mode === "hybrid") {
+      const toolbarEl = this.#buildToolbarEl();
+      if (toolbarEl) {
         options.element.prepend(toolbarEl);
-      }
-    } else if (mode === "hybrid") {
-      if (options.toolbar && Array.isArray(options.toolbar)) {
-        const toolbarEl = buildToolbar(
-          this,
-          options.toolbar,
-          options.keybindings,
-        );
-        toolbarEl.classList.add("traven-hybrid-toolbar");
-        options.element.prepend(toolbarEl);
-
-        const statsEl = buildStatsWidget(this);
-        toolbarEl.appendChild(statsEl);
       }
     } else if (mode === "floating") {
       if (options.toolbar !== false) {
@@ -617,6 +603,72 @@ export class TravenEditor {
   }
 
   // --- Public API Methods ---
+
+  /**
+   * Returns the integrator's original toolbar configuration array.
+   * Used by the settings modal to scope which tools are configurable.
+   * @returns {string[]}
+   */
+  getToolbarConfig() {
+    return this.#options.toolbar && Array.isArray(this.#options.toolbar)
+      ? this.#options.toolbar
+      : [];
+  }
+
+  /**
+   * Returns the toolbar localStorage scope key.
+   * @returns {string|undefined}
+   */
+  getToolbarScope() {
+    return this.#options.toolbarScope;
+  }
+
+  /**
+   * Builds the toolbar DOM element for static/hybrid modes,
+   * filtered by the user's saved preferences.
+   * @returns {HTMLElement|null}
+   */
+  #buildToolbarEl() {
+    const mode = resolveToolbarMode(this.#options);
+    if (mode !== "static" && mode !== "hybrid") return null;
+    const baseToolbar = this.#options.toolbar;
+    if (!baseToolbar || !Array.isArray(baseToolbar)) return null;
+
+    const effective = getEffectiveToolbar(baseToolbar, this.#options.toolbarScope);
+    const el = buildToolbar(this, effective, this.#options.keybindings);
+
+    const hasSavedConfig = loadToolbarConfig(this.#options.toolbarScope) !== null;
+    if (hasSavedConfig) {
+      el.classList.add("is-customized");
+    }
+
+    if (mode === "hybrid") {
+      el.classList.add("traven-hybrid-toolbar");
+      el.appendChild(buildStatsWidget(this));
+    }
+
+    return el;
+  }
+
+  /**
+   * Tears down and rebuilds the static/hybrid toolbar using the current
+   * saved user preferences from localStorage.
+   */
+  rebuildToolbar() {
+    const parent = this.#options.element;
+
+    // Remove existing toolbar
+    const existing = parent.querySelector(".traven-toolbar-container");
+    if (existing) existing.remove();
+
+    // Rebuild
+    const toolbarEl = this.#buildToolbarEl();
+    if (toolbarEl) parent.prepend(toolbarEl);
+
+    // Recalculate editor layout
+    const view = this.getView();
+    if (view) view.requestMeasure();
+  }
 
   /**
    * Triggers history undo on the currently focused editor.

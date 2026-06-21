@@ -62,6 +62,49 @@ Full Vim keybindings (normal/visual/insert emulation), line numbers, and the com
 
 ---
 
+## Dynamic Toolbar Configuration
+
+Traven features a dynamic toolbar configuration system that allows end-users to customize their main/hybrid toolbar workspace at runtime.
+
+### How it Works
+1. **The Gear Icon**: Clicking the settings gear icon (⚙️) on a static or hybrid toolbar opens the **Toolbar Settings** modal.
+2. **Category Tabs**: The modal groups available tools into categories (Formatting, Structure, Media & Links, Utilities). Only the tools present in the integrator's base `toolbar` configuration are displayed.
+3. **Persistence**: Toggled checkbox states are immediately saved to the browser's `localStorage` and the toolbar layout updates in real-time.
+4. **Locked Tools**: Essential tools (like `settings` itself) are locked and cannot be disabled.
+
+### Scoping Editor Instances
+For pages hosting multiple editor instances (such as a sidebar editor next to a main body editor), you can isolate preference stores using the `toolbarScope` configuration parameter:
+
+```html
+<!-- Main editor uses the default settings scope -->
+<traven-editor name="body" toolbar></traven-editor>
+
+<!-- Sidebar editor uses a distinct scope to separate preferences -->
+<traven-editor name="sidebar" toolbar toolbar-scope="sidebar"></traven-editor>
+```
+
+In JavaScript, pass the `toolbarScope` property:
+```javascript
+new TravenEditor({
+  element: document.querySelector('#sidebar-editor'),
+  toolbar: DEFAULT_TOOLBAR,
+  toolbarScope: 'sidebar'
+});
+```
+
+### Opting Out
+To prevent end-users from customizing the toolbar layout, simply omit the `"settings"` key from your custom toolbar array. The gear button will not render:
+
+```javascript
+new TravenEditor({
+  element: document.querySelector('#editor'),
+  // Does not include "settings" -> toolbar settings button is hidden
+  toolbar: ["bold", "italic", "|", "heading", "help"]
+});
+```
+
+---
+
 ## Toggling Toolbars at Runtime via JavaScript
 
 You can dynamically show or hide individual toolbar layers at runtime by toggling CSS utility classes on the `<traven-editor>` element. This is useful for user preference toggles (such as persisting settings to `localStorage`).

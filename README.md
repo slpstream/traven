@@ -68,12 +68,14 @@ Type `**bold**` and the asterisks quietly step aside, leaving only the bold text
 
 ## Like Typora, but for the Browser
 
-When evaluating **[the landscape](https://traven.dev/site/traven-vs-others.php)** of browser-based editors, and trying to find a Markdown-first editor with the look and feel of Typora, but for embedding and using in a web browser, each category had trade-offs:
+When evaluating **[the landscape](https://traven.dev/site/traven-vs-others.php)** of browser-based editors, and trying to find a Markdown-first editor with the look and feel of Typora and Obsidian, but for embedding and using in a web browser, each category had trade-offs:
 
 * **WYSIWYG Heavyweights:** Editors like TinyMCE and CKEditor want an API key, emit HTML, and make you serialize that HTML back to Markdown lossily.
 * **Classic Split-Panes:** Tools like EasyMDE use the legacy CodeMirror 5 engine and a split-pane UX.
 * **Framework Editors:** ProseMirror, Lexical, and TipTap are frameworks, aren't Markdown-native, and are also not built to just quickly embed.
 * **AST Roundtrip Editors:** Even editors like Milkdown parse Markdown into an HTML AST and back, in a roundtrip that can be brittle and cause spacing artifacts.
+
+Traven Editor solves all that.
 
 ---
 

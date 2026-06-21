@@ -27,6 +27,7 @@ export const DEFAULT_TOOLBAR: string[];
  * @property {"light" | "dark"} [theme] - Visual style theme.
  * @property {string} [caretColor] - Configurable caret color override.
  * @property {Array<string>|boolean} [toolbar=false] - Toolbar configuration array or false.
+ * @property {string} [toolbarScope] - Optional localStorage scope for toolbar config persistence. Defaults to "default". Use distinct values for multi-editor pages.
  * @property {ComponentOption[]} [components] - Pre-defined custom components options array.
  * @property {string|boolean} [componentsUrl="assets/components.json"] - URL/path to load components schema, or false.
  * @property {any} [katex] - Configure/enable KaTeX math formatting option.
@@ -66,6 +67,22 @@ export class TravenEditor {
      * @param {TravenOptions} options
      */
     constructor(options: TravenOptions);
+    /**
+     * Returns the integrator's original toolbar configuration array.
+     * Used by the settings modal to scope which tools are configurable.
+     * @returns {string[]}
+     */
+    getToolbarConfig(): string[];
+    /**
+     * Returns the toolbar localStorage scope key.
+     * @returns {string|undefined}
+     */
+    getToolbarScope(): string | undefined;
+    /**
+     * Tears down and rebuilds the static/hybrid toolbar using the current
+     * saved user preferences from localStorage.
+     */
+    rebuildToolbar(): void;
     /**
      * Triggers history undo on the currently focused editor.
      */
@@ -364,6 +381,10 @@ export type TravenOptions = {
      * - Toolbar configuration array or false.
      */
     toolbar?: Array<string> | boolean;
+    /**
+     * - Optional localStorage scope for toolbar config persistence. Defaults to "default". Use distinct values for multi-editor pages.
+     */
+    toolbarScope?: string;
     /**
      * - Pre-defined custom components options array.
      */

@@ -26,6 +26,7 @@ Initializes a new editor instance.
 | `theme` | `"light" \| "dark"`| `"light"` | Configures baseline cursor theme variables and dark mode class triggers. |
 | `caretColor` | `string` | `""` | Custom hex color for the editor caret overrides. |
 | `toolbar` | `Array<string> \| boolean`| `false` | A list of tool key strings defining the toolbar buttons layout, or `false` to disable the toolbar. |
+| `toolbarScope` | `string` | `"default"` | Optional localStorage scope for toolbar config persistence. Use distinct values for multi-editor pages. |
 | `vimMode` | `boolean` | `false` | Enables Vim keybindings and normal mode emulation in both editing panes. |
 | `readOnly` | `boolean` | `false` | Enables read-only mode for both primary and secondary editor panes. |
 | `keybindings` | `object` | `{}` | Key-value pairs overriding default tool keybindings (e.g. `{ bold: "Ctrl-Shift-b" }`). |
@@ -161,6 +162,17 @@ Returns the list of currently registered component schemas.
 
 ### `destroy()`
 Cleans up event listeners and destroys CodeMirror instances.
+
+### `rebuildToolbar()`
+Tears down and rebuilds the static/hybrid toolbar using the current saved user preferences from `localStorage`.
+
+### `getToolbarConfig()`
+Returns the integrator's original toolbar configuration array. Used by the settings modal to scope which tools are configurable.
+*   **Returns:** `string[]`
+
+### `getToolbarScope()`
+Returns the toolbar `localStorage` scope key.
+*   **Returns:** `string|undefined`
 
 ---
 

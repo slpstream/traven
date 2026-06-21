@@ -497,3 +497,144 @@
   vertical-align: super;
   font-size: 0.75em;
 }
+
+/* ==========================================================================
+   Search Panel Styling (Find/Replace)
+   ========================================================================== */
+.cm-panel.cm-search {
+  padding: 6px 12px 8px;
+  background-color: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.cm-panel.cm-search .cm-textfield {
+  border: 1px solid #cbd5e1;
+  background-color: #ffffff;
+  color: #1e293b;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.78rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.cm-panel.cm-search .cm-textfield:focus {
+  border-color: #64748b;
+  box-shadow: 0 0 0 2px rgba(100, 116, 139, 0.15);
+}
+
+.cm-panel.cm-search .cm-button {
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  padding: 2px 6px !important;
+  border-radius: 4px;
+  font-size: 0.65rem !important;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: inherit;
+  cursor: pointer;
+  line-height: 1.2 !important;
+  transition: all 0.15s ease;
+}
+
+.cm-panel.cm-search .cm-button:hover,
+.cm-panel.cm-search .cm-button:focus {
+  background: #f1f5f9 !important;
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+
+.cm-panel.cm-search .cm-button:active {
+  background: #e2e8f0 !important;
+  border-color: #94a3b8;
+}
+
+.cm-panel.cm-search label {
+  font-size: 0.8rem !important;
+  font-weight: normal;
+  color: #64748b;
+  cursor: pointer;
+  user-select: none;
+}
+
+.cm-panel.cm-search input[type=checkbox] {
+  cursor: pointer;
+  vertical-align: middle;
+  margin-top: -2px;
+  margin-right: 4px;
+}
+
+.cm-panel.cm-search [name=close] {
+  position: absolute;
+  top: 4px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  font-size: 1.2em;
+  color: #64748b;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+  transition: color 0.15s ease;
+}
+
+.cm-panel.cm-search [name=close]:hover {
+  color: #0f172a;
+}
+
+/* Dark Mode Overrides */
+.cm-wysiwym-dark .cm-panel.cm-search {
+  background-color: #1e293b;
+  border-top-color: #334155;
+  border-bottom-color: #334155;
+}
+
+.cm-wysiwym-dark .cm-panel.cm-search .cm-textfield {
+  border-color: #475569;
+  background-color: #0f172a;
+  color: #cbd5e1;
+}
+
+.cm-wysiwym-dark .cm-panel.cm-search .cm-textfield:focus {
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.15);
+}
+
+.cm-wysiwym-dark .cm-panel.cm-search .cm-button {
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  border-color: #475569;
+  color: #94a3b8;
+}
+
+.cm-wysiwym-dark .cm-panel.cm-search .cm-button:hover,
+.cm-wysiwym-dark .cm-panel.cm-search .cm-button:focus {
+  background: #334155 !important;
+  border-color: #64748b;
+  color: #f1f5f9;
+}
+
+.cm-wysiwym-dark .cm-panel.cm-search .cm-button:active {
+  background: #475569 !important;
+  border-color: #64748b;
+}
+
+.cm-wysiwym-dark .cm-panel.cm-search label {
+  color: #94a3b8;
+}
+
+.cm-wysiwym-dark .cm-panel.cm-search [name=close] {
+  color: #94a3b8;
+}
+
+.cm-wysiwym-dark .cm-panel.cm-search [name=close]:hover {
+  color: #f1f5f9;
+}

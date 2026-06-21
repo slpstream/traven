@@ -9,3 +9,4 @@ export { openVideoModal } from "./modal-video.js";
 export { openAudioModal } from "./modal-audio.js";
 export { openFigureModal } from "./modal-figure.js";
 export { openSnippetModal } from "./modal-snippet.js";
+export { openSettingsModal } from "./modal-settings.js";

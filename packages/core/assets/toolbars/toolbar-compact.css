@@ -9,22 +9,26 @@
   --rail-icon-color: #475569;
 }
 
-/* Hide unwanted buttons to keep a reduced, compact set */
-.traven-toolbar-container .btn-undo,
-.traven-toolbar-container .btn-redo,
-.traven-toolbar-container .btn-strikethrough,
-.traven-toolbar-container .btn-tasklist,
-.traven-toolbar-container .btn-hr,
-.traven-toolbar-container .btn-datetime,
-.traven-toolbar-container .btn-search,
-.traven-toolbar-container .btn-clear,
-.traven-toolbar-container .btn-uppercase,
-.traven-toolbar-container .btn-lowercase,
-.traven-toolbar-container .btn-capitalize,
-.traven-toolbar-container .btn-removeformatting,
-.traven-toolbar-container .btn-gotoline,
-.traven-toolbar-container .btn-help,
-.traven-toolbar-container .btn-snippet,
+/* Hide unwanted buttons to keep a reduced, compact set by default (when not customized) */
+.traven-toolbar-container:not(.is-customized) .btn-undo,
+.traven-toolbar-container:not(.is-customized) .btn-redo,
+.traven-toolbar-container:not(.is-customized) .btn-strikethrough,
+.traven-toolbar-container:not(.is-customized) .btn-tasklist,
+.traven-toolbar-container:not(.is-customized) .btn-hr,
+.traven-toolbar-container:not(.is-customized) .btn-datetime,
+.traven-toolbar-container:not(.is-customized) .btn-search,
+.traven-toolbar-container:not(.is-customized) .btn-clear,
+.traven-toolbar-container:not(.is-customized) .btn-uppercase,
+.traven-toolbar-container:not(.is-customized) .btn-lowercase,
+.traven-toolbar-container:not(.is-customized) .btn-capitalize,
+.traven-toolbar-container:not(.is-customized) .btn-removeformatting,
+.traven-toolbar-container:not(.is-customized) .btn-gotoline,
+.traven-toolbar-container:not(.is-customized) .btn-help,
+.traven-toolbar-container:not(.is-customized) .btn-snippet {
+  display: none !important;
+}
+
+/* Always hide vertical separators to keep the compact look */
 .traven-toolbar-container .toolbar-separator {
   display: none !important;
 }
@@ -60,14 +64,20 @@
 }
 
 /* First visible button on the left end */
-.traven-toolbar-container .btn-bold {
+.traven-toolbar-container:not(.is-customized) .btn-bold,
+.traven-toolbar-container.is-customized > *:first-child,
+.traven-toolbar-container.is-customized > *:first-child .toolbar-btn {
   border-left: 1px solid var(--rail-border) !important;
   border-top-left-radius: 6px !important;
   border-bottom-left-radius: 6px !important;
 }
 
-/* Last visible button on the right end */
-.traven-toolbar-container .btn-fullscreen {
+/* Last visible button on the right end (excluding free-standing settings gear) */
+.traven-toolbar-container:not(.is-customized) .btn-fullscreen,
+.traven-toolbar-container.is-customized > *:last-child:not(.btn-settings),
+.traven-toolbar-container.is-customized > *:last-child:not(.btn-settings) .toolbar-btn,
+.traven-toolbar-container.is-customized > *:nth-last-child(2):has(+ .btn-settings),
+.traven-toolbar-container.is-customized > *:nth-last-child(2):has(+ .btn-settings) .toolbar-btn {
   border-top-right-radius: 6px !important;
   border-bottom-right-radius: 6px !important;
 }
@@ -191,4 +201,17 @@
 .traven-gutter-menu .toolbar-dropdown-item:hover {
   background-color: var(--rail-hover-bg) !important;
   color: var(--rail-icon-color) !important;
+}
+
+/* Style settings button as a free-standing gear icon */
+.traven-toolbar-container .btn-settings {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  margin-left: 8px !important; /* Clean gap between the rail and the gear button */
+  border-radius: 6px !important;
+}
+
+.traven-toolbar-container .btn-settings:hover {
+  background-color: var(--rail-hover-bg) !important;
 }
