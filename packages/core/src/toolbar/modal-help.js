@@ -30,6 +30,8 @@ export function openHelpModal(editor, triggerBtn) {
           <div class="help-row"><span class="help-key">Strikethrough</span><span class="help-value">~~text~~</span></div>
           <div class="help-row"><span class="help-key">Highlight</span><span class="help-value">==text==</span></div>
           <div class="help-row"><span class="help-key">Inline Code</span><span class="help-value">\`code\`</span></div>
+          <div class="help-row"><span class="help-key">Subscript</span><span class="help-value">~text~</span></div>
+          <div class="help-row"><span class="help-key">Superscript</span><span class="help-value">^text^</span></div>
 
           <div class="help-section-title">Links & Media</div>
           <div class="help-row"><span class="help-key">Link</span><span class="help-value">[text](url)</span></div>
