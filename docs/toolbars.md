@@ -148,7 +148,7 @@ To hide specific buttons or override their styles in your own CSS:
 }
 ```
 
-For the complete mapping of buttons to their CSS class selectors and keyboard shortcuts, see **[Customization & Styling](dev/customization-styling.md)**.
+For the complete mapping of buttons to their CSS class selectors and keyboard shortcuts, see **[Customization & Styling](customization-styling.md)**.
 
 ---
 
@@ -158,4 +158,4 @@ Traven does not currently ship a bottom-rail or side-rail toolbar layout. But th
 
 **See also:** 
 * **[Cheat Sheet](cheatsheet.md)** — For the complete list of toolbar button keys and attribute syntax.
-* **[Customization & Styling](dev/customization-styling.md)** — For details on editor skin design and CSS variables.
+* **[Customization & Styling](customization-styling.md)** — For details on editor skin design and CSS variables.

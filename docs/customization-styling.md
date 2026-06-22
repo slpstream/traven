@@ -63,7 +63,7 @@ Each button generated in the toolbar is assigned a generic `.toolbar-btn` class,
 | `bold` | `.btn-bold` | Bold text (`**bold text**`) | `Ctrl+B` (`Cmd+B` on Mac) |
 | `italic` | `.btn-italic` | Italic text (`*italic text*`) | `Ctrl+I` (`Cmd+I` on Mac) |
 | `strikethrough` | `.btn-strikethrough` | Strikethrough text (`~~strikethrough~~`) | `Ctrl+Shift+S` (`Cmd+Shift+S` on Mac) |
-| `highlight` | `.btn-highlight` | Highlight text (`==highlight==`) | - |
+| `highlight` | `.btn-highlight` | Highlight text (`==highlight==`) | `Ctrl+Shift+H` (`Cmd+Shift+H` on Mac) |
 | `code` | `.btn-code` | Inline code backticks (`` `code` ``) | - |
 | `heading` | `.btn-heading` | Dropdown selector for Heading 1 to Heading 6 | - |
 | `bulletlist` | `.btn-bulletlist` | Format line or selection as unordered list (`- `) | - |
@@ -87,8 +87,10 @@ Each button generated in the toolbar is assigned a generic `.toolbar-btn` class,
 | `video` | `.btn-video` | Insert video shortcode via modal | - |
 | `audio` | `.btn-audio` | Insert audio shortcode via modal | - |
 | `component` | `.btn-component` | Insert `[component]` shortcode block via modal | - |
+| `snippet` | `.btn-snippet` | Dropdown menu for custom snippets & Manage Snippets modal | - |
 | `figure` | `.btn-figure` | Insert `[figure]` shortcode block via modal | - |
 | `help` | `.btn-help` | Open keyboard shortcuts help modal | `Ctrl+/` (`Cmd+/` on Mac) |
+| `settings` | `.btn-settings` | Open toolbar configuration settings modal | - |
 
 ### Hiding Buttons via CSS
 

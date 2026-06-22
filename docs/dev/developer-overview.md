@@ -349,6 +349,7 @@ What Traven is *not*, so you can scope correctly:
 - `docs/toolbars.md` — the three toolbar layers in depth.
 - `docs/images.md`, `docs/shortcodes.md`, `docs/latex-support.md`, `docs/mermaid-support.md`, `docs/code-syntax-highlighting.md` — rich-content guides.
 - `docs/skins.md` — skin catalog and hot-swapping.
+- `docs/customization-styling.md` — instructions for swapping pre-built skins, loading skins via CDN, utilizing custom CSS selectors, and hiding or re-styling specific toolbar buttons.
 - `docs/api-reference.md` — the canonical API reference this synopsis summarizes.
 - `docs/troubleshooting.md` — common integration issues and fixes.
 - `docs/installation-setup.md` — CDN vs. local hosting, strict CSP, toolbars vs. skins distinction.
@@ -358,7 +359,6 @@ What Traven is *not*, so you can scope correctly:
 - `docs/dev/development.md` — the development workflow for compiling, building, testing, and running Traven locally, covering npm build scripts, testing, and demo page configurations.
 - `docs/dev/knowledgebase.md` — a deep technical reference of internal findings, covering CodeMirror 6 pitfalls, resizing logic, toolbar customization hooks, input sanitization, and LaTeX/toolbar architectures.
 - `docs/dev/theme-development.md` — the comprehensive guide to building custom Traven skins, detailing editor vs. preview CSS scopes, selector references, WYSIWYM/preview styling parity, and theme design strategies.
-- `docs/dev/customization-styling.md` — instructions for swapping pre-built skins, loading skins via CDN, utilizing custom CSS selectors, and hiding or re-styling specific toolbar buttons.
 - `docs/dev/custom-typography.md` — configuring editor fonts (display, body, and monospace) using CSS custom properties, custom font-face setups, and Google Fonts integration.
 - `docs/dev/building-custom-shortcodes.md` — the architectural blueprint for extending the shortcode parser and widgets, detailing custom parser plugins and CSS styling tokens.
 - `docs/dev/custom-markdown-rendering.md` — how to replace Traven's built-in markdown engine with a custom third-party renderer (e.g., Marked or markdown-it) using the `registerRenderer` API.

@@ -223,3 +223,8 @@ Six of the eight skins load fonts from Google Fonts (or BitMaks) by default. To 
 ```
 
 `skin-starter.css` and `skin-custom.css` already make zero external calls and need no changes for offline use.
+
+---
+
+**See also:**
+* **[Customization & Styling Guide](customization-styling.md)** — For details on swapping skins, CDNs, and overriding CSS selectors.

@@ -80,6 +80,7 @@ Guides and copy-pasteable examples for integrating Traven into server-rendered a
 ## Skins & Appearance
 
 - **[Skins](skins.md)** — All eight shipped skins explained with their fonts, network footprint, and best-fit use cases. Covers how to load a skin, hot-swap skins at runtime with a `<link>` tag swap, and self-host fonts for fully offline deployments.
+- **[Customization & Styling](customization-styling.md)** — How to swap between pre-built skins (light, dark, colorful, editorial, modern, academic, custom), load skins via CDN, find CSS button selectors, and hide or re-style toolbar elements.
 
 ---
 

@@ -129,7 +129,7 @@ Traven is highly modular and endlessly customizable. Check out the documentation
 * **[Quick Start](docs/quickstart.md)** — Step-by-step guides for adding Traven to PHP forms and HTML pages.
 * **[Cheat Sheet](docs/cheatsheet.md)** — A quick reference for every `<traven-editor>` attribute and configuration option.
 * **[Common Configurations](docs/common-configurations.md)** — Ready-made recipes for common use cases (e.g., minimal comment boxes, CMS admin panels).
-* **[Customization & Styling](docs/dev/customization-styling.md)** — Learn how to swap skins, override selectors, and build custom themes.
+* **[Customization & Styling](docs/customization-styling.md)** — Learn how to swap skins, override selectors, and build custom themes.
 * **[Framework Wrappers](docs/frameworks.md)** — Official wrappers and integration guides for React, Vue, and Svelte.
 * **[API Reference](docs/api-reference.md)** — The complete list of constructor options, public methods, and events.
 

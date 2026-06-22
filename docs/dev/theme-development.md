@@ -1053,7 +1053,7 @@ When you build a new theme, picking a "donor" from this table gets you 80% of th
 ## 14. Where to go next
 
 * `../toolbars.md` — toolbar presets, sheets, dynamic toggles, and styles.
-* `customization-styling.md` — skin customization, CSS button selectors table, and how to hide buttons.
+* `../customization-styling.md` — skin customization, CSS button selectors table, and how to hide buttons.
 * `shortcodes-architecture.md` — what each shortcode compiles to, attribute parsing, and how to register a brand-new shortcode (parser, widget, and skin).
 * `shortcodes.md` — technical blueprint for adding custom shortcode support, including the regex/scanner pattern used in `wysiwym.js`.
 * `../installation-setup.md` — how to wire the editor into a host page.

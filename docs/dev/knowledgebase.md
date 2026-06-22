@@ -106,8 +106,8 @@ By default, Traven displays the following tools in order (separated by pipe `|` 
 * `undo` / `redo` (History controls)
 * `bold` / `italic` / `strikethrough` / `highlight` / `code` / `codeblock` (Inline formatting)
 * `heading` (H1–H6 selection dropdown)
-* `bulletlist` / `numberedlist` / `tasklist` / `blockquote` / `hr` / `table` / `component` / `figure` (Block and special elements)
-* `datetime` / `search` / `link` / `image` / `video` / `audio` / `fullscreen` / `clear` / `uppercase` / `lowercase` / `capitalize` / `removeformatting` / `gotoline` / `help` (Utility functions)
+* `bulletlist` / `numberedlist` / `tasklist` / `blockquote` / `hr` / `table` / `component` / `snippet` / `figure` (Block and special elements)
+* `datetime` / `search` / `link` / `image` / `video` / `audio` / `fullscreen` / `clear` / `uppercase` / `lowercase` / `capitalize` / `removeformatting` / `gotoline` / `help` / `settings` (Utility functions)
 
 This corresponds to the `DEFAULT_TOOLBAR` array defined in `src/index.js`.
 
@@ -134,7 +134,7 @@ Each button generated in the toolbar is assigned the class `.toolbar-btn` and a 
 | `bold` | `.btn-bold` | Bold text (`**bold text**`) | `Ctrl+B` (`Cmd+B` on Mac) |
 | `italic` | `.btn-italic` | Italic text (`*italic text*`) | `Ctrl+I` (`Cmd+I` on Mac) |
 | `strikethrough` | `.btn-strikethrough` | Strikethrough text (`~~strikethrough~~`) | `Ctrl+Shift+S` (`Cmd+Shift+S` on Mac) |
-| `highlight` | `.btn-highlight` | Highlight text (`==highlight==`) | - |
+| `highlight` | `.btn-highlight` | Highlight text (`==highlight==`) | `Ctrl+Shift+H` (`Cmd+Shift+H` on Mac) |
 | `code` | `.btn-code` | Inline code backticks (`` `code` ``) | - |
 | `heading` | `.btn-heading` | Dropdown menu for Heading 1 to Heading 6 | - |
 | `bulletlist` | `.btn-bulletlist` | Unordered list formatting (`- `) | - |
@@ -158,8 +158,10 @@ Each button generated in the toolbar is assigned the class `.toolbar-btn` and a 
 | `video` | `.btn-video` | Insert video shortcode via modal | - |
 | `audio` | `.btn-audio` | Insert audio shortcode via modal | - |
 | `component` | `.btn-component` | Insert `[component]` shortcode block via modal | - |
+| `snippet` | `.btn-snippet` | Dropdown menu for custom snippets & Manage Snippets modal | - |
 | `figure` | `.btn-figure` | Insert `[figure]` shortcode block via modal | - |
 | `help` | `.btn-help` | Open keyboard shortcuts help modal | `Ctrl+/` (`Cmd+/` on Mac) |
+| `settings` | `.btn-settings` | Open toolbar configuration settings modal | - |
 
 ### Hiding Buttons via CSS
 Although the preferred way to hide buttons is through the `toolbar` array configuration, host platforms can also hide toolbar buttons by editing or overriding styles in `packages/core/assets/toolbars/toolbar-default.css`. E.g., to hide the "Redo" and "Heading" buttons:
@@ -170,6 +172,8 @@ Although the preferred way to hide buttons is through the `toolbar` array config
   display: none;
 }
 ```
+
+For the complete table of buttons, their CSS class selectors, and default keyboard shortcuts, see the general **[Customization & Styling Guide](../customization-styling.md)**.
 
 ### Adding a New Toolbar Button
 To add a brand-new formatting tool to Traven, follow these three steps:
