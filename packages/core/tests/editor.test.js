@@ -1900,7 +1900,7 @@ describe('HTML Sanitization (XSS Security) in HTML Preview', () => {
 
   it('2. Configured sanitizeHtml option is invoked and sanitizes compiled HTML', () => {
     const customSanitizer = vi.fn((html) => {
-      return html.replace(/<script>.*?<\/script>/g, '[CLEANED]');
+      return html.replace('<script>alert(1)</script>', '[CLEANED]');
     });
 
     const editor = new TravenEditor({
@@ -1917,7 +1917,7 @@ describe('HTML Sanitization (XSS Security) in HTML Preview', () => {
 
   it('3. Auto-detected global window.DOMPurify sanitizes the output', () => {
     window.DOMPurify = {
-      sanitize: vi.fn((html) => html.replace(/<script>.*?<\/script>/g, '[PURIFIED]')),
+      sanitize: vi.fn((html) => html.replace('<script>alert(1)</script>', '[PURIFIED]')),
     };
 
     const editor = new TravenEditor({
@@ -1933,7 +1933,7 @@ describe('HTML Sanitization (XSS Security) in HTML Preview', () => {
 
   it('4. Custom renderer output still gets processed by the sanitization hook', () => {
     const customSanitizer = vi.fn((html) => {
-      return html.replace(/<script>.*?<\/script>/g, '[CLEANED]');
+      return html.replace('<script>alert(1)</script>', '[CLEANED]');
     });
 
     const editor = new TravenEditor({
