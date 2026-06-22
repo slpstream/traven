@@ -1,5 +1,11 @@
 # @freedomware/traven
 
+## 0.2.15
+
+### Patch Changes
+
+- 9faa3a9: Implement configurable HTML sanitization option (`sanitizeHtml`) in the editor options and automatic dynamic global `window.DOMPurify` detection in `getContentHtml()` to secure raw HTML previews.
+
 ## 0.2.14
 
 ### Patch Changes
