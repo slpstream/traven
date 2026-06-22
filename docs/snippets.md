@@ -55,6 +55,6 @@ Because Custom Snippets insert plain text directly into the editor, they can be 
 - **HTML Components:** If you frequently inject custom HTML (like a specific div structure for styling), save the raw HTML as a snippet for quick insertion.
 
 > [!WARNING]
-> **Security Caveat**: Traven does **not** sanitize HTML output. Since snippets can contain raw HTML, any HTML inserted via a snippet will be rendered unescaped in the final HTML output. If you are rendering untrusted or user-submitted Markdown, you must run the resulting HTML through a secure HTML sanitizer library (e.g., `DOMPurify`) before injecting it into the page.
+> **Security Caveat**: Traven's compiled HTML output returned by `getContentHtml()` is unsanitized by default unless you configure a custom `sanitizeHtml` function in the editor options or load `DOMPurify` globally on your page. Since snippets can contain raw HTML, any HTML inserted via a snippet will be rendered unescaped in the final HTML output unless one of these sanitization pathways is active.
 
 Snippets are stored locally in the browser (`traven-snippets` key).

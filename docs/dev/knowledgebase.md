@@ -441,14 +441,15 @@ To protect against URI-based XSS attacks—specifically through Markdown links `
 
 ### C. HTML Block & Tag Rendering (WYSIWYM)
 Traven includes an `HTMLPlugin` to render raw HTML blocks (`HTMLBlock` nodes) and paired inline HTML tags (`HTMLTag` nodes) inside the editor view when the cursor is outside.
-*   **Security Trust Model**: The plugin assumes a trust model where Traven trusts the author's input model (the XSS surface is confined to what the author types, similar to a static site generator). For integrations reading untrusted content sources, a robust sanitizer (like DOMPurify) should be run at the integration boundary, not inside the core editor.
+*   **Security Trust Model**: The plugin assumes a trust model where Traven trusts the author's input model (the XSS surface is confined to what the author types, similar to a static site generator). For integrations reading untrusted content sources, a robust sanitizer (like DOMPurify) should be run at the integration boundary. Traven supports this out-of-the-box in `getContentHtml()` via the custom `sanitizeHtml` option or through auto-detecting a global `window.DOMPurify` object.
 *   **Script & Event Stripping**: To prevent code execution inside the editor's live DOM view, a helper `safeHtmlForEditor` strips out `<script>` elements and inline event attributes (matching `/^on[a-z]+$/i` such as `onerror`, `onclick`). If `DOMParser` fails, it falls back to a safely escaped string.
 *   **SVG ID Scoping**: Appending duplicate SVGs with internal references (e.g. `clipPath` and `textPath`) causes global ID collisions in the DOM (where the second SVG points to the first hidden SVG's IDs). To resolve this, Traven dynamically scopes IDs in WYSIWYM mode by appending a unique suffix (e.g. `blobClip-suffix`) and updates all corresponding references (e.g. `url(#...)`, `href="#..."`, styling attributes, and selectors within `<style>` blocks).
 *   **Stack-based Tag Matcher**: Pairs inline HTML tags using an O(n) stack-based algorithm. Only the outermost paired elements are decorated to prevent overlapping/nested decorations inside CodeMirror.
 
-### D. Standalone Compiler XSS Risks (`renderMarkdown` / `TravenRenderer`)
-* **Unsanitized HTML Output**: The standalone rendering functions (`renderMarkdown` and `TravenRenderer`) output raw unescaped HTML for `HTMLBlock` and `HTMLTag` nodes. They do **not** run the editor's live DOM-only sanitization helper (`safeHtmlForEditor`) because they compile directly to static HTML strings.
-* **Risk Mitigation**: If using Traven to compile untrusted user-submitted Markdown in a browser or server-side environment, you must pass the resulting HTML through a secure HTML sanitizer library (such as DOMPurify) before injecting it into any webpage:
+### D. Sanitization in Editor Preview vs Standalone Compiler
+* **Editor Preview Sanitization (`getContentHtml`)**: `getContentHtml()` provides built-in integration boundary sanitization. It automatically runs HTML output through the custom `sanitizeHtml` configuration function (if configured) or delegates to `window.DOMPurify` (if globally loaded on the host page). Note that `sanitizeHtml` takes precedence, and `window.DOMPurify` auto-detection is skipped if configured.
+* **Unsanitized Standalone Output**: The standalone rendering functions (`renderMarkdown` and `TravenRenderer`) output raw unescaped HTML for `HTMLBlock` and `HTMLTag` nodes. They do **not** run the editor's live DOM-only sanitization helper (`safeHtmlForEditor`) or support `sanitizeHtml` options directly because they compile directly to static HTML strings.
+* **Risk Mitigation**: If compiling untrusted user-submitted Markdown outside of the active editor environment (e.g. server-side), you must manually pass the resulting HTML through a secure HTML sanitizer library before injecting it into any page:
   ```javascript
   import { renderMarkdown } from "@freedomware/traven";
   import DOMPurify from "dompurify";

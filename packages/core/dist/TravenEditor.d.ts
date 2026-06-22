@@ -42,6 +42,7 @@ export const DEFAULT_TOOLBAR: string[];
  * @property {number} [bubbleAppearDelay=200] - Delay in ms between pointer settling on a stable selection and the selection bubble appearing. Set to 0 to restore the previous eager-appear behavior.
  * @property {boolean} [autoLoadStyles=true] - Auto-inject core CSS from CDN/local bundle. Set to false for strict CSP environments.
  * @property {any} [codeLanguages] - Optional CodeMirror LanguageDescription array (e.g. from @codemirror/language-data) or matching function to enable syntax highlighting in fenced code blocks without bloating the core bundle.
+ * @property {(html: string) => string} [sanitizeHtml] - Optional custom HTML sanitization function. If provided, it takes precedence and window.DOMPurify auto-detection is skipped. If the sanitizer throws an error, it propagates to the caller.
  */
 export class TravenEditor {
     /**

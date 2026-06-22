@@ -13,6 +13,9 @@
     href="https://fonts.googleapis.com/css2?family=Goudy+Bookletter+1911&family=Macondo&family=Victor+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,700;1,400;1,700&family=Fira+Code:wght@400..700&family=Mozilla+Headline:wght@700;800;900&display=swap"
     rel="stylesheet">
 
+  <!-- Load DOMPurify for secure HTML Preview sanitization -->
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+
   <!-- Core Editor Styles -->
   <link rel="stylesheet" href="packages/core/dist/traven.css" id="traven-core-styles">
 

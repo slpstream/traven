@@ -1872,3 +1872,143 @@ describe('Agent API', () => {
     });
   });
 });
+
+describe('HTML Sanitization (XSS Security) in HTML Preview', () => {
+  let container;
+
+  beforeEach(() => {
+    expect(window.DOMPurify).toBeUndefined(); // Verify test isolation and cleanup from prior suites
+    container = document.createElement('div');
+    document.body.appendChild(container);
+  });
+
+  afterEach(() => {
+    container.remove();
+    if (typeof window !== 'undefined') {
+      delete window.DOMPurify;
+    }
+  });
+
+  it('1. Default behavior (no sanitizer, no DOMPurify) preserves raw HTML blocks', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '<div>Safe</div><script>alert(1)</script>',
+    });
+    const html = editor.getContentHtml();
+    expect(html).toContain('<script>alert(1)</script>');
+  });
+
+  it('2. Configured sanitizeHtml option is invoked and sanitizes compiled HTML', () => {
+    const customSanitizer = vi.fn((html) => {
+      return html.replace(/<script>.*?<\/script>/g, '[CLEANED]');
+    });
+
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '<div>Safe</div><script>alert(1)</script>',
+      sanitizeHtml: customSanitizer,
+    });
+
+    const html = editor.getContentHtml();
+    expect(customSanitizer).toHaveBeenCalled();
+    expect(html).toContain('<div>Safe</div>[CLEANED]');
+    expect(html).not.toContain('<script>');
+  });
+
+  it('3. Auto-detected global window.DOMPurify sanitizes the output', () => {
+    window.DOMPurify = {
+      sanitize: vi.fn((html) => html.replace(/<script>.*?<\/script>/g, '[PURIFIED]')),
+    };
+
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '<div>Safe</div><script>alert(1)</script>',
+    });
+
+    const html = editor.getContentHtml();
+    expect(window.DOMPurify.sanitize).toHaveBeenCalled();
+    expect(html).toContain('<div>Safe</div>[PURIFIED]');
+    expect(html).not.toContain('<script>');
+  });
+
+  it('4. Custom renderer output still gets processed by the sanitization hook', () => {
+    const customSanitizer = vi.fn((html) => {
+      return html.replace(/<script>.*?<\/script>/g, '[CLEANED]');
+    });
+
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: 'plain text',
+      sanitizeHtml: customSanitizer,
+    });
+
+    editor.registerRenderer((markdown) => {
+      return `<p>${markdown}</p><script>alert(1)</script>`;
+    });
+
+    const html = editor.getContentHtml();
+    expect(customSanitizer).toHaveBeenCalled();
+    expect(html).toBe('<p>plain text</p>[CLEANED]');
+  });
+
+  it('5. sanitizeHtml returning non-string falls back to raw HTML gracefully', () => {
+    const badSanitizer = vi.fn(() => null);
+
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '<p>test</p><script>alert(1)</script>',
+      sanitizeHtml: badSanitizer,
+    });
+
+    const html = editor.getContentHtml();
+    expect(badSanitizer).toHaveBeenCalled();
+    expect(html).toContain('<script>alert(1)</script>');
+  });
+
+  it('6. window.DOMPurify without a .sanitize function is ignored and does not crash', () => {
+    window.DOMPurify = {
+      notASanitizeMethod: true,
+    };
+
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '<p>test</p><script>alert(1)</script>',
+    });
+
+    const html = editor.getContentHtml();
+    expect(html).toContain('<script>alert(1)</script>');
+  });
+
+  it('7. sanitizeHtml option takes precedence over window.DOMPurify', () => {
+    const customSanitizer = vi.fn((html) => 'custom-sanitized');
+    window.DOMPurify = {
+      sanitize: vi.fn((html) => 'dompurify-sanitized'),
+    };
+
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: 'Hello',
+      sanitizeHtml: customSanitizer,
+    });
+
+    const html = editor.getContentHtml();
+    expect(customSanitizer).toHaveBeenCalled();
+    expect(window.DOMPurify.sanitize).not.toHaveBeenCalled();
+    expect(html).toBe('custom-sanitized');
+  });
+
+  it('8. sanitizeHtml error propagation is preserved', () => {
+    const errorSanitizer = vi.fn(() => {
+      throw new Error('Sanitization failed');
+    });
+
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '<p>test</p>',
+      sanitizeHtml: errorSanitizer,
+    });
+
+    expect(() => editor.getContentHtml()).toThrow('Sanitization failed');
+  });
+});
+

@@ -39,6 +39,7 @@ Initializes a new editor instance.
 | `bubbleAppearDelay`| `number` | `200` | Delay in ms between selection and selection bubble appearance. |
 | `autoLoadStyles` | `boolean` | `true` | Auto-inject core CSS from CDN/local bundle. Set to `false` for strict CSP environments. |
 | `codeLanguages` | `Array` | `null` | CodeMirror LanguageDescription array to enable syntax highlighting in fenced code blocks. |
+| `sanitizeHtml` | `function` | `null` | Optional custom HTML sanitization function: `(html: string) => string`. If provided, it takes precedence and `window.DOMPurify` auto-detection is skipped. |
 
 ---
 
@@ -127,7 +128,9 @@ Registers a custom Markdown compilation function to render custom HTML previews.
 *   **Parameters:** `renderFn` (`(markdown: string) => string`)
 
 ### `getContentHtml()`
-Returns the compiled HTML representation of the document, using the registered custom renderer or the built-in fallback parser.
+Returns the compiled HTML representation of the document, using the registered custom renderer or the built-in fallback parser. 
+
+If the `sanitizeHtml` configuration option is provided, it is used to sanitize the HTML output. Otherwise, if `window.DOMPurify` is loaded on the page, it will automatically sanitize the HTML before returning. If neither is available, it returns the raw unescaped compiled HTML.
 *   **Returns:** `string`
 
 ### `getView()`
@@ -261,6 +264,8 @@ Traven provides standalone utilities for compiling Markdown directly to HTML out
 
 > [!WARNING]
 > **Security Caveat**: The standalone compiler does **not** sanitize HTML output. Since Traven supports raw HTML blocks (`HTMLBlock`) and inline tags (`HTMLTag`), any HTML inserted in the input Markdown will be rendered unescaped in the final HTML output. If you are rendering untrusted user-submitted Markdown, you must run the resulting HTML through a secure HTML sanitizer library (e.g., `DOMPurify`) before injecting it into the page.
+> 
+> **Note**: Unlike the editor's `getContentHtml()` API, the standalone `renderMarkdown` and `TravenRenderer` functions do not support the `sanitizeHtml` option or perform automatic `window.DOMPurify` detection.
 
 ### `renderMarkdown(markdownText)`
 A convenience helper function to compile a Markdown string directly into HTML with all default Traven plugins, extensions, and shortcodes active.

@@ -212,6 +212,7 @@ function buildBaseSetup(options = {}) {
  * @property {number} [bubbleAppearDelay=200] - Delay in ms between pointer settling on a stable selection and the selection bubble appearing. Set to 0 to restore the previous eager-appear behavior.
  * @property {boolean} [autoLoadStyles=true] - Auto-inject core CSS from CDN/local bundle. Set to false for strict CSP environments.
  * @property {any} [codeLanguages] - Optional CodeMirror LanguageDescription array (e.g. from @codemirror/language-data) or matching function to enable syntax highlighting in fenced code blocks without bloating the core bundle.
+ * @property {(html: string) => string} [sanitizeHtml] - Optional custom HTML sanitization function. If provided, it takes precedence and window.DOMPurify auto-detection is skipped. If the sanitizer throws an error, it propagates to the caller.
  */
 
 export class TravenEditor {
@@ -908,15 +909,37 @@ export class TravenEditor {
   }
 
   /**
+   * Sanitizes the compiled HTML output using either the configured custom
+   * sanitizer or window.DOMPurify if available globally.
+   * @param {string} html - Raw compiled HTML.
+   * @returns {string} Sanitized HTML.
+   */
+  #applySanitization(html) {
+    const fn = /** @type {any} */ (this.#options).sanitizeHtml;
+    if (typeof fn === "function") {
+      const result = fn(html);
+      return typeof result === "string" ? result : html;
+    }
+    if (
+      typeof window !== "undefined" &&
+      window["DOMPurify"] &&
+      typeof window["DOMPurify"].sanitize === "function"
+    ) {
+      return window["DOMPurify"].sanitize(html);
+    }
+    return html;
+  }
+
+  /**
    * Returns the rendered HTML of the current document content.
    * @returns {string} HTML representation of the document.
    */
   getContentHtml() {
     const val = this.getValue();
-    if (this.#customRenderer) {
-      return this.#customRenderer(val);
-    }
-    return this.#renderer.compile(val);
+    const raw = this.#customRenderer
+      ? this.#customRenderer(val)
+      : this.#renderer.compile(val);
+    return this.#applySanitization(raw);
   }
 
   /**

@@ -28630,10 +28630,10 @@ var sD = class {
 			U.updateListener.of((t) => {
 				if (t.docChanged) {
 					let n = t.state.doc.toString();
-					e.onChange && e.onChange(n), this.#u("change", n), this.#t && !t.transactions.some((e) => e.annotation(nD)) && this.#t.dispatch({
+					e.onChange && e.onChange(n), this.#d("change", n), this.#t && !t.transactions.some((e) => e.annotation(nD)) && this.#t.dispatch({
 						changes: t.changes,
 						annotations: nD.of(!0)
-					}), this.#l();
+					}), this.#u();
 				}
 			}),
 			VT(),
@@ -28653,7 +28653,7 @@ var sD = class {
 			if ((t.ctrlKey || t.metaKey) && t.key === "s") {
 				t.preventDefault();
 				let n = this.getValue();
-				return e.onSave && e.onSave(n), this.#u("save", n), !0;
+				return e.onSave && e.onSave(n), this.#d("save", n), !0;
 			}
 			return !1;
 		} });
@@ -28707,7 +28707,7 @@ var sD = class {
 			}), e.theme === "dark" && this.#t.dom.classList.add("cm-wysiwym-dark");
 		}
 		Promise.resolve().then(() => {
-			this.#l();
+			this.#u();
 		}), typeof document < "u" && document.fonts && document.fonts.ready && document.fonts.ready.then(() => {
 			this.#e && this.#e.requestMeasure(), this.#t && this.#t.requestMeasure();
 		});
@@ -28754,7 +28754,7 @@ var sD = class {
 		this.#e.focus();
 	}
 	setReadOnly(e) {
-		this.#e.dispatch({ effects: iD.reconfigure(I.readOnly.of(e)) }), this.#t && this.#t.dispatch({ effects: iD.reconfigure(I.readOnly.of(e)) }), this.#d(e ? "Editor is now read only" : "Editor is now editable");
+		this.#e.dispatch({ effects: iD.reconfigure(I.readOnly.of(e)) }), this.#t && this.#t.dispatch({ effects: iD.reconfigure(I.readOnly.of(e)) }), this.#f(e ? "Editor is now read only" : "Editor is now editable");
 	}
 	isReadOnly() {
 		return this.#e.state.readOnly;
@@ -28781,11 +28781,11 @@ var sD = class {
 		}), this.#e.focus();
 	}
 	setTheme(e) {
-		e === "dark" ? (this.#e.dom.classList.add("cm-wysiwym-dark"), this.#t && this.#t.dom.classList.add("cm-wysiwym-dark")) : (this.#e.dom.classList.remove("cm-wysiwym-dark"), this.#t && this.#t.dom.classList.remove("cm-wysiwym-dark")), this.#d(`Theme changed to ${e}`);
+		e === "dark" ? (this.#e.dom.classList.add("cm-wysiwym-dark"), this.#t && this.#t.dom.classList.add("cm-wysiwym-dark")) : (this.#e.dom.classList.remove("cm-wysiwym-dark"), this.#t && this.#t.dom.classList.remove("cm-wysiwym-dark")), this.#f(`Theme changed to ${e}`);
 	}
 	setVimMode(e) {
 		let t = e ? ME() : [];
-		this.#e.dispatch({ effects: rD.reconfigure(t) }), this.#t && this.#t.dispatch({ effects: rD.reconfigure(t) }), this.#d(e ? "Vim keybindings enabled" : "Vim keybindings disabled");
+		this.#e.dispatch({ effects: rD.reconfigure(t) }), this.#t && this.#t.dispatch({ effects: rD.reconfigure(t) }), this.#f(e ? "Vim keybindings enabled" : "Vim keybindings disabled");
 	}
 	getCharacterCount() {
 		return this.getValue().length;
@@ -28799,7 +28799,7 @@ var sD = class {
 		return Math.ceil(e / 200);
 	}
 	getMarkdownState() {
-		let e = this.#e.state, t = e.selection.main, n = e.doc.lineAt(t.head), { frontmatter: r, body: i } = this.#f();
+		let e = this.#e.state, t = e.selection.main, n = e.doc.lineAt(t.head), { frontmatter: r, body: i } = this.#p();
 		return {
 			markdown: e.doc.toString(),
 			frontmatter: r,
@@ -28827,9 +28827,17 @@ var sD = class {
 		if (typeof e != "function") throw Error("registerRenderer expects a function.");
 		this.#i = e;
 	}
+	#l(e) {
+		let t = this.#r.sanitizeHtml;
+		if (typeof t == "function") {
+			let n = t(e);
+			return typeof n == "string" ? n : e;
+		}
+		return typeof window < "u" && window.DOMPurify && typeof window.DOMPurify.sanitize == "function" ? window.DOMPurify.sanitize(e) : e;
+	}
 	getContentHtml() {
-		let e = this.getValue();
-		return this.#i ? this.#i(e) : this.#s.compile(e);
+		let e = this.getValue(), t = this.#i ? this.#i(e) : this.#s.compile(e);
+		return this.#l(t);
 	}
 	insertSnippet(e, t, n = "") {
 		let r = this.#e.state.selection.main, i = !r.empty, a = this.#e.state.sliceDoc(r.from, r.to), o = "", s = "";
@@ -28939,7 +28947,7 @@ var sD = class {
 		let e = this.#e.dom.closest(".editor-wrapper") || this.#e.dom.parentElement;
 		e.classList.toggle("is-fullscreen");
 		let t = e.classList.contains("is-fullscreen");
-		this.#d(t ? "Fullscreen enabled" : "Fullscreen disabled"), this.#e.requestMeasure(), this.#e.focus();
+		this.#f(t ? "Fullscreen enabled" : "Fullscreen disabled"), this.#e.requestMeasure(), this.#e.focus();
 	}
 	openSearch() {
 		vT(this.#e);
@@ -29145,28 +29153,28 @@ var sD = class {
 	}
 	triggerSave() {
 		let e = this.getValue();
-		this.#u("save", e);
+		this.#d("save", e);
 	}
 	on(e, t) {
 		this.#n[e] || (this.#n[e] = []), this.#n[e].push(t);
 	}
-	#l() {
+	#u() {
 		let e = {
 			words: this.getWordCount(),
 			characters: this.getCharacterCount(),
 			readTime: this.getReadTime()
 		};
-		this.#r.onStatsUpdate && this.#r.onStatsUpdate(e), this.#u("statsUpdate", e);
+		this.#r.onStatsUpdate && this.#r.onStatsUpdate(e), this.#d("statsUpdate", e);
 	}
-	#u(e, t) {
+	#d(e, t) {
 		this.#n[e] && this.#n[e].forEach((e) => e(t));
 	}
-	#d(e) {
+	#f(e) {
 		this.#o && (this.#o.textContent = "", setTimeout(() => {
 			this.#o && (this.#o.textContent = e);
 		}, 50));
 	}
-	#f() {
+	#p() {
 		let e = this.#e.state.doc.toString(), t = Y(this.#e.state), n = 0;
 		if (t.iterate({
 			from: 0,

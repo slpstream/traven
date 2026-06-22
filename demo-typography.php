@@ -30,6 +30,9 @@ if ($isPost) {
   <meta name="description"
     content="A dynamic typography customization environment for Traven Editor utilizing the skin-custom.css parameterized overlay.">
 
+  <!-- Load DOMPurify for secure HTML Preview sanitization -->
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+
   <!-- Core stylesheets -->
   <link rel="stylesheet" href="packages/core/assets/skins/skin-custom.css" id="editor-skin-link">
   <link rel="stylesheet" href="packages/core/assets/toolbars/toolbar-default.css" id="editor-toolbar-link">
