@@ -101,7 +101,7 @@ The fastest way to get Traven running is by simply dropping the custom HTML elem
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Traven Editor</title>
+  <title>Quick Start test drive of the editor</title>
 </head>
 <body>
 
@@ -118,7 +118,7 @@ The fastest way to get Traven running is by simply dropping the custom HTML elem
 </html>
 ```
 
-For more advanced setups, you can also instantiate Traven programmatically via `new TravenEditor()`.
+For more advanced setups, you can also instantiate Traven programmatically via `new TravenEditor()`. **[See how](https://traven.dev/docs/general/common-configurations/index.php)**.
 
 ---
 
