@@ -100,6 +100,8 @@ export const DEFAULT_TOOLBAR = [
   "italic",
   "strikethrough",
   "highlight",
+  "subscript",
+  "superscript",
   "code",
   "codeblock",
   "|",

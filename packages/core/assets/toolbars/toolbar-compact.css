@@ -13,6 +13,8 @@
 .traven-toolbar-container:not(.is-customized) .btn-undo,
 .traven-toolbar-container:not(.is-customized) .btn-redo,
 .traven-toolbar-container:not(.is-customized) .btn-strikethrough,
+.traven-toolbar-container:not(.is-customized) .btn-subscript,
+.traven-toolbar-container:not(.is-customized) .btn-superscript,
 .traven-toolbar-container:not(.is-customized) .btn-tasklist,
 .traven-toolbar-container:not(.is-customized) .btn-hr,
 .traven-toolbar-container:not(.is-customized) .btn-datetime,

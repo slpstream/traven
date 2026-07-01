@@ -6,7 +6,7 @@
  */
 export const BUBBLE_ACTIONS = [
   // Category 1
-  "bold", "italic", "strikethrough", "highlight", "code", "link",
+  "bold", "italic", "strikethrough", "highlight", "subscript", "superscript", "code", "link",
   "uppercase", "lowercase", "capitalize", "removeformatting",
   // Category 2
   "heading", "blockquote", "bulletlist", "numberedlist", "tasklist", "codeblock",

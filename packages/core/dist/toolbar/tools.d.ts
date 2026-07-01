@@ -228,6 +228,18 @@ export const TOOL_REGISTRY: {
         icon: string;
         action: () => void;
     };
+    subscript: {
+        key: string;
+        title: string;
+        icon: string;
+        action: (editor: any) => any;
+    };
+    superscript: {
+        key: string;
+        title: string;
+        icon: string;
+        action: (editor: any) => any;
+    };
     snippet: {
         key: string;
         title: string;

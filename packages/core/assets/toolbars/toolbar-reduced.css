@@ -2,6 +2,8 @@
 
 /* Exclude less commonly used buttons for the reduced toolbar layout */
 .traven-toolbar-container .btn-strikethrough,
+.traven-toolbar-container .btn-subscript,
+.traven-toolbar-container .btn-superscript,
 .traven-toolbar-container .btn-gotoline,
 .traven-toolbar-container .btn-search,
 .traven-toolbar-container .btn-help,

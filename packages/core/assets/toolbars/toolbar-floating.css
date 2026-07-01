@@ -256,3 +256,11 @@
   border-color: rgba(255, 255, 255, 0.12);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
 }
+
+/* Hide subscript and superscript buttons from floating menus */
+.traven-bubble-menu .btn-subscript,
+.traven-bubble-menu .btn-superscript,
+.traven-gutter-menu .btn-subscript,
+.traven-gutter-menu .btn-superscript {
+  display: none !important;
+}

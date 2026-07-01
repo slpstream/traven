@@ -359,6 +359,18 @@ export const TOOL_REGISTRY = {
     icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><circle cx="92" cy="60" r="12" fill="currentColor"/><circle cx="164" cy="60" r="12" fill="currentColor"/><circle cx="92" cy="128" r="12" fill="currentColor"/><circle cx="164" cy="128" r="12" fill="currentColor"/><circle cx="92" cy="196" r="12" fill="currentColor"/><circle cx="164" cy="196" r="12" fill="currentColor"/></svg>`,
     action: () => {}
   },
+  subscript: {
+    key: "subscript",
+    title: "Subscript",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="M248,208a8,8,0,0,1-8,8H192a8,8,0,0,1-6.4-12.8l43.17-57.56a16,16,0,1,0-27.86-15,8,8,0,0,1-15.09-5.34,32.18,32.18,0,0,1,4.63-8.59,32,32,0,0,1,51.11,38.52L208,200h32A8,8,0,0,1,248,208ZM149.24,50a8,8,0,0,0-11.29.8L92,103.78l-45.95-53A8,8,0,0,0,34,61.24L81.41,116,34,170.76a8,8,0,0,0,12.1,10.48l46-53,45.95,53a8,8,0,1,0,12.1-10.48L102.59,116l47.46-54.76A8,8,0,0,0,149.24,50Z" fill="currentColor"/></svg>`,
+    action: (editor) => editor.insertSnippet("~", "~", "subscript")
+  },
+  superscript: {
+    key: "superscript",
+    title: "Superscript",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="M248,144a8,8,0,0,1-8,8H192a8,8,0,0,1-6.4-12.8l43.17-57.55a16,16,0,1,0-27.86-15,8,8,0,0,1-15.09-5.33,32,32,0,1,1,55.74,29.92L208,136h32A8,8,0,0,1,248,144ZM149.24,74a8,8,0,0,0-11.29.8L92,127.79l-45.95-53A8,8,0,0,0,34,85.24L81.41,140,34,194.76a8,8,0,0,0,12.1,10.48l46-53,45.95,53a8,8,0,1,0,12.1-10.48L102.59,140l47.46-54.76A8,8,0,0,0,149.24,74Z" fill="currentColor"/></svg>`,
+    action: (editor) => editor.insertSnippet("^", "^", "superscript")
+  },
   snippet: {
     key: "snippet",
     title: "Custom Snippets",

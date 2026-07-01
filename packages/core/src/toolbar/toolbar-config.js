@@ -6,7 +6,7 @@
  * present in the integrator's toolbar array.
  */
 export const TOOL_CATEGORIES = {
-  "Formatting": ["bold", "italic", "strikethrough", "highlight", "code", "codeblock"],
+  "Formatting": ["bold", "italic", "strikethrough", "highlight", "subscript", "superscript", "code", "codeblock"],
   "Structure": ["heading", "bulletlist", "numberedlist", "tasklist", "blockquote", "hr", "table"],
   "Media & Links": ["link", "image", "video", "audio", "figure", "component"],
   "Utilities": ["undo", "redo", "search", "fullscreen", "clear", "datetime", "gotoline", "uppercase", "lowercase", "capitalize", "removeformatting", "snippet", "help"]
