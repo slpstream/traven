@@ -1,5 +1,11 @@
 # @freedomware/traven
 
+## 0.2.16
+
+### Patch Changes
+
+- d57e2f7: Add Subscript and Superscript buttons to the default editor toolbars and selection bubble menu.
+
 ## 0.2.15
 
 ### Patch Changes
