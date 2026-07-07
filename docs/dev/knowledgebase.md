@@ -295,7 +295,7 @@ To prevent subtle divergence bugs between the WYSIWYM decorations builder (`src/
 * **`isInCodeBlock(state, pos)`**: Prevents editor commands from inserting list formatting when the selection starts inside a fenced code block or inline code text.
 * **Benefits**: Resolves pre-existing bugs such as incorrect parsing of star/plus list bullets (`*`, `+`), double-insertions on negative numbers (`-3.14`), and formatting corruptions inside code blocks.
 
-### K. Custom Image Shortcode [image ...] Parser & Widget
+### K. Custom Image Shortcode `[image ...]` Parser & Widget
 Traven includes support for an optional, self-closing `[image src="..." align="..." size="..." caption="..." class="..." alt="..."]` shortcode system:
 * **Optional & Backwards-Compatible**: This custom shortcode is completely optional. Traven remains fully backwards-compatible with standard Markdown image syntax (`![alt](src)`). Legacies images will parse, render, and compile exactly as they did previously.
 * **Lezer Custom Inline Parser (`src/shortcode-parser.js`)**: Implements a custom `@lezer/markdown` inline parser that detects the `[image` tag, scans for key-value attribute pairs (normalizing single, double, or unquoted values), and builds a structured AST subtree with nodes like `ImageShortcode`, `ShortcodeMark`, `ShortcodeTagName`, `ShortcodeAttributeName`, and `ShortcodeAttributeValue`. It is integrated into the CodeMirror markdown configuration inside `src/index.js`.
@@ -339,7 +339,7 @@ Traven includes native support for an optional `[audio src="..." align="..." siz
 * **Toolbar Button**: The audio toolbar tool (`.btn-audio`) opens `openAudioModal()` from `src/toolbar/modal-audio.js` to insert or edit audio shortcodes.
 * **Delimiter Skip Integration**: Delimiter skipping in `src/delimiter-skip.js` automatically detects `AudioShortcode` syntax boundaries for seamless arrow navigation.
 
-### O. Custom Figure Shortcode [figure ...] Parser & Widget
+### O. Custom Figure Shortcode `[figure ...]` Parser & Widget
 Traven includes native support for an optional `[figure align="..." size="..." caption="..." class="..."]...[/figure]` shortcode system designed to wrap block-level contents in a captioned figure block:
 * **Lezer Custom Inline Parser (`src/figure-parser.js`)**: Implements a custom `@lezer/markdown` inline parser that detects the `[figure` tag, parses attributes, and builds a structured AST subtree containing `FigureShortcode`, `FigureShortcodeOpen`, `FigureShortcodeClose`, `FigureShortcodeBody`, `FigureShortcodeTagName`, and attribute name/value tokens.
 * **WYSIWYM Widget Rendering**: The `FigureShortcodeWidget` in `src/wysiwym.js` collapses the raw shortcode text when the cursor is outside. It renders the figure's body content (allowing nested block elements like images, code blocks, or tables) and displays a caption underneath if specified, alongside an edit icon. Clicking the widget launches the interactive Figure Modal.
