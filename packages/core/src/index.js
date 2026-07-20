@@ -32,6 +32,8 @@ export { getCM } from "@replit/codemirror-vim";
 export { TravenEditorElement } from "./TravenEditorElement.js";
 export { TravenRenderer } from "./renderer/index.js";
 export { TravenPlugin } from "./plugins/TravenPlugin.js";
+export { registerTools, getTool, TOOL_REGISTRY } from "./toolbar/tools.js";
+export { openModal } from "./toolbar/modal-base.js";
 /** Re-exported so host plugins share the same CodeMirror instance as the editor bundle. */
 export { Decoration, WidgetType } from "@codemirror/view";
 export { Decoration as Decorations } from "@codemirror/view";

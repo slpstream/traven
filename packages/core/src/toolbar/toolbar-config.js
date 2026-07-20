@@ -12,6 +12,21 @@ export const TOOL_CATEGORIES = {
   "Utilities": ["undo", "redo", "search", "fullscreen", "clear", "datetime", "gotoline", "uppercase", "lowercase", "capitalize", "removeformatting", "snippet", "help"]
 };
 
+/**
+ * Append tool keys to a settings-modal category (idempotent).
+ * @param {string} category
+ * @param {string[]} keys
+ */
+export function addToolsToCategory(category, keys) {
+  if (!TOOL_CATEGORIES[category]) {
+    TOOL_CATEGORIES[category] = [];
+  }
+  const list = TOOL_CATEGORIES[category];
+  for (const key of keys) {
+    if (key && !list.includes(key)) list.push(key);
+  }
+}
+
 /** Tools that cannot be disabled by end-users. */
 export const LOCKED_TOOLS = ["settings"];
 

@@ -26,6 +26,7 @@ export const DEFAULT_TOOLBAR: string[];
  * @property {function(File): Promise<string>} [onUploadImage] - Callback handling image uploads.
  * @property {function(string): Promise<{title: string, url: string, slug?: string}[]>} [onSuggestLinks] - Optional host callback for link-modal autocomplete. When set, typing in the URL field requests suggestions (e.g. site pages). Hosts that omit it keep the classic text+URL modal.
  * @property {import("./plugins/TravenPlugin.js").TravenPlugin[]} [plugins] - Additional TravenPlugin instances registered at init (grammar, decorations, keymap, extensions, HTML render). Core built-ins always load; host plugins are appended.
+ * @property {Object.<string, object>} [extraTools] - Optional host/plugin toolbar tool definitions merged via registerTools() at init. Must also list keys in `toolbar` to show buttons (never added to DEFAULT_TOOLBAR).
  * @property {"light" | "dark"} [theme] - Visual style theme.
  * @property {string} [caretColor] - Configurable caret color override.
  * @property {Array<string>|boolean} [toolbar=false] - Toolbar configuration array or false.
@@ -394,6 +395,12 @@ export type TravenOptions = {
      * - Additional TravenPlugin instances registered at init (grammar, decorations, keymap, extensions, HTML render). Core built-ins always load; host plugins are appended.
      */
     plugins?: import("./plugins/TravenPlugin.js").TravenPlugin[];
+    /**
+     * - Optional host/plugin toolbar tool definitions merged via registerTools() at init. Must also list keys in `toolbar` to show buttons (never added to DEFAULT_TOOLBAR).
+     */
+    extraTools?: {
+        [x: string]: any;
+    };
     /**
      * - Visual style theme.
      */

@@ -2074,3 +2074,46 @@ describe('options.plugins host registration', () => {
   });
 });
 
+describe('registerTools / extraTools', () => {
+  let container;
+
+  beforeEach(() => {
+    container = document.createElement('div');
+    document.body.appendChild(container);
+  });
+
+  afterEach(() => {
+    document.body.innerHTML = '';
+  });
+
+  it('registers tools via options.extraTools so toolbar can resolve them', async () => {
+    const { registerTools, getTool } = await import('../src/toolbar/tools.js');
+    const action = vi.fn();
+    registerTools({
+      'test-extra': {
+        title: 'Test Extra',
+        icon: '<svg></svg>',
+        action,
+      },
+    });
+    expect(getTool('test-extra')?.title).toBe('Test Extra');
+
+    new TravenEditor({
+      element: container,
+      initialValue: '',
+      toolbar: ['test-extra'],
+      toolbarMode: 'static',
+      extraTools: {
+        'test-extra-2': {
+          title: 'Two',
+          icon: '<svg></svg>',
+          action: vi.fn(),
+        },
+      },
+    });
+    expect(getTool('test-extra-2')?.title).toBe('Two');
+    const btn = container.querySelector('.btn-test-extra');
+    expect(btn).not.toBeNull();
+  });
+});
+

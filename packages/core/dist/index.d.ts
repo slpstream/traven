@@ -9,6 +9,8 @@ export { getCM } from "@replit/codemirror-vim";
 export { TravenEditorElement } from "./TravenEditorElement.js";
 export { TravenRenderer } from "./renderer/index.js";
 export { TravenPlugin } from "./plugins/TravenPlugin.js";
+export { openModal } from "./toolbar/modal-base.js";
 export { syntaxTree } from "@codemirror/language";
 export { TravenEditor, DEFAULT_TOOLBAR } from "./TravenEditor.js";
+export { registerTools, getTool, TOOL_REGISTRY } from "./toolbar/tools.js";
 export { Decoration, WidgetType, Decoration as Decorations } from "@codemirror/view";

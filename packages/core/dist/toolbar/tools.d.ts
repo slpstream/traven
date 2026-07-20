@@ -1,3 +1,20 @@
+/**
+ * Register host/plugin toolbar tools into the shared registry.
+ * Keys must be listed in `options.toolbar` to appear; they are never added to DEFAULT_TOOLBAR.
+ *
+ * @param {Object.<string, object>} defs - Map of tool key → tool definition ({ title, icon, action, keybinding?, ... }).
+ * @param {{ category?: string }} [opts] - Optional settings-modal category (default "Media & Links").
+ */
+export function registerTools(defs: {
+    [x: string]: any;
+}, opts?: {
+    category?: string;
+}): void;
+/**
+ * @param {string} key
+ * @returns {object|undefined}
+ */
+export function getTool(key: string): object | undefined;
 export const TOOL_REGISTRY: {
     settings: {
         key: string;

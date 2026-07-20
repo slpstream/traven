@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { parseExpandEmbedAttrs } from "../src/parser.js";
+import { buildExpandEmbedShortcode } from "../src/shortcode-build.js";
 
 describe("parseExpandEmbedAttrs", () => {
   it("parses slug and heading attributes", () => {
@@ -20,5 +21,17 @@ describe("parseExpandEmbedAttrs", () => {
     expect(r.mode).toBe("embed");
     expect(r.slug).toBe("other-post");
     expect(r.heading).toBeNull();
+  });
+});
+
+describe("buildExpandEmbedShortcode", () => {
+  it("builds expand with slug only", () => {
+    expect(buildExpandEmbedShortcode("expand", "hello")).toBe('[expand slug="hello"]');
+  });
+
+  it("builds embed with heading", () => {
+    expect(buildExpandEmbedShortcode("embed", "hello", "Sec")).toBe(
+      '[embed slug="hello" heading="Sec"]'
+    );
   });
 });

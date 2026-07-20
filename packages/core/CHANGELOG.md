@@ -1,5 +1,11 @@
 # @freedomware/traven
 
+## 0.2.18
+
+### Patch Changes
+
+- Add `registerTools()` / `options.extraTools` so hosts and plugins can register toolbar tools without changing `DEFAULT_TOOLBAR`. Export `openModal`, `TOOL_REGISTRY`, `getTool`.
+
 ## 0.2.17
 
 ### Patch Changes

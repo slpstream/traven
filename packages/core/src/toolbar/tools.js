@@ -2,6 +2,7 @@
 import { openModal, openLinkModal, openImageModal, openHelpModal, openTableModal, openComponentModal, openVideoModal, openAudioModal, openFigureModal, openSnippetModal } from "./modal.js";
 import { openSettingsModal } from "./modal-settings.js";
 import { getSnippets } from "./snippet-store.js";
+import { addToolsToCategory } from "./toolbar-config.js";
 
 export const TOOL_REGISTRY = {
   settings: {
@@ -392,3 +393,33 @@ export const TOOL_REGISTRY = {
     }
   }
 };
+
+/**
+ * Register host/plugin toolbar tools into the shared registry.
+ * Keys must be listed in `options.toolbar` to appear; they are never added to DEFAULT_TOOLBAR.
+ *
+ * @param {Object.<string, object>} defs - Map of tool key → tool definition ({ title, icon, action, keybinding?, ... }).
+ * @param {{ category?: string }} [opts] - Optional settings-modal category (default "Media & Links").
+ */
+export function registerTools(defs, opts = {}) {
+  if (!defs || typeof defs !== "object") return;
+  const category = opts.category || "Media & Links";
+  /** @type {string[]} */
+  const keys = [];
+  for (const [key, def] of Object.entries(defs)) {
+    if (!key || !def || typeof def !== "object") continue;
+    TOOL_REGISTRY[key] = { ...def, key: def.key || key };
+    keys.push(key);
+  }
+  if (keys.length > 0) {
+    addToolsToCategory(category, keys);
+  }
+}
+
+/**
+ * @param {string} key
+ * @returns {object|undefined}
+ */
+export function getTool(key) {
+  return TOOL_REGISTRY[key];
+}

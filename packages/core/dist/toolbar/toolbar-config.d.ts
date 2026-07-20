@@ -1,4 +1,10 @@
 /**
+ * Append tool keys to a settings-modal category (idempotent).
+ * @param {string} category
+ * @param {string[]} keys
+ */
+export function addToolsToCategory(category: string, keys: string[]): void;
+/**
  * Load saved enabled-tool keys from localStorage.
  * @param {string} [scope]
  * @returns {string[] | null} - null if no config saved.
