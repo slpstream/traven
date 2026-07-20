@@ -386,6 +386,14 @@ button.btn-snippet {
   box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
 }
 
+/* Portaled list: escapes .traven-modal overflow:hidden; top/left/width set in JS */
+.traven-link-suggest-list.is-fixed {
+  position: fixed;
+  right: auto;
+  margin: 0;
+  z-index: 10001;
+}
+
 .traven-link-suggest-item {
   display: flex;
   flex-direction: column;

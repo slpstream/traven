@@ -59,14 +59,35 @@ export function openLinkModal(editor, triggerBtn) {
   let activeIndex = -1;
   /** @type {LinkSuggestion[]} */
   let currentSuggestions = [];
+  /** @type {(() => void) | null} */
+  let removePositionListeners = null;
+
+  const clearPositionListeners = () => {
+    if (removePositionListeners) {
+      removePositionListeners();
+      removePositionListeners = null;
+    }
+  };
+
+  const positionSuggestList = () => {
+    if (!suggestList) return;
+    const rect = urlInputEl.getBoundingClientRect();
+    suggestList.style.top = `${rect.bottom + 4}px`;
+    suggestList.style.left = `${rect.left}px`;
+    suggestList.style.width = `${rect.width}px`;
+  };
 
   const hideSuggestions = () => {
+    clearPositionListeners();
     if (suggestList) {
       suggestList.remove();
       suggestList = null;
     }
     activeIndex = -1;
     currentSuggestions = [];
+    urlInputEl.setAttribute("aria-expanded", "false");
+    urlInputEl.removeAttribute("aria-activedescendant");
+    urlInputEl.removeAttribute("aria-controls");
   };
 
   const applySuggestion = (/** @type {LinkSuggestion} */ item) => {
@@ -84,7 +105,7 @@ export function openLinkModal(editor, triggerBtn) {
     if (currentSuggestions.length === 0) return;
 
     suggestList = document.createElement("ul");
-    suggestList.className = "traven-link-suggest-list";
+    suggestList.className = "traven-link-suggest-list is-fixed";
     suggestList.setAttribute("role", "listbox");
     suggestList.id = "traven-link-suggest-list";
 
@@ -113,7 +134,18 @@ export function openLinkModal(editor, triggerBtn) {
       suggestList.appendChild(li);
     });
 
-    urlField.appendChild(suggestList);
+    // Portal to body so overflow:hidden on .traven-modal cannot clip the list
+    document.body.appendChild(suggestList);
+    positionSuggestList();
+
+    const onReposition = () => positionSuggestList();
+    window.addEventListener("resize", onReposition);
+    window.addEventListener("scroll", onReposition, true);
+    removePositionListeners = () => {
+      window.removeEventListener("resize", onReposition);
+      window.removeEventListener("scroll", onReposition, true);
+    };
+
     urlInputEl.setAttribute("aria-expanded", "true");
     urlInputEl.setAttribute("aria-controls", "traven-link-suggest-list");
   };
