@@ -2012,3 +2012,65 @@ describe('HTML Sanitization (XSS Security) in HTML Preview', () => {
   });
 });
 
+describe('onSuggestLinks / getSuggestLinks', () => {
+  let container;
+
+  beforeEach(() => {
+    container = document.createElement('div');
+    document.body.appendChild(container);
+  });
+
+  afterEach(() => {
+    document.body.innerHTML = '';
+  });
+
+  it('returns null when no handler is configured', () => {
+    const editor = new TravenEditor({ element: container, initialValue: '' });
+    expect(editor.getSuggestLinks()).toBeNull();
+  });
+
+  it('returns the configured onSuggestLinks handler', async () => {
+    const handler = vi.fn(async () => [{ title: 'Hello', url: '/blog/post.php?slug=hello', slug: 'hello' }]);
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '',
+      onSuggestLinks: handler,
+    });
+    expect(editor.getSuggestLinks()).toBe(handler);
+    const results = await editor.getSuggestLinks()('hel');
+    expect(results).toHaveLength(1);
+    expect(results[0].slug).toBe('hello');
+  });
+});
+
+describe('options.plugins host registration', () => {
+  let container;
+
+  beforeEach(() => {
+    container = document.createElement('div');
+    document.body.appendChild(container);
+  });
+
+  afterEach(() => {
+    document.body.innerHTML = '';
+  });
+
+  it('calls onRegister for host plugins at init', async () => {
+    const { TravenPlugin } = await import('../src/plugins/TravenPlugin.js');
+    const onRegister = vi.fn();
+    class HostPlugin extends TravenPlugin {
+      name = 'host-test';
+      onRegister(ctx) {
+        onRegister(ctx);
+      }
+    }
+    new TravenEditor({
+      element: container,
+      initialValue: '',
+      plugins: [new HostPlugin()],
+    });
+    expect(onRegister).toHaveBeenCalledTimes(1);
+    expect(onRegister.mock.calls[0][0].options).toBeTruthy();
+  });
+});
+

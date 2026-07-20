@@ -196,6 +196,8 @@ function buildBaseSetup(options = {}) {
  * @property {function(string): void} [onChange] - Callback fired on document changes.
  * @property {function(string): void} [onSave] - Callback fired on manual save command (Cmd+S / Ctrl+S).
  * @property {function(File): Promise<string>} [onUploadImage] - Callback handling image uploads.
+ * @property {function(string): Promise<{title: string, url: string, slug?: string}[]>} [onSuggestLinks] - Optional host callback for link-modal autocomplete. When set, typing in the URL field requests suggestions (e.g. site pages). Hosts that omit it keep the classic text+URL modal.
+ * @property {import("./plugins/TravenPlugin.js").TravenPlugin[]} [plugins] - Additional TravenPlugin instances registered at init (grammar, decorations, keymap, extensions, HTML render). Core built-ins always load; host plugins are appended.
  * @property {"light" | "dark"} [theme] - Visual style theme.
  * @property {string} [caretColor] - Configurable caret color override.
  * @property {Array<string>|boolean} [toolbar=false] - Toolbar configuration array or false.
@@ -367,6 +369,9 @@ export class TravenEditor {
     ];
 
     const mdParser = /** @type {import("@lezer/markdown").MarkdownParser} */ (markdownLanguage.parser);
+    const hostPlugins = Array.isArray(options.plugins)
+      ? options.plugins.filter((p) => p && typeof p === "object")
+      : [];
     const activePlugins = [
       new HeadingPlugin(),
       new HrPlugin(),
@@ -380,8 +385,29 @@ export class TravenEditor {
       new MermaidPlugin(),
       new TablePlugin(),
       new ShortcodePlugin(),
-      new HTMLPlugin()
+      new HTMLPlugin(),
+      ...hostPlugins,
     ];
+
+    // Host plugins may contribute Lezer MarkdownConfig (grammar) at init.
+    for (const plugin of hostPlugins) {
+      if (typeof plugin.getMarkdownConfig === "function") {
+        const cfg = plugin.getMarkdownConfig();
+        if (cfg) parserExtensions.push(cfg);
+      }
+    }
+
+    const pluginContext = { editor: this, options };
+    for (const plugin of hostPlugins) {
+      if (typeof plugin.onRegister === "function") {
+        try {
+          plugin.onRegister(pluginContext);
+        } catch (err) {
+          console.error(`Plugin ${plugin.name || "(unnamed)"} onRegister failed:`, err);
+        }
+      }
+    }
+
     const baseLang = yamlFrontmatter({
       content: markdown({
         ...(options.codeLanguages
@@ -391,6 +417,13 @@ export class TravenEditor {
       }),
     });
     this.#renderer = new TravenRenderer(baseLang.language.parser, activePlugins);
+
+    const hostKeymaps = hostPlugins.flatMap((p) =>
+      typeof p.getKeymap === "function" ? p.getKeymap() || [] : []
+    );
+    const hostExtensions = hostPlugins.flatMap((p) =>
+      typeof p.getExtensions === "function" ? p.getExtensions() || [] : []
+    );
 
     const extensions = [
       ...buildBaseSetup({
@@ -412,6 +445,8 @@ export class TravenEditor {
       wysiwymPlugin(),
       delimiterSkipKeymap(),
       imageDecorationPlugin(),
+      ...hostExtensions,
+      ...(hostKeymaps.length > 0 ? [Prec.high(keymap.of(hostKeymaps))] : []),
 
       // Update listener to track doc changes and sync to raw editor
       EditorView.updateListener.of((update) => {
@@ -1612,6 +1647,16 @@ export class TravenEditor {
   getUploadHandler() {
     // @ts-ignore
     return this.onUploadImage || this.#options.onUploadImage || this.#options.element?.onUploadImage || null;
+  }
+
+  /**
+   * Returns the configured link-suggestion handler, or null if not set.
+   * Used by the Insert Link modal for host-provided title/URL autocomplete.
+   * @returns {function(string): Promise<{title: string, url: string, slug?: string}[]> | null}
+   */
+  getSuggestLinks() {
+    // @ts-ignore
+    return this.onSuggestLinks || this.#options.onSuggestLinks || this.#options.element?.onSuggestLinks || null;
   }
 
   /**

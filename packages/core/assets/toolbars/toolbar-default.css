@@ -369,6 +369,70 @@ button.btn-snippet {
   border-color: var(--accent, #475569);
 }
 
+/* Link modal site-page suggestions (host-provided onSuggestLinks) */
+.traven-link-suggest-list {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 4px 0;
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  max-height: 220px;
+  overflow-y: auto;
+  background: var(--bg-primary, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 6px;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
+}
+
+.traven-link-suggest-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.traven-link-suggest-item:hover,
+.traven-link-suggest-item.is-active {
+  background: var(--bg-hover, #f1f5f9);
+}
+
+.traven-link-suggest-title {
+  font-size: 0.9em;
+  font-weight: 600;
+  color: var(--text-primary, #0f172a);
+}
+
+.traven-link-suggest-meta {
+  font-size: 0.75em;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  color: var(--text-secondary, #64748b);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.traven-modal-overlay.cm-wysiwym-dark .traven-link-suggest-list {
+  background: #1e293b;
+  border-color: #334155;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+}
+
+.traven-modal-overlay.cm-wysiwym-dark .traven-link-suggest-item:hover,
+.traven-modal-overlay.cm-wysiwym-dark .traven-link-suggest-item.is-active {
+  background: #334155;
+}
+
+.traven-modal-overlay.cm-wysiwym-dark .traven-link-suggest-title {
+  color: #e2e8f0;
+}
+
+.traven-modal-overlay.cm-wysiwym-dark .traven-link-suggest-meta {
+  color: #94a3b8;
+}
+
 .traven-modal-btn {
   padding: 8px 16px;
   border-radius: 6px;

@@ -14,6 +14,8 @@
 /**
  * Context passed to plugin lifecycle methods.
  * @typedef {Object} PluginContext
+ * @property {any} [editor] - TravenEditor instance (may not have a view yet during onRegister).
+ * @property {Object} [options] - Constructor options passed to TravenEditor.
  */
 export class TravenPlugin {
     /** @type {string} */
@@ -84,4 +86,13 @@ export type DecorationContext = {
 /**
  * Context passed to plugin lifecycle methods.
  */
-export type PluginContext = any;
+export type PluginContext = {
+    /**
+     * - TravenEditor instance (may not have a view yet during onRegister).
+     */
+    editor?: any;
+    /**
+     * - Constructor options passed to TravenEditor.
+     */
+    options?: any;
+};

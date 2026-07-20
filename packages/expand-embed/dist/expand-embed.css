@@ -1,0 +1,54 @@
+/* Expand / embed shortcode — default skin (host may override) */
+
+.traven-expand-card {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 0.75rem;
+  margin: 0.5rem 0;
+  padding: 0.65rem 0.85rem;
+  border: 1px dashed var(--traven-expand-border, #94a3b8);
+  border-radius: 4px;
+  background: var(--traven-expand-bg, #f8fafc);
+  cursor: pointer;
+  font-size: 0.9em;
+  color: var(--traven-expand-fg, #334155);
+}
+
+.traven-expand-card-badge {
+  font-size: 0.7em;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--traven-expand-accent, #475569);
+}
+
+.traven-expand-card-title {
+  font-weight: 600;
+}
+
+.traven-expand-card-meta {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.8em;
+  color: var(--traven-expand-muted, #64748b);
+}
+
+.traven-expand,
+.traven-embed {
+  margin: 1rem 0;
+}
+
+.traven-expand-summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.traven-expand-content,
+.traven-embed-content {
+  margin-top: 0.5rem;
+}
+
+.traven-expand-unresolved {
+  opacity: 0.7;
+  font-style: italic;
+}

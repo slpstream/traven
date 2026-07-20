@@ -1,5 +1,12 @@
 # @freedomware/traven
 
+## 0.2.17
+
+### Patch Changes
+
+- Add `onSuggestLinks` / `getSuggestLinks()` for host-provided Insert Link modal autocomplete (opt-in; unchanged without a handler).
+- Add `options.plugins` for runtime host plugin registration (grammar via `getMarkdownConfig`, decorations, keymap, extensions, `onRegister`, HTML render). Export `TravenPlugin`. `renderMarkdown(text, extraPlugins)` accepts optional host plugins.
+
 ## 0.2.16
 
 ### Patch Changes

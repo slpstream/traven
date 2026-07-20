@@ -24,6 +24,8 @@ export const DEFAULT_TOOLBAR: string[];
  * @property {function(string): void} [onChange] - Callback fired on document changes.
  * @property {function(string): void} [onSave] - Callback fired on manual save command (Cmd+S / Ctrl+S).
  * @property {function(File): Promise<string>} [onUploadImage] - Callback handling image uploads.
+ * @property {function(string): Promise<{title: string, url: string, slug?: string}[]>} [onSuggestLinks] - Optional host callback for link-modal autocomplete. When set, typing in the URL field requests suggestions (e.g. site pages). Hosts that omit it keep the classic text+URL modal.
+ * @property {import("./plugins/TravenPlugin.js").TravenPlugin[]} [plugins] - Additional TravenPlugin instances registered at init (grammar, decorations, keymap, extensions, HTML render). Core built-ins always load; host plugins are appended.
  * @property {"light" | "dark"} [theme] - Visual style theme.
  * @property {string} [caretColor] - Configurable caret color override.
  * @property {Array<string>|boolean} [toolbar=false] - Toolbar configuration array or false.
@@ -279,6 +281,16 @@ export class TravenEditor {
      */
     getUploadHandler(): (arg0: File) => Promise<string> | null;
     /**
+     * Returns the configured link-suggestion handler, or null if not set.
+     * Used by the Insert Link modal for host-provided title/URL autocomplete.
+     * @returns {function(string): Promise<{title: string, url: string, slug?: string}[]> | null}
+     */
+    getSuggestLinks(): (arg0: string) => Promise<{
+        title: string;
+        url: string;
+        slug?: string;
+    }[]> | null;
+    /**
      * Returns the list of component names.
      * @returns {ComponentOption[]}
      */
@@ -370,6 +382,18 @@ export type TravenOptions = {
      * - Callback handling image uploads.
      */
     onUploadImage?: (arg0: File) => Promise<string>;
+    /**
+     * - Optional host callback for link-modal autocomplete. When set, typing in the URL field requests suggestions (e.g. site pages). Hosts that omit it keep the classic text+URL modal.
+     */
+    onSuggestLinks?: (arg0: string) => Promise<{
+        title: string;
+        url: string;
+        slug?: string;
+    }[]>;
+    /**
+     * - Additional TravenPlugin instances registered at init (grammar, decorations, keymap, extensions, HTML render). Core built-ins always load; host plugins are appended.
+     */
+    plugins?: import("./plugins/TravenPlugin.js").TravenPlugin[];
     /**
      * - Visual style theme.
      */
