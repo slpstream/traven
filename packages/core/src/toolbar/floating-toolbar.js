@@ -1,7 +1,7 @@
 // @ts-check
 import { StateEffect, StateField, RangeSet, Prec } from "@codemirror/state";
 import { showTooltip, keymap, EditorView, GutterMarker, gutter, ViewPlugin, Decoration, highlightActiveLineGutter } from "@codemirror/view";
-import { BUBBLE_ACTIONS, BUBBLE_INSERT_KEY, GUTTER_ACTIONS } from "./actions.js";
+import { DEFAULT_BUBBLE_TOOLBAR, BUBBLE_INSERT_KEY, GUTTER_ACTIONS } from "./actions.js";
 import { buildToolButton } from "./dom-button.js";
 
 /* ---------- Selection Bubble ---------- */
@@ -79,9 +79,17 @@ function wireBubbleKeyboard(dom, editor) {
   }
 }
 
-function buildBubbleFragment(editor, view, clearBubble) {
+/**
+ * @param {any} editor
+ * @param {EditorView} view
+ * @param {import("@codemirror/state").StateEffectType<void>} clearBubble
+ * @param {string[]} [actions]
+ */
+function buildBubbleFragment(editor, view, clearBubble, actions) {
   const frag = document.createDocumentFragment();
-  for (const key of BUBBLE_ACTIONS) {
+  const keys = Array.isArray(actions) ? actions : DEFAULT_BUBBLE_TOOLBAR;
+  for (const key of keys) {
+    if (key === "|") continue; // bubble has no separator concept
     buildToolButton(frag, key, editor);
   }
 
@@ -142,7 +150,14 @@ function _openGutterFromBubble(editor, view, clearBubble) {
   });
 }
 
-function makeBubbleTooltip(from, to, editor, clearBubble) {
+/**
+ * @param {number} from
+ * @param {number} to
+ * @param {any} editor
+ * @param {import("@codemirror/state").StateEffectType<void>} clearBubble
+ * @param {string[]} [actions]
+ */
+function makeBubbleTooltip(from, to, editor, clearBubble, actions) {
   return {
     pos: from,
     end: to,
@@ -157,7 +172,7 @@ function makeBubbleTooltip(from, to, editor, clearBubble) {
       }
       dom.setAttribute("role", "toolbar");
       dom.setAttribute("aria-label", "Text formatting");
-      const frag = buildBubbleFragment(editor, view, clearBubble);
+      const frag = buildBubbleFragment(editor, view, clearBubble, actions);
       dom.appendChild(frag);
       wireBubbleKeyboard(dom, editor);
 
@@ -298,12 +313,13 @@ function bubblePointerController({ appearDelay, setBubblePos, clearBubble }) {
 /**
  * Selection bubble extension.
  * @param {any} editor
- * @param {{ hotkey?: string, appearDelay?: number }} [options]
+ * @param {{ hotkey?: string, appearDelay?: number, actions?: string[] }} [options]
  * @returns {any[]}
  */
 export function selectionBubbleExtension(editor, options = {}) {
   const hotkey = options.hotkey || "Mod-.";
   const appearDelay = options.appearDelay ?? 200;
+  const actions = Array.isArray(options.actions) ? options.actions : DEFAULT_BUBBLE_TOOLBAR;
 
   /** @type {import("@codemirror/state").StateEffectType<{ from: number, to: number } | null>} */
   const setBubblePos = StateEffect.define();
@@ -318,7 +334,7 @@ export function selectionBubbleExtension(editor, options = {}) {
       }
       return value;
     },
-    provide: (f) => showTooltip.from(f, (val) => (val == null ? null : makeBubbleTooltip(val.from, val.to, editor, clearBubble))),
+    provide: (f) => showTooltip.from(f, (val) => (val == null ? null : makeBubbleTooltip(val.from, val.to, editor, clearBubble, actions))),
   });
 
   const pointerController = bubblePointerController({

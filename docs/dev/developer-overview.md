@@ -121,6 +121,7 @@ const editor = new TravenEditor(options);
 | `theme` | `"light" \| "dark"` | `"light"` | Baseline cursor theme + dark-mode class trigger. |
 | `caretColor` | `string` | `""` | Custom hex caret color override. |
 | `toolbar` | `Array<string> \| boolean` | `false` | Tool key list, or `false` to disable. |
+| `bubbleToolbar` | `Array<string>` | *(DEFAULT_BUBBLE_TOOLBAR)* | Optional selection-bubble tool keys. Omit for the default bubble. Host tools must be registered and listed here. |
 | `toolbarMode` | `"static" \| "floating" \| "hybrid"` | `"static"` | Toolbar presentation layout. |
 | `bubbleHotkey` | `string` | `"Mod-."` | Selection bubble open hotkey. |
 | `gutterHotkey` | `string` | `"Mod-Shift-Enter"` | Gutter insert-menu hotkey. |

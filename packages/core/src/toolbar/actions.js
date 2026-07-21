@@ -1,16 +1,22 @@
 // @ts-check
 
 /**
- * Category 1 (inline / selection-only) + Category 2 (hybrid) actions rendered
- * inside the Selection Bubble.
+ * Default Category 1 (inline / selection-only) + Category 2 (hybrid) actions
+ * rendered inside the Selection Bubble. Hosts may override via
+ * `options.bubbleToolbar` (omit to keep this list unchanged).
  */
-export const BUBBLE_ACTIONS = [
+export const DEFAULT_BUBBLE_TOOLBAR = [
   // Category 1
   "bold", "italic", "strikethrough", "highlight", "subscript", "superscript", "code", "link",
   "uppercase", "lowercase", "capitalize", "removeformatting",
   // Category 2
   "heading", "blockquote", "bulletlist", "numberedlist", "tasklist", "codeblock",
 ];
+
+/**
+ * @deprecated Prefer {@link DEFAULT_BUBBLE_TOOLBAR}. Alias kept for internal/docs compatibility.
+ */
+export const BUBBLE_ACTIONS = DEFAULT_BUBBLE_TOOLBAR;
 
 /**
  * Key for the insert-block shortcut button inside the Selection Bubble.

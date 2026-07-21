@@ -26,6 +26,7 @@ Initializes a new editor instance.
 | `theme` | `"light" \| "dark"`| `"light"` | Configures baseline cursor theme variables and dark mode class triggers. |
 | `caretColor` | `string` | `""` | Custom hex color for the editor caret overrides. |
 | `toolbar` | `Array<string> \| boolean`| `false` | A list of tool key strings defining the toolbar buttons layout, or `false` to disable the toolbar. |
+| `bubbleToolbar` | `Array<string>` | *(DEFAULT_BUBBLE_TOOLBAR)* | Optional tool keys for the selection bubble. Omit to keep the default bubble. Registered host tools (`extraTools` / `registerTools`) must also appear here to show on the bubble. Separators (`"|"`) are skipped. |
 | `toolbarScope` | `string` | `"default"` | Optional localStorage scope for toolbar config persistence. Use distinct values for multi-editor pages. |
 | `vimMode` | `boolean` | `false` | Enables Vim keybindings and normal mode emulation in both editing panes. |
 | `readOnly` | `boolean` | `false` | Enables read-only mode for both primary and secondary editor panes. |

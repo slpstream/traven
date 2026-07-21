@@ -26,6 +26,7 @@ const editor = new TravenEditor({
   initialValue,
   onSuggestLinks: async (query) => hostSuggest(query), // powers Link + Expand/Embed typeahead
   toolbar: [...DEFAULT_TOOLBAR, '|', ...EXPAND_EMBED_TOOLBAR],
+  // Optional: also list 'expand' (and/or 'embed') in bubbleToolbar / DEFAULT_BUBBLE_TOOLBAR (Traven ≥ 0.2.20)
   plugins: [
     new ExpandEmbedPlugin({
       resolve({ slug, heading, mode }) {

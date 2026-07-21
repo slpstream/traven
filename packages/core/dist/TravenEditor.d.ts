@@ -30,6 +30,7 @@ export const DEFAULT_TOOLBAR: string[];
  * @property {"light" | "dark"} [theme] - Visual style theme.
  * @property {string} [caretColor] - Configurable caret color override.
  * @property {Array<string>|boolean} [toolbar=false] - Toolbar configuration array or false.
+ * @property {Array<string>} [bubbleToolbar] - Optional tool keys for the selection bubble. Omit to use DEFAULT_BUBBLE_TOOLBAR. Registered tools (extraTools / registerTools) must also appear in this list to show on the bubble. Separators ("|") are skipped.
  * @property {string} [toolbarScope] - Optional localStorage scope for toolbar config persistence. Defaults to "default". Use distinct values for multi-editor pages.
  * @property {ComponentOption[]} [components] - Pre-defined custom components options array.
  * @property {string|boolean} [componentsUrl="assets/components.json"] - URL/path to load components schema, or false.
@@ -413,6 +414,10 @@ export type TravenOptions = {
      * - Toolbar configuration array or false.
      */
     toolbar?: Array<string> | boolean;
+    /**
+     * - Optional tool keys for the selection bubble. Omit to use DEFAULT_BUBBLE_TOOLBAR. Registered tools (extraTools / registerTools) must also appear in this list to show on the bubble. Separators ("|") are skipped.
+     */
+    bubbleToolbar?: Array<string>;
     /**
      * - Optional localStorage scope for toolbar config persistence. Defaults to "default". Use distinct values for multi-editor pages.
      */

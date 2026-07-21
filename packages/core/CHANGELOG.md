@@ -1,5 +1,11 @@
 # @freedomware/traven
 
+## 0.2.20
+
+### Patch Changes
+
+- Add optional `bubbleToolbar` / export `DEFAULT_BUBBLE_TOOLBAR` so hosts can customize the selection bubble without changing the default for other consumers. Separators (`"|"`) in the bubble list are skipped. `BUBBLE_ACTIONS` remains an alias of the default list.
+
 ## 0.2.18
 
 ### Patch Changes

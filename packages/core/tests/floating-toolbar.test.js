@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { resolveToolbarMode } from '../src/toolbar/mode.js';
-import { TravenEditor } from '../src/index.js';
+import { TravenEditor, DEFAULT_BUBBLE_TOOLBAR, registerTools } from '../src/index.js';
 import { EditorView } from '@codemirror/view';
 
 // Polyfill Range.prototype.getClientRects and getBoundingClientRect for JSDOM / CodeMirror 6 compatibility
@@ -747,5 +747,95 @@ describe('Floating Toolbar and Modes', () => {
     // Clean up
     const escEvent = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true });
     document.querySelector('.traven-gutter-menu').dispatchEvent(escEvent);
+  });
+
+  // 29. Default bubble has link and no host-only tools
+  it('default selection bubble includes link and omits unregistered host tools', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: 'Select me',
+      toolbarMode: 'floating'
+    });
+    editor.focus();
+    editor.setSelection(0, 6);
+
+    const view = editor.getView();
+    view.contentDOM.dispatchEvent(new window.PointerEvent('pointerup', {
+      bubbles: true, cancelable: true, button: 0, pointerType: 'mouse',
+    }));
+    vi.advanceTimersByTime(250);
+
+    const bubble = document.querySelector('.traven-bubble-menu');
+    expect(bubble).not.toBeNull();
+    expect(bubble.querySelector('.btn-link')).not.toBeNull();
+    expect(bubble.querySelector('.btn-hostprobe')).toBeNull();
+  });
+
+  // 30. bubbleToolbar inserts a registered tool after link
+  it('bubbleToolbar renders a registered custom tool after link', () => {
+    const action = vi.fn();
+    registerTools({
+      hostprobe: {
+        key: 'hostprobe',
+        title: 'Host Probe',
+        icon: '<svg></svg>',
+        action,
+      },
+    });
+
+    const bubbleToolbar = [...DEFAULT_BUBBLE_TOOLBAR];
+    const linkIdx = bubbleToolbar.indexOf('link');
+    bubbleToolbar.splice(linkIdx + 1, 0, 'hostprobe');
+
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: 'Select me',
+      toolbarMode: 'floating',
+      bubbleToolbar,
+    });
+    editor.focus();
+    editor.setSelection(0, 6);
+
+    const view = editor.getView();
+    view.contentDOM.dispatchEvent(new window.PointerEvent('pointerup', {
+      bubbles: true, cancelable: true, button: 0, pointerType: 'mouse',
+    }));
+    vi.advanceTimersByTime(250);
+
+    const bubble = document.querySelector('.traven-bubble-menu');
+    expect(bubble).not.toBeNull();
+
+    const linkBtn = bubble.querySelector('.btn-link');
+    const probeBtn = bubble.querySelector('.btn-hostprobe');
+    expect(linkBtn).not.toBeNull();
+    expect(probeBtn).not.toBeNull();
+    expect(linkBtn.nextElementSibling).toBe(probeBtn);
+
+    probeBtn.click();
+    expect(action).toHaveBeenCalled();
+    expect(action.mock.calls[0][0]).toBe(editor);
+  });
+
+  // 31. Separators in bubbleToolbar are skipped
+  it('skips pipe separators in bubbleToolbar', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: 'Select me',
+      toolbarMode: 'floating',
+      bubbleToolbar: ['bold', '|', 'italic'],
+    });
+    editor.focus();
+    editor.setSelection(0, 6);
+
+    const view = editor.getView();
+    view.contentDOM.dispatchEvent(new window.PointerEvent('pointerup', {
+      bubbles: true, cancelable: true, button: 0, pointerType: 'mouse',
+    }));
+    vi.advanceTimersByTime(250);
+
+    const bubble = document.querySelector('.traven-bubble-menu');
+    expect(bubble.querySelector('.btn-bold')).not.toBeNull();
+    expect(bubble.querySelector('.btn-italic')).not.toBeNull();
+    expect(bubble.querySelectorAll('button').length).toBe(3); // bold, italic, bubble-insert
   });
 });

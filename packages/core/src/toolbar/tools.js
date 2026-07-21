@@ -396,7 +396,7 @@ export const TOOL_REGISTRY = {
 
 /**
  * Register host/plugin toolbar tools into the shared registry.
- * Keys must be listed in `options.toolbar` to appear; they are never added to DEFAULT_TOOLBAR.
+ * Keys must be listed in `options.toolbar` (and/or `options.bubbleToolbar`) to appear; they are never added to DEFAULT_TOOLBAR.
  *
  * @param {Object.<string, object>} defs - Map of tool key → tool definition ({ title, icon, action, keybinding?, ... }).
  * @param {{ category?: string }} [opts] - Optional settings-modal category (default "Media & Links").

@@ -202,6 +202,7 @@ function buildBaseSetup(options = {}) {
  * @property {"light" | "dark"} [theme] - Visual style theme.
  * @property {string} [caretColor] - Configurable caret color override.
  * @property {Array<string>|boolean} [toolbar=false] - Toolbar configuration array or false.
+ * @property {Array<string>} [bubbleToolbar] - Optional tool keys for the selection bubble. Omit to use DEFAULT_BUBBLE_TOOLBAR. Registered tools (extraTools / registerTools) must also appear in this list to show on the bubble. Separators ("|") are skipped.
  * @property {string} [toolbarScope] - Optional localStorage scope for toolbar config persistence. Defaults to "default". Use distinct values for multi-editor pages.
  * @property {ComponentOption[]} [components] - Pre-defined custom components options array.
  * @property {string|boolean} [componentsUrl="assets/components.json"] - URL/path to load components schema, or false.
@@ -490,6 +491,9 @@ export class TravenEditor {
           selectionBubbleExtension(this, {
             hotkey: options.bubbleHotkey || "Mod-.",
             appearDelay: options.bubbleAppearDelay ?? 200,
+            actions: Array.isArray(options.bubbleToolbar)
+              ? options.bubbleToolbar
+              : undefined,
           }),
           ...(options.gutterInserter !== false
             ? [gutterInserterExtension(this, {

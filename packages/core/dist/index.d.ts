@@ -13,4 +13,5 @@ export { openModal } from "./toolbar/modal-base.js";
 export { syntaxTree } from "@codemirror/language";
 export { TravenEditor, DEFAULT_TOOLBAR } from "./TravenEditor.js";
 export { registerTools, getTool, TOOL_REGISTRY } from "./toolbar/tools.js";
+export { DEFAULT_BUBBLE_TOOLBAR, BUBBLE_ACTIONS } from "./toolbar/actions.js";
 export { Decoration, WidgetType, Decoration as Decorations } from "@codemirror/view";

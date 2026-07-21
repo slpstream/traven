@@ -105,6 +105,30 @@ new TravenEditor({
 
 ---
 
+## Customizing the Selection Bubble
+
+By default the selection bubble renders `DEFAULT_BUBBLE_TOOLBAR` (exported from `@freedomware/traven`). Pass `bubbleToolbar` to opt in extra registered tools or reorder keys. Omitting the option leaves other hosts unchanged.
+
+```js
+import { TravenEditor, DEFAULT_BUBBLE_TOOLBAR, registerTools } from "@freedomware/traven";
+
+registerTools({
+  hostprobe: { title: "Host Probe", icon: "<svg></svg>", action: (ed) => { /* … */ } },
+});
+
+const bubble = [...DEFAULT_BUBBLE_TOOLBAR];
+const i = bubble.indexOf("link");
+bubble.splice(i + 1, 0, "hostprobe");
+
+new TravenEditor({
+  element: document.querySelector("#editor"),
+  toolbarMode: "hybrid",
+  bubbleToolbar: bubble,
+});
+```
+
+---
+
 ## Toggling Toolbars at Runtime via JavaScript
 
 You can dynamically show or hide individual toolbar layers at runtime by toggling CSS utility classes on the `<traven-editor>` element. This is useful for user preference toggles (such as persisting settings to `localStorage`).

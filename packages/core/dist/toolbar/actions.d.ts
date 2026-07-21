@@ -1,6 +1,11 @@
 /**
- * Category 1 (inline / selection-only) + Category 2 (hybrid) actions rendered
- * inside the Selection Bubble.
+ * Default Category 1 (inline / selection-only) + Category 2 (hybrid) actions
+ * rendered inside the Selection Bubble. Hosts may override via
+ * `options.bubbleToolbar` (omit to keep this list unchanged).
+ */
+export const DEFAULT_BUBBLE_TOOLBAR: string[];
+/**
+ * @deprecated Prefer {@link DEFAULT_BUBBLE_TOOLBAR}. Alias kept for internal/docs compatibility.
  */
 export const BUBBLE_ACTIONS: string[];
 /**
