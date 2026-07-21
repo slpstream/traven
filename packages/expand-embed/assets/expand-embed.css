@@ -1,51 +1,115 @@
 /* Expand / embed shortcode — default skin (host may override) */
 
-.traven-expand-card {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.5rem 0.75rem;
-  margin: 0.5rem 0;
-  padding: 0.65rem 0.85rem;
-  border: 1px dashed var(--traven-expand-border, #94a3b8);
-  border-radius: 4px;
-  background: var(--traven-expand-bg, #f8fafc);
+/* --- Editor WYSIWYM inline chips (CodeMirror: no vertical margin) --- */
+
+.traven-expand-chip {
+  display: inline;
+  margin: 0;
+  padding: 0 0.05em;
+  border: none;
+  background: transparent;
+  color: var(--traven-expand-link, #64748b);
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 0.15em;
   cursor: pointer;
-  font-size: 0.9em;
-  color: var(--traven-expand-fg, #334155);
+  font: inherit;
+  font-weight: inherit;
 }
 
-.traven-expand-card-badge {
-  font-size: 0.7em;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+.traven-expand-chip--embed {
+  text-decoration-style: solid;
+}
+
+/* --- Reader: Nutshell-style expand trigger (phrasing-safe) --- */
+
+.traven-expand-trigger {
+  display: inline;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: inherit;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 0.15em;
+  cursor: pointer;
+  vertical-align: baseline;
+}
+
+.traven-expand-trigger:hover,
+.traven-expand-trigger:focus-visible {
   color: var(--traven-expand-accent, #475569);
+  outline: none;
 }
 
-.traven-expand-card-title {
-  font-weight: 600;
+.traven-expand-trigger[aria-expanded="true"] {
+  color: var(--traven-expand-muted, #94a3b8);
 }
 
-.traven-expand-card-meta {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 0.8em;
-  color: var(--traven-expand-muted, #64748b);
+/* Panel inserted as nextSibling of trigger — full-width wraps to next line */
+.traven-expand-panel {
+  display: inline-block;
+  box-sizing: border-box;
+  width: 100%;
+  position: relative;
+  margin: 1.25rem 0 0.75rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--traven-expand-border, #94a3b8);
+  border-radius: 6px;
+  background: var(--traven-expand-bg, #fff);
+  color: var(--traven-expand-fg, inherit);
+  vertical-align: top;
 }
 
-.traven-expand,
+.traven-expand-panel[hidden] {
+  display: none !important;
+}
+
+/* Callout pointer (CSS triangle) — left set by positionExpandArrow() */
+.traven-expand-panel-arrow {
+  width: 0;
+  height: 0;
+  border-left: 11px solid transparent;
+  border-right: 11px solid transparent;
+  border-bottom: 11px solid var(--traven-expand-border, #94a3b8);
+  position: absolute;
+  top: -11px;
+  left: 24px;
+  pointer-events: none;
+}
+
+.traven-expand-panel-arrow::after {
+  content: "";
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid var(--traven-expand-bg, #fff);
+  position: absolute;
+  top: 1px;
+  left: -10px;
+}
+
+.traven-expand-panel > :not(.traven-expand-panel-arrow):first-of-type,
+.traven-expand-panel > .traven-expand-panel-arrow + * {
+  margin-top: 0;
+}
+
+.traven-expand-panel > :last-child {
+  margin-bottom: 0;
+}
+
+/* --- Always-on embed (block by nature) --- */
+
 .traven-embed {
   margin: 1rem 0;
 }
 
-.traven-expand-summary {
-  cursor: pointer;
-  font-weight: 600;
-}
-
-.traven-expand-content,
 .traven-embed-content {
-  margin-top: 0.5rem;
+  margin-top: 0;
 }
 
 .traven-expand-unresolved {

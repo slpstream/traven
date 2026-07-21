@@ -169,6 +169,14 @@ export function openExpandEmbedModal(editor, triggerBtn, mode = "expand") {
   const isEmbed = mode === "embed";
   const form = document.createElement("div");
 
+  const textField = document.createElement("div");
+  textField.className = "traven-modal-field";
+  textField.innerHTML = `
+    <label class="traven-modal-label" for="traven-expand-text">Link Text</label>
+    <input type="text" id="traven-expand-text" class="traven-modal-input" placeholder="Visible link label" value="" autocomplete="off" />
+  `;
+  form.appendChild(textField);
+
   const slugField = document.createElement("div");
   slugField.className = "traven-modal-field";
   slugField.style.position = "relative";
@@ -182,7 +190,7 @@ export function openExpandEmbedModal(editor, triggerBtn, mode = "expand") {
   headingField.className = "traven-modal-field";
   headingField.innerHTML = `
     <label class="traven-modal-label" for="traven-expand-heading">Heading (optional)</label>
-    <input type="text" id="traven-expand-heading" class="traven-modal-input" placeholder="Section heading or leave blank for whole post" value="" autocomplete="off" />
+    <input type="text" id="traven-expand-heading" class="traven-modal-input" placeholder="Section heading — leave blank for whole post" value="" autocomplete="off" />
   `;
   form.appendChild(headingField);
 
@@ -192,16 +200,34 @@ export function openExpandEmbedModal(editor, triggerBtn, mode = "expand") {
   hint.style.fontSize = "0.8em";
   hint.style.color = "var(--text-secondary, #64748b)";
   hint.textContent = isEmbed
-    ? "Embed always shows the target content in place."
-    : "Expand stays collapsed until the reader opens it (Nutshell-style).";
+    ? "Embed always shows the target content in place. Heading selects a section; Link Text labels the editor chip."
+    : "Expand stays collapsed until the reader opens it (Nutshell-style). Heading selects a section; Link Text is the clickable label.";
   form.appendChild(hint);
 
+  /** @type {HTMLInputElement} */
+  const textInput = /** @type {HTMLInputElement} */ (form.querySelector("#traven-expand-text"));
   /** @type {HTMLInputElement} */
   const slugInput = /** @type {HTMLInputElement} */ (form.querySelector("#traven-expand-slug"));
   /** @type {HTMLInputElement} */
   const headingInput = /** @type {HTMLInputElement} */ (form.querySelector("#traven-expand-heading"));
 
-  const typeahead = attachSlugTypeahead(editor, slugInput, slugField);
+  // Pre-fill Link Text from selection (same pattern as Insert Link).
+  const view = typeof editor.getView === "function" ? editor.getView() : null;
+  if (view && view.state && view.state.selection) {
+    const { from, to } = view.state.selection.main;
+    const selectionText = from !== to ? view.state.sliceDoc(from, to) : "";
+    if (selectionText) {
+      textInput.value = selectionText;
+    }
+  }
+
+  const typeahead = attachSlugTypeahead(editor, slugInput, slugField, {
+    onPick: (item) => {
+      if (!textInput.value.trim() && item.title) {
+        textInput.value = item.title;
+      }
+    },
+  });
 
   openModal({
     title: isEmbed ? "Insert Embed" : "Insert Expand",
@@ -210,9 +236,9 @@ export function openExpandEmbedModal(editor, triggerBtn, mode = "expand") {
     className: "traven-modal-expand-embed",
     onClose: () => {
       typeahead.destroy();
-      const view = editor.getView && editor.getView();
-      if (view && typeof view.requestMeasure === "function") {
-        view.requestMeasure();
+      const v = editor.getView && editor.getView();
+      if (v && typeof v.requestMeasure === "function") {
+        v.requestMeasure();
       }
     },
     buttons: [
@@ -234,7 +260,8 @@ export function openExpandEmbedModal(editor, triggerBtn, mode = "expand") {
             return;
           }
           const heading = headingInput.value.trim() || null;
-          const md = buildExpandEmbedShortcode(mode, slug, heading);
+          const linkText = textInput.value.trim() || null;
+          const md = buildExpandEmbedShortcode(mode, slug, heading, linkText);
           if (typeof editor.replaceSelection === "function") {
             editor.replaceSelection(md);
           } else if (typeof editor.insertSnippet === "function") {
@@ -246,5 +273,8 @@ export function openExpandEmbedModal(editor, triggerBtn, mode = "expand") {
     ],
   });
 
-  requestAnimationFrame(() => slugInput.focus());
+  requestAnimationFrame(() => {
+    if (textInput.value.trim()) slugInput.focus();
+    else textInput.focus();
+  });
 }

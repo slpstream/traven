@@ -117,9 +117,23 @@ export const ExpandEmbedShortcode = {
 };
 
 /**
+ * Visible chip / trigger label: text → heading → slug.
+ * @param {{ text?: string|null, heading?: string|null, slug?: string|null }} attrs
+ * @returns {string}
+ */
+export function expandEmbedLabel(attrs) {
+  const text = String(attrs?.text || "").trim();
+  if (text) return text;
+  const heading = String(attrs?.heading || "").trim();
+  if (heading) return heading;
+  const slug = String(attrs?.slug || "").trim();
+  return slug || "(missing slug)";
+}
+
+/**
  * Parse attribute map from raw shortcode source text.
  * @param {string} raw
- * @returns {{ mode: 'expand'|'embed', slug: string, heading: string|null }}
+ * @returns {{ mode: 'expand'|'embed', slug: string, heading: string|null, text: string|null }}
  */
 export function parseExpandEmbedAttrs(raw) {
   const text = String(raw || "").trim();
@@ -141,6 +155,7 @@ export function parseExpandEmbedAttrs(raw) {
 
   let slug = (attrs.slug || attrs.default || "").trim();
   let heading = (attrs.heading || "").trim() || null;
+  const linkText = (attrs.text || "").trim() || null;
 
   if (slug.includes("#") && !heading) {
     const parts = slug.split("#");
@@ -148,5 +163,5 @@ export function parseExpandEmbedAttrs(raw) {
     heading = parts.slice(1).join("#") || null;
   }
 
-  return { mode, slug, heading };
+  return { mode, slug, heading, text: linkText };
 }

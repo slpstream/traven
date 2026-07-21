@@ -1,6 +1,6 @@
 // @ts-check
-import { TravenPlugin, Decoration, WidgetType, syntaxTree } from "@freedomware/traven";
-import { ExpandEmbedShortcode, parseExpandEmbedAttrs } from "./parser.js";
+import { TravenPlugin, Decorations, WidgetType, syntaxTree } from "@freedomware/traven";
+import { ExpandEmbedShortcode, parseExpandEmbedAttrs, expandEmbedLabel } from "./parser.js";
 
 /**
  * @typedef {Object} ExpandResolveArgs
@@ -15,39 +15,40 @@ import { ExpandEmbedShortcode, parseExpandEmbedAttrs } from "./parser.js";
  * @returns {string|null}
  */
 
+let expandIdCounter = 0;
+
+/**
+ * @returns {string}
+ */
+function nextExpandId() {
+  expandIdCounter += 1;
+  return `traven-ee-${expandIdCounter}`;
+}
+
 class ExpandEmbedWidget extends WidgetType {
   /**
-   * @param {{ mode: string, slug: string, heading: string|null, rawText: string, nodeFrom: number }} opts
+   * @param {{ mode: string, slug: string, heading: string|null, text: string|null, rawText: string, nodeFrom: number }} opts
    */
   constructor(opts) {
     super();
     this.mode = opts.mode;
     this.slug = opts.slug;
     this.heading = opts.heading;
+    this.text = opts.text;
     this.rawText = opts.rawText;
     this.nodeFrom = opts.nodeFrom;
   }
 
   toDOM(view) {
-    const el = document.createElement("div");
-    el.className = `traven-expand-card traven-expand-card--${this.mode}`;
+    const el = document.createElement("span");
+    el.className = `traven-expand-chip traven-expand-chip--${this.mode}`;
+    el.dataset.mode = this.mode;
     el.title = this.rawText;
-
-    const badge = document.createElement("span");
-    badge.className = "traven-expand-card-badge";
-    badge.textContent = this.mode === "embed" ? "embed" : "expand";
-
-    const title = document.createElement("span");
-    title.className = "traven-expand-card-title";
-    title.textContent = this.heading || this.slug || "(missing slug)";
-
-    const meta = document.createElement("span");
-    meta.className = "traven-expand-card-meta";
-    meta.textContent = this.slug ? `slug: ${this.slug}` : "no slug";
-
-    el.appendChild(badge);
-    el.appendChild(title);
-    el.appendChild(meta);
+    el.textContent = expandEmbedLabel({
+      text: this.text,
+      heading: this.heading,
+      slug: this.slug,
+    });
 
     el.addEventListener("mousedown", (e) => {
       e.preventDefault();
@@ -65,6 +66,7 @@ class ExpandEmbedWidget extends WidgetType {
       other.mode === this.mode &&
       other.slug === this.slug &&
       other.heading === this.heading &&
+      other.text === this.text &&
       other.rawText === this.rawText
     );
   }
@@ -112,15 +114,16 @@ export class ExpandEmbedPlugin extends TravenPlugin {
         decorations.push({
           from: node.from,
           to: node.to,
-          deco: Decoration.replace({
+          deco: Decorations.replace({
             widget: new ExpandEmbedWidget({
               mode: attrs.mode,
               slug: attrs.slug,
               heading: attrs.heading,
+              text: attrs.text,
               rawText,
               nodeFrom: node.from,
             }),
-            block: true,
+            // Inline — must not use block:true (breaks mid-sentence flow).
           }),
         });
       },
@@ -157,7 +160,7 @@ export class ExpandEmbedPlugin extends TravenPlugin {
       return "";
     }
 
-    const summary = escapeHtml(attrs.heading || attrs.slug);
+    const label = escapeHtml(expandEmbedLabel(attrs));
     const slugAttr = escapeAttr(attrs.slug);
     const headingAttr = attrs.heading ? ` data-heading="${escapeAttr(attrs.heading)}"` : "";
     const inner =
@@ -169,7 +172,13 @@ export class ExpandEmbedPlugin extends TravenPlugin {
       return `<div class="traven-embed" data-slug="${slugAttr}"${headingAttr}><div class="traven-embed-content">${inner}</div></div>`;
     }
 
-    return `<details class="traven-expand" data-slug="${slugAttr}"${headingAttr}><summary class="traven-expand-summary">${summary}</summary><div class="traven-expand-content">${inner}</div></details>`;
+    // Phrasing-safe: button + template stay inside <p>; JS inserts the panel.
+    const id = nextExpandId();
+    return (
+      `<button type="button" class="traven-expand-trigger" data-traven-expand="${id}"` +
+      ` data-slug="${slugAttr}"${headingAttr} aria-expanded="false">${label}</button>` +
+      `<template id="${id}">${inner}</template>`
+    );
   }
 }
 
@@ -190,4 +199,4 @@ function escapeAttr(text) {
   return escapeHtml(text).replace(/"/g, "&quot;");
 }
 
-export { ExpandEmbedShortcode, parseExpandEmbedAttrs };
+export { ExpandEmbedShortcode, parseExpandEmbedAttrs, expandEmbedLabel };

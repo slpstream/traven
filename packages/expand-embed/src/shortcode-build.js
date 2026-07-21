@@ -16,12 +16,18 @@ export function escapeAttr(value) {
  * @param {'expand'|'embed'} mode
  * @param {string} slug
  * @param {string|null} [heading]
+ * @param {string|null} [text] — visible link/chip label (independent of heading)
  * @returns {string}
  */
-export function buildExpandEmbedShortcode(mode, slug, heading = null) {
+export function buildExpandEmbedShortcode(mode, slug, heading = null, text = null) {
   const s = String(slug || "").trim();
   const h = heading ? String(heading).trim() : "";
+  const t = text ? String(text).trim() : "";
   if (!s) return `[${mode} slug=""]`;
-  if (h) return `[${mode} slug="${escapeAttr(s)}" heading="${escapeAttr(h)}"]`;
-  return `[${mode} slug="${escapeAttr(s)}"]`;
+
+  let out = `[${mode} slug="${escapeAttr(s)}"`;
+  if (t) out += ` text="${escapeAttr(t)}"`;
+  if (h) out += ` heading="${escapeAttr(h)}"`;
+  out += "]";
+  return out;
 }

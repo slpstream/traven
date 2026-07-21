@@ -1,6 +1,6 @@
 {
   "name": "@freedomware/traven-expand-embed",
-  "version": "0.1.1",
+  "version": "0.1.8",
   "description": "Traven plugin: [expand] / [embed] shortcodes for site-owned post transclusion",
   "license": "MIT",
   "type": "module",
@@ -11,7 +11,7 @@
     "assets"
   ],
   "scripts": {
-    "build": "esbuild src/index.js --bundle --format=esm --outfile=dist/expand-embed.js --external:@freedomware/traven && cp assets/expand-embed.css dist/expand-embed.css",
+    "build": "esbuild src/index.js --bundle --format=esm --outfile=dist/expand-embed.js --external:@freedomware/traven && esbuild src/runtime.js --bundle --format=esm --outfile=dist/expand-embed-runtime.js && cp assets/expand-embed.css dist/expand-embed.css",
     "test": "vitest run"
   },
   "peerDependencies": {
