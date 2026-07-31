@@ -17384,42 +17384,39 @@ function _y(e, t = null) {
 	let m = {};
 	for (let [e, t] of Object.entries(o)) e !== "name" && e !== "_tagName" && (m[e] = t);
 	let { from: h, to: g } = c.state.selection.main, _ = h === g ? "" : c.state.sliceDoc(h, g), v = (s || _ || "").replace(/^\r?\n|\r?\n$/g, ""), y = document.createElement("div"), b = document.createElement("div");
-	b.className = "traven-modal-field", b.innerHTML = `
-    <label class="traven-modal-label" for="traven-component-name">Component Name</label>
-    <select
-      id="traven-component-name"
-      class="traven-modal-input"
-    >
-      ${u.map((e) => `<option value="${e.name}">${e.name}</option>`).join("\n")}
-    </select>
-  `;
-	let x = b.querySelector("#traven-component-name");
-	x.value = d, y.appendChild(b);
-	let S = document.createElement("div");
-	S.className = "traven-modal-field";
-	let C = document.createElement("label");
-	C.className = "traven-modal-label", C.setAttribute("for", "traven-component-slot"), C.textContent = "Content", S.appendChild(C);
-	let w = document.createElement("textarea");
-	w.id = "traven-component-slot", w.className = "traven-modal-input", w.placeholder = "The content that goes inside the component…", w.rows = 3, w.style.resize = "none", w.style.overflow = "hidden", w.style.lineHeight = "1.5", w.style.fontFamily = "inherit", w.style.minHeight = "72px", w.style.boxSizing = "border-box", w.value = v;
-	let T = () => {
-		w.style.height = "auto", w.style.height = w.scrollHeight + "px";
+	b.className = "traven-modal-field";
+	let x = document.createElement("label");
+	x.className = "traven-modal-label", x.setAttribute("for", "traven-component-name"), x.textContent = "Component Name";
+	let S = document.createElement("select");
+	S.id = "traven-component-name", S.className = "traven-modal-input", u.forEach((e) => {
+		let t = document.createElement("option");
+		t.value = e.name, t.textContent = e.name, S.appendChild(t);
+	}), S.value = d, b.appendChild(x), b.appendChild(S), y.appendChild(b);
+	let C = document.createElement("div");
+	C.className = "traven-modal-field";
+	let w = document.createElement("label");
+	w.className = "traven-modal-label", w.setAttribute("for", "traven-component-slot"), w.textContent = "Content", C.appendChild(w);
+	let T = document.createElement("textarea");
+	T.id = "traven-component-slot", T.className = "traven-modal-input", T.placeholder = "The content that goes inside the component…", T.rows = 3, T.style.resize = "none", T.style.overflow = "hidden", T.style.lineHeight = "1.5", T.style.fontFamily = "inherit", T.style.minHeight = "72px", T.style.boxSizing = "border-box", T.value = v;
+	let E = () => {
+		T.style.height = "auto", T.style.height = T.scrollHeight + "px";
 	};
-	w.addEventListener("input", T), S.appendChild(w), y.appendChild(S);
-	let E = document.createElement("div");
-	E.className = "traven-modal-field traven-attrs-dynamic-wrapper", y.appendChild(E);
-	let D = document.createElement("input");
-	D.type = "hidden", D.id = "traven-component-attrs", D.value = f, E.appendChild(D);
-	let O = document.createElement("div");
-	O.className = "traven-attrs-visual-container", E.appendChild(O);
-	let k = (e, t = !1) => {
-		O.innerHTML = "";
+	T.addEventListener("input", E), C.appendChild(T), y.appendChild(C);
+	let D = document.createElement("div");
+	D.className = "traven-modal-field traven-attrs-dynamic-wrapper", y.appendChild(D);
+	let O = document.createElement("input");
+	O.type = "hidden", O.id = "traven-component-attrs", O.value = f, D.appendChild(O);
+	let k = document.createElement("div");
+	k.className = "traven-attrs-visual-container", D.appendChild(k);
+	let ee = (e, t = !1) => {
+		k.innerHTML = "";
 		let n = u.find((t) => t.name === e);
 		if (n && n.attributes && n.attributes.length > 0) {
-			E.dataset.activeOption = "schema";
+			D.dataset.activeOption = "schema";
 			let e = document.createElement("label");
-			e.className = "traven-modal-label", e.style.marginBottom = "8px", O.appendChild(e);
+			e.className = "traven-modal-label", e.style.marginBottom = "8px", k.appendChild(e);
 			let r = () => {
-				let t = O.querySelectorAll(".attr-schema-input"), n = !1;
+				let t = k.querySelectorAll(".attr-schema-input"), n = !1;
 				t.forEach((e) => {
 					e.type === "checkbox" ? e.checked && (n = !0) : e.value.trim() && (n = !0);
 				}), n ? e.textContent = "Attributes" : e.innerHTML = "Attributes <span style=\"font-weight:400;opacity:0.6;\">(optional)</span>";
@@ -17441,14 +17438,14 @@ function _y(e, t = null) {
 					let a = document.createElement("input");
 					a.type = "text", a.className = "traven-modal-input attr-schema-input", a.dataset.name = e.name, a.dataset.type = "text", a.placeholder = e.placeholder || "", a.value = i, a.addEventListener("input", r), n.appendChild(t), n.appendChild(a);
 				}
-				O.appendChild(n);
+				k.appendChild(n);
 			}), r();
 		} else {
-			E.dataset.activeOption = "builder";
+			D.dataset.activeOption = "builder";
 			let e = document.createElement("label");
-			e.className = "traven-modal-label", e.textContent = "Extra Attributes (optional)", e.style.marginBottom = "8px", O.appendChild(e);
+			e.className = "traven-modal-label", e.textContent = "Extra Attributes (optional)", e.style.marginBottom = "8px", k.appendChild(e);
 			let n = document.createElement("div");
-			n.className = "traven-attrs-rows-wrapper", O.appendChild(n);
+			n.className = "traven-attrs-rows-wrapper", k.appendChild(n);
 			let r = (e = "", t = "") => {
 				let n = document.createElement("div");
 				n.className = "traven-attr-row", n.style.display = "flex", n.style.gap = "8px", n.style.marginBottom = "8px", n.style.alignItems = "center";
@@ -17465,16 +17462,16 @@ function _y(e, t = null) {
 			let i = document.createElement("button");
 			i.type = "button", i.className = "traven-table-toolbar-btn", i.style.marginTop = "4px", i.style.fontSize = "0.8em", i.style.padding = "4px 8px", i.textContent = "+ Add Attribute", i.addEventListener("click", () => {
 				n.appendChild(r());
-			}), O.appendChild(i);
+			}), k.appendChild(i);
 		}
 	};
 	b.querySelector("#traven-component-name").addEventListener("change", (e) => {
 		let t = e.target;
-		k(t.value, !1);
-	}), k(d, !0);
-	let ee = document.createElement("div");
-	ee.className = "traven-modal-error", ee.style.display = "none", y.appendChild(ee);
-	let te = (e, t, n) => {
+		ee(t.value, !1);
+	}), ee(d, !0);
+	let te = document.createElement("div");
+	te.className = "traven-modal-error", te.style.display = "none", y.appendChild(te);
+	let ne = (e, t, n) => {
 		c.dispatch({ changes: {
 			from: e,
 			to: t,
@@ -17505,7 +17502,7 @@ function _y(e, t = null) {
 			onClick: (e, t) => {
 				let n = t.querySelector("#traven-component-name"), r = t.querySelector("#traven-component-attrs"), o = t.querySelector("#traven-component-slot"), s = n.value.trim();
 				if (!s) {
-					ee.textContent = "Component name is required.", ee.style.display = "block", n.focus();
+					te.textContent = "Component name is required.", te.style.display = "block", n.focus();
 					return;
 				}
 				let u = "", d = t.querySelector(".traven-attrs-dynamic-wrapper");
@@ -17533,11 +17530,11 @@ function _y(e, t = null) {
 				let y = m ? `
 ${m}
 ` : "\n\n", b = `${v}${y}[/component]`;
-				l ? te(i, a, b) : te(_ ? h : c.state.selection.main.from, _ ? g : c.state.selection.main.to, b), c.focus(), t.querySelector(".traven-modal-close").click();
+				l ? ne(i, a, b) : ne(_ ? h : c.state.selection.main.from, _ ? g : c.state.selection.main.to, b), c.focus(), t.querySelector(".traven-modal-close").click();
 			}
 		}]
 	}), requestAnimationFrame(() => {
-		T();
+		E();
 	});
 }
 function vy(e, t = null) {

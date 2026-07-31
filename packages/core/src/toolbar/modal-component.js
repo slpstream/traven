@@ -94,21 +94,27 @@ export function openComponentModal(optionsOrEditor, triggerBtn = null) {
   // --- Component name field ---
   const nameField = document.createElement("div");
   nameField.className = "traven-modal-field";
-  const selectOptionsHtml = componentList.map(c => {
-    return `<option value="${c.name}">${c.name}</option>`;
-  }).join("\n");
 
-  nameField.innerHTML = `
-    <label class="traven-modal-label" for="traven-component-name">Component Name</label>
-    <select
-      id="traven-component-name"
-      class="traven-modal-input"
-    >
-      ${selectOptionsHtml}
-    </select>
-  `;
-  const nameSelectEl = /** @type {HTMLSelectElement} */ (nameField.querySelector("#traven-component-name"));
+  const nameLabel = document.createElement("label");
+  nameLabel.className = "traven-modal-label";
+  nameLabel.setAttribute("for", "traven-component-name");
+  nameLabel.textContent = "Component Name";
+
+  const nameSelectEl = document.createElement("select");
+  nameSelectEl.id = "traven-component-name";
+  nameSelectEl.className = "traven-modal-input";
+
+  componentList.forEach(c => {
+    const optionEl = document.createElement("option");
+    optionEl.value = c.name;
+    optionEl.textContent = c.name;
+    nameSelectEl.appendChild(optionEl);
+  });
+
   nameSelectEl.value = initialName;
+
+  nameField.appendChild(nameLabel);
+  nameField.appendChild(nameSelectEl);
   form.appendChild(nameField);
 
   // --- Slot content textarea (auto-resize) ---
