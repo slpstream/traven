@@ -133,7 +133,7 @@ export function expandEmbedLabel(attrs) {
 /**
  * Parse attribute map from raw shortcode source text.
  * @param {string} raw
- * @returns {{ mode: 'expand'|'embed', slug: string, heading: string|null, text: string|null }}
+ * @returns {{ mode: 'expand'|'embed', slug: string, heading: string|null, text: string|null, source: string|null }}
  */
 export function parseExpandEmbedAttrs(raw) {
   const text = String(raw || "").trim();
@@ -156,6 +156,7 @@ export function parseExpandEmbedAttrs(raw) {
   let slug = (attrs.slug || attrs.default || "").trim();
   let heading = (attrs.heading || "").trim() || null;
   const linkText = (attrs.text || "").trim() || null;
+  const source = (attrs.source || "").trim() || null;
 
   if (slug.includes("#") && !heading) {
     const parts = slug.split("#");
@@ -163,5 +164,5 @@ export function parseExpandEmbedAttrs(raw) {
     heading = parts.slice(1).join("#") || null;
   }
 
-  return { mode, slug, heading, text: linkText };
+  return { mode, slug, heading, text: linkText, source };
 }

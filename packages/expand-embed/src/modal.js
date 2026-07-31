@@ -184,12 +184,17 @@ function attachSlugTypeahead(editor, slugInput, fieldWrap, opts = {}) {
 }
 
 /**
- * Reset a heading <select> to the Whole-post option only.
+ * Sentinel select value for source="deck" (Summary).
+ * Must not collide with real heading titles.
+ */
+export const EXPAND_TARGET_DECK = "__deck__";
+
+/**
+ * Reset a target <select> to the Whole-post option only.
  * @param {HTMLSelectElement} select
  * @param {boolean} [disabled]
  */
-function resetHeadingSelect(select, disabled = true) {
-  const prev = select.value;
+function resetTargetSelect(select, disabled = true) {
   select.innerHTML = "";
   const whole = document.createElement("option");
   whole.value = "";
@@ -197,19 +202,27 @@ function resetHeadingSelect(select, disabled = true) {
   select.appendChild(whole);
   select.value = "";
   select.disabled = disabled;
-  return prev;
 }
 
 /**
- * Populate heading select from host results; preserve prior value if still present.
+ * Populate target select: Whole post | optional Summary (deck) | section headings.
  * @param {HTMLSelectElement} select
- * @param {Array<{ title?: string, level?: number }>} headings
+ * @param {{ deck?: string|null, headings?: Array<{ title?: string, level?: number }> }} targets
  * @param {string} [preserveValue]
+ * @param {boolean} [includeDeck]
  */
-function fillHeadingSelect(select, headings, preserveValue = "") {
-  resetHeadingSelect(select, false);
+function fillTargetSelect(select, targets, preserveValue = "", includeDeck = false) {
+  resetTargetSelect(select, false);
   const seen = new Set([""]);
-  for (const item of headings || []) {
+  const deck = includeDeck ? String(targets?.deck || "").trim() : "";
+  if (deck) {
+    const opt = document.createElement("option");
+    opt.value = EXPAND_TARGET_DECK;
+    opt.textContent = "Summary";
+    select.appendChild(opt);
+    seen.add(EXPAND_TARGET_DECK);
+  }
+  for (const item of targets?.headings || []) {
     const title = String(item?.title || "").trim();
     if (!title || seen.has(title)) continue;
     seen.add(title);
@@ -224,6 +237,28 @@ function fillHeadingSelect(select, headings, preserveValue = "") {
   } else {
     select.value = "";
   }
+}
+
+/**
+ * Populate heading-only select (onListHeadings fallback); preserve prior value if still present.
+ * @param {HTMLSelectElement} select
+ * @param {Array<{ title?: string, level?: number }>} headings
+ * @param {string} [preserveValue]
+ */
+function fillHeadingSelect(select, headings, preserveValue = "") {
+  fillTargetSelect(select, { headings }, preserveValue, false);
+}
+
+/**
+ * Map select value → { heading, source } for shortcode-build.
+ * @param {string} value
+ * @returns {{ heading: string|null, source: string|null }}
+ */
+function targetValueToAttrs(value) {
+  const v = String(value || "").trim();
+  if (!v) return { heading: null, source: null };
+  if (v === EXPAND_TARGET_DECK) return { heading: null, source: "deck" };
+  return { heading: v, source: null };
 }
 
 /**
@@ -254,15 +289,22 @@ export function openExpandEmbedModal(editor, triggerBtn, mode = "expand") {
   `;
   form.appendChild(slugField);
 
+  const listExpandTargetsHandler =
+    typeof editor.getListExpandTargets === "function"
+      ? editor.getListExpandTargets()
+      : null;
   const listHeadingsHandler =
     typeof editor.getListHeadings === "function" ? editor.getListHeadings() : null;
-  const useHeadingSelect = typeof listHeadingsHandler === "function";
+  const useExpandTargets = typeof listExpandTargetsHandler === "function";
+  const useHeadingSelect =
+    useExpandTargets || typeof listHeadingsHandler === "function";
+  const targetLabel = useExpandTargets ? "Target" : "Heading (optional)";
 
   const headingField = document.createElement("div");
   headingField.className = "traven-modal-field";
   if (useHeadingSelect) {
     headingField.innerHTML = `
-      <label class="traven-modal-label" for="traven-expand-heading">Heading (optional)</label>
+      <label class="traven-modal-label" for="traven-expand-heading">${targetLabel}</label>
       <select id="traven-expand-heading" class="traven-modal-input" disabled>
         <option value="">Whole post</option>
       </select>
@@ -280,9 +322,15 @@ export function openExpandEmbedModal(editor, triggerBtn, mode = "expand") {
   hint.style.margin = "0";
   hint.style.fontSize = "0.8em";
   hint.style.color = "var(--text-secondary, #64748b)";
-  hint.textContent = isEmbed
-    ? "Embed always shows the target content in place. Heading selects a section; Link Text labels the editor chip."
-    : "Expand stays collapsed until the reader opens it (Nutshell-style). Heading selects a section; Link Text is the clickable label.";
+  if (useExpandTargets) {
+    hint.textContent = isEmbed
+      ? "Embed always shows the target in place. Target: whole post, Summary (deck), or a section. Link Text labels the editor chip."
+      : "Expand stays collapsed until the reader opens it (Nutshell-style). Target: whole post, Summary (deck), or a section. Link Text is the clickable label.";
+  } else {
+    hint.textContent = isEmbed
+      ? "Embed always shows the target content in place. Heading selects a section; Link Text labels the editor chip."
+      : "Expand stays collapsed until the reader opens it (Nutshell-style). Heading selects a section; Link Text is the clickable label.";
+  }
   form.appendChild(hint);
 
   /** @type {HTMLInputElement} */
@@ -304,26 +352,42 @@ export function openExpandEmbedModal(editor, triggerBtn, mode = "expand") {
     }
   }
 
-  let headingRequestId = 0;
-  const refreshHeadings = async (slug) => {
+  let targetRequestId = 0;
+  const refreshTargets = async (slug) => {
     if (!useHeadingSelect) return;
     const select = /** @type {HTMLSelectElement} */ (headingControl);
     const s = String(slug || "").trim();
     if (!s) {
-      resetHeadingSelect(select, true);
+      resetTargetSelect(select, true);
       return;
     }
     const preserve = select.value;
-    const id = ++headingRequestId;
+    const id = ++targetRequestId;
     select.disabled = true;
     try {
-      const result = await listHeadingsHandler(s);
-      if (id !== headingRequestId) return;
-      fillHeadingSelect(select, Array.isArray(result) ? result : [], preserve);
+      if (useExpandTargets) {
+        const result = await listExpandTargetsHandler(s);
+        if (id !== targetRequestId) return;
+        const targets =
+          result && typeof result === "object" && !Array.isArray(result)
+            ? {
+                deck: result.deck ?? null,
+                headings: Array.isArray(result.headings) ? result.headings : [],
+              }
+            : { deck: null, headings: [] };
+        fillTargetSelect(select, targets, preserve, true);
+      } else {
+        const result = await listHeadingsHandler(s);
+        if (id !== targetRequestId) return;
+        fillHeadingSelect(select, Array.isArray(result) ? result : [], preserve);
+      }
     } catch (err) {
-      if (id !== headingRequestId) return;
-      resetHeadingSelect(select, false);
-      console.warn("onListHeadings failed:", err);
+      if (id !== targetRequestId) return;
+      resetTargetSelect(select, false);
+      console.warn(
+        useExpandTargets ? "onListExpandTargets failed:" : "onListHeadings failed:",
+        err,
+      );
     }
   };
 
@@ -334,7 +398,7 @@ export function openExpandEmbedModal(editor, triggerBtn, mode = "expand") {
       }
     },
     onSlugChange: (slug) => {
-      refreshHeadings(slug);
+      refreshTargets(slug);
     },
   });
 
@@ -368,9 +432,12 @@ export function openExpandEmbedModal(editor, triggerBtn, mode = "expand") {
             slugInput.classList.add("traven-modal-input-error");
             return;
           }
-          const heading = headingControl.value.trim() || null;
+          const rawTarget = headingControl.value.trim();
+          const { heading, source } = useExpandTargets
+            ? targetValueToAttrs(rawTarget)
+            : { heading: rawTarget || null, source: null };
           const linkText = textInput.value.trim() || null;
-          const md = buildExpandEmbedShortcode(mode, slug, heading, linkText);
+          const md = buildExpandEmbedShortcode(mode, slug, heading, linkText, source);
           if (typeof editor.replaceSelection === "function") {
             editor.replaceSelection(md);
           } else if (typeof editor.insertSnippet === "function") {

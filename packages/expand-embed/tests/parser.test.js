@@ -39,6 +39,17 @@ describe("parseExpandEmbedAttrs", () => {
     expect(r.slug).toBe("christmas-in-finland");
     expect(r.text).toBe("Click to expand…");
     expect(r.heading).toBe("Rovaniemi: The Official Home of Santa Claus");
+    expect(r.source).toBeNull();
+  });
+
+  it("parses source=deck", () => {
+    const r = parseExpandEmbedAttrs(
+      '[expand slug="finland" text="Finland" source="deck"]'
+    );
+    expect(r.slug).toBe("finland");
+    expect(r.text).toBe("Finland");
+    expect(r.source).toBe("deck");
+    expect(r.heading).toBeNull();
   });
 });
 
@@ -71,5 +82,17 @@ describe("buildExpandEmbedShortcode", () => {
     expect(
       buildExpandEmbedShortcode("expand", "hello", "Section One", "Click here")
     ).toBe('[expand slug="hello" text="Click here" heading="Section One"]');
+  });
+
+  it("builds expand with source=deck", () => {
+    expect(
+      buildExpandEmbedShortcode("expand", "finland", null, "Finland", "deck")
+    ).toBe('[expand slug="finland" text="Finland" source="deck"]');
+  });
+
+  it("omits heading when source is set", () => {
+    expect(
+      buildExpandEmbedShortcode("embed", "finland", "Origins", "Finland", "deck")
+    ).toBe('[embed slug="finland" text="Finland" source="deck"]');
   });
 });

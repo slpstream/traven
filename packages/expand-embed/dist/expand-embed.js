@@ -2156,12 +2156,13 @@ function parseExpandEmbedAttrs(raw) {
   let slug = (attrs.slug || attrs.default || "").trim();
   let heading2 = (attrs.heading || "").trim() || null;
   const linkText = (attrs.text || "").trim() || null;
+  const source = (attrs.source || "").trim() || null;
   if (slug.includes("#") && !heading2) {
     const parts = slug.split("#");
     slug = parts[0];
     heading2 = parts.slice(1).join("#") || null;
   }
-  return { mode, slug, heading: heading2, text: linkText };
+  return { mode, slug, heading: heading2, text: linkText, source };
 }
 
 // src/plugin.js
@@ -2273,6 +2274,7 @@ var ExpandEmbedPlugin = class extends TravenPlugin {
         bodyHtml = this.resolve({
           slug: attrs.slug,
           heading: attrs.heading,
+          source: attrs.source,
           mode: attrs.mode
         });
       } catch (err) {
@@ -2286,12 +2288,13 @@ var ExpandEmbedPlugin = class extends TravenPlugin {
     const label = escapeHtml(expandEmbedLabel(attrs));
     const slugAttr = escapeAttr(attrs.slug);
     const headingAttr = attrs.heading ? ` data-heading="${escapeAttr(attrs.heading)}"` : "";
+    const sourceAttr = attrs.source ? ` data-source="${escapeAttr(attrs.source)}"` : "";
     const inner = bodyHtml != null && bodyHtml !== "" ? bodyHtml : `<p class="traven-expand-unresolved">Unresolved reference: ${escapeHtml(attrs.slug)}</p>`;
     if (attrs.mode === "embed") {
-      return `<div class="traven-embed" data-slug="${slugAttr}"${headingAttr}><div class="traven-embed-content">${inner}</div></div>`;
+      return `<div class="traven-embed" data-slug="${slugAttr}"${headingAttr}${sourceAttr}><div class="traven-embed-content">${inner}</div></div>`;
     }
     const id = nextExpandId();
-    return `<button type="button" class="traven-expand-trigger" data-traven-expand="${id}" data-slug="${slugAttr}"${headingAttr} aria-expanded="false">${label}</button><template id="${id}">${inner}</template>`;
+    return `<button type="button" class="traven-expand-trigger" data-traven-expand="${id}" data-slug="${slugAttr}"${headingAttr}${sourceAttr} aria-expanded="false">${label}</button><template id="${id}">${inner}</template>`;
   }
 };
 function escapeHtml(text) {
@@ -2308,14 +2311,16 @@ import { openModal } from "@freedomware/traven";
 function escapeAttr2(value) {
   return String(value || "").replace(/\\/g, "\\\\").replace(/"/g, '\\"');
 }
-function buildExpandEmbedShortcode(mode, slug, heading2 = null, text = null) {
+function buildExpandEmbedShortcode(mode, slug, heading2 = null, text = null, source = null) {
   const s = String(slug || "").trim();
-  const h = heading2 ? String(heading2).trim() : "";
+  const src = source ? String(source).trim() : "";
+  const h = !src && heading2 ? String(heading2).trim() : "";
   const t2 = text ? String(text).trim() : "";
   if (!s) return `[${mode} slug=""]`;
   let out = `[${mode} slug="${escapeAttr2(s)}"`;
   if (t2) out += ` text="${escapeAttr2(t2)}"`;
-  if (h) out += ` heading="${escapeAttr2(h)}"`;
+  if (src) out += ` source="${escapeAttr2(src)}"`;
+  else if (h) out += ` heading="${escapeAttr2(h)}"`;
   out += "]";
   return out;
 }
@@ -2465,8 +2470,8 @@ function attachSlugTypeahead(editor, slugInput, fieldWrap, opts = {}) {
     }
   };
 }
-function resetHeadingSelect(select, disabled = true) {
-  const prev = select.value;
+var EXPAND_TARGET_DECK = "__deck__";
+function resetTargetSelect(select, disabled = true) {
   select.innerHTML = "";
   const whole = document.createElement("option");
   whole.value = "";
@@ -2474,12 +2479,19 @@ function resetHeadingSelect(select, disabled = true) {
   select.appendChild(whole);
   select.value = "";
   select.disabled = disabled;
-  return prev;
 }
-function fillHeadingSelect(select, headings, preserveValue = "") {
-  resetHeadingSelect(select, false);
+function fillTargetSelect(select, targets, preserveValue = "", includeDeck = false) {
+  resetTargetSelect(select, false);
   const seen = /* @__PURE__ */ new Set([""]);
-  for (const item of headings || []) {
+  const deck = includeDeck ? String(targets?.deck || "").trim() : "";
+  if (deck) {
+    const opt = document.createElement("option");
+    opt.value = EXPAND_TARGET_DECK;
+    opt.textContent = "Summary";
+    select.appendChild(opt);
+    seen.add(EXPAND_TARGET_DECK);
+  }
+  for (const item of targets?.headings || []) {
     const title = String(item?.title || "").trim();
     if (!title || seen.has(title)) continue;
     seen.add(title);
@@ -2494,6 +2506,15 @@ function fillHeadingSelect(select, headings, preserveValue = "") {
   } else {
     select.value = "";
   }
+}
+function fillHeadingSelect(select, headings, preserveValue = "") {
+  fillTargetSelect(select, { headings }, preserveValue, false);
+}
+function targetValueToAttrs(value) {
+  const v = String(value || "").trim();
+  if (!v) return { heading: null, source: null };
+  if (v === EXPAND_TARGET_DECK) return { heading: null, source: "deck" };
+  return { heading: v, source: null };
 }
 function openExpandEmbedModal(editor, triggerBtn, mode = "expand") {
   const isEmbed = mode === "embed";
@@ -2513,13 +2534,16 @@ function openExpandEmbedModal(editor, triggerBtn, mode = "expand") {
     <input type="text" id="traven-expand-slug" class="traven-modal-input" placeholder="slug" value="" autocomplete="off" />
   `;
   form.appendChild(slugField);
+  const listExpandTargetsHandler = typeof editor.getListExpandTargets === "function" ? editor.getListExpandTargets() : null;
   const listHeadingsHandler = typeof editor.getListHeadings === "function" ? editor.getListHeadings() : null;
-  const useHeadingSelect = typeof listHeadingsHandler === "function";
+  const useExpandTargets = typeof listExpandTargetsHandler === "function";
+  const useHeadingSelect = useExpandTargets || typeof listHeadingsHandler === "function";
+  const targetLabel = useExpandTargets ? "Target" : "Heading (optional)";
   const headingField = document.createElement("div");
   headingField.className = "traven-modal-field";
   if (useHeadingSelect) {
     headingField.innerHTML = `
-      <label class="traven-modal-label" for="traven-expand-heading">Heading (optional)</label>
+      <label class="traven-modal-label" for="traven-expand-heading">${targetLabel}</label>
       <select id="traven-expand-heading" class="traven-modal-input" disabled>
         <option value="">Whole post</option>
       </select>
@@ -2536,7 +2560,11 @@ function openExpandEmbedModal(editor, triggerBtn, mode = "expand") {
   hint.style.margin = "0";
   hint.style.fontSize = "0.8em";
   hint.style.color = "var(--text-secondary, #64748b)";
-  hint.textContent = isEmbed ? "Embed always shows the target content in place. Heading selects a section; Link Text labels the editor chip." : "Expand stays collapsed until the reader opens it (Nutshell-style). Heading selects a section; Link Text is the clickable label.";
+  if (useExpandTargets) {
+    hint.textContent = isEmbed ? "Embed always shows the target in place. Target: whole post, Summary (deck), or a section. Link Text labels the editor chip." : "Expand stays collapsed until the reader opens it (Nutshell-style). Target: whole post, Summary (deck), or a section. Link Text is the clickable label.";
+  } else {
+    hint.textContent = isEmbed ? "Embed always shows the target content in place. Heading selects a section; Link Text labels the editor chip." : "Expand stays collapsed until the reader opens it (Nutshell-style). Heading selects a section; Link Text is the clickable label.";
+  }
   form.appendChild(hint);
   const textInput = (
     /** @type {HTMLInputElement} */
@@ -2558,8 +2586,8 @@ function openExpandEmbedModal(editor, triggerBtn, mode = "expand") {
       textInput.value = selectionText;
     }
   }
-  let headingRequestId = 0;
-  const refreshHeadings = async (slug) => {
+  let targetRequestId = 0;
+  const refreshTargets = async (slug) => {
     if (!useHeadingSelect) return;
     const select = (
       /** @type {HTMLSelectElement} */
@@ -2567,20 +2595,33 @@ function openExpandEmbedModal(editor, triggerBtn, mode = "expand") {
     );
     const s = String(slug || "").trim();
     if (!s) {
-      resetHeadingSelect(select, true);
+      resetTargetSelect(select, true);
       return;
     }
     const preserve = select.value;
-    const id = ++headingRequestId;
+    const id = ++targetRequestId;
     select.disabled = true;
     try {
-      const result = await listHeadingsHandler(s);
-      if (id !== headingRequestId) return;
-      fillHeadingSelect(select, Array.isArray(result) ? result : [], preserve);
+      if (useExpandTargets) {
+        const result = await listExpandTargetsHandler(s);
+        if (id !== targetRequestId) return;
+        const targets = result && typeof result === "object" && !Array.isArray(result) ? {
+          deck: result.deck ?? null,
+          headings: Array.isArray(result.headings) ? result.headings : []
+        } : { deck: null, headings: [] };
+        fillTargetSelect(select, targets, preserve, true);
+      } else {
+        const result = await listHeadingsHandler(s);
+        if (id !== targetRequestId) return;
+        fillHeadingSelect(select, Array.isArray(result) ? result : [], preserve);
+      }
     } catch (err) {
-      if (id !== headingRequestId) return;
-      resetHeadingSelect(select, false);
-      console.warn("onListHeadings failed:", err);
+      if (id !== targetRequestId) return;
+      resetTargetSelect(select, false);
+      console.warn(
+        useExpandTargets ? "onListExpandTargets failed:" : "onListHeadings failed:",
+        err
+      );
     }
   };
   const typeahead = attachSlugTypeahead(editor, slugInput, slugField, {
@@ -2590,7 +2631,7 @@ function openExpandEmbedModal(editor, triggerBtn, mode = "expand") {
       }
     },
     onSlugChange: (slug) => {
-      refreshHeadings(slug);
+      refreshTargets(slug);
     }
   });
   openModal({
@@ -2623,9 +2664,10 @@ function openExpandEmbedModal(editor, triggerBtn, mode = "expand") {
             slugInput.classList.add("traven-modal-input-error");
             return;
           }
-          const heading2 = headingControl.value.trim() || null;
+          const rawTarget = headingControl.value.trim();
+          const { heading: heading2, source } = useExpandTargets ? targetValueToAttrs(rawTarget) : { heading: rawTarget || null, source: null };
           const linkText = textInput.value.trim() || null;
-          const md = buildExpandEmbedShortcode(mode, slug, heading2, linkText);
+          const md = buildExpandEmbedShortcode(mode, slug, heading2, linkText, source);
           if (typeof editor.replaceSelection === "function") {
             editor.replaceSelection(md);
           } else if (typeof editor.insertSnippet === "function") {

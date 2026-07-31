@@ -2074,6 +2074,41 @@ describe('onListHeadings / getListHeadings', () => {
   });
 });
 
+describe('onListExpandTargets / getListExpandTargets', () => {
+  let container;
+
+  beforeEach(() => {
+    container = document.createElement('div');
+    document.body.appendChild(container);
+  });
+
+  afterEach(() => {
+    document.body.innerHTML = '';
+  });
+
+  it('returns null when no handler is configured', () => {
+    const editor = new TravenEditor({ element: container, initialValue: '' });
+    expect(editor.getListExpandTargets()).toBeNull();
+  });
+
+  it('returns the configured onListExpandTargets handler', async () => {
+    const handler = vi.fn(async () => ({
+      deck: 'A short nutshell.',
+      headings: [{ title: 'Origins', level: 2 }],
+    }));
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '',
+      onListExpandTargets: handler,
+    });
+    expect(editor.getListExpandTargets()).toBe(handler);
+    const results = await editor.getListExpandTargets()('hello');
+    expect(results.deck).toBe('A short nutshell.');
+    expect(results.headings).toHaveLength(1);
+    expect(results.headings[0].title).toBe('Origins');
+  });
+});
+
 describe('options.plugins host registration', () => {
   let container;
 

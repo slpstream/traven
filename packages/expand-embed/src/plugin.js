@@ -6,6 +6,7 @@ import { ExpandEmbedShortcode, parseExpandEmbedAttrs, expandEmbedLabel } from ".
  * @typedef {Object} ExpandResolveArgs
  * @property {string} slug
  * @property {string|null} [heading]
+ * @property {string|null} [source]
  * @property {'expand'|'embed'} mode
  */
 
@@ -147,6 +148,7 @@ export class ExpandEmbedPlugin extends TravenPlugin {
         bodyHtml = this.resolve({
           slug: attrs.slug,
           heading: attrs.heading,
+          source: attrs.source,
           mode: attrs.mode,
         });
       } catch (err) {
@@ -163,20 +165,21 @@ export class ExpandEmbedPlugin extends TravenPlugin {
     const label = escapeHtml(expandEmbedLabel(attrs));
     const slugAttr = escapeAttr(attrs.slug);
     const headingAttr = attrs.heading ? ` data-heading="${escapeAttr(attrs.heading)}"` : "";
+    const sourceAttr = attrs.source ? ` data-source="${escapeAttr(attrs.source)}"` : "";
     const inner =
       bodyHtml != null && bodyHtml !== ""
         ? bodyHtml
         : `<p class="traven-expand-unresolved">Unresolved reference: ${escapeHtml(attrs.slug)}</p>`;
 
     if (attrs.mode === "embed") {
-      return `<div class="traven-embed" data-slug="${slugAttr}"${headingAttr}><div class="traven-embed-content">${inner}</div></div>`;
+      return `<div class="traven-embed" data-slug="${slugAttr}"${headingAttr}${sourceAttr}><div class="traven-embed-content">${inner}</div></div>`;
     }
 
     // Phrasing-safe: button + template stay inside <p>; JS inserts the panel.
     const id = nextExpandId();
     return (
       `<button type="button" class="traven-expand-trigger" data-traven-expand="${id}"` +
-      ` data-slug="${slugAttr}"${headingAttr} aria-expanded="false">${label}</button>` +
+      ` data-slug="${slugAttr}"${headingAttr}${sourceAttr} aria-expanded="false">${label}</button>` +
       `<template id="${id}">${inner}</template>`
     );
   }

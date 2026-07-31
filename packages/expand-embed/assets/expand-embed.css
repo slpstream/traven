@@ -116,3 +116,30 @@
   opacity: 0.7;
   font-style: italic;
 }
+
+/* --- Deck / Summary nutshell: Read more CTA (opens full post) --- */
+
+.traven-expand-read-more {
+  margin: 0.75em 0 0;
+}
+
+.traven-expand-read-more a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.traven-expand-read-more a::after {
+  content: "";
+  display: inline-block;
+  width: 0.85em;
+  height: 0.85em;
+  flex-shrink: 0;
+  background-color: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Crect width='256' height='256' fill='none'/%3E%3Cline x1='136' y1='120' x2='216' y2='40' fill='none' stroke='black' stroke-linecap='round' stroke-linejoin='round' stroke-width='24'/%3E%3Cpolyline points='216 104 215.99 40.01 152 40' fill='none' stroke='black' stroke-linecap='round' stroke-linejoin='round' stroke-width='24'/%3E%3Cpath d='M184,140v68a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V80a8,8,0,0,1,8-8h68' fill='none' stroke='black' stroke-linecap='round' stroke-linejoin='round' stroke-width='24'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Crect width='256' height='256' fill='none'/%3E%3Cline x1='136' y1='120' x2='216' y2='40' fill='none' stroke='black' stroke-linecap='round' stroke-linejoin='round' stroke-width='24'/%3E%3Cpolyline points='216 104 215.99 40.01 152 40' fill='none' stroke='black' stroke-linecap='round' stroke-linejoin='round' stroke-width='24'/%3E%3Cpath d='M184,140v68a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V80a8,8,0,0,1,8-8h68' fill='none' stroke='black' stroke-linecap='round' stroke-linejoin='round' stroke-width='24'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+}

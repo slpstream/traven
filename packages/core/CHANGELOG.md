@@ -1,5 +1,11 @@
 # @freedomware/traven
 
+## 0.2.22
+
+### Patch Changes
+
+- Add `onListExpandTargets` / `getListExpandTargets()` so hosts can supply frontmatter deck plus section headings for the Expand/Embed insert modal. expand-embed gains `source="deck"` shortcode support, Summary modal target, and Read more link styles.
+
 ## 0.2.21
 
 ### Patch Changes
