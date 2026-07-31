@@ -1,6 +1,6 @@
 {
   "name": "@freedomware/traven-expand-embed",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "Traven plugin: [expand] / [embed] shortcodes for site-owned post transclusion",
   "license": "MIT",
   "type": "module",
@@ -15,7 +15,7 @@
     "test": "vitest run"
   },
   "peerDependencies": {
-    "@freedomware/traven": ">=0.2.22"
+    "@freedomware/traven": ">=0.2.23"
   },
   "devDependencies": {
     "@freedomware/traven": "*",

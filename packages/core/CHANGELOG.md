@@ -1,5 +1,11 @@
 # @freedomware/traven
 
+## 0.2.23
+
+### Patch Changes
+
+- 1c9e5ff: Fix ReDoS vulnerability (CodeQL Alert #64) in shortcode attribute parsing by replacing polynomial regular expressions with a linear O(N) state machine parser.
+
 ## 0.2.22
 
 ### Patch Changes
