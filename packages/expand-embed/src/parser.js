@@ -78,7 +78,7 @@ export const ExpandEmbedShortcode = {
         }
 
         const attrRegex =
-          /\s*([a-zA-Z0-9_-]+)\s*=\s*(?:"([\s\S]*?)"(?=\s+[a-zA-Z0-9_-]+\s*=|\s*\]|\s*$)|'([\s\S]*?)'(?=\s+[a-zA-Z0-9_-]+\s*=|\s*\]|\s*$)|([^\s\]]+))/g;
+          /\s*([a-zA-Z0-9_-]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s\]]+))/g;
         let match;
         while ((match = attrRegex.exec(attrStr)) !== null) {
           // Skip if this overlaps the shorthand "=" at start without a name
@@ -147,7 +147,7 @@ export function parseExpandEmbedAttrs(raw) {
   }
 
   const attrRegex =
-    /([a-zA-Z0-9_-]+)\s*=\s*(?:"([\s\S]*?)"|'([\s\S]*?)'|([^\s\]]+))/g;
+    /([a-zA-Z0-9_-]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s\]]+))/g;
   let m;
   while ((m = attrRegex.exec(text)) !== null) {
     attrs[m[1]] = m[2] ?? m[3] ?? m[4] ?? "";

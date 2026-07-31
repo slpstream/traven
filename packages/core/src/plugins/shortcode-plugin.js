@@ -5,6 +5,7 @@ import { TravenPlugin } from "./TravenPlugin.js";
 import { highlightDeco, collapseDeco, renderInlineMarkdown } from "../wysiwym.js";
 import { openImageModal, openComponentModal, openVideoModal, openAudioModal, openFigureModal } from "../toolbar/modal.js";
 import { sanitizeUrl, parseVideoUrl } from "../security.js";
+import { parseAttrMap } from "../attr-parser.js";
 import { viewToEditor } from "../bridge.js";
 
 export class ImageShortcodeWidget extends WidgetType {
@@ -610,15 +611,7 @@ export class ShortcodePlugin extends TravenPlugin {
 
       const isCursorInside = cursorHead > from && cursorHead < to;
       if (!isCursorInside) {
-        const attrs = {};
-        const attrRegex = /\s*([a-zA-Z0-9_-]+)\s*=\s*(?:"([\s\S]*?)"(?=\s+[a-zA-Z0-9_-]+\s*=|\s*\]|\s*$)|'([\s\S]*?)'(?=\s+[a-zA-Z0-9_-]+\s*=|\s*\]|\s*$)|([^\s\]]+))/g;
-        let attrMatch;
-        while ((attrMatch = attrRegex.exec(attrsStr)) !== null) {
-          const name = attrMatch[1];
-          let val = attrMatch[2] !== undefined ? attrMatch[2] : (attrMatch[3] !== undefined ? attrMatch[3] : (attrMatch[4] || ""));
-          val = val.replace(/\\"/g, '"').replace(/\\'/g, "'");
-          attrs[name] = val;
-        }
+        const attrs = parseAttrMap(attrsStr);
         
         const rawText = match[0];
         const widget = new FigureShortcodeWidget(attrs, from, bodyText, rawText);

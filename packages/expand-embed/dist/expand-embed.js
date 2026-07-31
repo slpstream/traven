@@ -2104,7 +2104,7 @@ var ExpandEmbedShortcode = {
             ])
           );
         }
-        const attrRegex = /\s*([a-zA-Z0-9_-]+)\s*=\s*(?:"([\s\S]*?)"(?=\s+[a-zA-Z0-9_-]+\s*=|\s*\]|\s*$)|'([\s\S]*?)'(?=\s+[a-zA-Z0-9_-]+\s*=|\s*\]|\s*$)|([^\s\]]+))/g;
+        const attrRegex = /\s*([a-zA-Z0-9_-]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s\]]+))/g;
         let match;
         while ((match = attrRegex.exec(attrStr)) !== null) {
           if (shorthand && match.index < shorthand[0].length) continue;
@@ -2148,7 +2148,7 @@ function parseExpandEmbedAttrs(raw) {
   if (shorthand) {
     attrs.default = shorthand[1] ?? shorthand[2] ?? shorthand[3] ?? "";
   }
-  const attrRegex = /([a-zA-Z0-9_-]+)\s*=\s*(?:"([\s\S]*?)"|'([\s\S]*?)'|([^\s\]]+))/g;
+  const attrRegex = /([a-zA-Z0-9_-]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s\]]+))/g;
   let m;
   while ((m = attrRegex.exec(text)) !== null) {
     attrs[m[1]] = m[2] ?? m[3] ?? m[4] ?? "";

@@ -1,5 +1,6 @@
 // @ts-check
 import { tags } from "@lezer/highlight";
+import { parseAttrPairs } from "./attr-parser.js";
 
 export const AudioShortcode = {
   defineNodes: [
@@ -59,21 +60,14 @@ export const AudioShortcode = {
       const attrStr = cx.slice(attrStart, attrEnd);
 
       // Regex to match attribute key-value pairs (e.g. name="value", name='value', name=value)
-      const attrRegex = /\s*([a-zA-Z0-9_-]+)\s*=\s*(?:"([\s\S]*?)"(?=\s+[a-zA-Z0-9_-]+\s*=|\s*\]|\s*$)|'([\s\S]*?)'(?=\s+[a-zA-Z0-9_-]+\s*=|\s*\]|\s*$)|([^\s\]]+))/g;
-      let match;
-      while ((match = attrRegex.exec(attrStr)) !== null) {
-        const matchStart = attrStart + match.index;
-        const matchEnd = attrStart + attrRegex.lastIndex;
-
-        const nameStr = match[1];
-        const nameStart = matchStart + match[0].indexOf(nameStr);
-        const nameEnd = nameStart + nameStr.length;
-
-        const valStr = match[2] !== undefined ? match[2] : (match[3] !== undefined ? match[3] : (match[4] || ""));
-        const eqIdx = match[0].indexOf("=");
-        const valIdxInMatch = match[0].indexOf(valStr, eqIdx);
-        const valStart = matchStart + valIdxInMatch;
-        const valEnd = valStart + valStr.length;
+      const pairs = parseAttrPairs(attrStr);
+      for (const p of pairs) {
+        const matchStart = attrStart + p.index;
+        const matchEnd = attrStart + p.lastIndex;
+        const nameStart = attrStart + p.nameStart;
+        const nameEnd = attrStart + p.nameEnd;
+        const valStart = attrStart + p.valStart;
+        const valEnd = attrStart + p.valEnd;
 
         const attrChildren = [
           cx.elt("AudioShortcodeAttributeName", nameStart, nameEnd),

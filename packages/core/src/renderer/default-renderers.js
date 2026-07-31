@@ -1,6 +1,7 @@
 // @ts-check
 import { escapeHtml, escapeHtmlAttr } from "./TravenRenderer.js";
 import { sanitizeUrl, parseVideoUrl } from "../security.js";
+import { parseAttrMap } from "../attr-parser.js";
 import { renderMermaidSync } from "../mermaid-parser.js";
 import { renderInlineMarkdown } from "../wysiwym.js";
 
@@ -363,17 +364,5 @@ export function defaultNodeRenderer(node, childrenHtml, docText) {
 }
 
 function parseShortcodeAttrs(raw) {
-  /** @type {Record<string, string>} */
-  const attrs = {};
-  // The regex uses a lookahead to allow unescaped (and escaped) quotes inside the attribute values,
-  // matched lazily up to the next attribute definition key="..." or the shortcode end bracket ].
-  const attrRegex = /([a-zA-Z0-9_-]+)\s*=\s*(?:"([\s\S]*?)"(?=\s+[a-zA-Z0-9_-]+\s*=|\s*\])|'([\s\S]*?)'(?=\s+[a-zA-Z0-9_-]+\s*=|\s*\])|([^\s\]]+))/g;
-  let m;
-  while ((m = attrRegex.exec(raw)) !== null) {
-    let val = m[2] !== undefined ? m[2] : m[3] !== undefined ? m[3] : m[4] || "";
-    // Unescape backslash-escaped quotes if present
-    val = val.replace(/\\"/g, '"').replace(/\\'/g, "'");
-    attrs[m[1]] = val;
-  }
-  return attrs;
+  return parseAttrMap(raw);
 }
