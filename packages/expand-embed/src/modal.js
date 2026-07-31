@@ -11,7 +11,7 @@ export { buildExpandEmbedShortcode } from "./shortcode-build.js";
  * @param {Object} editor
  * @param {HTMLInputElement} slugInput
  * @param {HTMLElement} fieldWrap - positioned parent for the suggestion list
- * @param {{ onPick?: (item: { title: string, url: string, slug?: string }) => void }} [opts]
+ * @param {{ onPick?: (item: { title: string, url: string, slug?: string }) => void, onSlugChange?: (slug: string) => void }} [opts]
  * @returns {{ destroy: () => void }}
  */
 function attachSlugTypeahead(editor, slugInput, fieldWrap, opts = {}) {
@@ -19,6 +19,25 @@ function attachSlugTypeahead(editor, slugInput, fieldWrap, opts = {}) {
     typeof editor.getSuggestLinks === "function" ? editor.getSuggestLinks() : null;
 
   if (!suggestHandler) {
+    // Still notify slug changes so heading picker can load when the host
+    // provides onListHeadings but not onSuggestLinks.
+    if (typeof opts.onSlugChange === "function") {
+      let debounceTimer = null;
+      const onInput = () => {
+        if (debounceTimer) clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(
+          () => opts.onSlugChange(slugInput.value.trim()),
+          200,
+        );
+      };
+      slugInput.addEventListener("input", onInput);
+      return {
+        destroy() {
+          if (debounceTimer) clearTimeout(debounceTimer);
+          slugInput.removeEventListener("input", onInput);
+        },
+      };
+    }
     return { destroy() {} };
   }
 
@@ -43,6 +62,7 @@ function attachSlugTypeahead(editor, slugInput, fieldWrap, opts = {}) {
     const slug = item.slug || "";
     if (slug) slugInput.value = slug;
     if (typeof opts.onPick === "function") opts.onPick(item);
+    if (typeof opts.onSlugChange === "function") opts.onSlugChange(slug);
     hide();
     slugInput.focus();
   };
@@ -121,7 +141,12 @@ function attachSlugTypeahead(editor, slugInput, fieldWrap, opts = {}) {
 
   const onInput = () => {
     if (debounceTimer) clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(() => run(slugInput.value), 200);
+    debounceTimer = setTimeout(() => {
+      run(slugInput.value);
+      if (typeof opts.onSlugChange === "function") {
+        opts.onSlugChange(slugInput.value.trim());
+      }
+    }, 200);
   };
 
   const onKeyDown = (e) => {
@@ -159,6 +184,49 @@ function attachSlugTypeahead(editor, slugInput, fieldWrap, opts = {}) {
 }
 
 /**
+ * Reset a heading <select> to the Whole-post option only.
+ * @param {HTMLSelectElement} select
+ * @param {boolean} [disabled]
+ */
+function resetHeadingSelect(select, disabled = true) {
+  const prev = select.value;
+  select.innerHTML = "";
+  const whole = document.createElement("option");
+  whole.value = "";
+  whole.textContent = "Whole post";
+  select.appendChild(whole);
+  select.value = "";
+  select.disabled = disabled;
+  return prev;
+}
+
+/**
+ * Populate heading select from host results; preserve prior value if still present.
+ * @param {HTMLSelectElement} select
+ * @param {Array<{ title?: string, level?: number }>} headings
+ * @param {string} [preserveValue]
+ */
+function fillHeadingSelect(select, headings, preserveValue = "") {
+  resetHeadingSelect(select, false);
+  const seen = new Set([""]);
+  for (const item of headings || []) {
+    const title = String(item?.title || "").trim();
+    if (!title || seen.has(title)) continue;
+    seen.add(title);
+    const opt = document.createElement("option");
+    opt.value = title;
+    const level = item.level ? Number(item.level) : 0;
+    opt.textContent = level > 0 ? `${"\u00A0".repeat((level - 1) * 2)}${title}` : title;
+    select.appendChild(opt);
+  }
+  if (preserveValue && seen.has(preserveValue)) {
+    select.value = preserveValue;
+  } else {
+    select.value = "";
+  }
+}
+
+/**
  * Open Insert Expand or Insert Embed modal.
  *
  * @param {Object} editor
@@ -186,12 +254,25 @@ export function openExpandEmbedModal(editor, triggerBtn, mode = "expand") {
   `;
   form.appendChild(slugField);
 
+  const listHeadingsHandler =
+    typeof editor.getListHeadings === "function" ? editor.getListHeadings() : null;
+  const useHeadingSelect = typeof listHeadingsHandler === "function";
+
   const headingField = document.createElement("div");
   headingField.className = "traven-modal-field";
-  headingField.innerHTML = `
-    <label class="traven-modal-label" for="traven-expand-heading">Heading (optional)</label>
-    <input type="text" id="traven-expand-heading" class="traven-modal-input" placeholder="Section heading — leave blank for whole post" value="" autocomplete="off" />
-  `;
+  if (useHeadingSelect) {
+    headingField.innerHTML = `
+      <label class="traven-modal-label" for="traven-expand-heading">Heading (optional)</label>
+      <select id="traven-expand-heading" class="traven-modal-input" disabled>
+        <option value="">Whole post</option>
+      </select>
+    `;
+  } else {
+    headingField.innerHTML = `
+      <label class="traven-modal-label" for="traven-expand-heading">Heading (optional)</label>
+      <input type="text" id="traven-expand-heading" class="traven-modal-input" placeholder="Section heading — leave blank for whole post" value="" autocomplete="off" />
+    `;
+  }
   form.appendChild(headingField);
 
   const hint = document.createElement("p");
@@ -208,8 +289,10 @@ export function openExpandEmbedModal(editor, triggerBtn, mode = "expand") {
   const textInput = /** @type {HTMLInputElement} */ (form.querySelector("#traven-expand-text"));
   /** @type {HTMLInputElement} */
   const slugInput = /** @type {HTMLInputElement} */ (form.querySelector("#traven-expand-slug"));
-  /** @type {HTMLInputElement} */
-  const headingInput = /** @type {HTMLInputElement} */ (form.querySelector("#traven-expand-heading"));
+  /** @type {HTMLInputElement|HTMLSelectElement} */
+  const headingControl = /** @type {HTMLInputElement|HTMLSelectElement} */ (
+    form.querySelector("#traven-expand-heading")
+  );
 
   // Pre-fill Link Text from selection (same pattern as Insert Link).
   const view = typeof editor.getView === "function" ? editor.getView() : null;
@@ -221,11 +304,37 @@ export function openExpandEmbedModal(editor, triggerBtn, mode = "expand") {
     }
   }
 
+  let headingRequestId = 0;
+  const refreshHeadings = async (slug) => {
+    if (!useHeadingSelect) return;
+    const select = /** @type {HTMLSelectElement} */ (headingControl);
+    const s = String(slug || "").trim();
+    if (!s) {
+      resetHeadingSelect(select, true);
+      return;
+    }
+    const preserve = select.value;
+    const id = ++headingRequestId;
+    select.disabled = true;
+    try {
+      const result = await listHeadingsHandler(s);
+      if (id !== headingRequestId) return;
+      fillHeadingSelect(select, Array.isArray(result) ? result : [], preserve);
+    } catch (err) {
+      if (id !== headingRequestId) return;
+      resetHeadingSelect(select, false);
+      console.warn("onListHeadings failed:", err);
+    }
+  };
+
   const typeahead = attachSlugTypeahead(editor, slugInput, slugField, {
     onPick: (item) => {
       if (!textInput.value.trim() && item.title) {
         textInput.value = item.title;
       }
+    },
+    onSlugChange: (slug) => {
+      refreshHeadings(slug);
     },
   });
 
@@ -259,7 +368,7 @@ export function openExpandEmbedModal(editor, triggerBtn, mode = "expand") {
             slugInput.classList.add("traven-modal-input-error");
             return;
           }
-          const heading = headingInput.value.trim() || null;
+          const heading = headingControl.value.trim() || null;
           const linkText = textInput.value.trim() || null;
           const md = buildExpandEmbedShortcode(mode, slug, heading, linkText);
           if (typeof editor.replaceSelection === "function") {

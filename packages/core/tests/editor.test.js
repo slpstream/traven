@@ -2043,6 +2043,37 @@ describe('onSuggestLinks / getSuggestLinks', () => {
   });
 });
 
+describe('onListHeadings / getListHeadings', () => {
+  let container;
+
+  beforeEach(() => {
+    container = document.createElement('div');
+    document.body.appendChild(container);
+  });
+
+  afterEach(() => {
+    document.body.innerHTML = '';
+  });
+
+  it('returns null when no handler is configured', () => {
+    const editor = new TravenEditor({ element: container, initialValue: '' });
+    expect(editor.getListHeadings()).toBeNull();
+  });
+
+  it('returns the configured onListHeadings handler', async () => {
+    const handler = vi.fn(async () => [{ title: 'Origins', level: 2 }]);
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '',
+      onListHeadings: handler,
+    });
+    expect(editor.getListHeadings()).toBe(handler);
+    const results = await editor.getListHeadings()('hello');
+    expect(results).toHaveLength(1);
+    expect(results[0].title).toBe('Origins');
+  });
+});
+
 describe('options.plugins host registration', () => {
   let container;
 

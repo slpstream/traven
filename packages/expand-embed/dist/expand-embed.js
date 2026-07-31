@@ -2324,6 +2324,23 @@ function buildExpandEmbedShortcode(mode, slug, heading2 = null, text = null) {
 function attachSlugTypeahead(editor, slugInput, fieldWrap, opts = {}) {
   const suggestHandler = typeof editor.getSuggestLinks === "function" ? editor.getSuggestLinks() : null;
   if (!suggestHandler) {
+    if (typeof opts.onSlugChange === "function") {
+      let debounceTimer2 = null;
+      const onInput2 = () => {
+        if (debounceTimer2) clearTimeout(debounceTimer2);
+        debounceTimer2 = setTimeout(
+          () => opts.onSlugChange(slugInput.value.trim()),
+          200
+        );
+      };
+      slugInput.addEventListener("input", onInput2);
+      return {
+        destroy() {
+          if (debounceTimer2) clearTimeout(debounceTimer2);
+          slugInput.removeEventListener("input", onInput2);
+        }
+      };
+    }
     return { destroy() {
     } };
   }
@@ -2345,6 +2362,7 @@ function attachSlugTypeahead(editor, slugInput, fieldWrap, opts = {}) {
     const slug = item.slug || "";
     if (slug) slugInput.value = slug;
     if (typeof opts.onPick === "function") opts.onPick(item);
+    if (typeof opts.onSlugChange === "function") opts.onSlugChange(slug);
     hide();
     slugInput.focus();
   };
@@ -2410,7 +2428,12 @@ function attachSlugTypeahead(editor, slugInput, fieldWrap, opts = {}) {
   };
   const onInput = () => {
     if (debounceTimer) clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(() => run(slugInput.value), 200);
+    debounceTimer = setTimeout(() => {
+      run(slugInput.value);
+      if (typeof opts.onSlugChange === "function") {
+        opts.onSlugChange(slugInput.value.trim());
+      }
+    }, 200);
   };
   const onKeyDown = (e) => {
     if (!suggestList || current.length === 0) return;
@@ -2442,6 +2465,36 @@ function attachSlugTypeahead(editor, slugInput, fieldWrap, opts = {}) {
     }
   };
 }
+function resetHeadingSelect(select, disabled = true) {
+  const prev = select.value;
+  select.innerHTML = "";
+  const whole = document.createElement("option");
+  whole.value = "";
+  whole.textContent = "Whole post";
+  select.appendChild(whole);
+  select.value = "";
+  select.disabled = disabled;
+  return prev;
+}
+function fillHeadingSelect(select, headings, preserveValue = "") {
+  resetHeadingSelect(select, false);
+  const seen = /* @__PURE__ */ new Set([""]);
+  for (const item of headings || []) {
+    const title = String(item?.title || "").trim();
+    if (!title || seen.has(title)) continue;
+    seen.add(title);
+    const opt = document.createElement("option");
+    opt.value = title;
+    const level = item.level ? Number(item.level) : 0;
+    opt.textContent = level > 0 ? `${"\xA0".repeat((level - 1) * 2)}${title}` : title;
+    select.appendChild(opt);
+  }
+  if (preserveValue && seen.has(preserveValue)) {
+    select.value = preserveValue;
+  } else {
+    select.value = "";
+  }
+}
 function openExpandEmbedModal(editor, triggerBtn, mode = "expand") {
   const isEmbed = mode === "embed";
   const form = document.createElement("div");
@@ -2460,12 +2513,23 @@ function openExpandEmbedModal(editor, triggerBtn, mode = "expand") {
     <input type="text" id="traven-expand-slug" class="traven-modal-input" placeholder="slug" value="" autocomplete="off" />
   `;
   form.appendChild(slugField);
+  const listHeadingsHandler = typeof editor.getListHeadings === "function" ? editor.getListHeadings() : null;
+  const useHeadingSelect = typeof listHeadingsHandler === "function";
   const headingField = document.createElement("div");
   headingField.className = "traven-modal-field";
-  headingField.innerHTML = `
-    <label class="traven-modal-label" for="traven-expand-heading">Heading (optional)</label>
-    <input type="text" id="traven-expand-heading" class="traven-modal-input" placeholder="Section heading \u2014 leave blank for whole post" value="" autocomplete="off" />
-  `;
+  if (useHeadingSelect) {
+    headingField.innerHTML = `
+      <label class="traven-modal-label" for="traven-expand-heading">Heading (optional)</label>
+      <select id="traven-expand-heading" class="traven-modal-input" disabled>
+        <option value="">Whole post</option>
+      </select>
+    `;
+  } else {
+    headingField.innerHTML = `
+      <label class="traven-modal-label" for="traven-expand-heading">Heading (optional)</label>
+      <input type="text" id="traven-expand-heading" class="traven-modal-input" placeholder="Section heading \u2014 leave blank for whole post" value="" autocomplete="off" />
+    `;
+  }
   form.appendChild(headingField);
   const hint = document.createElement("p");
   hint.className = "traven-expand-modal-hint";
@@ -2482,8 +2546,8 @@ function openExpandEmbedModal(editor, triggerBtn, mode = "expand") {
     /** @type {HTMLInputElement} */
     form.querySelector("#traven-expand-slug")
   );
-  const headingInput = (
-    /** @type {HTMLInputElement} */
+  const headingControl = (
+    /** @type {HTMLInputElement|HTMLSelectElement} */
     form.querySelector("#traven-expand-heading")
   );
   const view = typeof editor.getView === "function" ? editor.getView() : null;
@@ -2494,11 +2558,39 @@ function openExpandEmbedModal(editor, triggerBtn, mode = "expand") {
       textInput.value = selectionText;
     }
   }
+  let headingRequestId = 0;
+  const refreshHeadings = async (slug) => {
+    if (!useHeadingSelect) return;
+    const select = (
+      /** @type {HTMLSelectElement} */
+      headingControl
+    );
+    const s = String(slug || "").trim();
+    if (!s) {
+      resetHeadingSelect(select, true);
+      return;
+    }
+    const preserve = select.value;
+    const id = ++headingRequestId;
+    select.disabled = true;
+    try {
+      const result = await listHeadingsHandler(s);
+      if (id !== headingRequestId) return;
+      fillHeadingSelect(select, Array.isArray(result) ? result : [], preserve);
+    } catch (err) {
+      if (id !== headingRequestId) return;
+      resetHeadingSelect(select, false);
+      console.warn("onListHeadings failed:", err);
+    }
+  };
   const typeahead = attachSlugTypeahead(editor, slugInput, slugField, {
     onPick: (item) => {
       if (!textInput.value.trim() && item.title) {
         textInput.value = item.title;
       }
+    },
+    onSlugChange: (slug) => {
+      refreshHeadings(slug);
     }
   });
   openModal({
@@ -2531,7 +2623,7 @@ function openExpandEmbedModal(editor, triggerBtn, mode = "expand") {
             slugInput.classList.add("traven-modal-input-error");
             return;
           }
-          const heading2 = headingInput.value.trim() || null;
+          const heading2 = headingControl.value.trim() || null;
           const linkText = textInput.value.trim() || null;
           const md = buildExpandEmbedShortcode(mode, slug, heading2, linkText);
           if (typeof editor.replaceSelection === "function") {

@@ -2,7 +2,7 @@
 
 Traven plugin for site-owned post transclusion via `[expand]` and `[embed]` shortcodes.
 
-Core `traven.js` stays storage-agnostic. This package owns the grammar, WYSIWYM inline chips, reader HTML shells, a tiny public `initExpandEmbed` runtime, and **optional toolbar tools** (Insert Expand / Insert Embed modals with host typeahead). The **host** implements the resolver (`slug` → content | not-found) and `onSuggestLinks` for slug picking.
+Core `traven.js` stays storage-agnostic. This package owns the grammar, WYSIWYM inline chips, reader HTML shells, a tiny public `initExpandEmbed` runtime, and **optional toolbar tools** (Insert Expand / Insert Embed modals with host typeahead). The **host** implements the resolver (`slug` → content | not-found), `onSuggestLinks` for slug picking, and optionally `onListHeadings` for a section dropdown.
 
 ## Load contract
 
@@ -25,6 +25,7 @@ const editor = new TravenEditor({
   element,
   initialValue,
   onSuggestLinks: async (query) => hostSuggest(query), // powers Link + Expand/Embed typeahead
+  onListHeadings: async (slug) => hostListHeadings(slug), // optional: Heading dropdown (Whole post + sections)
   toolbar: [...DEFAULT_TOOLBAR, '|', ...EXPAND_EMBED_TOOLBAR],
   // Optional: also list 'expand' (and/or 'embed') in bubbleToolbar / DEFAULT_BUBBLE_TOOLBAR (Traven ≥ 0.2.20)
   plugins: [
@@ -36,6 +37,8 @@ const editor = new TravenEditor({
   ],
 });
 ```
+
+`onListHeadings(slug)` should return `Promise<{ title: string, level?: number }[]>`. When provided, the Insert Expand/Embed modal uses a **Heading** `<select>` (first option: Whole post) instead of free-text. Omit it to keep the classic text field.
 
 Also load `expand-embed.css` (or override with host skin tokens).
 
@@ -81,7 +84,7 @@ Toolbar buttons are **opt-in**: they never appear in core `DEFAULT_TOOLBAR`. Hos
 
 ## Editor (WYSIWYM)
 
-When the cursor is outside the shortcode, it collapses to an **inline chip** (`text` / `heading` / slug), styled like a normal link. Insert modals pre-fill **Link Text** from the current selection (same as Insert Link).
+When the cursor is outside the shortcode, it collapses to an **inline chip** (`text` / `heading` / slug), styled like a normal link. Insert modals pre-fill **Link Text** from the current selection (same as Insert Link). With `onListHeadings`, **Heading** is a dropdown of sections for the chosen slug (blank = whole post).
 
 ## Resolver interface
 

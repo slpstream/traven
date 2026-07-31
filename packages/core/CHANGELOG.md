@@ -1,5 +1,11 @@
 # @freedomware/traven
 
+## 0.2.21
+
+### Patch Changes
+
+- Add `onListHeadings` / `getListHeadings()` so hosts can supply section headings for the Expand/Embed insert modal. When set, the expand-embed plugin shows a Heading dropdown (Whole post + sections) instead of free-text.
+
 ## 0.2.20
 
 ### Patch Changes
