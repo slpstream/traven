@@ -119,19 +119,18 @@
 
 /* --- Deck / Summary nutshell: Read more CTA (opens full post) --- */
 
-.traven-expand-read-more {
-  margin: 0.75em 0 0;
-}
-
-.traven-expand-read-more a {
+a.traven-expand-read-more {
   display: inline-flex;
   align-items: center;
   gap: 0.35em;
+  margin-left: 0.35em;
   text-decoration: underline;
   text-underline-offset: 0.15em;
+  white-space: nowrap;
+  vertical-align: baseline;
 }
 
-.traven-expand-read-more a::after {
+a.traven-expand-read-more::after {
   content: "";
   display: inline-block;
   width: 0.85em;
