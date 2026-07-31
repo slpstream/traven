@@ -25,8 +25,8 @@ const editor = new TravenEditor({
   element,
   initialValue,
   onSuggestLinks: async (query) => hostSuggest(query), // powers Link + Expand/Embed typeahead
-  onListExpandTargets: async (slug) => hostListExpandTargets(slug), // preferred: Whole post | Summary (deck) | sections
-  // onListHeadings: async (slug) => hostListHeadings(slug), // fallback: Heading dropdown without Summary
+  onListExpandTargets: async (slug) => hostListExpandTargets(slug), // preferred: Whole post | Summary | Deck | sections
+  // onListHeadings: async (slug) => hostListHeadings(slug), // fallback: Heading dropdown without Summary/Deck
   toolbar: [...DEFAULT_TOOLBAR, '|', ...EXPAND_EMBED_TOOLBAR],
   // Optional: also list 'expand' (and/or 'embed') in bubbleToolbar / DEFAULT_BUBBLE_TOOLBAR (Traven ≥ 0.2.20)
   plugins: [
@@ -39,7 +39,7 @@ const editor = new TravenEditor({
 });
 ```
 
-Hosts that only implement `onListHeadings` keep the section-only dropdown. Prefer `onListExpandTargets` when the host can supply a frontmatter `deck` (modal label **Summary** → `source="deck"`).
+Hosts that only implement `onListHeadings` keep the section-only dropdown. Prefer `onListExpandTargets` when the host can supply frontmatter `summary` and/or `deck` (modal **Summary** → `source="summary"`, **Deck** → `source="deck"`).
 `onListHeadings(slug)` should return `Promise<{ title: string, level?: number }[]>`. When provided, the Insert Expand/Embed modal uses a **Heading** `<select>` (first option: Whole post) instead of free-text. Omit it to keep the classic text field.
 
 Also load `expand-embed.css` (or override with host skin tokens).

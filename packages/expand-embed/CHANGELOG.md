@@ -1,5 +1,13 @@
 # @freedomware/traven-expand-embed
 
+## 0.1.12
+
+### Patch Changes
+
+- Expand/Embed Target picker supports dedicated frontmatter `summary` alongside `deck`: host `onListExpandTargets` returns `{ summary?, deck?, headings }`; modal offers Whole post | Summary | Deck | sections mapping to `source="summary"` / `source="deck"`.
+- Updated dependencies
+  - @freedomware/traven@0.2.24
+
 ## 0.1.11
 
 ### Patch Changes

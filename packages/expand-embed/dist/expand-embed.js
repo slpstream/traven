@@ -2470,6 +2470,7 @@ function attachSlugTypeahead(editor, slugInput, fieldWrap, opts = {}) {
     }
   };
 }
+var EXPAND_TARGET_SUMMARY = "__summary__";
 var EXPAND_TARGET_DECK = "__deck__";
 function resetTargetSelect(select, disabled = true) {
   select.innerHTML = "";
@@ -2480,16 +2481,26 @@ function resetTargetSelect(select, disabled = true) {
   select.value = "";
   select.disabled = disabled;
 }
-function fillTargetSelect(select, targets, preserveValue = "", includeDeck = false) {
+function fillTargetSelect(select, targets, preserveValue = "", includeFmTargets = false) {
   resetTargetSelect(select, false);
   const seen = /* @__PURE__ */ new Set([""]);
-  const deck = includeDeck ? String(targets?.deck || "").trim() : "";
-  if (deck) {
-    const opt = document.createElement("option");
-    opt.value = EXPAND_TARGET_DECK;
-    opt.textContent = "Summary";
-    select.appendChild(opt);
-    seen.add(EXPAND_TARGET_DECK);
+  if (includeFmTargets) {
+    const summary = String(targets?.summary || "").trim();
+    if (summary) {
+      const opt = document.createElement("option");
+      opt.value = EXPAND_TARGET_SUMMARY;
+      opt.textContent = "Summary";
+      select.appendChild(opt);
+      seen.add(EXPAND_TARGET_SUMMARY);
+    }
+    const deck = String(targets?.deck || "").trim();
+    if (deck) {
+      const opt = document.createElement("option");
+      opt.value = EXPAND_TARGET_DECK;
+      opt.textContent = "Deck";
+      select.appendChild(opt);
+      seen.add(EXPAND_TARGET_DECK);
+    }
   }
   for (const item of targets?.headings || []) {
     const title = String(item?.title || "").trim();
@@ -2513,6 +2524,7 @@ function fillHeadingSelect(select, headings, preserveValue = "") {
 function targetValueToAttrs(value) {
   const v = String(value || "").trim();
   if (!v) return { heading: null, source: null };
+  if (v === EXPAND_TARGET_SUMMARY) return { heading: null, source: "summary" };
   if (v === EXPAND_TARGET_DECK) return { heading: null, source: "deck" };
   return { heading: v, source: null };
 }
@@ -2561,7 +2573,7 @@ function openExpandEmbedModal(editor, triggerBtn, mode = "expand") {
   hint.style.fontSize = "0.8em";
   hint.style.color = "var(--text-secondary, #64748b)";
   if (useExpandTargets) {
-    hint.textContent = isEmbed ? "Embed always shows the target in place. Target: whole post, Summary (deck), or a section. Link Text labels the editor chip." : "Expand stays collapsed until the reader opens it (Nutshell-style). Target: whole post, Summary (deck), or a section. Link Text is the clickable label.";
+    hint.textContent = isEmbed ? "Embed always shows the target in place. Target: whole post, Summary, Deck, or a section. Link Text labels the editor chip." : "Expand stays collapsed until the reader opens it (Nutshell-style). Target: whole post, Summary, Deck, or a section. Link Text is the clickable label.";
   } else {
     hint.textContent = isEmbed ? "Embed always shows the target content in place. Heading selects a section; Link Text labels the editor chip." : "Expand stays collapsed until the reader opens it (Nutshell-style). Heading selects a section; Link Text is the clickable label.";
   }
@@ -2606,9 +2618,10 @@ function openExpandEmbedModal(editor, triggerBtn, mode = "expand") {
         const result = await listExpandTargetsHandler(s);
         if (id !== targetRequestId) return;
         const targets = result && typeof result === "object" && !Array.isArray(result) ? {
+          summary: result.summary ?? null,
           deck: result.deck ?? null,
           headings: Array.isArray(result.headings) ? result.headings : []
-        } : { deck: null, headings: [] };
+        } : { summary: null, deck: null, headings: [] };
         fillTargetSelect(select, targets, preserve, true);
       } else {
         const result = await listHeadingsHandler(s);

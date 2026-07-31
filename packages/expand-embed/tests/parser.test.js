@@ -51,6 +51,16 @@ describe("parseExpandEmbedAttrs", () => {
     expect(r.source).toBe("deck");
     expect(r.heading).toBeNull();
   });
+
+  it("parses source=summary", () => {
+    const r = parseExpandEmbedAttrs(
+      '[expand slug="finland" text="Finland" source="summary"]'
+    );
+    expect(r.slug).toBe("finland");
+    expect(r.text).toBe("Finland");
+    expect(r.source).toBe("summary");
+    expect(r.heading).toBeNull();
+  });
 });
 
 describe("expandEmbedLabel", () => {
@@ -90,9 +100,18 @@ describe("buildExpandEmbedShortcode", () => {
     ).toBe('[expand slug="finland" text="Finland" source="deck"]');
   });
 
+  it("builds expand with source=summary", () => {
+    expect(
+      buildExpandEmbedShortcode("expand", "finland", null, "Finland", "summary")
+    ).toBe('[expand slug="finland" text="Finland" source="summary"]');
+  });
+
   it("omits heading when source is set", () => {
     expect(
       buildExpandEmbedShortcode("embed", "finland", "Origins", "Finland", "deck")
     ).toBe('[embed slug="finland" text="Finland" source="deck"]');
+    expect(
+      buildExpandEmbedShortcode("embed", "finland", "Origins", "Finland", "summary")
+    ).toBe('[embed slug="finland" text="Finland" source="summary"]');
   });
 });

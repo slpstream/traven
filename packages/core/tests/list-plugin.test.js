@@ -1,8 +1,9 @@
 import { describe, it, expect, vi } from 'vitest';
-import { ListPlugin, CheckboxWidget, BulletWidget } from '../src/plugins/list-plugin.js';
+import { ListPlugin, CheckboxWidget, BulletWidget, HiddenBulletWidget } from '../src/plugins/list-plugin.js';
 import { EditorState } from '@codemirror/state';
 import { markdown } from '@codemirror/lang-markdown';
 import { TaskList } from '@lezer/markdown';
+import { ensureSyntaxTree } from '@codemirror/language';
 
 describe('ListPlugin', () => {
   it('instantiates correctly', () => {
@@ -17,6 +18,8 @@ describe('ListPlugin', () => {
       doc: "- [x] Done\n- [ ] Todo",
       extensions: [markdown({ extensions: [TaskList] })]
     });
+    // TaskList ListMark + TaskMarker pairing needs a fully parsed tree
+    ensureSyntaxTree(state, state.doc.length, 5000);
 
     const plugin = new ListPlugin();
     const decorations = [];
@@ -29,9 +32,11 @@ describe('ListPlugin', () => {
 
     plugin.buildDecorations(ctx);
 
-    expect(decorations.length).toBe(4); // 2 TaskMarker (CheckboxWidget) + 2 ListMark (HiddenBulletWidget)
     const checkboxes = decorations.filter(d => d.deco.spec.widget instanceof CheckboxWidget);
+    const hiddenBullets = decorations.filter(d => d.deco.spec.widget instanceof HiddenBulletWidget);
     expect(checkboxes.length).toBe(2);
+    expect(hiddenBullets.length).toBe(2);
+    expect(decorations.length).toBe(4); // 2 TaskMarker (CheckboxWidget) + 2 ListMark (HiddenBulletWidget)
     expect(checkboxes[0].deco.spec.widget.checked).toBe(true);
     expect(checkboxes[1].deco.spec.widget.checked).toBe(false);
   });
@@ -41,6 +46,7 @@ describe('ListPlugin', () => {
       doc: "- [x] Done\n- [ ] Todo",
       extensions: [markdown({ extensions: [TaskList] })]
     });
+    ensureSyntaxTree(state, state.doc.length, 5000);
 
     const plugin = new ListPlugin();
     const decorations = [];
@@ -64,6 +70,7 @@ describe('ListPlugin', () => {
       doc: "* Bullet\n1. Number",
       extensions: [markdown()]
     });
+    ensureSyntaxTree(state, state.doc.length, 5000);
 
     const plugin = new ListPlugin();
     const decorations = [];
@@ -86,6 +93,7 @@ describe('ListPlugin', () => {
       doc: "* Bullet\n1. Number",
       extensions: [markdown()]
     });
+    ensureSyntaxTree(state, state.doc.length, 5000);
 
     const plugin = new ListPlugin();
     const decorations = [];

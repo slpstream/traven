@@ -2093,7 +2093,8 @@ describe('onListExpandTargets / getListExpandTargets', () => {
 
   it('returns the configured onListExpandTargets handler', async () => {
     const handler = vi.fn(async () => ({
-      deck: 'A short nutshell.',
+      summary: 'Expand nutshell.',
+      deck: 'Editorial dek.',
       headings: [{ title: 'Origins', level: 2 }],
     }));
     const editor = new TravenEditor({
@@ -2103,7 +2104,8 @@ describe('onListExpandTargets / getListExpandTargets', () => {
     });
     expect(editor.getListExpandTargets()).toBe(handler);
     const results = await editor.getListExpandTargets()('hello');
-    expect(results.deck).toBe('A short nutshell.');
+    expect(results.summary).toBe('Expand nutshell.');
+    expect(results.deck).toBe('Editorial dek.');
     expect(results.headings).toHaveLength(1);
     expect(results.headings[0].title).toBe('Origins');
   });

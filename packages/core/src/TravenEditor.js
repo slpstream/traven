@@ -198,7 +198,7 @@ function buildBaseSetup(options = {}) {
  * @property {function(File): Promise<string>} [onUploadImage] - Callback handling image uploads.
  * @property {function(string): Promise<{title: string, url: string, slug?: string}[]>} [onSuggestLinks] - Optional host callback for link-modal autocomplete. When set, typing in the URL field requests suggestions (e.g. site pages). Hosts that omit it keep the classic text+URL modal.
  * @property {function(string): Promise<{title: string, level?: number}[]>} [onListHeadings] - Optional host callback for Expand/Embed heading picker: given a post/page slug, return section headings. When set, the expand-embed modal uses a dropdown instead of free-text.
- * @property {function(string): Promise<{deck?: string|null, headings: {title: string, level?: number}[]}>} [onListExpandTargets] - Optional richer Expand/Embed target picker: return frontmatter deck (if any) plus section headings. When set, the expand-embed modal offers Whole post | Summary (deck) | sections.
+ * @property {function(string): Promise<{summary?: string|null, deck?: string|null, headings: {title: string, level?: number}[]}>} [onListExpandTargets] - Optional richer Expand/Embed target picker: return frontmatter summary and/or deck (if any) plus section headings. When set, the expand-embed modal offers Whole post | Summary | Deck | sections.
  * @property {import("./plugins/TravenPlugin.js").TravenPlugin[]} [plugins] - Additional TravenPlugin instances registered at init (grammar, decorations, keymap, extensions, HTML render). Core built-ins always load; host plugins are appended.
  * @property {Object.<string, object>} [extraTools] - Optional host/plugin toolbar tool definitions merged via registerTools() at init. Must also list keys in `toolbar` to show buttons (never added to DEFAULT_TOOLBAR).
  * @property {"light" | "dark"} [theme] - Visual style theme.
@@ -1683,9 +1683,9 @@ export class TravenEditor {
 
   /**
    * Returns the configured expand-target handler, or null if not set.
-   * Used by the Expand/Embed insert modal for Whole post | Summary (deck) | section options.
-   * Prefer this over getListHeadings when the host can supply deck + headings.
-   * @returns {function(string): Promise<{deck?: string|null, headings: {title: string, level?: number}[]}> | null}
+   * Used by the Expand/Embed insert modal for Whole post | Summary | Deck | section options.
+   * Prefer this over getListHeadings when the host can supply summary/deck + headings.
+   * @returns {function(string): Promise<{summary?: string|null, deck?: string|null, headings: {title: string, level?: number}[]}> | null}
    */
   getListExpandTargets() {
     // @ts-ignore

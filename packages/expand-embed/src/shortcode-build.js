@@ -18,7 +18,7 @@ export function escapeAttr(value) {
  * @param {string} slug
  * @param {string|null} [heading]
  * @param {string|null} [text] — visible link/chip label (independent of heading)
- * @param {string|null} [source] — e.g. "deck" for frontmatter deck nutshell
+ * @param {string|null} [source] — e.g. "summary" or "deck" for frontmatter nutshell
  * @returns {string}
  */
 export function buildExpandEmbedShortcode(

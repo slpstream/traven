@@ -24,7 +24,7 @@ Initializes a new editor instance.
 | `onUploadImage` | `function` | `null` | Callback returning a promise of the uploaded image's URL: `(file: File) => Promise<string>`. |
 | `onSuggestLinks` | `function` | `null` | Optional host callback for Insert Link modal autocomplete: `(query: string) => Promise<{ title: string, url: string, slug?: string }[]>`. When omitted, the modal stays text + URL only. Also powers Expand/Embed slug typeahead when those plugin tools are loaded. |
 | `onListHeadings` | `function` | `null` | Optional host callback for Expand/Embed Heading dropdown: `(slug: string) => Promise<{ title: string, level?: number }[]>`. When set (and `onListExpandTargets` is omitted), the expand-embed insert modal uses a `<select>` (Whole post + sections) instead of free-text. |
-| `onListExpandTargets` | `function` | `null` | Optional richer Expand/Embed target picker: `(slug: string) => Promise<{ deck?: string\|null, headings: { title: string, level?: number }[] }>`. When set, the modal offers Whole post \| Summary (deck, if non-empty) \| section headings. Preferred over `onListHeadings`. |
+| `onListExpandTargets` | `function` | `null` | Optional richer Expand/Embed target picker: `(slug: string) => Promise<{ summary?: string\|null, deck?: string\|null, headings: { title: string, level?: number }[] }>`. When set, the modal offers Whole post \| Summary (if summary non-empty) \| Deck (if deck non-empty) \| section headings. Preferred over `onListHeadings`. |
 | `onStatsUpdate` | `function` | `null` | Callback fired when document stats change: `(stats: { words: number, characters: number, readTime: number }) => void`. |
 | `theme` | `"light" \| "dark"`| `"light"` | Configures baseline cursor theme variables and dark mode class triggers. |
 | `caretColor` | `string` | `""` | Custom hex color for the editor caret overrides. |
@@ -172,8 +172,8 @@ Returns the configured heading-list handler for the Expand/Embed insert modal, o
 *   **Returns:** `(slug: string) => Promise<{ title: string, level?: number }[]>` or `null`
 
 ### `getListExpandTargets()`
-Returns the configured expand-target handler (deck + headings) for the Expand/Embed insert modal, or `null` if not configured. Prefer this over `getListHeadings()` when the host can supply a frontmatter deck.
-*   **Returns:** `(slug: string) => Promise<{ deck?: string|null, headings: { title: string, level?: number }[] }>` or `null`
+Returns the configured expand-target handler (summary + deck + headings) for the Expand/Embed insert modal, or `null` if not configured. Prefer this over `getListHeadings()` when the host can supply frontmatter summary and/or deck.
+*   **Returns:** `(slug: string) => Promise<{ summary?: string|null, deck?: string|null, headings: { title: string, level?: number }[] }>` or `null`
 
 ### `getComponents()`
 Returns the list of currently registered component schemas.
