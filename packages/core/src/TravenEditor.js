@@ -79,6 +79,7 @@ import "../assets/skins/skin-starter.css";
 import { resolveToolbarMode } from "./toolbar/mode.js";
 import { loadStyles } from "./toolbar/load-styles.js";
 import { buildSlimRail, buildStatsWidget } from "./toolbar/slim-rail.js";
+import { openImageModal as openImageModalDialog } from "./toolbar/modal.js";
 import {
   selectionBubbleExtension,
   gutterInserterExtension,
@@ -196,6 +197,7 @@ function buildBaseSetup(options = {}) {
  * @property {function(string): void} [onChange] - Callback fired on document changes.
  * @property {function(string): void} [onSave] - Callback fired on manual save command (Cmd+S / Ctrl+S).
  * @property {function(File): Promise<string>} [onUploadImage] - Callback handling image uploads.
+ * @property {function(): Promise<{url: string, alt?: string, caption?: string}|null>} [onPickImage] - Optional host callback to pick an existing image from the host media library. When set, the Insert/Edit Image modal shows a "Choose from library" control. Resolve with `{ url, alt?, caption? }` or `null` if cancelled.
  * @property {function(string): Promise<{title: string, url: string, slug?: string}[]>} [onSuggestLinks] - Optional host callback for link-modal autocomplete. When set, typing in the URL field requests suggestions (e.g. site pages). Hosts that omit it keep the classic text+URL modal.
  * @property {{value: string, label: string}[]} [imageAspectOptions] - Optional host-declared aspect choices for the Edit/Insert Image modal (e.g. theme scrapbook crops). When set and non-empty, the advanced image modal shows an Aspect pill row; selected values are managed as class tokens on `[image class="…"]`. Omit or pass [] to leave the modal unchanged.
  * @property {function(string): Promise<{title: string, level?: number}[]>} [onListHeadings] - Optional host callback for Expand/Embed heading picker: given a post/page slug, return section headings. When set, the expand-embed modal uses a dropdown instead of free-text.
@@ -1660,6 +1662,55 @@ export class TravenEditor {
   getUploadHandler() {
     // @ts-ignore
     return this.onUploadImage || this.#options.onUploadImage || this.#options.element?.onUploadImage || null;
+  }
+
+  /**
+   * Returns the configured host media-library picker, or null if not set.
+   * When present, the Insert/Edit Image modal shows a "Choose from library" control.
+   * @returns {function(): Promise<{url: string, alt?: string, caption?: string}|null> | null}
+   */
+  getPickImageHandler() {
+    // @ts-ignore
+    return this.onPickImage || this.#options.onPickImage || this.#options.element?.onPickImage || null;
+  }
+
+  /**
+   * Opens the Insert Image modal, optionally prefilled from host attrs
+   * (e.g. selecting an asset in a CMS media gallery).
+   *
+   * @param {Object} [attrsOrOpts]
+   * @param {string} [attrsOrOpts.src]
+   * @param {string} [attrsOrOpts.alt]
+   * @param {string} [attrsOrOpts.caption]
+   * @param {string} [attrsOrOpts.class]
+   * @param {string} [attrsOrOpts.align]
+   * @param {string} [attrsOrOpts.size]
+   * @param {Object} [attrsOrOpts.attrs] - Nested attrs bag (takes precedence over flat keys when present).
+   * @param {boolean} [attrsOrOpts.isAdvancedMode=true]
+   * @param {HTMLElement|null} [attrsOrOpts.triggerElement]
+   * @param {number|null} [attrsOrOpts.docFrom]
+   * @param {number|null} [attrsOrOpts.docTo]
+   */
+  openImageModal(attrsOrOpts = {}) {
+    const nested = attrsOrOpts && typeof attrsOrOpts.attrs === "object" && attrsOrOpts.attrs
+      ? attrsOrOpts.attrs
+      : null;
+    const attrs = nested || {
+      src: attrsOrOpts.src,
+      alt: attrsOrOpts.alt,
+      caption: attrsOrOpts.caption,
+      class: attrsOrOpts.class,
+      align: attrsOrOpts.align,
+      size: attrsOrOpts.size
+    };
+    openImageModalDialog({
+      editor: this,
+      attrs,
+      isAdvancedMode: attrsOrOpts.isAdvancedMode !== undefined ? attrsOrOpts.isAdvancedMode : true,
+      triggerElement: attrsOrOpts.triggerElement || null,
+      docFrom: attrsOrOpts.docFrom !== undefined ? attrsOrOpts.docFrom : null,
+      docTo: attrsOrOpts.docTo !== undefined ? attrsOrOpts.docTo : null
+    });
   }
 
   /**

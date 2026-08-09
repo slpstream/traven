@@ -1,5 +1,11 @@
 # @freedomware/traven
 
+## 0.2.28
+
+### Patch Changes
+
+- Add optional `onPickImage` / `getPickImageHandler()` so hosts can wire a media-library picker into the Insert/Edit Image modal. When set, the modal shows **Or choose from library** (OS dropzone unchanged). Escape is suspended while the pick promise is in flight so a host overlay above the modal can cancel without closing the image dialog. Also adds `TravenEditor#openImageModal(attrs)` for hosts that open the modal prefilled from a sidebar gallery.
+
 ## 0.2.27
 
 ### Patch Changes

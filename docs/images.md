@@ -18,13 +18,17 @@ The "Insert Image" toolbar button dynamically adjusts its user interface dependi
 
 ## 2. Dynamic Image Modal Adaptation
 
-To keep the editor lightweight and adaptable, the file upload picker is only shown if the host application explicitly configures an upload handler.
+To keep the editor lightweight and adaptable, the file upload picker is only shown if the host application explicitly configures an upload handler. Likewise, the **Choose from library** control appears only when `onPickImage` is configured.
 
 ```mermaid
 graph TD
     ClickImage[Click 'Insert Image' Button] --> CheckHandler{Upload Handler Configured?}
-    CheckHandler -->|No onUploadImage| LegacyModal[Render Basic Modal: Alt Text + URL only]
-    CheckHandler -->|Yes onUploadImage| CompleteModal[Render Advanced Modal: Alt Text + URL + Choose File Picker]
+    CheckHandler -->|No onUploadImage| CheckPick{onPickImage?}
+    CheckHandler -->|Yes onUploadImage| CompleteModal[Modal: URL + Choose File dropzone]
+    CheckPick -->|Yes| PickModal[Modal: URL + Choose from library]
+    CheckPick -->|No| LegacyModal[Basic Modal: Alt Text + URL only]
+    CompleteModal --> CheckPick2{onPickImage?}
+    CheckPick2 -->|Yes| Both[Also show Choose from library]
 ```
 
 ### A. Basic Mode (No Upload Handler)
@@ -171,7 +175,23 @@ This section answers architectural and implementation questions regarding image 
 **A:** You can use **any backend technology stack** (PHP, Node.js, Python, Ruby, Go, serverless functions, etc.). Because Traven's interface is a standard browser-based JS `Promise`, you can send the file using standard `fetch()` or `XMLHttpRequest` requests to any HTTP endpoint of your choice.
 
 ### Q: Does Traven include a built-in media library to select previously uploaded images?
-**A:** No. Traven is an embeddable editor component, not a full Content Management System (CMS). Designing, indexing, searching, and hosting a database-driven Media Asset Management (MAM) interface is best handled by the hosting CMS or application shell. Traven maintains a clean separation of concerns by keeping its bundle lightweight and letting you wire your CMS's existing media library UI directly to the editor.
+**A:** No. Traven is an embeddable editor component, not a full Content Management System (CMS). Designing, indexing, searching, and hosting a database-driven Media Asset Management (MAM) interface is best handled by the hosting CMS or application shell.
+
+To wire your existing media library into the Insert/Edit Image modal, pass an `onPickImage` callback. When set, the modal shows a **“Or choose from library”** control (without replacing the OS file dropzone). Your handler opens the host picker UI and resolves with `{ url, alt?, caption? }` or `null` if the user cancels:
+
+```javascript
+const editor = new TravenEditor({
+  element: document.getElementById("editor"),
+  onUploadImage: uploadToMyBackend,
+  onPickImage: async () => {
+    const asset = await myCms.openMediaPicker(); // host-owned UI
+    if (!asset) return null;
+    return { url: asset.url, alt: asset.alt };
+  }
+});
+```
+
+Hosts can also open the image modal prefilled (e.g. from a sidebar gallery) via `editor.openImageModal({ src, alt })`.
 
 ### Q: Is Traven's image handling fully Free and Open Source (FOSS)?
 **A:** Yes, Traven is **100% FOSS**. While commercial editors (like TinyMCE or CKEditor) license their advanced drag-and-drop, dropzone, and cloud upload wrappers under paid enterprise subscriptions or restrict usage with volume caps, Traven gives you a polished, fully-integrated dropzone interface, live thumbnail previews, metadata inspection, and copy-paste hooks entirely free and open-source. Traven is MIT-licensed, so you can modify whatever you want, change anything, build on it, extend it, and freely use it in any project, commercial or non-commercial, without restrictions.

@@ -9,6 +9,7 @@
  * @param {HTMLElement} [options.triggerElement] - The button element that triggered the modal.
  * @param {string|null} [options.className] - Optional extra class on the dialog element.
  * @param {Function|null} [options.onClose] - Callback when modal is closed.
+ * @returns {{ setEscapeSuspended: (suspended: boolean) => void, close: () => void }}
  */
 export function openModal({ title, body, buttons, triggerElement, className, onClose }: {
     title: string;
@@ -17,4 +18,7 @@ export function openModal({ title, body, buttons, triggerElement, className, onC
     triggerElement?: HTMLElement;
     className?: string | null;
     onClose?: Function | null;
-}): void;
+}): {
+    setEscapeSuspended: (suspended: boolean) => void;
+    close: () => void;
+};

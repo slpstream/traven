@@ -22,6 +22,7 @@ Initializes a new editor instance.
 | `onChange` | `function` | `null` | Callback fired on change: `(value: string) => void`. |
 | `onSave` | `function` | `null` | Callback fired on Save command (Cmd+S / Ctrl+S): `(value: string) => void`. |
 | `onUploadImage` | `function` | `null` | Callback returning a promise of the uploaded image's URL: `(file: File) => Promise<string>`. |
+| `onPickImage` | `function` | `null` | Optional host media-library picker: `() => Promise<{ url: string, alt?: string, caption?: string } \| null>`. When set, the Insert/Edit Image modal shows **Or choose from library**. Resolve with an asset or `null` if cancelled. Does not replace the OS file dropzone. |
 | `onSuggestLinks` | `function` | `null` | Optional host callback for Insert Link modal autocomplete: `(query: string) => Promise<{ title: string, url: string, slug?: string }[]>`. When omitted, the modal stays text + URL only. Also powers Expand/Embed slug typeahead when those plugin tools are loaded. |
 | `imageAspectOptions` | `Array<{ value: string, label: string }>` | `null` | Optional host-declared aspect choices for the Edit/Insert Image modal. When set and non-empty, advanced mode shows an Aspect pill row between Layout and CSS Class; selected values are managed as `class` tokens on `[image class="…"]`. Omit or pass `[]` to leave the modal unchanged. |
 | `onListHeadings` | `function` | `null` | Optional host callback for Expand/Embed Heading dropdown: `(slug: string) => Promise<{ title: string, level?: number }[]>`. When set (and `onListExpandTargets` is omitted), the expand-embed insert modal uses a `<select>` (Whole post + sections) instead of free-text. |
@@ -163,6 +164,14 @@ editor.on("statsUpdate", (stats) => {
 ### `getUploadHandler()`
 Returns the configured image upload handler, or `null` if not configured.
 *   **Returns:** `(file: File) => Promise<string>` or `null`
+
+### `getPickImageHandler()`
+Returns the configured host media-library picker, or `null` if not configured. When present, the Insert/Edit Image modal shows **Or choose from library**.
+*   **Returns:** `() => Promise<{ url: string, alt?: string, caption?: string } | null>` or `null`
+
+### `openImageModal(attrsOrOpts?)`
+Opens the Insert Image modal, optionally prefilled (e.g. from a CMS sidebar gallery). Accepts flat `{ src, alt, caption, … }` or `{ attrs: { src, alt, … }, isAdvancedMode?, docFrom?, docTo? }`.
+*   **Returns:** `void`
 
 ### `getSuggestLinks()`
 Returns the configured link-suggestion handler for the Insert Link modal, or `null` if not configured.

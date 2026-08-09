@@ -24,6 +24,7 @@ export const DEFAULT_TOOLBAR: string[];
  * @property {function(string): void} [onChange] - Callback fired on document changes.
  * @property {function(string): void} [onSave] - Callback fired on manual save command (Cmd+S / Ctrl+S).
  * @property {function(File): Promise<string>} [onUploadImage] - Callback handling image uploads.
+ * @property {function(): Promise<{url: string, alt?: string, caption?: string}|null>} [onPickImage] - Optional host callback to pick an existing image from the host media library. When set, the Insert/Edit Image modal shows a "Choose from library" control. Resolve with `{ url, alt?, caption? }` or `null` if cancelled.
  * @property {function(string): Promise<{title: string, url: string, slug?: string}[]>} [onSuggestLinks] - Optional host callback for link-modal autocomplete. When set, typing in the URL field requests suggestions (e.g. site pages). Hosts that omit it keep the classic text+URL modal.
  * @property {{value: string, label: string}[]} [imageAspectOptions] - Optional host-declared aspect choices for the Edit/Insert Image modal (e.g. theme scrapbook crops). When set and non-empty, the advanced image modal shows an Aspect pill row; selected values are managed as class tokens on `[image class="…"]`. Omit or pass [] to leave the modal unchanged.
  * @property {function(string): Promise<{title: string, level?: number}[]>} [onListHeadings] - Optional host callback for Expand/Embed heading picker: given a post/page slug, return section headings. When set, the expand-embed modal uses a dropdown instead of free-text.
@@ -286,6 +287,46 @@ export class TravenEditor {
      */
     getUploadHandler(): (arg0: File) => Promise<string> | null;
     /**
+     * Returns the configured host media-library picker, or null if not set.
+     * When present, the Insert/Edit Image modal shows a "Choose from library" control.
+     * @returns {function(): Promise<{url: string, alt?: string, caption?: string}|null> | null}
+     */
+    getPickImageHandler(): () => Promise<{
+        url: string;
+        alt?: string;
+        caption?: string;
+    } | null> | null;
+    /**
+     * Opens the Insert Image modal, optionally prefilled from host attrs
+     * (e.g. selecting an asset in a CMS media gallery).
+     *
+     * @param {Object} [attrsOrOpts]
+     * @param {string} [attrsOrOpts.src]
+     * @param {string} [attrsOrOpts.alt]
+     * @param {string} [attrsOrOpts.caption]
+     * @param {string} [attrsOrOpts.class]
+     * @param {string} [attrsOrOpts.align]
+     * @param {string} [attrsOrOpts.size]
+     * @param {Object} [attrsOrOpts.attrs] - Nested attrs bag (takes precedence over flat keys when present).
+     * @param {boolean} [attrsOrOpts.isAdvancedMode=true]
+     * @param {HTMLElement|null} [attrsOrOpts.triggerElement]
+     * @param {number|null} [attrsOrOpts.docFrom]
+     * @param {number|null} [attrsOrOpts.docTo]
+     */
+    openImageModal(attrsOrOpts?: {
+        src?: string;
+        alt?: string;
+        caption?: string;
+        class?: string;
+        align?: string;
+        size?: string;
+        attrs?: any;
+        isAdvancedMode?: boolean;
+        triggerElement?: HTMLElement | null;
+        docFrom?: number | null;
+        docTo?: number | null;
+    }): void;
+    /**
      * Returns the configured link-suggestion handler, or null if not set.
      * Used by the Insert Link modal for host-provided title/URL autocomplete.
      * @returns {function(string): Promise<{title: string, url: string, slug?: string}[]> | null}
@@ -419,6 +460,14 @@ export type TravenOptions = {
      * - Callback handling image uploads.
      */
     onUploadImage?: (arg0: File) => Promise<string>;
+    /**
+     * - Optional host callback to pick an existing image from the host media library. When set, the Insert/Edit Image modal shows a "Choose from library" control. Resolve with `{ url, alt?, caption? }` or `null` if cancelled.
+     */
+    onPickImage?: () => Promise<{
+        url: string;
+        alt?: string;
+        caption?: string;
+    } | null>;
     /**
      * - Optional host callback for link-modal autocomplete. When set, typing in the URL field requests suggestions (e.g. site pages). Hosts that omit it keep the classic text+URL modal.
      */

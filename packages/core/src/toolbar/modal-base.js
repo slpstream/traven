@@ -10,6 +10,7 @@
  * @param {HTMLElement} [options.triggerElement] - The button element that triggered the modal.
  * @param {string|null} [options.className] - Optional extra class on the dialog element.
  * @param {Function|null} [options.onClose] - Callback when modal is closed.
+ * @returns {{ setEscapeSuspended: (suspended: boolean) => void, close: () => void }}
  */
 export function openModal({ title, body, buttons = [], triggerElement = null, className = null, onClose = null }) {
   const overlay = document.createElement("div");
@@ -103,8 +104,11 @@ export function openModal({ title, body, buttons = [], triggerElement = null, cl
     focusable[0].focus();
   }
 
+  let escapeSuspended = false;
+
   const handleKeyDown = (e) => {
     if (e.key === "Escape") {
+      if (escapeSuspended) return;
       closeModal();
       return;
     }
@@ -156,10 +160,22 @@ export function openModal({ title, body, buttons = [], triggerElement = null, cl
   // Wire close triggers
   closeBtn.addEventListener("click", closeModal);
   overlay.addEventListener("click", (e) => {
-    if (e.target === overlay) {
+    if (e.target === overlay && !escapeSuspended) {
       closeModal();
     }
   });
 
   document.addEventListener("keydown", handleKeyDown);
+
+  return {
+    /**
+     * When true, Escape (and backdrop click) do not close this modal.
+     * Used while a nested host picker (e.g. onPickImage) is open above this dialog.
+     * @param {boolean} suspended
+     */
+    setEscapeSuspended(suspended) {
+      escapeSuspended = !!suspended;
+    },
+    close: closeModal
+  };
 }

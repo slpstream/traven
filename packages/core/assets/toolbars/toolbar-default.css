@@ -671,6 +671,35 @@ button.btn-snippet {
   font-weight: 500;
 }
 
+.traven-modal-library-field {
+  margin-top: -4px;
+  margin-bottom: 4px;
+}
+
+.traven-modal-library-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--accent, #334155);
+  font-size: 0.88em;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.traven-modal-library-btn:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+.traven-modal-library-btn:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
 .traven-modal-dropzone-preview {
   width: 100%;
   display: flex;
@@ -1013,6 +1042,10 @@ button.btn-snippet {
 }
 
 .traven-modal-overlay.cm-wysiwym-dark .traven-modal-dropzone-text {
+  color: #94a3b8;
+}
+
+.traven-modal-overlay.cm-wysiwym-dark .traven-modal-library-btn {
   color: #94a3b8;
 }
 

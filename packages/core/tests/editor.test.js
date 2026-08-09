@@ -2043,6 +2043,129 @@ describe('onSuggestLinks / getSuggestLinks', () => {
   });
 });
 
+describe('onPickImage / getPickImageHandler', () => {
+  let container;
+
+  beforeEach(() => {
+    container = document.createElement('div');
+    document.body.appendChild(container);
+  });
+
+  afterEach(() => {
+    document.body.innerHTML = '';
+  });
+
+  it('returns null when no handler is configured', () => {
+    const editor = new TravenEditor({ element: container, initialValue: '' });
+    expect(editor.getPickImageHandler()).toBeNull();
+  });
+
+  it('returns the configured onPickImage handler', async () => {
+    const handler = vi.fn(async () => ({ url: 'https://example.com/a.jpg', alt: 'A' }));
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '',
+      onPickImage: handler,
+    });
+    expect(editor.getPickImageHandler()).toBe(handler);
+    const result = await editor.getPickImageHandler()();
+    expect(result.url).toBe('https://example.com/a.jpg');
+    expect(result.alt).toBe('A');
+  });
+
+  it('shows Choose from library when onPickImage is set', async () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '',
+      onPickImage: async () => null,
+      toolbar: ['image'],
+    });
+    editor.openImageModal();
+    await Promise.resolve();
+    const btn = document.querySelector('.traven-modal-library-btn');
+    expect(btn).toBeTruthy();
+    expect(btn.textContent).toMatch(/choose from library/i);
+  });
+
+  it('does not show Choose from library when onPickImage is omitted', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '',
+      toolbar: ['image'],
+    });
+    editor.openImageModal();
+    expect(document.querySelector('.traven-modal-library-btn')).toBeNull();
+  });
+
+  it('fills URL and alt when onPickImage resolves with an asset', async () => {
+    let resolvePick;
+    const pickPromise = new Promise((resolve) => { resolvePick = resolve; });
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '',
+      onPickImage: () => pickPromise,
+    });
+    editor.openImageModal();
+    const btn = document.querySelector('.traven-modal-library-btn');
+    const clickPromise = btn.click();
+    resolvePick({ url: 'https://cdn.example.com/photo.jpg', alt: 'Sunset' });
+    await clickPromise;
+    await Promise.resolve();
+    const urlInput = document.querySelector('#traven-image-url');
+    const altInput = document.querySelector('#traven-image-alt');
+    expect(urlInput.value).toBe('https://cdn.example.com/photo.jpg');
+    expect(altInput.value).toBe('Sunset');
+  });
+
+  it('leaves fields unchanged when onPickImage resolves null', async () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '',
+      onPickImage: async () => null,
+    });
+    editor.openImageModal({ src: 'https://example.com/keep.jpg', alt: 'Keep me' });
+    await Promise.resolve();
+    const btn = document.querySelector('.traven-modal-library-btn');
+    await btn.click();
+    await Promise.resolve();
+    expect(document.querySelector('#traven-image-url').value).toBe('https://example.com/keep.jpg');
+    expect(document.querySelector('#traven-image-alt').value).toBe('Keep me');
+  });
+
+  it('openImageModal prefills src and alt for insert', () => {
+    const editor = new TravenEditor({ element: container, initialValue: '' });
+    editor.openImageModal({ src: 'https://example.com/from-gallery.jpg', alt: 'Gallery shot' });
+    expect(document.querySelector('#traven-image-url').value).toBe('https://example.com/from-gallery.jpg');
+    expect(document.querySelector('#traven-image-alt').value).toBe('Gallery shot');
+  });
+
+  it('suspends Escape while onPickImage is in flight', async () => {
+    let resolvePick;
+    const pickPromise = new Promise((resolve) => { resolvePick = resolve; });
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '',
+      onPickImage: () => pickPromise,
+    });
+    editor.openImageModal();
+    const overlay = document.querySelector('.traven-modal-overlay');
+    expect(overlay).toBeTruthy();
+    const btn = document.querySelector('.traven-modal-library-btn');
+    btn.click();
+    await Promise.resolve();
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    expect(document.querySelector('.traven-modal-overlay')).toBeTruthy();
+    resolvePick(null);
+    await Promise.resolve();
+    await Promise.resolve();
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    // After resume, Escape closes (may be mid-transition)
+    await new Promise((r) => setTimeout(r, 50));
+    const stillOpen = document.querySelector('.traven-modal-overlay.is-active');
+    expect(stillOpen).toBeNull();
+  });
+});
+
 describe('imageAspectOptions / getImageAspectOptions', () => {
   let container;
 

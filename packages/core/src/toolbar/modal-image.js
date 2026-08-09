@@ -11,9 +11,10 @@ import {
 
 /**
  * Renders the Image Insertion Modal dialog.
- * Supports two insertion paths:
- *   1. Direct URL input — constructs ![alt](url) markdown.
+ * Supports three insertion paths:
+ *   1. Direct URL input — constructs ![alt](url) markdown or [image] shortcode.
  *   2. File upload via onUploadImage callback — uploads first, then inserts.
+ *   3. Host media library via onPickImage — fills URL (+ optional alt/caption).
  *
  * @param {Object|any} optionsOrEditor - The TravenEditor instance, or options object.
  * @param {HTMLElement|null} [triggerBtn] - The button that triggered the modal.
@@ -40,6 +41,10 @@ export function openImageModal(optionsOrEditor, triggerBtn = null) {
 
   const uploadHandler = typeof editor.getUploadHandler === "function"
     ? editor.getUploadHandler()
+    : null;
+
+  const pickImageHandler = typeof editor.getPickImageHandler === "function"
+    ? editor.getPickImageHandler()
     : null;
 
   const aspectOptions = normalizeImageAspectOptions(
@@ -295,6 +300,56 @@ export function openImageModal(optionsOrEditor, triggerBtn = null) {
     form.appendChild(fileField);
   }
 
+  /** @type {{ setEscapeSuspended: (suspended: boolean) => void, close: () => void } | null} */
+  let modalController = null;
+
+  /**
+   * Host media-library browse control (opt-in via onPickImage).
+   * Placed under the dropzone when upload is present, otherwise under the URL field.
+   */
+  if (typeof pickImageHandler === "function") {
+    const libraryField = document.createElement("div");
+    libraryField.className = "traven-modal-field traven-modal-library-field";
+
+    const libraryBtn = document.createElement("button");
+    libraryBtn.type = "button";
+    libraryBtn.className = "traven-modal-library-btn";
+    libraryBtn.textContent = "Or choose from library";
+
+    libraryBtn.addEventListener("click", async (e) => {
+      e.preventDefault();
+      if (modalController) modalController.setEscapeSuspended(true);
+      libraryBtn.disabled = true;
+      try {
+        const result = await pickImageHandler();
+        if (result && typeof result === "object" && result.url) {
+          const urlEl = /** @type {HTMLInputElement} */ (form.querySelector("#traven-image-url"));
+          const altEl = /** @type {HTMLInputElement} */ (form.querySelector("#traven-image-alt"));
+          const captionEl = /** @type {HTMLInputElement} */ (form.querySelector("#traven-image-caption"));
+          if (fileInput) fileInput.value = "";
+          urlEl.disabled = false;
+          urlEl.value = String(result.url);
+          if (result.alt != null && String(result.alt).trim() !== "") {
+            altEl.value = String(result.alt);
+          }
+          if (result.caption != null && String(result.caption).trim() !== "" && captionEl) {
+            captionEl.value = String(result.caption);
+          }
+          errorEl.style.display = "none";
+          if (updatePreview) updatePreview();
+        }
+      } catch (err) {
+        console.warn("onPickImage failed:", err);
+      } finally {
+        libraryBtn.disabled = false;
+        if (modalController) modalController.setEscapeSuspended(false);
+      }
+    });
+
+    libraryField.appendChild(libraryBtn);
+    form.appendChild(libraryField);
+  }
+
   // Toggle button immediately below the dropzone
   const toggleRow = document.createElement("div");
   toggleRow.className = "traven-modal-field";
@@ -427,6 +482,15 @@ export function openImageModal(optionsOrEditor, triggerBtn = null) {
     const selectionText = from !== to ? view.state.sliceDoc(from, to) : "";
     if (selectionText) {
       altInput.value = selectionText;
+    }
+    // Host-provided attrs for insert (e.g. sidebar Media Library → modal)
+    if (attrs.src) urlInput.value = attrs.src;
+    if (attrs.alt) altInput.value = attrs.alt;
+    if (attrs.caption) captionInput.value = attrs.caption;
+    if (attrs.class) {
+      classInput.value = aspectOptions
+        ? stripManagedAspectClasses(attrs.class, aspectOptions)
+        : attrs.class;
     }
   }
 
@@ -641,7 +705,7 @@ export function openImageModal(optionsOrEditor, triggerBtn = null) {
     v.focus();
   };
 
-  openModal({
+  modalController = openModal({
     title: docFrom !== null ? "Edit Image" : "Insert Image",
     body: form,
     triggerElement: triggerElement,
