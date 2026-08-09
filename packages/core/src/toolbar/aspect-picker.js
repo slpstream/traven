@@ -116,11 +116,7 @@ export function createAspectPicker({ selectId, options, initialValue = "" }) {
   field.appendChild(hiddenSelect);
 
   const pillsRow = document.createElement("div");
-  pillsRow.className = "traven-modal-size-row";
-  pillsRow.style.position = "relative";
-  pillsRow.style.display = "flex";
-  pillsRow.style.flexWrap = "wrap";
-  pillsRow.style.gap = "6px";
+  pillsRow.className = "traven-modal-aspect-row";
   field.appendChild(pillsRow);
 
   /** @type {HTMLButtonElement[]} */
@@ -128,7 +124,7 @@ export function createAspectPicker({ selectId, options, initialValue = "" }) {
   options.forEach((opt) => {
     const pill = document.createElement("button");
     pill.type = "button";
-    pill.className = "traven-modal-size-pill size-m";
+    pill.className = "traven-modal-aspect-pill";
     pill.dataset.aspect = opt.value;
     pill.textContent = opt.label;
     pillsRow.appendChild(pill);

@@ -1,5 +1,11 @@
 # @freedomware/traven
 
+## 0.2.27
+
+### Patch Changes
+
+- Fix Aspect pills in the image modal: use dedicated text pill styles instead of fixed-width S/M/L size pills so labels like Portrait / Landscape render without overflow.
+
 ## 0.2.26
 
 ### Patch Changes

@@ -1135,6 +1135,45 @@ button.btn-snippet {
   box-shadow: 0 0 0 1px #0f172a;
 }
 
+.traven-modal-aspect-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.traven-modal-aspect-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #64748b;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+  padding: 6px 12px;
+  height: 32px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.traven-modal-aspect-pill:hover {
+  background-color: #f8fafc;
+  color: #0f172a;
+  border-color: #94a3b8;
+}
+
+.traven-modal-aspect-pill.active {
+  background-color: #f1f5f9;
+  border-color: #0f172a;
+  color: #0f172a;
+  box-shadow: 0 0 0 1px #0f172a;
+}
+
 /* Dark theme styles */
 .traven-modal-overlay.cm-wysiwym-dark .traven-modal-preset-btn,
 .traven-modal-overlay.cm-wysiwym-dark .traven-modal-size-pill {
@@ -1152,6 +1191,25 @@ button.btn-snippet {
 
 .traven-modal-overlay.cm-wysiwym-dark .traven-modal-preset-btn.active,
 .traven-modal-overlay.cm-wysiwym-dark .traven-modal-size-pill.active {
+  background-color: #1e293b;
+  border-color: #38bdf8;
+  color: #38bdf8;
+  box-shadow: 0 0 0 1px #38bdf8;
+}
+
+.traven-modal-overlay.cm-wysiwym-dark .traven-modal-aspect-pill {
+  background-color: #0f172a;
+  border-color: #334155;
+  color: #94a3b8;
+}
+
+.traven-modal-overlay.cm-wysiwym-dark .traven-modal-aspect-pill:hover {
+  background-color: #1e293b;
+  color: #f8fafc;
+  border-color: #475569;
+}
+
+.traven-modal-overlay.cm-wysiwym-dark .traven-modal-aspect-pill.active {
   background-color: #1e293b;
   border-color: #38bdf8;
   color: #38bdf8;
