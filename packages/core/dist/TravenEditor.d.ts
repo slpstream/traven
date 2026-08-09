@@ -25,6 +25,7 @@ export const DEFAULT_TOOLBAR: string[];
  * @property {function(string): void} [onSave] - Callback fired on manual save command (Cmd+S / Ctrl+S).
  * @property {function(File): Promise<string>} [onUploadImage] - Callback handling image uploads.
  * @property {function(string): Promise<{title: string, url: string, slug?: string}[]>} [onSuggestLinks] - Optional host callback for link-modal autocomplete. When set, typing in the URL field requests suggestions (e.g. site pages). Hosts that omit it keep the classic text+URL modal.
+ * @property {{value: string, label: string}[]} [imageAspectOptions] - Optional host-declared aspect choices for the Edit/Insert Image modal (e.g. theme scrapbook crops). When set and non-empty, the advanced image modal shows an Aspect pill row; selected values are managed as class tokens on `[image class="…"]`. Omit or pass [] to leave the modal unchanged.
  * @property {function(string): Promise<{title: string, level?: number}[]>} [onListHeadings] - Optional host callback for Expand/Embed heading picker: given a post/page slug, return section headings. When set, the expand-embed modal uses a dropdown instead of free-text.
  * @property {function(string): Promise<{summary?: string|null, deck?: string|null, headings: {title: string, level?: number}[]}>} [onListExpandTargets] - Optional richer Expand/Embed target picker: return frontmatter summary and/or deck (if any) plus section headings. When set, the expand-embed modal offers Whole post | Summary | Deck | sections.
  * @property {import("./plugins/TravenPlugin.js").TravenPlugin[]} [plugins] - Additional TravenPlugin instances registered at init (grammar, decorations, keymap, extensions, HTML render). Core built-ins always load; host plugins are appended.
@@ -295,6 +296,15 @@ export class TravenEditor {
         slug?: string;
     }[]> | null;
     /**
+     * Returns host-declared image aspect options for the Edit/Insert Image modal, or null.
+     * Used when a theme/host wants Aspect pills (managed class tokens) without changing core defaults.
+     * @returns {{value: string, label: string}[] | null}
+     */
+    getImageAspectOptions(): {
+        value: string;
+        label: string;
+    }[] | null;
+    /**
      * Returns the configured heading-list handler, or null if not set.
      * Used by the Expand/Embed insert modal for a section dropdown once a slug is known.
      * @returns {function(string): Promise<{title: string, level?: number}[]> | null}
@@ -417,6 +427,13 @@ export type TravenOptions = {
         url: string;
         slug?: string;
     }[]>;
+    /**
+     * - Optional host-declared aspect choices for the Edit/Insert Image modal (e.g. theme scrapbook crops). When set and non-empty, the advanced image modal shows an Aspect pill row; selected values are managed as class tokens on `[image class="…"]`. Omit or pass [] to leave the modal unchanged.
+     */
+    imageAspectOptions?: {
+        value: string;
+        label: string;
+    }[];
     /**
      * - Optional host callback for Expand/Embed heading picker: given a post/page slug, return section headings. When set, the expand-embed modal uses a dropdown instead of free-text.
      */

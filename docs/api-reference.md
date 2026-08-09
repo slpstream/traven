@@ -23,6 +23,7 @@ Initializes a new editor instance.
 | `onSave` | `function` | `null` | Callback fired on Save command (Cmd+S / Ctrl+S): `(value: string) => void`. |
 | `onUploadImage` | `function` | `null` | Callback returning a promise of the uploaded image's URL: `(file: File) => Promise<string>`. |
 | `onSuggestLinks` | `function` | `null` | Optional host callback for Insert Link modal autocomplete: `(query: string) => Promise<{ title: string, url: string, slug?: string }[]>`. When omitted, the modal stays text + URL only. Also powers Expand/Embed slug typeahead when those plugin tools are loaded. |
+| `imageAspectOptions` | `Array<{ value: string, label: string }>` | `null` | Optional host-declared aspect choices for the Edit/Insert Image modal. When set and non-empty, advanced mode shows an Aspect pill row between Layout and CSS Class; selected values are managed as `class` tokens on `[image class="…"]`. Omit or pass `[]` to leave the modal unchanged. |
 | `onListHeadings` | `function` | `null` | Optional host callback for Expand/Embed Heading dropdown: `(slug: string) => Promise<{ title: string, level?: number }[]>`. When set (and `onListExpandTargets` is omitted), the expand-embed insert modal uses a `<select>` (Whole post + sections) instead of free-text. |
 | `onListExpandTargets` | `function` | `null` | Optional richer Expand/Embed target picker: `(slug: string) => Promise<{ summary?: string\|null, deck?: string\|null, headings: { title: string, level?: number }[] }>`. When set, the modal offers Whole post \| Summary (if summary non-empty) \| Deck (if deck non-empty) \| section headings. Preferred over `onListHeadings`. |
 | `onStatsUpdate` | `function` | `null` | Callback fired when document stats change: `(stats: { words: number, characters: number, readTime: number }) => void`. |
@@ -166,6 +167,10 @@ Returns the configured image upload handler, or `null` if not configured.
 ### `getSuggestLinks()`
 Returns the configured link-suggestion handler for the Insert Link modal, or `null` if not configured.
 *   **Returns:** `(query: string) => Promise<{ title: string, url: string, slug?: string }[]>` or `null`
+
+### `getImageAspectOptions()`
+Returns host-declared image aspect options for the Edit/Insert Image modal, or `null` if not configured / empty.
+*   **Returns:** `{ value: string, label: string }[]` or `null`
 
 ### `getListHeadings()`
 Returns the configured heading-list handler for the Expand/Embed insert modal, or `null` if not configured.

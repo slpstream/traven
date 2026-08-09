@@ -2043,6 +2043,46 @@ describe('onSuggestLinks / getSuggestLinks', () => {
   });
 });
 
+describe('imageAspectOptions / getImageAspectOptions', () => {
+  let container;
+
+  beforeEach(() => {
+    container = document.createElement('div');
+    document.body.appendChild(container);
+  });
+
+  afterEach(() => {
+    document.body.innerHTML = '';
+  });
+
+  it('returns null when no options are configured', () => {
+    const editor = new TravenEditor({ element: container, initialValue: '' });
+    expect(editor.getImageAspectOptions()).toBeNull();
+  });
+
+  it('returns null for an empty array', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '',
+      imageAspectOptions: [],
+    });
+    expect(editor.getImageAspectOptions()).toBeNull();
+  });
+
+  it('returns the configured imageAspectOptions list', () => {
+    const options = [
+      { value: '', label: 'Portrait' },
+      { value: 'square', label: 'Square' },
+    ];
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '',
+      imageAspectOptions: options,
+    });
+    expect(editor.getImageAspectOptions()).toBe(options);
+  });
+});
+
 describe('onListHeadings / getListHeadings', () => {
   let container;
 

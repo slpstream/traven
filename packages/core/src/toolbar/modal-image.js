@@ -1,6 +1,13 @@
 // @ts-check
 import { openModal } from "./modal-base.js";
 import { createLayoutPicker } from "./layout-picker.js";
+import {
+  createAspectPicker,
+  detectAspectValue,
+  mergeAspectIntoClass,
+  normalizeImageAspectOptions,
+  stripManagedAspectClasses
+} from "./aspect-picker.js";
 
 /**
  * Renders the Image Insertion Modal dialog.
@@ -34,6 +41,12 @@ export function openImageModal(optionsOrEditor, triggerBtn = null) {
   const uploadHandler = typeof editor.getUploadHandler === "function"
     ? editor.getUploadHandler()
     : null;
+
+  const aspectOptions = normalizeImageAspectOptions(
+    typeof editor.getImageAspectOptions === "function"
+      ? editor.getImageAspectOptions()
+      : null
+  );
 
   const form = document.createElement("div");
 
@@ -367,6 +380,20 @@ export function openImageModal(optionsOrEditor, triggerBtn = null) {
   const groupRow = layoutPicker.element;
   form.appendChild(groupRow);
 
+  /** @type {ReturnType<typeof createAspectPicker> | null} */
+  let aspectPicker = null;
+  let aspectField = /** @type {HTMLElement | null} */ (null);
+  if (aspectOptions) {
+    const initialAspect = detectAspectValue(attrs.class || "", aspectOptions);
+    aspectPicker = createAspectPicker({
+      selectId: "traven-image-aspect",
+      options: aspectOptions,
+      initialValue: initialAspect
+    });
+    aspectField = aspectPicker.element;
+    form.appendChild(aspectField);
+  }
+
   // CSS Class field
   const classField = document.createElement("div");
   classField.className = "traven-modal-field";
@@ -389,7 +416,10 @@ export function openImageModal(optionsOrEditor, triggerBtn = null) {
     altInput.value = attrs.alt || "";
     urlInput.value = attrs.src || "";
     captionInput.value = attrs.caption || "";
-    classInput.value = attrs.class || "";
+    const rawClass = attrs.class || "";
+    classInput.value = aspectOptions
+      ? stripManagedAspectClasses(rawClass, aspectOptions)
+      : rawClass;
   } else {
     // Pre-fill alt text with selection if any
     const view = editor.getView();
@@ -473,11 +503,13 @@ export function openImageModal(optionsOrEditor, triggerBtn = null) {
       captionField.style.display = "";
       groupRow.style.display = "flex";
       classField.style.display = "";
+      if (aspectField) aspectField.style.display = "flex";
 
       captionInput.disabled = false;
       alignSelect.disabled = false;
       sizeSelect.disabled = false;
       classInput.disabled = false;
+      if (aspectPicker) aspectPicker.aspectSelect.disabled = false;
 
       if (layoutPicker && typeof layoutPicker.syncUI === "function") {
         layoutPicker.syncUI();
@@ -491,11 +523,13 @@ export function openImageModal(optionsOrEditor, triggerBtn = null) {
       captionField.style.display = "none";
       groupRow.style.display = "none";
       classField.style.display = "none";
+      if (aspectField) aspectField.style.display = "none";
 
       captionInput.disabled = true;
       alignSelect.disabled = true;
       sizeSelect.disabled = true;
       classInput.disabled = true;
+      if (aspectPicker) aspectPicker.aspectSelect.disabled = true;
     }
   };
 
@@ -550,7 +584,10 @@ export function openImageModal(optionsOrEditor, triggerBtn = null) {
       const captionText = captionInput.value.trim();
       const alignVal = alignSelect.value;
       const sizeVal = sizeSelect.value;
-      const classVal = classInput.value.trim();
+      let classVal = classInput.value.trim();
+      if (aspectPicker && aspectOptions) {
+        classVal = mergeAspectIntoClass(classVal, aspectPicker.getValue(), aspectOptions);
+      }
 
       const attrParts = [`src="${url}"`];
 
