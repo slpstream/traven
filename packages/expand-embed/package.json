@@ -21,6 +21,6 @@
     "@freedomware/traven": "*",
     "esbuild": "^0.28.1",
     "jsdom": "^24.0.0",
-    "vitest": "^4.1.8"
+    "vitest": "^4.1.11"
   }
 }
