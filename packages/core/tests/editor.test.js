@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { TravenEditor } from '../src/index.js';
-import { parseMarkdownTable, serializeTableToMarkdown, openComponentModal } from '../src/toolbar/modal.js';
+import { parseMarkdownTable, serializeTableToMarkdown, openComponentModal, openHelpModal } from '../src/toolbar/modal.js';
 import { skipDelimiter } from '../src/delimiter-skip.js';
 
 // Polyfill Range.prototype.getClientRects and getBoundingClientRect for JSDOM / CodeMirror 6 compatibility
@@ -1168,6 +1168,48 @@ describe('ComponentShortcode', () => {
 
     // Verify value in editor is updated
     expect(editor.getValue()).toBe('<Pullquote author="Jane">\nNew content\n</Pullquote>\nText');
+  });
+
+  it('maps Callout type to the warning dropdown when opening the pencil modal', () => {
+    const editor = new TravenEditor({
+      element: container,
+      initialValue: '<Callout type="warning">Watch out</Callout>\nText',
+    });
+    editor.focus();
+    editor.setSelection(editor.getValue().length, editor.getValue().length);
+
+    const widgetEl = container.querySelector('.cm-wysiwym-component-shortcode');
+    expect(widgetEl).not.toBeNull();
+
+    const event = new window.MouseEvent('mousedown', { bubbles: true, cancelable: true });
+    widgetEl.dispatchEvent(event);
+
+    const modal = document.querySelector('.traven-modal-overlay');
+    expect(modal).not.toBeNull();
+    const nameInput = modal.querySelector('#traven-component-name');
+    expect(nameInput.value).toBe('warning');
+
+    modal.querySelector('.traven-modal-close').click();
+  });
+
+  it('opens help modal with MDX component examples, not bracket shortcodes', () => {
+    const editor = new TravenEditor({ element: container });
+    openHelpModal(editor, document.createElement('button'));
+
+    const modal = document.querySelector('.traven-modal-overlay');
+    expect(modal).not.toBeNull();
+    const tabBtn = modal.querySelector('[data-tab="shortcodes"]');
+    expect(tabBtn).not.toBeNull();
+    expect(tabBtn.textContent).toBe('Components');
+
+    const tab = modal.querySelector('#help-tab-shortcodes');
+    expect(tab).not.toBeNull();
+    expect(tab.textContent).toContain('<Image');
+    expect(tab.textContent).toContain('<Callout');
+    expect(tab.textContent).not.toContain('[image]');
+    expect(tab.textContent).not.toContain('[component]');
+
+    modal.querySelector('.traven-modal-close').click();
   });
 
   it('opens component modal and populates dropdown options from default schema', () => {

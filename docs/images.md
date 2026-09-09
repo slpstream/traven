@@ -10,7 +10,7 @@ Traven supports two main ways to insert images:
 1. **Direct Image URL**: Paste a URL link to a remote or self-hosted image.
 2. **File Upload**: Choose a local file via the system file dialog, drag it directly into the editing area, or paste it from the clipboard.
 
-Every insertion can generate either standard Markdown image syntax (`![alt](src)`) or Traven's custom `[image]` shortcode. Traven remains fully backwards-compatible and non-breaking for standard Markdown image syntax, making the custom shortcode completely optional.
+Every insertion can generate either standard Markdown image syntax (`![alt](src)`) or Traven's advanced `<Image />` component. Traven remains fully backwards-compatible and non-breaking for standard Markdown image syntax, making the MDX tag completely optional.
 
 The "Insert Image" toolbar button dynamically adjusts its user interface depending on whether the host application supports file uploads.
 
@@ -123,7 +123,7 @@ Configuring `onUploadImage` does more than enable the file picker button inside 
 1. **Drag and Drop**: The author drags an image file from their desktop and drops it onto the editor workspace.
 2. **Copy and Paste**: The author copies an image (e.g. from an image editor or a screenshot tool) and pastes it (`Ctrl+V` / `Cmd+V`) directly into the editor text pane.
 3. **Optimistic Loading Feedback**: Traven intercepts the event, generates a temporary optimistic loading state (an animated spinner widget inline at the cursor drop location), and begins uploading the file in the background.
-4. **Shortcode Insertion**: Once the `onUploadImage` promise resolves, the editor replaces the loading indicator with the custom image shortcode containing explicit alignment and sizing defaults: `[image src="resolved_url" alt="filename.png" align="center" size="medium"]`. 
+4. **MDX Insertion**: Once the `onUploadImage` promise resolves, the editor replaces the loading indicator with an `<Image />` tag containing explicit alignment and sizing defaults: `<Image src="resolved_url" alt="filename.png" align="center" size="medium" />`. 
 
 If the upload fails, the spinner indicator is cleanly removed, and a localized error warning is logged to prevent editor state corruption.
 
@@ -169,7 +169,7 @@ Every element in the modal and upload workflow is assigned generic, semantic CSS
 This section answers architectural and implementation questions regarding image storage and library management in Traven.
 
 ### Q: Where are the uploaded images stored?
-**A:** Traven does not store images or provide a backend storage service. When a user drags/drops, pastes, or selects a file in the dropzone, Traven calls the custom asynchronous JavaScript function (`onUploadImage`) that you define in the constructor. Your function uploads the file (to your local server, AWS S3, Cloudinary, etc.) and returns a URL. Traven simply takes that URL string and inserts it as standard Markdown: `![alt text](url)` or as a custom image shortcode.
+**A:** Traven does not store images or provide a backend storage service. When a user drags/drops, pastes, or selects a file in the dropzone, Traven calls the custom asynchronous JavaScript function (`onUploadImage`) that you define in the constructor. Your function uploads the file (to your local server, AWS S3, Cloudinary, etc.) and returns a URL. Traven simply takes that URL string and inserts it as standard Markdown: `![alt text](url)` or as `<Image src="url" … />`.
 
 ### Q: What backend technologies can I use for uploads?
 **A:** You can use **any backend technology stack** (PHP, Node.js, Python, Ruby, Go, serverless functions, etc.). Because Traven's interface is a standard browser-based JS `Promise`, you can send the file using standard `fetch()` or `XMLHttpRequest` requests to any HTTP endpoint of your choice.
@@ -201,23 +201,25 @@ Hosts can also open the image modal prefilled (e.g. from a sidebar gallery) via 
 
 ---
 
-## 7. Custom `[image]` Shortcode & Backwards Compatibility
+## 7. Advanced `<Image />` Component & Backwards Compatibility
 
-Traven features a built-in custom `[image]` shortcode for modular page building:
-```markdown
-[image src="photo.jpg" align="right" size="medium" alt="Description" caption="Caption text" class="custom-class"]
+Traven features a built-in `<Image />` MDX component for modular page building:
+```mdx
+<Image src="photo.jpg" align="right" size="medium" alt="Description" caption="Caption text" class="custom-class" />
 ```
 
+Only capitalized tags (`<[A-Z]\w+>`) are MDX components. Lowercase `<image>` stays HTML.
+
 ### Backwards Compatibility
-The custom shortcode is completely optional. Traven is fully backwards-compatible and will not break existing content that uses standard Markdown image declarations (`![alt](src)`). Both syntaxes are supported simultaneously.
+The MDX component is completely optional. Traven is fully backwards-compatible and will not break existing content that uses standard Markdown image declarations (`![alt](src)`). Both syntaxes are supported simultaneously.
 
 ### Toggle Modal Option
 The Image Insertion Modal features a sliders-icon toggle button to switch between:
-- **Advanced settings mode**: Inserts custom `[image]` shortcode syntax and reveals settings for caption, custom CSS class, alignment, and size.
+- **Advanced settings mode**: Inserts `<Image … />` and reveals settings for caption, custom CSS class, alignment, and size.
 - **Legacy mode**: Inserts standard `![alt](src)` Markdown and disables the advanced layout inputs.
 
 ### CSS Styling & Theme Separation
-When parsing `[image]` shortcodes, the fallback HTML renderer generates clean semantic `<img>` tags with zero inline styling attributes:
+When parsing `<Image />` tags, the fallback HTML renderer generates clean semantic `<img>` tags with zero inline styling attributes:
 ```html
 <img src="photo.jpg" alt="Description" class="traven-image-shortcode align-right size-medium custom-class">
 ```

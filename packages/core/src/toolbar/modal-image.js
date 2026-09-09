@@ -12,7 +12,7 @@ import {
 /**
  * Renders the Image Insertion Modal dialog.
  * Supports three insertion paths:
- *   1. Direct URL input — constructs ![alt](url) markdown or [image] shortcode.
+ *   1. Direct URL input — constructs ![alt](url) markdown or <Image />.
  *   2. File upload via onUploadImage callback — uploads first, then inserts.
  *   3. Host media library via onPickImage — fills URL (+ optional alt/caption).
  *

@@ -15,10 +15,7 @@ export function cursorInRange(state: import("@codemirror/state").EditorState, fr
  * @returns {boolean}
  */
 export function selectionOverlapsRange(state: import("@codemirror/state").EditorState, from: number, to: number): boolean;
-export function getActiveFigureRanges(state: any, cursorHead: any): {
-    from: number;
-    to: number;
-}[];
+export function getActiveFigureRanges(state: any, cursorHead: any): any[];
 export function getListPrefixAt(state: any, pos: any): {
     type: string;
     from: any;

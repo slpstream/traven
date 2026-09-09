@@ -46,6 +46,13 @@ describe('MdxComponents tokenizer', () => {
     expect(names).toContain('FencedCode');
   });
 
+  it('parses multi-line Quote close as a block after a paragraph', () => {
+    const names = parseNames('<Quote author="Ada">\nHello\n</Quote>');
+    expect(names).toContain('MdxContainerOpen');
+    expect(names).toContain('MdxContainerClose');
+    expect(names).toContain('Paragraph');
+  });
+
   it('does not emit a media node for an incomplete tag', () => {
     expect(parseNames('<Image src="')).not.toContain('MdxMediaTag');
   });

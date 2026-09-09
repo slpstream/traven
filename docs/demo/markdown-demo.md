@@ -1,6 +1,6 @@
 # Hello, I'm Traven!
 
-TAKE ME FOR A SPIN.  Everything you see here is a **fully live editor.** Type anywhere, like *just right here, for instance.* Everything works using the Markdown you know and love, along with a few shortcodes thrown in to make Markdown more powerful (but they are completely optional, so go ahead and ignore them if shortcodes are not your thing).
+TAKE ME FOR A SPIN.  Everything you see here is a **fully live editor.** Type anywhere, like *just right here, for instance.* Everything works using the Markdown you know and love, along with a few MDX components thrown in to make Markdown more powerful (but they are completely optional, so go ahead and ignore them if components are not your thing).
 
 ## What You See Is What You Get (*and what you mean*)
 
@@ -21,10 +21,11 @@ Here is a sample of how a blog post might read in an editorial layout. Notice ho
 ## The Art of Distraction-Free Writing
 Writers hate overload. Notification badges, cluttered editing interfaces, and complex design systems pull attention away from the main task of *putting words on the page*. In a WYSIWYM editing environment, writers maintain their flow state. There are no heavy preview panels or complex layout settings to configure. You simply write, structure your thoughts with headings, and let stylesheets handle the rest.
 
-Want to draw attention to key phrases? Add ==highlight formatting== directly on inline text using standard double equals delimiters, or use a shortcode. The shortcode option is great for wrapping block-level or inline-level text:
-[highlight]This text block is highlighted using the highlight shortcode. Pro-tip: Click on this text to discover the delimiters. You can edit them anything here by yourself, even the shortcodes.[/highlight]
+Want to draw attention to key phrases? Add ==highlight formatting== directly on inline text using standard double equals delimiters:
 
-[image src="https://traven.dev/img/sample.jpg" align="center" size="large" alt="Image with a caption. Edit me!" caption="Unlike plain Markdown, images can have captions and positioning"]
+==This text block is highlighted. Pro-tip: Click on this text to discover the delimiters. You can edit them yourself.==
+
+<Image src="https://traven.dev/img/sample.jpg" align="center" size="large" alt="Image with a caption. Edit me!" caption="Unlike plain Markdown, images can have captions and positioning" />
 
 You can easily structure your thoughts using bulleted or nested lists:
 1.  **First Item**: This is a numbered list item.
@@ -69,40 +70,40 @@ Markdown tables are rendered as rich, interactive database-style visual tables i
 | Feature | Markdown | Traven WYSIWYM | Extensible |
 | :--- | :---: | :---: | :---: |
 | **LaTeX Math** | `$E=mc^2$` | Live Render | Yes |
-| **Shortcodes** | `[youtube]` | Visual Cards | Yes |
+| **MDX Components** | `<Video />` | Visual Cards | Yes |
 | **Highlights** | `==text==` | Sleek Yellow | Yes |
 | **Tables** | `\| col \|` | Interactive | Yes |
 
 ### Content Containers (Info & Warning Boxes)
 To highlight notices, callouts, or warnings, Traven provides ready-made interactive component boxes. Here are two examples that come built-in with the editor, but you can style and add unlimited elements and components and style them any way you want. Content can be hardcoded, from your Markdown, or inserted dynamically using Twig.
 
-Need a quick info callout? Use the `[info]` shortcode for tips, notes, or explanations. You can set the box title (optional) and choose if the box is collapsible.
+Need a quick info callout? Use `<Callout type="info">` for tips, notes, or explanations. You can set the box title (optional) and choose if the box is collapsible.
 
-[info title="Pro Tip: Editing Components" collapsible="true"]
+<Callout type="info" title="Pro Tip: Editing Components" collapsible="true">
 Double-click anywhere on this info box to bring up its interactive properties panel. From there, you can change the title or toggle whether the box is collapsible.
-[/info]
+</Callout>
 
-To get a differently styled Warning Box, the `[warning]` shortcode to draw attention to critical actions, system notifications, or safety warnings.
+To get a differently styled Warning Box, use `<Callout type="warning">` to draw attention to critical actions, system notifications, or safety warnings.
 
-[warning title="Important Alert" collapsible="false"]
-To avoid parsing errors, use matching closing tags all your open bracket shortcodes when editing raw Markdown. Or just handle everything using toolbar buttons and Traven's interactive modals. That makes everything simpler and error-proof.
-[/warning]
+<Callout type="warning" title="Important Alert">
+To avoid parsing errors, use matching closing tags on all your open MDX components when editing raw Markdown. Or just handle everything using toolbar buttons and Traven's interactive modals. That makes everything simpler and error-proof.
+</Callout>
 
 ### Blockquotes & Pullquotes
 
 Quote blocks can be formatted as standard blockquotes or as stylized magazine-style pullquotes.
 
-For things like author blockquotes, use `[blockquote]` to present quotes with beautiful author attributions and source citations. Like anything else, you can style the quotes any way you want with an external stylesheet, and the styles show up directly inside the editor as WYSIWYG: What You See Is What You Get:
+For things like author blockquotes, use `<Quote>` to present quotes with beautiful author attributions and source citations. Like anything else, you can style the quotes any way you want with an external stylesheet, and the styles show up directly inside the editor as WYSIWYG: What You See Is What You Get:
 
-[blockquote author="James Baldwin" source="The Fire Next Time"]
+<Quote author="James Baldwin" source="The Fire Next Time">
 Love takes off the masks that we fear we cannot live without and know we cannot live within.
-[/blockquote]
+</Quote>
 
-For the more graphic, editorial pullquotes, use `[pullquote]` to break up long blocks of text with large, high-impact pull-out quotes:
+For the more graphic, editorial pullquotes, use `<Pullquote>` to break up long blocks of text with large, high-impact pull-out quotes:
 
-[pullquote]
+<Pullquote>
 "Traven completely bridges the gap between pure Markdown and modern rich-text editors."
-[/pullquote]
+</Pullquote>
 
 ### GitHub-style Alert Callouts
 
@@ -121,17 +122,17 @@ Alternatively, you can write native Markdown blockquotes starting with an alert 
 
 ## Embedded Media Assets
 
-Traven makes embedding external or local media a breeze. Each media shortcode is rendered as an interactive placeholder card with inline edit controls.
+Traven makes embedding external or local media a breeze. Each media tag is rendered as an interactive placeholder card with inline edit controls.
 
 ### YouTube Video Embeds
-Easily display video playbacks using the `[youtube]` shortcode:
+Easily display video playbacks using `<Video />`:
 
-[youtube src="dQw4w9WgXcQ" caption="Never Gonna Give You Up - Rick Astley" align="center" size="medium"]
+<Video src="https://www.youtube.com/watch?v=dQw4w9WgXcQ" caption="Never Gonna Give You Up - Rick Astley" align="center" size="medium" />
 
 ### Audio Embeds
-Integrate podcast episodes or audio files using the `[audio]` shortcode:
+Integrate podcast episodes or audio files using `<Audio />`:
 
-[audio src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" size="large" caption="SoundHelix Song 1 (Sample Audio Stream)"]
+<Audio src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" size="large" caption="SoundHelix Song 1 (Sample Audio Stream)" />
 
 ### LaTeX Mathematical Formulas
 Traven features native LaTeX math rendering via KaTeX. Delimiters hide when the cursor is elsewhere, leaving beautiful mathematical typography.

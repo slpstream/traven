@@ -84,11 +84,11 @@ Each button generated in the toolbar is assigned a generic `.toolbar-btn` class,
 | `gotoline` | `.btn-gotoline` | Prompt for line number and navigate | `Ctrl+G` (`Cmd+G` on Mac) |
 | `link` | `.btn-link` | Insert link using link modal dialog | `Ctrl+K` (`Cmd+K` on Mac) |
 | `image` | `.btn-image` | Insert image via URL or file upload modal | - |
-| `video` | `.btn-video` | Insert video shortcode via modal | - |
-| `audio` | `.btn-audio` | Insert audio shortcode via modal | - |
-| `component` | `.btn-component` | Insert `[component]` shortcode block via modal | - |
+| `video` | `.btn-video` | Insert `<Video />` via modal | - |
+| `audio` | `.btn-audio` | Insert `<Audio />` via modal | - |
+| `component` | `.btn-component` | Insert `<Quote>`, `<Callout>`, or `<Component>` via modal | - |
 | `snippet` | `.btn-snippet` | Dropdown menu for custom snippets & Manage Snippets modal | - |
-| `figure` | `.btn-figure` | Insert `[figure]` shortcode block via modal | - |
+| `figure` | `.btn-figure` | Insert `<Figure>` block via modal | - |
 | `help` | `.btn-help` | Open keyboard shortcuts help modal | `Ctrl+/` (`Cmd+/` on Mac) |
 | `settings` | `.btn-settings` | Open toolbar configuration settings modal | - |
 

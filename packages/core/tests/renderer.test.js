@@ -172,6 +172,27 @@ describe('Traven Renderer Golden Tests', () => {
       const html = render('<Component id="123" type="cta"></Component>');
       expect(html).toContain('traven-component');
     });
+
+    it('renders empty paired and self-closing Component as a generic card', () => {
+      const paired = render('<Component name="x"></Component>');
+      expect(paired).toContain('traven-component-x');
+      const selfClosing = render('<Component name="x" />');
+      expect(selfClosing).toContain('traven-component-x');
+    });
+
+    it('renders one-line Quote with author cite', () => {
+      const html = render('<Quote author="Ada">Hello</Quote>');
+      expect(html).toContain('<blockquote class="traven-component-blockquote">');
+      expect(html).toContain('<cite>— Ada</cite>');
+      expect(html).toContain('</blockquote>');
+    });
+
+    it('renders multi-line Quote cite before the closing blockquote', () => {
+      const html = render('<Quote author="Ada" source="Notes">\nHello\n</Quote>');
+      expect(html).toContain('<blockquote class="traven-component-blockquote">');
+      expect(html).toContain('<cite>— Ada, Notes</cite>');
+      expect(html.indexOf('<cite>— Ada, Notes</cite>')).toBeLessThan(html.indexOf('</blockquote>'));
+    });
     
     it('renders figure shortcodes', () => {
       const html = render('<Figure>\nContent\n</Figure>');

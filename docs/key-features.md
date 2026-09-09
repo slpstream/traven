@@ -52,10 +52,10 @@ Accessibility is built directly into Traven’s core:
 
 ---
 
-## 6. Custom Shortcode System & Widgets
+## 6. MDX Components & Widgets
 
-*   **Semantic Extensions:** Rich media options such as `[image]`, `[video]`, `[audio]`, and `[figure]` are supported. Traven parses these into interactive WYSIWYM block widgets with placeholder previews inside the editing canvas, while compiling them into semantic HTML structures.
-*   **Nested Block Components:** Employs a robust `[component]` shortcode structure for injecting callouts, pullquotes, highlights, and custom components with native layouts.
+*   **Semantic Extensions:** Rich media tags such as `<Image />`, `<Video />`, `<Audio />`, and `<Figure>` are supported. Traven parses these into interactive WYSIWYM block widgets with placeholder previews inside the editing canvas, while compiling them into semantic HTML structures.
+*   **Nested Block Components:** Uses capitalized MDX tags (`<Quote>`, `<Callout>`, `<Pullquote>`, `<Component name="…">`) for callouts, pullquotes, and custom theme slots.
 
 ---
 
@@ -126,4 +126,4 @@ const editor = new TravenEditor({
   ]
 });
 ```
-This configuration outputs clean, parseable shortcodes (e.g., `[component name="callout" type="warning"]...[/component]`) that your backend can safely render.
+This configuration outputs clean, parseable MDX tags (e.g., `<Callout type="warning">…</Callout>`) that your backend can safely render.

@@ -146,15 +146,15 @@ Each button generated in the toolbar is assigned the class `.toolbar-btn` and a 
 | `blockquote` | `.btn-blockquote` | Blockquote formatting (`> `) | - |
 | `hr` | `.btn-hr` | Horizontal rule line (`---`) | - |
 | `table` | `.btn-table` | Insert table template via modal grid | - |
-| `component` | `.btn-component` | Insert `[component]` shortcode block via modal | - |
+| `component` | `.btn-component` | Insert `<Quote>`, `<Callout>`, or `<Component>` via modal | - |
 | `snippet` | `.btn-snippet` | Dropdown menu for custom snippets & Manage Snippets modal | - |
-| `figure` | `.btn-figure` | Insert `[figure]` shortcode block via modal | - |
+| `figure` | `.btn-figure` | Insert `<Figure>` block via modal | - |
 | `datetime` | `.btn-datetime` | Insert current Date & Time | - |
 | `search` | `.btn-search` | Open CodeMirror search panel | `Ctrl+F` (`Cmd+F` on Mac) |
 | `link` | `.btn-link` | Insert link using link modal dialog | `Ctrl+K` (`Cmd+K` on Mac) |
 | `image` | `.btn-image` | Insert image via URL or file upload modal | - |
-| `video` | `.btn-video` | Insert video shortcode via modal | - |
-| `audio` | `.btn-audio` | Insert audio shortcode via modal | - |
+| `video` | `.btn-video` | Insert `<Video />` via modal | - |
+| `audio` | `.btn-audio` | Insert `<Audio />` via modal | - |
 | `fullscreen` | `.btn-fullscreen` | Toggle editor fullscreen mode | - |
 | `clear` | `.btn-clear` | Clear all document contents | - |
 | `uppercase` | `.btn-uppercase` | Convert selection to UPPERCASE | - |
@@ -295,58 +295,59 @@ To prevent subtle divergence bugs between the WYSIWYM decorations builder (`src/
 * **`isInCodeBlock(state, pos)`**: Prevents editor commands from inserting list formatting when the selection starts inside a fenced code block or inline code text.
 * **Benefits**: Resolves pre-existing bugs such as incorrect parsing of star/plus list bullets (`*`, `+`), double-insertions on negative numbers (`-3.14`), and formatting corruptions inside code blocks.
 
-### K. Custom Image Shortcode [image ...] Parser & Widget
-Traven includes support for an optional, self-closing `[image src="..." align="..." size="..." caption="..." class="..." alt="..."]` shortcode system:
-* **Optional & Backwards-Compatible**: This custom shortcode is completely optional. Traven remains fully backwards-compatible with standard Markdown image syntax (`![alt](src)`). Legacies images will parse, render, and compile exactly as they did previously.
-* **Lezer Custom Inline Parser (`src/shortcode-parser.js`)**: Implements a custom `@lezer/markdown` inline parser that detects the `[image` tag, scans for key-value attribute pairs (normalizing single, double, or unquoted values), and builds a structured AST subtree with nodes like `ImageShortcode`, `ShortcodeMark`, `ShortcodeTagName`, `ShortcodeAttributeName`, and `ShortcodeAttributeValue`. It is integrated into the CodeMirror markdown configuration inside `src/index.js`.
-* **WYSIWYM Widget Rendering**: The `ImageShortcodeWidget` in `src/wysiwym.js` collapses the shortcode text block into a styled block preview widget showing the image thumbnail/element with custom sizing, alignment styling (via auto-margins to preserve CodeMirror coordinate mapping), and badges, while hiding the raw code when the cursor is outside.
-* **Fallback HTML Compilation**: The `#fallbackRender` method compiles `[image]` shortcodes into high-quality semantic `<img>` elements with mapped attributes and class names (such as `.traven-image-shortcode`, `.align-[alignment]`, and `.size-[size]`). In order to maintain a separation of concerns, the renderer outputs **zero inline styles**, delegating layout, width, float, and margin styling entirely to the skin stylesheets.
-* **Toolbar Toggle**: The "Insert Image" toolbar modal features a sliders-icon toggle to dynamically switch between Advanced mode (inserting custom `[image]` shortcodes with fields for alt text, captions, class names, alignments, and sizes) and Legacy mode (inserting standard `![alt](src)` Markdown).
-* **Delimiter Skip Integration**: Delimiter skip logic in `src/delimiter-skip.js` detects `ImageShortcode` syntax boundaries and allows arrow keys to skip across the delimiters (jump to first attribute when entering, skip closing brackets when exiting).
+### K. `<Image />` Parser & Widget
+Traven includes support for an optional, self-closing `<Image src="..." align="..." size="..." caption="..." class="..." alt="..." />` MDX component:
+* **Optional & Backwards-Compatible**: Completely optional. Traven remains fully backwards-compatible with standard Markdown image syntax (`![alt](src)`). Legacy images parse, render, and compile exactly as they did previously.
+* **Lezer Custom Parser (`src/mdx-parser.js`)**: A `@lezer/markdown` parser that detects `<` followed by an uppercase letter, scans key-value attributes, and builds a structured AST subtree (`MdxMediaTag`, `MdxMark`, `MdxTagName`, `MdxAttributeName`, `MdxAttributeValue`). It is integrated into the CodeMirror markdown configuration inside `src/index.js`. Lowercase `<image>` stays HTML.
+* **WYSIWYM Widget Rendering**: `ImageShortcodeWidget` in `src/plugins/component-plugin.js` collapses the tag into a styled block preview showing the thumbnail with custom sizing, alignment styling (via auto-margins to preserve CodeMirror coordinate mapping), and badges, while hiding the raw code when the cursor is outside.
+* **Fallback HTML Compilation**: The renderer compiles `<Image />` tags into semantic `<img>` elements with mapped attributes and class names (such as `.traven-image-shortcode`, `.align-[alignment]`, and `.size-[size]`). The renderer outputs **zero inline styles**, delegating layout, width, float, and margin styling entirely to the skin stylesheets.
+* **Toolbar Toggle**: The Insert Image toolbar modal features a sliders-icon toggle to switch between Advanced mode (inserting `<Image … />` with fields for alt text, captions, class names, alignments, and sizes) and Legacy mode (inserting standard `![alt](src)` Markdown).
+* **Delimiter Skip Integration**: Delimiter skip logic in `src/delimiter-skip.js` detects `MdxMediaTag` syntax boundaries and allows arrow keys to skip across the delimiters.
 
-### L. Custom [component] Shortcode & Alias System (Blockquotes, Pullquotes, Generic Cards)
-Traven supports a flexible, block-level custom component shortcode system that wraps nested text, supporting attributes and aliases:
-* **Lezer Parser Extension (`src/component-parser.js`)**: Implements a paired-tag inline scanner that identifies opening `[component]` and closing `[/component]` syntax boundaries. It parses key-value attributes (e.g. `name`, `author`, `source`) into a structured AST subtree containing `ComponentShortcode`, `ComponentShortcodeOpen`, `ComponentShortcodeClose`, `ComponentShortcodeBody`, `ComponentShortcodeTagName`, and attribute name/value tokens.
-* **Shorthand Aliases & Syntax Normalization**: To optimize writer workflows, the parser and editor natively translate short-syntax attributes and custom tag aliases:
-  - Short Attribute: `[component="blockquote"]` is normalized to `[component name="blockquote"]`.
-  - Shorthand Quote Aliases: `[quote author="..." source="..."]...[/quote]` and `[blockquote author="..." source="..."]...[/blockquote]` map to `blockquote` under the hood.
-  - Shorthand Pullquote Alias: `[pullquote]...[/pullquote]` maps to `pullquote` under the hood.
-* **WYSIWYM Widget Rendering**: The `ComponentShortcodeWidget` in `src/wysiwym.js` collapses the raw tags when the cursor is outside, rendering a styled preview panel. It features a mouse hover edit-trigger overlay. Clicking the component or the overlay button launches the interactive Component Modal dialog to modify attributes or body content.
-* **Twig-Compatible Fallback Compilation**: In `#fallbackRender`, components are parsed and converted to high-quality semantic HTML/Twig containers with **no inline styles**:
-  - **Blockquotes**: Renders as `<blockquote class="traven-component-blockquote">[inner HTML]<footer><cite>— Author, Source</cite></footer></blockquote>` if `author` or `source` is defined; otherwise, just the `<blockquote>`.
-  - **Pullquotes**: Renders as `<blockquote class="traven-component-pullquote">[inner HTML]</blockquote>`.
-  - **Generic/Fallback Cards**: Any generic or unknown component names (like `[component="info"]` or `[component="warning"]`) fall back to card layouts: `<div class="traven-component traven-component-[name]">[inner HTML]</div>`, allowing theme developers to target them with stylesheet rules.
-* **Delimiter Skip Integration**: Delimiter skipping in `src/delimiter-skip.js` allows arrow keys to skip over opening/closing delimiters and jump inside the block content smoothly.
+### L. Quotes, Callouts, and `<Component>` (Blockquotes, Pullquotes, Generic Cards)
+Traven supports block-level MDX containers that wrap nested Markdown, with attributes:
+* **Lezer Parser (`src/mdx-parser.js`)**: Paired tags whose open tag sits alone on a line become `MdxContainerOpen` / `MdxContainerClose`; same-line open+close become `MdxContainerTag`. Attributes (`author`, `source`, `type`, `name`, `title`) are parsed into `MdxAttribute` children.
+* **Dedicated tags**:
+  - Quote: `<Quote author="..." source="...">…</Quote>` (also `<Blockquote>`).
+  - Pullquote: `<Pullquote>…</Pullquote>`.
+  - Callout: `<Callout type="info|warning" title="...">…</Callout>`.
+  - Generic: `<Component name="card">…</Component>` or self-closing `<Component name="x" />`.
+* **WYSIWYM Widget Rendering**: `ComponentShortcodeWidget` in `src/plugins/component-plugin.js` collapses the raw tags when the cursor is outside, rendering a styled preview panel. The pencil launches the Component Modal. `_tagName` maps Quote → blockquote, Callout+type → info/warning, Pullquote → pullquote, Component+name → that name.
+* **Twig-Compatible Fallback Compilation**: Components convert to semantic HTML with **no inline styles**:
+  - **Quotes**: `<blockquote class="traven-component-blockquote">[inner HTML]<cite>— Author, Source</cite></blockquote>` if `author` or `source` is defined.
+  - **Pullquotes**: `<blockquote class="traven-component-pullquote">[inner HTML]</blockquote>`.
+  - **Generic/Fallback Cards**: Unknown names fall back to `<div class="traven-component traven-component-[name]">[inner HTML]</div>`.
+* **Delimiter Skip Integration**: Delimiter skipping in `src/delimiter-skip.js` allows arrow keys to skip over opening/closing tag boundaries.
 
-### M. Custom Video Shortcode [video ...] Parser & Widget
-Traven includes native support for an optional `[video src="..." align="..." size="..." caption="..." class="..."]` shortcode system:
-* **Lezer Custom Inline Parser (`src/video-parser.js`)**: Implements a custom `@lezer/markdown` inline parser that detects the `[video` tag, parses key-value attributes, and builds a structured AST subtree containing `VideoShortcode`, `VideoShortcodeMark`, `VideoShortcodeTagName`, and attribute name/value tokens. It is integrated into the CodeMirror markdown parser inside `src/index.js`.
-* **WYSIWYM Widget Rendering**: The `VideoShortcodeWidget` in `src/wysiwym.js` collapses the raw shortcode text when the cursor is outside. It renders a clean placeholder card indicating the video's detected platform type (YouTube, Vimeo, or Video File) and URL, alongside an edit icon. Clicking the widget or edit icon launches the interactive Video Modal to modify attributes.
-* **Fallback HTML Compilation**: The `#fallbackRender` method compiles `[video]` shortcodes into high-quality semantic HTML structures with **zero inline styles**:
+### M. `<Video />` Parser & Widget
+Traven includes native support for an optional `<Video src="..." align="..." size="..." caption="..." class="..." />` tag:
+* **Lezer Parser (`src/mdx-parser.js`)**: Self-closing capitalized tags become `MdxMediaTag`. YouTube and Vimeo URLs are detected from `src` (legacy `[youtube]` / `[vimeo]` aliases are gone).
+* **WYSIWYM Widget Rendering**: `VideoShortcodeWidget` collapses the raw tag when the cursor is outside. It renders a placeholder card indicating the detected platform (YouTube, Vimeo, or Video File) and URL, alongside an edit icon. Clicking launches the Video Modal.
+* **Fallback HTML Compilation**: Compiles into semantic HTML with **zero inline styles**:
   - **YouTube**: `<iframe src="https://www.youtube.com/embed/[id]" ...></iframe>`
   - **Vimeo**: `<iframe src="https://player.vimeo.com/video/[id]" ...></iframe>`
   - **Direct/Local Video Files**: `<video src="[url]" controls></video>`
   - **Containers**: Wrapped in `<figure class="traven-video-figure align-[align] size-[size][custom-class]">` containing a `<figcaption class="traven-video-caption">` if a caption is present; otherwise, wrapped in a `<div class="traven-video-container align-[align] size-[size][custom-class]">`.
-* **Toolbar Button**: The video toolbar tool (`.btn-video`) opens `openVideoModal()` from `src/toolbar/modal-video.js` allowing users to insert or edit video shortcodes with explicit alignment, size, class, and caption fields.
-* **Delimiter Skip Integration**: Delimiter skipping in `src/delimiter-skip.js` automatically detects `VideoShortcode` syntax boundaries, allowing arrow keys to jump inside/across the delimiters smoothly.
+* **Toolbar Button**: The video toolbar tool (`.btn-video`) opens `openVideoModal()` from `src/toolbar/modal-video.js`.
+* **Delimiter Skip Integration**: `src/delimiter-skip.js` skips `MdxMediaTag` boundaries.
 
-### N. Custom Audio Shortcode [audio ...] Parser & Widget
-Traven includes native support for an optional `[audio src="..." align="..." size="..." caption="..." class="..."]` shortcode system:
-* **Lezer Custom Inline Parser (`src/audio-parser.js`)**: Implements a custom `@lezer/markdown` inline parser that detects the `[audio` tag, parses attributes, and builds a structured AST subtree containing `AudioShortcode`, `AudioShortcodeMark`, `AudioShortcodeTagName`, and attribute name/value tokens.
-* **WYSIWYM Widget Rendering**: The `AudioShortcodeWidget` in `src/wysiwym.js` collapses the raw shortcode text when the cursor is outside. It renders a clean placeholder card displaying the audio icon, the source URL/file, and the caption, with a click-to-edit option. Clicking the widget launches the interactive Audio Modal.
-* **Fallback HTML Compilation**: The `#fallbackRender` method compiles `[audio]` shortcodes into `<audio controls>` elements with **zero inline styles**:
+### N. `<Audio />` Parser & Widget
+Traven includes native support for an optional `<Audio src="..." align="..." size="..." caption="..." class="..." />` tag:
+* **Lezer Parser (`src/mdx-parser.js`)**: Self-closing `MdxMediaTag`.
+* **WYSIWYM Widget Rendering**: `AudioShortcodeWidget` collapses the raw tag when the cursor is outside. It renders a placeholder card displaying the audio icon, the source URL/file, and the caption.
+* **Fallback HTML Compilation**: Compiles into `<audio controls>` elements with **zero inline styles**:
   - **Containers**: Wrapped in `<figure class="traven-audio-figure align-[align] size-[size][custom-class]">` containing a `<figcaption class="traven-audio-caption">` if a caption is present; otherwise, wrapped in a `<div class="traven-audio-container align-[align] size-[size][custom-class]">`.
-* **Toolbar Button**: The audio toolbar tool (`.btn-audio`) opens `openAudioModal()` from `src/toolbar/modal-audio.js` to insert or edit audio shortcodes.
-* **Delimiter Skip Integration**: Delimiter skipping in `src/delimiter-skip.js` automatically detects `AudioShortcode` syntax boundaries for seamless arrow navigation.
+* **Toolbar Button**: The audio toolbar tool (`.btn-audio`) opens `openAudioModal()` from `src/toolbar/modal-audio.js`.
+* **Delimiter Skip Integration**: `src/delimiter-skip.js` skips `MdxMediaTag` boundaries.
 
-### O. Custom Figure Shortcode [figure ...] Parser & Widget
-Traven includes native support for an optional `[figure align="..." size="..." caption="..." class="..."]...[/figure]` shortcode system designed to wrap block-level contents in a captioned figure block:
-* **Lezer Custom Inline Parser (`src/figure-parser.js`)**: Implements a custom `@lezer/markdown` inline parser that detects the `[figure` tag, parses attributes, and builds a structured AST subtree containing `FigureShortcode`, `FigureShortcodeOpen`, `FigureShortcodeClose`, `FigureShortcodeBody`, `FigureShortcodeTagName`, and attribute name/value tokens.
-* **WYSIWYM Widget Rendering**: The `FigureShortcodeWidget` in `src/wysiwym.js` collapses the raw shortcode text when the cursor is outside. It renders the figure's body content (allowing nested block elements like images, code blocks, or tables) and displays a caption underneath if specified, alongside an edit icon. Clicking the widget launches the interactive Figure Modal.
-* **Fallback HTML Compilation**: The `#fallbackRender` method compiles `[figure]...[/figure]` shortcodes into a standard `<figure>` container with **zero inline styles**:
-  - `<figure class="traven-figure align-[align] size-[size][custom-class]">[inner HTML]<figcaption class="traven-figure-caption">[caption]</figcaption></figure>`
-* **Toolbar Button**: The figure toolbar tool (`.btn-figure`) opens `openFigureModal()` from `src/toolbar/modal-figure.js` to insert or edit figure shortcodes.
-* **Delimiter Skip Integration**: Delimiter skipping in `src/delimiter-skip.js` automatically detects `FigureShortcode` syntax boundaries for seamless arrow navigation.
+### O. `<Figure>` Parser & Widget
+Traven includes native support for an optional `<Figure align="..." size="..." caption="..." class="...">…</Figure>` wrapper for block-level contents:
+* **Lezer Parser (`src/mdx-parser.js`)**: Multi-line open/close become `MdxContainerOpen` / `MdxContainerClose`; inner Markdown is sibling nodes.
+* **WYSIWYM Widget Rendering**: `FigureShortcodeWidget` collapses the raw tags when the cursor is outside. It renders the figure's body content (nested images, code blocks, or tables) and displays a caption underneath if specified.
+* **Fallback HTML Compilation**: Compiles into a standard `<figure>` container with **zero inline styles**:
+  - `<figure class="traven-figure-shortcode align-[align]">[inner HTML]</figure>`
+* **Toolbar Button**: The figure toolbar tool (`.btn-figure`) opens `openFigureModal()` from `src/toolbar/modal-figure.js`.
+* **Delimiter Skip Integration**: `src/delimiter-skip.js` skips MDX tag boundaries.
 
 ---
 

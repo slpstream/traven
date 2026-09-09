@@ -86,7 +86,7 @@ Traven is 100% free and open source under the MIT license. There is no Pro versi
 
 Traven includes advanced, optional features that are lazy-loaded on demand:
 - **Media Uploads** — Drag-and-drop or paste with optimistic UI (see [Images & Media](images.md))
-- **Shortcodes** — Embed custom interactive widgets (see [Shortcodes](shortcodes.md))
+- **Shortcodes** — Embed custom interactive widgets (see [MDX Components](shortcodes.md))
 - **LaTeX Math** — Render formulas via KaTeX (see [LaTeX Support](latex-support.md))
 - **Mermaid Diagrams** — In-editor flowchart rendering (see [Mermaid Support](mermaid-support.md))
 - **Vim Mode & Sync** — Standard Vim emulation and side-by-side editing modes (see [Common Configurations](common-configurations.md))

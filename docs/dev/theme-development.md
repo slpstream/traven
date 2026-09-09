@@ -135,19 +135,19 @@ The list below covers every selector a complete theme should consider. Anything 
 | `.cm-wysiwym-codeblock-line` | One line inside a fenced code block. Use `-first` / `-last` modifiers for rounded corners. |
 | `.cm-wysiwym-collapsed-fence` | A fence line whose text is hidden but the empty container still occupies space. **Set `height: 0 !important`.** |
 | `.cm-wysiwym-image-widget-container` | Legacy plain `![alt](src)` Markdown image widget. |
-| `.cm-wysiwym-image-shortcode-container` | Advanced `[image ...]` shortcode widget. Same alignment helpers (`.align-left`, etc.) as the preview. |
+| `.cm-wysiwym-image-shortcode-container` | Advanced `<Image />` widget. Same alignment helpers (`.align-left`, etc.) as the preview. |
 | `.cm-wysiwym-image-caption` | Caption text under the legacy image widget. |
 | `.cm-wysiwym-image-shortcode-container .shortcode-meta` | The meta row under the advanced shortcode widget. |
 | `.cm-wysiwym-image-shortcode-container .meta-badge` | "Tag name" pill (`[IMAGE]`, etc.). Use `.tag-name` for the first badge. |
 | `.cm-wysiwym-image-uploading` | Optimistic upload pill (green dashed border). |
-| `.cm-wysiwym-video-shortcode-container` | `[video]` widget. |
+| `.cm-wysiwym-video-shortcode-container` | `<Video />` widget. |
 | `.cm-wysiwym-video-shortcode-container .video-placeholder`, `.video-placeholder-icon-wrap`, `.video-placeholder-details`, `.video-placeholder-platform`, `.video-placeholder-url` | Pieces of the video placeholder card. |
-| `.cm-wysiwym-audio-shortcode-container` | `[audio]` widget, same shape as the video container. |
-| `.cm-wysiwym-component-shortcode` | Generic `[component]` block, plus variants `.component-blockquote`, `.component-pullquote`, `.component-info`, `.component-warning`. |
+| `.cm-wysiwym-audio-shortcode-container` | `<Audio />` widget, same shape as the video container. |
+| `.cm-wysiwym-component-shortcode` | Generic `<Component>` / `<Callout>` / `<Quote>` block, plus variants `.component-blockquote`, `.component-pullquote`, `.component-info`, `.component-warning`. |
 | `.cm-wysiwym-component-shortcode .component-body` | Inner body container. |
 | `.cm-wysiwym-component-shortcode .component-body p` | Paragraphs inside the body. |
 | `.cm-wysiwym-component-shortcode cite` | The "— Author, Source" line on blockquote components. |
-| `.cm-wysiwym-figure-shortcode` | `[figure]` widget. Contains `.component-body` and `.figure-caption`. |
+| `.cm-wysiwym-figure-shortcode` | `<Figure>` widget. Contains `.component-body` and `.figure-caption`. |
 | `.cm-wysiwym-table-row` | GFM table source line in raw editing mode. |
 | `.cm-wysiwym-table-widget` | Rendered WYSIWYM table (when the cursor is outside). Style `.cm-wysiwym-table-widget table`, `th`, `td` normally. |
 | `.cm-wysiwym-inline-math-widget` | Live LaTeX inline equation. |
@@ -213,34 +213,34 @@ Targets compiled HTML. Almost all of these are standard selectors nested inside 
 | `.traven-preview > h1:first-child`, `> h2:first-child`, `> h3:first-child` | First-child headings — match the editor's `padding-top` to avoid a visual jump. |
 | `.traven-preview p` | Paragraphs. `line-height` and `margin-bottom` only. |
 | `.traven-preview ul`, `ol`, `li` | Lists. `padding-left`, `li::marker` (color). |
-| `.traven-preview blockquote:not(.traven-component-pullquote)` | Native blockquotes. (The `:not()` keeps the `[pullquote]` shortcode from picking these styles up.) |
+| `.traven-preview blockquote:not(.traven-component-pullquote)` | Native blockquotes. (The `:not()` keeps `<Pullquote>` from picking these styles up.) |
 | `.traven-preview pre`, `.traven-preview code` | Code blocks and inline code. |
 | `.traven-preview a` | Links. |
 | `.traven-preview mark` | `==highlight==` output. |
 | `.traven-preview hr` | Horizontal rule. |
 | `.traven-preview table`, `th`, `td` | GFM tables. Set `height: 38px` on `th`/`td` to keep blank cells from collapsing. |
-| `.traven-preview img.traven-image-shortcode` | The advanced image shortcode, no caption. |
-| `.traven-preview figure.traven-image-figure` | The advanced image shortcode, with caption. |
+| `.traven-preview img.traven-image-shortcode` | The advanced `<Image />` tag, no caption. |
+| `.traven-preview figure.traven-image-figure` | The advanced `<Image />` tag, with caption. |
 | `.traven-preview figure.traven-image-figure figcaption.traven-image-caption` | Caption text. |
-| `.traven-preview .traven-video-container`, `figure.traven-video-figure` | `[video]` output. |
+| `.traven-preview .traven-video-container`, `figure.traven-video-figure` | `<Video />` output. |
 | `.traven-preview figure.traven-video-figure .traven-video-container`, `figcaption.traven-video-caption` | Inner video container + caption. |
-| `.traven-preview .traven-audio-container`, `figure.traven-audio-figure` | `[audio]` output. |
+| `.traven-preview .traven-audio-container`, `figure.traven-audio-figure` | `<Audio />` output. |
 | `.traven-preview .traven-audio-figure figcaption.traven-audio-caption` | Audio caption. |
-| `.traven-preview .traven-component` | Generic `[component]` card wrapper. |
-| `.traven-preview .traven-component-blockquote` | The `[quote]` / `[blockquote]` / `[component="blockquote"]` block. |
+| `.traven-preview .traven-component` | Generic `<Component>` card wrapper. |
+| `.traven-preview .traven-component-blockquote` | The `<Quote>` / `<Blockquote>` block. |
 | `.traven-preview .traven-component-blockquote::before` | Decorative opening quote (the editorial/write themes draw it with a `::before`; default/colorful/dark omit it). |
 | `.traven-preview .traven-component-blockquote footer`, `cite` | The optional citation. |
-| `.traven-preview .traven-component-pullquote` | The `[pullquote]` block. Optional decorative `::before` / `::after`. |
-| `.traven-preview .traven-component-info` | The `[info]` notice block. |
-| `.traven-preview .traven-component-warning` | The `[warning]` notice block. |
-| `.traven-preview .traven-figure` | The `[figure]` block wrapper. |
+| `.traven-preview .traven-component-pullquote` | The `<Pullquote>` block. Optional decorative `::before` / `::after`. |
+| `.traven-preview .traven-component-info` | The `<Callout type="info">` notice block. |
+| `.traven-preview .traven-component-warning` | The `<Callout type="warning">` notice block. |
+| `.traven-preview .traven-figure` | The `<Figure>` block wrapper. |
 | `.traven-preview .traven-figure-caption` | The caption inside `.traven-figure`. |
 | `.traven-preview .traven-figure.align-fullbleed` | Breakout. Apply the same `100vw / calc(-50vw + 50%)` trick used elsewhere. |
-| `.traven-preview figure.traven-image-figure figcaption.traven-image-caption` | Caption of the `[image]` figure. |
+| `.traven-preview figure.traven-image-figure figcaption.traven-image-caption` | Caption of the `<Image />` figure. |
 
 #### Alignment helpers (shared between editor and preview)
 
-Every shortcode accepts `align="left|right|center|fullbleed"` and `size="small|medium|large|full"`. Both the editor widget and the preview HTML emit these as classes, so a single rule typically covers both scopes:
+Every media component accepts `align="left|right|center|fullbleed"` and `size="small|medium|large|full"`. Both the editor widget and the preview HTML emit these as classes, so a single rule typically covers both scopes:
 
 ```css
 .cm-wysiwym-image-shortcode-container.align-left,
@@ -427,7 +427,7 @@ Reduce the preview's blockquote vertical neighbors with a `:has()` selector to m
 }
 ```
 
-The same pattern is used around the `[component="blockquote"]` and `[info]`/`[warning]` blocks. (Search your theme for `:has(+ .traven-` to see them.)
+The same pattern is used around `<Quote>` and `<Callout type="info|warning">` blocks. (Search your theme for `:has(+ .traven-` to see them.)
 
 ### 5.3 Tables
 The live table widget (`.cm-wysiwym-table-widget table`) and the preview table (`.traven-preview table`) should share the same border colors, padding, and minimum cell height. All shipping themes set `height: 38px` on `th` and `td` so that an empty cell never collapses to zero.
@@ -443,7 +443,7 @@ In Traven, the default starter skin (`skin-starter.css` which is bundled inside 
   font-family: var(--traven-font-body) !important;
 }
 ```
-If your custom theme has elements that wrap nested paragraphs — such as standard blockquotes, blockquote components (`[component="blockquote"]`), and notice blocks (`[info]`, `[warning]`) — those nested paragraph tags will ignore the parent container's custom font declarations. Instead, they will inherit the starter skin's default body typeface (e.g. `Georgia`), breaking visual consistency.
+If your custom theme has elements that wrap nested paragraphs — such as standard blockquotes, `<Quote>` components, and callout blocks (`<Callout type="info">`, `<Callout type="warning">`) — those nested paragraph tags will ignore the parent container's custom font declarations. Instead, they will inherit the starter skin's default body typeface (e.g. `Georgia`), breaking visual consistency.
 
 #### The Fix
 To enforce your theme's custom typography on all nested structures, apply the `font-family` declaration using a selector targeting both the parent container and all its descendants (using `*`) along with `!important`:
@@ -464,11 +464,11 @@ This ensures the cascade correctly forces nested block contents to render using 
 
 ---
 
-## 6. Shortcode markup reference (cheat sheet)
+## 6. MDX component markup reference (cheat sheet)
 
 The fallback renderer emits **zero inline styles**; every visual decision is delegated to your theme. This section is a copy of the canonical markup in `docs/dev/shortcodestyles.css`, condensed for theme authors. Use the comment blocks in that file as your authoritative reference.
 
-### 6.1 `[image ...]`
+### 6.1 `<Image />`
 
 ```html
 <!-- No caption -->
@@ -503,7 +503,7 @@ For `align-fullbleed`, use the standard 100vw breakout:
 }
 ```
 
-### 6.2 `[video ...]`
+### 6.2 `<Video />`
 
 ```html
 <!-- YouTube / Vimeo / direct file, no caption -->
@@ -526,7 +526,7 @@ For `align-fullbleed`, use the standard 100vw breakout:
 * **Preview wrapper:** `.traven-preview .traven-video-container` (16:9 `aspect-ratio`), `.traven-preview figure.traven-video-figure`.
 * **Caption:** `figcaption.traven-video-caption`.
 
-### 6.3 `[audio ...]`
+### 6.3 `<Audio />`
 
 ```html
 <div class="traven-audio-container align-[a] size-[s] [custom]">
@@ -544,7 +544,7 @@ For `align-fullbleed`, use the standard 100vw breakout:
 
 Same alignment helpers as image/video.
 
-### 6.4 `[figure ...]...[/figure]`
+### 6.4 `<Figure>…</Figure>`
 
 Wraps arbitrary block content (tables, code blocks, images, etc.) in a captioned figure.
 
@@ -558,20 +558,18 @@ Wraps arbitrary block content (tables, code blocks, images, etc.) in a captioned
 * **Editor wrapper:** `.cm-wysiwym-figure-shortcode` (with `.component-body` and `.figure-caption`).
 * **Preview wrapper:** `.traven-preview .traven-figure`.
 
-### 6.5 `[component]...[/component]` and its aliases
+### 6.5 `<Quote>`, `<Callout>`, `<Pullquote>`, and `<Component>`
 
-The `[component]` shortcode has a structural base class plus one variant class derived from the `name` attribute. Aliases normalize to the same variants:
+These tags share a structural base class plus one variant class derived from the resolved name:
 
 | Author writes | Compiles to |
 | :--- | :--- |
-| `[component name="blockquote"]...[/component]` | `.traven-component-blockquote` |
-| `[quote]...[/quote]`, `[blockquote]...[/blockquote]` | `.traven-component-blockquote` |
-| `[component="blockquote"]...[/component]` | `.traven-component-blockquote` |
-| `[pullquote]...[/pullquote]` | `.traven-component-pullquote` |
-| `[info]...[/info]`, `[component="info"]...[/component]` | `.traven-component-info` |
-| `[warning]...[/warning]`, `[component="warning"]...[/component]` | `.traven-component-warning` |
-| `[component="my-card"]...[/component]` | `.traven-component.traven-component-my-card` |
-| `[highlight]...[/highlight]` | `<mark>...</mark>` |
+| `<Quote>…</Quote>`, `<Blockquote>…</Blockquote>` | `.traven-component-blockquote` |
+| `<Pullquote>…</Pullquote>` | `.traven-component-pullquote` |
+| `<Callout type="info">…</Callout>` | `.traven-component-info` |
+| `<Callout type="warning">…</Callout>` | `.traven-component-warning` |
+| `<Component name="my-card">…</Component>` | `.traven-component.traven-component-my-card` |
+| `==highlight==` | `<mark>...</mark>` |
 
 HTML output by variant:
 
@@ -596,7 +594,7 @@ HTML output by variant:
 </div>
 ```
 
-The editorial and write themes draw the `[info]` and `[warning]` blocks with the "hand-drawn" border radius:
+The editorial and write themes draw the info and warning callout blocks with the "hand-drawn" border radius:
 
 ```css
 .traven-preview .traven-component-info,
@@ -884,8 +882,8 @@ Use this when reviewing a finished theme before publishing it.
 * [ ] `.cm-fat-cursor` has `opacity: 0.6 !important`.
 * [ ] All four image alignments and four image sizes work in both scopes.
 * [ ] All four video and audio alignments and four sizes work in both scopes.
-* [ ] The `[component]` aliases (`blockquote`, `pullquote`, `info`, `warning`) are styled.
-* [ ] A `[component="my-custom-card"]` (generic / unknown) picks up the `.traven-component` + `.traven-component-my-custom-card` styling.
+* [ ] Quote, Pullquote, Callout info, and Callout warning variants are styled.
+* [ ] A `<Component name="my-custom-card">` (generic / unknown) picks up the `.traven-component` + `.traven-component-my-custom-card` styling.
 * [ ] `figcaption.traven-image-caption`, `figcaption.traven-video-caption`, `figcaption.traven-audio-caption`, `.traven-figure-caption` are styled.
 * [ ] First-child heading `margin-top` matches the editor's `padding-top` (§5.1).
 * [ ] `.traven-preview` first-child blockquote neighbors have reduced margins (§5.2).
@@ -1044,8 +1042,8 @@ When you build a new theme, picking a "donor" from this table gets you 80% of th
 * **Scope** — a wrapper class that isolates CSS so the same selectors can mean different things in the live editor vs. the preview. The two scopes are `.cm-editor` and `.traven-preview`.
 * **Skin** — a single CSS file under `packages/core/assets/skins/` that styles a theme. Auto-discovered, hot-swappable at runtime.
 * **Toolbar** — a separate concern, governed by `packages/core/assets/toolbars/*.css`. Toolbar styles, presets, and JS runtime toggles live in their own files; see `../toolbars.md`.
-* **Shortcode** — a Traven-extended Markdown construct (`[image]`, `[video]`, `[audio]`, `[figure]`, `[component]`) parsed by a custom Lezer grammar in `src/*.js`. Shortcodes compile to clean semantic HTML in the preview.
-* **Decoration** — a CodeMirror 6 visual transformation of a range. Inlined in `wysiwym.js`. Decorations can be marks (`.cm-wysiwym-bold`) or block-replacement widgets (the `[image]` card).
+* **MDX component** — a capitalized tag (`<Image />`, `<Video />`, `<Audio />`, `<Figure>`, `<Quote>`, `<Callout>`, `<Component>`) parsed by `src/mdx-parser.js`. Components compile to clean semantic HTML in the preview. CSS class names still contain `shortcode` for theme compatibility.
+* **Decoration** — a CodeMirror 6 visual transformation of a range. Inlined in `wysiwym.js`. Decorations can be marks (`.cm-wysiwym-bold`) or block-replacement widgets (the `<Image />` card).
 * **Dark class** — `.cm-wysiwym-dark` toggled on the editor host DOM by `setTheme("dark")` and on the preview container by the demo's theme switcher.
 
 ---
@@ -1054,9 +1052,9 @@ When you build a new theme, picking a "donor" from this table gets you 80% of th
 
 * `../toolbars.md` — toolbar presets, sheets, dynamic toggles, and styles.
 * `../customization-styling.md` — skin customization, CSS button selectors table, and how to hide buttons.
-* `shortcodes-architecture.md` — what each shortcode compiles to, attribute parsing, and how to register a brand-new shortcode (parser, widget, and skin).
-* `shortcodes.md` — technical blueprint for adding custom shortcode support, including the regex/scanner pattern used in `wysiwym.js`.
+* `building-custom-shortcodes.md` — technical blueprint for adding custom MDX tags via `mdx-parser.js` and `component-plugin.js`.
+* `../shortcodes.md` — authoring reference for built-in MDX components.
 * `../installation-setup.md` — how to wire the editor into a host page.
 * `../api-reference.md` — full constructor options and instance methods (notably `setTheme()`, `setVimMode()`, `getUploadHandler()`).
-* `shortcodestyles.css` — the canonical copy-paste cheat sheet for every shortcode's HTML output and CSS variables, kept in sync with the cheat sheet summary in [§6](#6-shortcode-markup-reference-cheat-sheet).
+* `shortcodestyles.css` — the canonical copy-paste cheat sheet for every component's HTML output and CSS variables, kept in sync with the cheat sheet summary in [§6](#6-mdx-component-markup-reference-cheat-sheet).
 * `knowledgebase.md` §2 and §6 — the engineering rules behind this guide (CodeMirror 6 pitfalls, dark-mode parity tips, list-parsing constraints). Read this if you plan to extend the editor itself.

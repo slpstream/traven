@@ -87,7 +87,7 @@ const editor = new TravenEditor({
 * **Dynamic Toolbars:** Choose from floating, hybrid, or static toolbar layouts, including formatting bubbles and gutter insert menus.
 * **Math & Diagrams:** Built-in, lazy-loaded support for rendering LaTeX math equations and Mermaid diagrams.
 * **Image Uploads:** Optimistic image uploads with drag-and-drop support.
-* **Custom Shortcodes:** Extend standard Markdown with custom, interactive WYSIWYM widgets.
+* **Custom MDX Components:** Extend standard Markdown with capitalized tags (`<Image />`, `<Quote>`, `<Callout>`) that fold into interactive WYSIWYM widgets.
 * **Bidirectional Sync:** Support for split-screen layouts where the raw Markdown and the visual editor stay perfectly in sync.
 * **Vim Mode:** Built-in Vim emulation for power users.
 

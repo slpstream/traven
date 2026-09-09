@@ -5,9 +5,9 @@
 ### Abstract
 This research paper explores the practical implementation of quantum key distribution (QKD) protocols, focusing on the E91 entanglement-based scheme. We analyze key generation rates under simulated eavesdropping (Eve) scenarios and present experimental data comparing key security metrics.
 
-[component name="pullquote"]
+<Pullquote>
 "Quantum cryptography is the first application of quantum mechanics that is based on the laws of physics rather than on the limitations of mathematical computations."
-[/component]
+</Pullquote>
 
 
 ## 1. Introduction and Quantum State Formulation
@@ -97,19 +97,19 @@ print("Simulated Quantum Correlations:", generate_bell_state_probabilities())
 
 When deploying entanglement-based systems, hardware synchronization is critical to prevent time-bin mismatch errors.
 
-[info title="Time-Tagging Synchronization" collapsible="true"]
+<Callout type="info" title="Time-Tagging Synchronization" collapsible="true">
 Ensure that Alice and Bob's time-tagging units (TDCs) are synchronized via a common reference clock or GPS disciplined oscillator. Drift should be kept below $\Delta t < 10\text{ ps}$ to prevent false-negative correlations.
-[/info]
+</Callout>
 
-[warning title="Critical Security Warning: Bell Violations" collapsible="false"]
+<Callout type="warning" title="Critical Security Warning: Bell Violations">
 If the measured Bell parameter $S$ falls below $2$, the channel is considered compromised, or the entanglement source has decohered. Immediately abort key generation and perform calibration.
-[/warning]
+</Callout>
 
 ## 6. Philosophical Context
 
-[blockquote author="Richard Feynman" source="The Character of Physical Law"]
+<Quote author="Richard Feynman" source="The Character of Physical Law">
 I think I can safely say that nobody understands quantum mechanics. If you can avoid it, do not keep saying to yourself, 'But how can it be like that?' because you will get 'down the drain', into a blind alley from which nobody has yet escaped.
-[/blockquote]
+</Quote>
 
 
 

@@ -1,3 +1,8 @@
+/**
+ * @param {Record<string, string>} attrs
+ * @returns {string}
+ */
+export function normalizeComponentName(attrs: Record<string, string>): string;
 export class ImageShortcodeWidget extends WidgetType {
     constructor(attrs: any, nodeFrom: any, rawText: any);
     attrs: any;
@@ -45,7 +50,7 @@ export class FigureShortcodeWidget extends WidgetType {
     eq(other: any): boolean;
     ignoreEvent(): boolean;
 }
-export class ShortcodePlugin extends TravenPlugin {
+export class ComponentPlugin extends TravenPlugin {
     requiredNodes: string[];
     /**
      * @param {import("@lezer/common").SyntaxNode} _node

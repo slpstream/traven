@@ -51,8 +51,8 @@ Rendering math, code, diagrams, and images inside the editor.
 - **[LaTeX Math Support](latex-support.md)** — Render inline and display LaTeX equations using KaTeX. Covers three integration strategies: self-hosted (privacy-first), global preloading, and opt-in CDN loading, plus fallback styling.
 - **[Code Syntax Highlighting](code-syntax-highlighting.md)** — Enable syntax highlighting for over 100 languages in the WYSIWYM editor and rendered HTML output using CodeMirror language data, Prism.js, Highlight.js, or custom Markdown renderers.
 - **[Mermaid Diagram Support](mermaid-support.md)** — Write Mermaid diagrams as fenced code blocks that render as interactive SVGs in the editor. Covers CDN and custom configuration, HTML preview integration, and CSS customization.
-- **[Image Handling & Uploads](images.md)** — Insert images via URL, drag-and-drop, clipboard paste, or file picker. Covers the `onUploadImage` callback, optimistic loading feedback, the `[image]` shortcode, backwards compatibility, and UI styling classes.
-- **[Custom Shortcodes](shortcodes.md)** — A reference of all built-in shortcodes: `[image]`, `[video]` (with `[youtube]` alias), `[audio]`, `[figure]`, and `[component]` (with `blockquote`, `pullquote`, `info`, `warning`, `highlight` aliases). Covers WYSIWYM widget folding, backwards compatibility, and clean fallback HTML output.
+- **[Image Handling & Uploads](images.md)** — Insert images via URL, drag-and-drop, clipboard paste, or file picker. Covers the `onUploadImage` callback, optimistic loading feedback, the `<Image />` component, backwards compatibility, and UI styling classes.
+- **[MDX Components](shortcodes.md)** — A reference of all built-in MDX tags: `<Image />`, `<Video />`, `<Audio />`, `<Figure>`, `<Quote>`, `<Callout>`, `<Pullquote>`, and `<Component>`. Covers the capitalization invariant, WYSIWYM widget folding, backwards compatibility with `![alt](src)`, and clean fallback HTML output.
 
 ---
 

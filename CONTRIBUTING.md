@@ -115,7 +115,7 @@ traven/
 
 - **CodeMirror 6** — Leverages a robust, highly extensible, and accessible editing engine to build a Typora-like experience.
 - **Vanilla JS & CSS** — Decoupled from any frontend framework, compiling down to a single lightweight Web Component (`<traven-editor>`) that runs anywhere.
-- **Shortcode System** — Standard Markdown is extended using custom shortcode blocks (`[image]`, `[video]`, `[audio]`, `[figure]`, `[component]`) for clean formatting without cluttering raw text.
+- **MDX Components** — Standard Markdown is extended with capitalized tags (`<Image />`, `<Video />`, `<Audio />`, `<Figure>`, `<Quote>`, `<Callout>`, `<Component>`) for clean formatting without cluttering raw text.
 - **Dynamic Theming** — Theme styles are completely separated into CSS Custom Properties (Variables) inside custom skins (such as `skin-starter.css`, `skin-modern.css`, `skin-academic.css`), allowing integrators to swap skins at runtime.
 - **Delimiters Collapsing** — Leverages customized CodeMirror decoration ranges to collapse syntax markup (like `*`, `**`, `_`) when the cursor is not near, offering a clean, distraction-free WYSIWYM canvas.
 

@@ -1,6 +1,6 @@
 # Custom Markdown Rendering
 
-By default, Traven uses an out-of-the-box fallback renderer (`#fallbackRender`) that supports basic Markdown syntax, LaTeX math, and custom shortcodes (like `[image]`, `[video]`, `[audio]`, `[figure]`, and `[component]`) securely with zero dependencies.
+By default, Traven uses an out-of-the-box fallback renderer (`#fallbackRender`) that supports basic Markdown syntax, LaTeX math, and MDX components (like `<Image />`, `<Video />`, `<Audio />`, `<Figure>`, and `<Component>`) securely with zero dependencies.
 
 However, for production applications, you can register a custom Markdown-to-HTML rendering engine (such as **Marked**, **markdown-it**, or **micromark**) to achieve full GitHub Flavored Markdown (GFM) compliance, optimize performance, or add custom parsing rules.
 
@@ -87,17 +87,17 @@ To maintain consistent styling between the editor's WYSIWYM mode and the HTML pr
 
 ---
 
-## Handling Custom Shortcodes (Optional)
+## Handling MDX Components (Optional)
 
-Traven supports several custom block and inline shortcodes (e.g., `[image ...]`, `[component ...]`). If you use a custom renderer, you may need to extend it to handle these shortcodes to avoid rendering them as plain text.
+Traven supports capitalized MDX tags (e.g. `<Image … />`, `<Figure>…</Figure>`, `<Quote>…</Quote>`). If you use a custom renderer, you may need to extend it to handle these tags to avoid rendering them as plain HTML or escaped text.
 
 Below is an integration example using a regex-based pre-processor before passing the content to Marked:
 
 ```javascript
 editor.registerRenderer((markdown) => {
-  // Pre-process Traven's custom [figure] shortcode
+  // Pre-process Traven's <Figure> tag
   let processed = markdown.replace(
-    /\[figure\s+align="([^"]+)"\s+size="([^"]+)"\s+caption="([^"]+)"\]([\s\S]*?)\[\/figure\]/g,
+    /<Figure\s+align="([^"]+)"\s+size="([^"]+)"\s+caption="([^"]+)">([\s\S]*?)<\/Figure>/g,
     (match, align, size, caption, content) => {
       return `<figure class="traven-figure align-${align} size-${size}">
         ${content}

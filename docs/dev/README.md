@@ -1,6 +1,6 @@
 # Developer Documentation
 
-These guides are for developers who want to dig deeper and extend, customize, or contribute to the Traven Editor codebase itself. They cover the build system, internal architecture, theming, shortcodes, and rendering internals.
+These guides are for developers who want to dig deeper and extend, customize, or contribute to the Traven Editor codebase itself. They cover the build system, internal architecture, theming, MDX components, and rendering internals.
 
 ---
 
@@ -18,9 +18,9 @@ These guides are for developers who want to dig deeper and extend, customize, or
 
 ---
 
-## Shortcodes
+## MDX Components
 
-- **[Building Custom Shortcodes](building-custom-shortcodes.md)** — The technical blueprint for extending Traven's shortcode system: architectural roles (parser, widget, skin), a step-by-step implementation strategy for adding new shortcodes, the CSS styling token roadmap, and details on the built-in `[image]` shortcode's Lezer parser integration.
-- **[Custom Markdown Rendering](custom-markdown-rendering.md)** — How to replace Traven's built-in fallback renderer with a custom Markdown-to-HTML engine (Marked, markdown-it, etc.) using `registerRenderer()`. Covers the renderer pipeline, preview styling via `.traven-preview`, and handling custom shortcodes with regex pre-processors or parser plugins.
+- **[Building Custom MDX Components](building-custom-shortcodes.md)** — The technical blueprint for extending Traven's MDX tag system: architectural roles (parser, widget, skin), a step-by-step implementation strategy for adding new capitalized tags, the CSS styling token roadmap, and details on the built-in `<Image />` Lezer parser integration.
+- **[Custom Markdown Rendering](custom-markdown-rendering.md)** — How to replace Traven's built-in fallback renderer with a custom Markdown-to-HTML engine (Marked, markdown-it, etc.) using `registerRenderer()`. Covers the renderer pipeline, preview styling via `.traven-preview`, and handling MDX tags with regex pre-processors or parser plugins.
 
 

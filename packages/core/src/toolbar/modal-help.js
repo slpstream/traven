@@ -17,7 +17,7 @@ export function openHelpModal(editor, triggerBtn) {
   helpContent.innerHTML = `
     <div class="help-tabs">
       <button class="help-tab-btn active" data-tab="markdown">Markdown</button>
-      <button class="help-tab-btn" data-tab="shortcodes">Shortcodes</button>
+      <button class="help-tab-btn" data-tab="shortcodes">Components</button>
       <button class="help-tab-btn" data-tab="shortcuts">Shortcuts</button>
     </div>
     <div class="help-tab-contents">
@@ -52,26 +52,25 @@ export function openHelpModal(editor, triggerBtn) {
         </div>
       </div>
 
-      <!-- Shortcodes Content -->
+      <!-- Components Content -->
       <div class="help-tab-content" id="help-tab-shortcodes" style="display: none;">
         <div class="help-grid">
           <div class="help-section-title">Callouts & Quotes</div>
-          <div class="help-row"><span class="help-key">Callout Info</span><span class="help-value">[component name="info" title="Title"]text[/component]</span></div>
-          <div class="help-row"><span class="help-key">Callout Warning</span><span class="help-value">[component name="warning" title="Title"]text[/component]</span></div>
-          <div class="help-row"><span class="help-key">Collapsible Block</span><span class="help-value">[component name="info" title="Title" collapsible="true"]text[/component]</span></div>
-          <div class="help-row"><span class="help-key">Custom Blockquote</span><span class="help-value">[blockquote author="Author" source="Source"]quote[/blockquote]</span></div>
-          <div class="help-row"><span class="help-key">Pullquote</span><span class="help-value">[pullquote]text[/pullquote]</span></div>
-          <div class="help-row"><span class="help-key">Inline Highlight</span><span class="help-value">[highlight]text[/highlight]</span></div>
+          <div class="help-row"><span class="help-key">Callout Info</span><span class="help-value">&lt;Callout type="info" title="Title"&gt;text&lt;/Callout&gt;</span></div>
+          <div class="help-row"><span class="help-key">Callout Warning</span><span class="help-value">&lt;Callout type="warning" title="Title"&gt;text&lt;/Callout&gt;</span></div>
+          <div class="help-row"><span class="help-key">Collapsible Block</span><span class="help-value">&lt;Callout type="info" title="Title" collapsible="true"&gt;text&lt;/Callout&gt;</span></div>
+          <div class="help-row"><span class="help-key">Custom Blockquote</span><span class="help-value">&lt;Quote author="Author" source="Source"&gt;quote&lt;/Quote&gt;</span></div>
+          <div class="help-row"><span class="help-key">Pullquote</span><span class="help-value">&lt;Pullquote&gt;text&lt;/Pullquote&gt;</span></div>
           <div class="help-row"><span class="help-key">GitHub Alert Note</span><span class="help-value">&gt; [!NOTE]\n&gt; text</span></div>
           <div class="help-row"><span class="help-key">GitHub Alert Warning</span><span class="help-value">&gt; [!WARNING]\n&gt; text</span></div>
 
           <div class="help-section-title">Media Previews</div>
-          <div class="help-row"><span class="help-key">Custom Image</span><span class="help-value">[image src="url" alt="alt" caption="caption" align="center" size="medium"]</span></div>
-          <div class="help-row"><span class="help-key">YouTube Video</span><span class="help-value">[youtube id="id"]</span></div>
-          <div class="help-row"><span class="help-key">Vimeo Video</span><span class="help-value">[vimeo id="id"]</span></div>
-          <div class="help-row"><span class="help-key">HTML5 Video</span><span class="help-value">[video src="url"]</span></div>
-          <div class="help-row"><span class="help-key">HTML5 Audio</span><span class="help-value">[audio src="url"]</span></div>
-          <div class="help-row"><span class="help-key">Figure Wrapper</span><span class="help-value">[figure]content[/figure]</span></div>
+          <div class="help-row"><span class="help-key">Custom Image</span><span class="help-value">&lt;Image src="url" alt="alt" caption="caption" align="center" size="medium" /&gt;</span></div>
+          <div class="help-row"><span class="help-key">YouTube Video</span><span class="help-value">&lt;Video src="https://youtu.be/id" /&gt;</span></div>
+          <div class="help-row"><span class="help-key">Vimeo Video</span><span class="help-value">&lt;Video src="https://vimeo.com/id" /&gt;</span></div>
+          <div class="help-row"><span class="help-key">HTML5 Video</span><span class="help-value">&lt;Video src="url" /&gt;</span></div>
+          <div class="help-row"><span class="help-key">HTML5 Audio</span><span class="help-value">&lt;Audio src="url" /&gt;</span></div>
+          <div class="help-row"><span class="help-key">Figure Wrapper</span><span class="help-value">&lt;Figure&gt;content&lt;/Figure&gt;</span></div>
         </div>
       </div>
 

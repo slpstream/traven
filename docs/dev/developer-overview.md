@@ -53,8 +53,7 @@ Key architectural consequences:
 | `math-parser.js` | KaTeX folding and rendering for LaTeX. |
 | `mermaid-parser.js` | Mermaid diagram rendering in-editor. |
 | `code-highlighting` (`highlight-parser.js`) | Fenced code block syntax highlighting. |
-| `audio-parser.js`, `video-parser.js`, `figure-parser.js` | Media shortcodes parsed into WYSIWYM widgets. |
-| `component-parser.js`, `shortcode-parser.js` | Custom `[component]` and built-in shortcode system. |
+| `mdx-parser.js` | Capitalized MDX tags (`<Image />`, `<Quote>`, `<Callout>`, …) parsed into WYSIWYM widgets. |
 | `components-default.json` | Default custom-component schema presets. |
 | `style.css` | Core scoped stylesheet. |
 | `toolbar/` | Toolbar UI. |
@@ -249,7 +248,7 @@ Pass a `sourceElement` option and Traven mounts a second, raw-editor pane that s
 
 ### Optimistic media uploads
 
-Drag-and-drop, clipboard paste, and file picker all flow through `onUploadImage`. When a file is dropped, Traven immediately inserts a loading spinner widget at the target position; when your handler resolves to a URL, the spinner is replaced with the rendered media. Audio and video are supported alongside images via the `[audio]`, `[video]`, and `[figure]` shortcodes.
+Drag-and-drop, clipboard paste, and file picker all flow through `onUploadImage`. When a file is dropped, Traven immediately inserts a loading spinner widget at the target position; when your handler resolves to a URL, the spinner is replaced with the rendered media. Audio and video are supported alongside images via `<Audio />`, `<Video />`, and `<Figure>`.
 
 ```javascript
 new TravenEditor({
@@ -262,9 +261,9 @@ new TravenEditor({
 });
 ```
 
-### Custom shortcodes & components
+### MDX components
 
-Traven extends Markdown with semantic shortcodes (`[image]`, `[video]`, `[audio]`, `[figure]`, and the general `[component]` with aliases like `blockquote`, `pullquote`, `info`, `warning`, `highlight`). These parse into interactive WYSIWYM widgets inside the editing canvas and compile into clean semantic HTML on output.
+Traven extends Markdown with capitalized MDX tags (`<Image />`, `<Video />`, `<Audio />`, `<Figure>`, `<Quote>`, `<Callout>`, `<Pullquote>`, and `<Component name="…">`). These parse into interactive WYSIWYM widgets inside the editing canvas and compile into clean semantic HTML on output. Lowercase HTML (`<video>`, `<audio>`) is left to CommonMark.
 
 Custom components are defined by passing a schema:
 
@@ -361,7 +360,7 @@ What Traven is *not*, so you can scope correctly:
 - `docs/dev/knowledgebase.md` — a deep technical reference of internal findings, covering CodeMirror 6 pitfalls, resizing logic, toolbar customization hooks, input sanitization, and LaTeX/toolbar architectures.
 - `docs/dev/theme-development.md` — the comprehensive guide to building custom Traven skins, detailing editor vs. preview CSS scopes, selector references, WYSIWYM/preview styling parity, and theme design strategies.
 - `docs/dev/custom-typography.md` — configuring editor fonts (display, body, and monospace) using CSS custom properties, custom font-face setups, and Google Fonts integration.
-- `docs/dev/building-custom-shortcodes.md` — the architectural blueprint for extending the shortcode parser and widgets, detailing custom parser plugins and CSS styling tokens.
+- `docs/dev/building-custom-shortcodes.md` — the architectural blueprint for extending MDX tags and widgets, detailing `mdx-parser.js`, `component-plugin.js`, and CSS styling tokens.
 - `docs/dev/custom-markdown-rendering.md` — how to replace Traven's built-in markdown engine with a custom third-party renderer (e.g., Marked or markdown-it) using the `registerRenderer` API.
 
 The packages `packages/react`, `packages/vue`, `packages/svelte` provide framework wrappers if you want a thinner integration layer than mounting the class API yourself.

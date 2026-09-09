@@ -232,12 +232,27 @@ export function defaultNodeRenderer(node, childrenHtml, docText) {
         return `<blockquote class="traven-component-pullquote">\n`;
       }
       const compName = resolveCompName(tagName, attrs);
-      return `<div class="traven-component traven-component-${escapeHtmlAttr(compName)}">\n`;
+      let html = `<div class="traven-component traven-component-${escapeHtmlAttr(compName)}">\n`;
+      const title = attrs.title || "";
+      const collapsible = attrs.collapsible === "true";
+      const displayTitle = title || (collapsible ? (compName.charAt(0).toUpperCase() + compName.slice(1)) : "");
+      if (displayTitle && !collapsible) {
+        html += `<div class="component-header"><span class="component-title">${escapeHtml(displayTitle)}</span></div>\n`;
+      }
+      return html;
     }
     case "MdxContainerClose": {
       const tagName = getMdxTagName(node, docText).toLowerCase();
       if (tagName === "figure") return `</figure>\n`;
       if (tagName === "quote" || tagName === "blockquote" || tagName === "pullquote") {
+        if (tagName === "quote" || tagName === "blockquote") {
+          const openNode = findMatchingMdxOpen(node, docText);
+          if (openNode) {
+            const attrs = parseShortcodeAttrs(docText.slice(openNode.from, openNode.to));
+            const cite = renderQuoteCiteHtml(attrs);
+            if (cite) return `${cite}</blockquote>\n`;
+          }
+        }
         return `</blockquote>\n`;
       }
       return `</div>\n`;
@@ -281,6 +296,43 @@ export function defaultNodeRenderer(node, childrenHtml, docText) {
 
 function parseShortcodeAttrs(raw) {
   return parseAttrMap(raw);
+}
+
+/**
+ * Pair a multi-line `MdxContainerClose` with its matching `MdxContainerOpen`
+ * by walking previous siblings with a same-tag depth counter.
+ *
+ * @param {import("@lezer/common").SyntaxNode} closeNode
+ * @param {string} docText
+ * @returns {import("@lezer/common").SyntaxNode | null}
+ */
+function findMatchingMdxOpen(closeNode, docText) {
+  const closeTag = getMdxTagName(closeNode, docText).toLowerCase();
+  let depth = 0;
+  let sibling = closeNode.prevSibling;
+  while (sibling) {
+    if (sibling.name === "MdxContainerClose") {
+      if (getMdxTagName(sibling, docText).toLowerCase() === closeTag) depth++;
+    } else if (sibling.name === "MdxContainerOpen") {
+      if (getMdxTagName(sibling, docText).toLowerCase() === closeTag) {
+        if (depth === 0) return sibling;
+        depth--;
+      }
+    }
+    sibling = sibling.prevSibling;
+  }
+  return null;
+}
+
+/** @param {Record<string, string>} attrs */
+function renderQuoteCiteHtml(attrs) {
+  const author = attrs.author || "";
+  const source = attrs.source || "";
+  if (!author && !source) return "";
+  let citeText = "— ";
+  if (author && source) citeText += `${author}, ${source}`;
+  else citeText += author || source;
+  return `<cite>${escapeHtml(citeText)}</cite>\n`;
 }
 
 /**
@@ -382,14 +434,7 @@ function renderComponentHtml(tagName, attrs, bodyText) {
 
   if (compName === "blockquote") {
     let html = `<blockquote class="traven-component-blockquote">\n${bodyHtml}`;
-    const author = attrs.author || "";
-    const source = attrs.source || "";
-    if (author || source) {
-      let citeText = "— ";
-      if (author && source) { citeText += `${author}, ${source}`; }
-      else { citeText += author || source; }
-      html += `<cite>${escapeHtml(citeText)}</cite>\n`;
-    }
+    html += renderQuoteCiteHtml(attrs);
     html += `</blockquote>\n`;
     return html;
   }

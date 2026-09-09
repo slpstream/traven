@@ -262,6 +262,14 @@ export const MdxComponents = {
     {
       name: "MdxTagBlock",
       before: "HTMLBlock",
+      // Quote/Callout/Component are not HTML Type 6 tags, so without endLeaf
+      // a following </Quote> is swallowed into the previous paragraph.
+      endLeaf(_cx, line) {
+        if (line.next !== 60) return false;
+        const parsed = parseTagAt(line.text, line.pos);
+        if (!parsed) return false;
+        return restIsBlank(line.text, parsed.relEnd);
+      },
       parse(cx, line) {
         if (line.next !== 60) return false;
 

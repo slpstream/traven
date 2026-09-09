@@ -24,7 +24,7 @@ Initializes a new editor instance.
 | `onUploadImage` | `function` | `null` | Callback returning a promise of the uploaded image's URL: `(file: File) => Promise<string>`. |
 | `onPickImage` | `function` | `null` | Optional host media-library picker: `() => Promise<{ url: string, alt?: string, caption?: string } \| null>`. When set, the Insert/Edit Image modal shows **Or choose from library**. Resolve with an asset or `null` if cancelled. Does not replace the OS file dropzone. |
 | `onSuggestLinks` | `function` | `null` | Optional host callback for Insert Link modal autocomplete: `(query: string) => Promise<{ title: string, url: string, slug?: string }[]>`. When omitted, the modal stays text + URL only. Also powers Expand/Embed slug typeahead when those plugin tools are loaded. |
-| `imageAspectOptions` | `Array<{ value: string, label: string }>` | `null` | Optional host-declared aspect choices for the Edit/Insert Image modal. When set and non-empty, advanced mode shows an Aspect pill row between Layout and CSS Class; selected values are managed as `class` tokens on `[image class="…"]`. Omit or pass `[]` to leave the modal unchanged. |
+| `imageAspectOptions` | `Array<{ value: string, label: string }>` | `null` | Optional host-declared aspect choices for the Edit/Insert Image modal. When set and non-empty, advanced mode shows an Aspect pill row between Layout and CSS Class; selected values are managed as `class` tokens on `<Image class="…">`. Omit or pass `[]` to leave the modal unchanged. |
 | `onListHeadings` | `function` | `null` | Optional host callback for Expand/Embed Heading dropdown: `(slug: string) => Promise<{ title: string, level?: number }[]>`. When set (and `onListExpandTargets` is omitted), the expand-embed insert modal uses a `<select>` (Whole post + sections) instead of free-text. |
 | `onListExpandTargets` | `function` | `null` | Optional richer Expand/Embed target picker: `(slug: string) => Promise<{ summary?: string\|null, deck?: string\|null, headings: { title: string, level?: number }[] }>`. When set, the modal offers Whole post \| Summary (if summary non-empty) \| Deck (if deck non-empty) \| section headings. Preferred over `onListHeadings`. |
 | `onStatsUpdate` | `function` | `null` | Callback fired when document stats change: `(stats: { words: number, characters: number, readTime: number }) => void`. |
@@ -298,7 +298,7 @@ Traven provides standalone utilities for compiling Markdown directly to HTML out
 > **Note**: Unlike the editor's `getContentHtml()` API, the standalone `renderMarkdown` and `TravenRenderer` functions do not support the `sanitizeHtml` option or perform automatic `window.DOMPurify` detection.
 
 ### `renderMarkdown(markdownText)`
-A convenience helper function to compile a Markdown string directly into HTML with all default Traven plugins, extensions, and shortcodes active.
+A convenience helper function to compile a Markdown string directly into HTML with all default Traven plugins, extensions, and MDX components active.
 *   **Parameters:** `markdownText` (`string`): The raw Markdown text to render.
 *   **Returns:** `string` (The compiled HTML)
 *   **Frontmatter**: Automatically parses and strips YAML frontmatter metadata blocks from the compiled output.
