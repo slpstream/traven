@@ -12,11 +12,12 @@ export default defineConfig({
       fileName: 'index'
     },
     rollupOptions: {
-      external: ['react', 'react-dom', 'traven'],
+      external: ['react', 'react-dom', '@freedomware/traven', 'traven'],
       output: {
         globals: {
           react: 'React',
           'react-dom': 'ReactDOM',
+          '@freedomware/traven': 'Traven',
           traven: 'Traven'
         }
       }

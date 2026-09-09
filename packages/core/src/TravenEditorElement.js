@@ -35,7 +35,7 @@ export class TravenEditorElement extends HTMLElement {
     const nameAttr = this.getAttribute("name");
 
     // 2. Clear DOM
-    this.innerHTML = "";
+    this.replaceChildren();
 
     // 3. Hidden Fallback
     this._hiddenTextarea = document.createElement("textarea");

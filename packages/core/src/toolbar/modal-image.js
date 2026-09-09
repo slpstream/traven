@@ -239,7 +239,7 @@ export function openImageModal(optionsOrEditor, triggerBtn = null) {
         fileDetails.style.display = "block";
         fileSizeEl.style.wordBreak = "break-all";
         fileSizeEl.textContent = urlValue;
-        fileDimsEl.innerHTML = "";
+        fileDimsEl.textContent = "";
 
         urlInput.disabled = false;
         thumbImg.src = urlValue;
@@ -250,10 +250,13 @@ export function openImageModal(optionsOrEditor, triggerBtn = null) {
         errorEl.style.display = "none";
 
         thumbImg.onload = () => {
-          fileDimsEl.innerHTML = `<br>${thumbImg.naturalWidth}×${thumbImg.naturalHeight}`;
+          fileDimsEl.replaceChildren(
+            document.createElement("br"),
+            document.createTextNode(`${thumbImg.naturalWidth}×${thumbImg.naturalHeight}`)
+          );
         };
         thumbImg.onerror = () => {
-          fileDimsEl.innerHTML = "";
+          fileDimsEl.textContent = "";
         };
       } else {
         fileName.textContent = "No file chosen";

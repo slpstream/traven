@@ -14,10 +14,11 @@ export default defineConfig({
       fileName: (format) => `traven-vue.${format}.js`
     },
     rollupOptions: {
-      external: ['vue', 'traven'],
+      external: ['vue', '@freedomware/traven', 'traven'],
       output: {
         globals: {
           vue: 'Vue',
+          '@freedomware/traven': 'Traven',
           traven: 'Traven'
         }
       }

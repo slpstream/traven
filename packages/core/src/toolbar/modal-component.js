@@ -172,7 +172,7 @@ export function openComponentModal(optionsOrEditor, triggerBtn = null) {
   attrsWrapper.appendChild(visualAttrsContainer);
 
   const renderAttributes = (componentName, isInitialLoad = false) => {
-    visualAttrsContainer.innerHTML = "";
+    visualAttrsContainer.replaceChildren();
 
     const comp = componentList.find(c => c.name === componentName);
     const hasSchemaAttrs = comp && comp.attributes && comp.attributes.length > 0;

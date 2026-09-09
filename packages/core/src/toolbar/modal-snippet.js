@@ -101,7 +101,7 @@ export function openSnippetModal({ editor, triggerElement }) {
   editContainer.appendChild(editActions);
 
   function renderList() {
-    listContainer.innerHTML = "";
+    listContainer.replaceChildren();
     if (snippets.length === 0) {
       const emptyMsg = document.createElement("p");
       emptyMsg.textContent = "No snippets saved yet.";

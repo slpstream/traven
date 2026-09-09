@@ -182,7 +182,7 @@ export function openTableModal({ editor, tableData = null, docFrom = null, docTo
   tableEl.className = "traven-table-editor";
 
   const buildTable = () => {
-    tableEl.innerHTML = "";
+    tableEl.replaceChildren();
 
     // thead
     const thead = document.createElement("thead");

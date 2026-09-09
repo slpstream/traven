@@ -19,7 +19,7 @@ export const Traven = forwardRef(({
     if (!containerRef.current) return;
     
     // Critical for React 18 Strict Mode which remounts components
-    containerRef.current.innerHTML = "";
+    containerRef.current.replaceChildren();
 
     editorRef.current = new TravenEditor({
       element: containerRef.current,

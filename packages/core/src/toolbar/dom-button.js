@@ -107,7 +107,7 @@ function buildDropdown(parent, key, tool, editor, displayShortcut) {
   menu.setAttribute("aria-labelledby", triggerId);
 
   function renderMenuChildren(childrenArr) {
-    menu.innerHTML = "";
+    menu.replaceChildren();
     childrenArr.forEach((child) => {
       const item = document.createElement("button");
       item.type = "button";

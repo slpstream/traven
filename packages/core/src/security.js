@@ -11,11 +11,18 @@ export function sanitizeUrl(url) {
   let decoded = url;
 
   // 1. Decode HTML entities (in case of obfuscation like j&#97;vascript:)
-  if (typeof document !== "undefined") {
-    const tempEl = document.createElement("textarea");
-    tempEl.innerHTML = url;
-    decoded = tempEl.value;
-  }
+  decoded = decoded
+    .replace(/&#(\d+);?/g, (_, dec) => {
+      const code = parseInt(dec, 10);
+      return code > 0 && code <= 0x10ffff ? String.fromCodePoint(code) : "";
+    })
+    .replace(/&#x([0-9a-fA-F]+);?/g, (_, hex) => {
+      const code = parseInt(hex, 16);
+      return code > 0 && code <= 0x10ffff ? String.fromCodePoint(code) : "";
+    })
+    .replace(/&colon;/gi, ":")
+    .replace(/&tab;/gi, "\t")
+    .replace(/&newline;/gi, "\n");
 
   // 2. Decode percent-encoding (up to 3 passes for nested percent encoding)
   let prevDecoded = "";
