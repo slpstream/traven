@@ -4,7 +4,7 @@ import { createLayoutPicker } from "./layout-picker.js";
 
 /**
  * Renders the Figure Insertion/Edition Modal dialog.
- * Inserts or updates a [figure caption="…"]…[/figure] shortcode block.
+ * Inserts or updates a <Figure caption="…">…</Figure> MDX block.
  *
  * @param {Object|any} optionsOrEditor - The TravenEditor instance, or options object.
  * @param {HTMLElement|null} [triggerBtn] - The button that triggered the modal.
@@ -168,8 +168,8 @@ export function openFigureModal(optionsOrEditor, triggerBtn = null) {
           if (sizeVal !== "medium") parts.push(`size="${sizeVal}"`);
           if (classVal) parts.push(`class="${classVal}"`);
 
-          const openTag = `[figure${parts.length > 0 ? " " + parts.join(" ") : ""}]`;
-          const closeTag = `[/figure]`;
+          const openTag = `<Figure${parts.length > 0 ? " " + parts.join(" ") : ""}>`;
+          const closeTag = `</Figure>`;
           const snippet = `${openTag}\n${bodyVal}\n${closeTag}`;
 
           if (isEditing) {

@@ -161,7 +161,7 @@ export function openAudioModal(optionsOrEditor, triggerBtn = null) {
       attrParts.push(`class="${classVal}"`);
     }
 
-    const insertion = `[audio ${attrParts.join(" ")}]`;
+    const insertion = `<Audio ${attrParts.join(" ")} />`;
 
     if (docFrom !== null) {
       v.dispatch({

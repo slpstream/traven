@@ -1,13 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { ShortcodePlugin, ImageShortcodeWidget, ComponentShortcodeWidget } from '../src/plugins/shortcode-plugin.js';
-import { EditorState } from '@codemirror/state';
-import { markdown } from '@codemirror/lang-markdown';
+import { ComponentPlugin, ImageShortcodeWidget, ComponentShortcodeWidget } from '../src/plugins/component-plugin.js';
 
-describe('ShortcodePlugin', () => {
+describe('ComponentPlugin', () => {
   it('instantiates correctly', () => {
-    const plugin = new ShortcodePlugin();
-    expect(plugin.name).toBe('shortcode');
-    expect(plugin.requiredNodes).toContain('ImageShortcode');
-    expect(plugin.requiredNodes).toContain('ComponentShortcode');
+    const plugin = new ComponentPlugin();
+    expect(plugin.name).toBe('component');
+    expect(plugin.requiredNodes).toContain('MdxMediaTag');
+    expect(plugin.requiredNodes).toContain('MdxContainerTag');
+    expect(typeof ImageShortcodeWidget).toBe('function');
+    expect(typeof ComponentShortcodeWidget).toBe('function');
   });
 });

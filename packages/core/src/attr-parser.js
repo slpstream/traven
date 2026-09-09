@@ -12,7 +12,7 @@
  * @property {number} valEnd - End position of value in attrStr
  */
 
-const BOUNDARY_REGEX = /^\s*(?:[a-zA-Z0-9_-]+\s*=|\s*\]|\s*$)/;
+const BOUNDARY_REGEX = /^\s*(?:[a-zA-Z0-9_-]+\s*=|\s*[\]>/]|\s*$)/;
 
 /**
  * Parse attribute key-value pairs from shortcode attribute string in linear O(N) time.
@@ -121,7 +121,7 @@ export function parseAttrPairs(attrStr) {
       value = rawVal.replace(/\\"/g, '"').replace(/\\'/g, "'");
     } else {
       valStart = i;
-      while (i < len && !/\s/.test(attrStr[i]) && attrStr[i] !== ']') {
+      while (i < len && !/\s/.test(attrStr[i]) && attrStr[i] !== ']' && attrStr[i] !== '>' && attrStr[i] !== '/') {
         i++;
       }
       valEnd = i;

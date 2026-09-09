@@ -5,6 +5,24 @@ import { syntaxTree } from "@codemirror/language";
 import { setSuppression, clearSuppression } from "./wysiwym.js";
 
 /**
+ * Skip bounds for a single MDX tag node (`<Name ... />`, `<Name ...>`, `</Name>`).
+ * @param {EditorState} state
+ * @param {{ from: number, to: number, name: string, node: import("@lezer/common").SyntaxNode }} node
+ */
+function mdxTagSkipBounds(state, node) {
+  const tagNode = node.node.getChild("MdxTagName");
+  const nameLen = tagNode ? tagNode.to - tagNode.from : 0;
+  const isClose = node.name === "MdxContainerClose" || state.sliceDoc(node.from, node.from + 2) === "</";
+  let openEnd = node.from + (isClose ? 2 : 1) + nameLen;
+  if (openEnd < node.to && state.sliceDoc(openEnd, openEnd + 1) === " ") {
+    openEnd++;
+  }
+  const lastTwo = state.sliceDoc(Math.max(node.from, node.to - 2), node.to);
+  const closeStart = lastTwo === "/>" ? node.to - 2 : node.to - 1;
+  return { openEnd, closeStart };
+}
+
+/**
  * Examines the syntax tree around `cursor` and returns the best skip target
  * for a single delimiter boundary, plus an optional suppress range if the
  * cursor is entering (not exiting) a node.
@@ -211,10 +229,9 @@ function findSkipTarget(state, cursor, direction) {
           }
         }
       }
-      // 9. ImageShortcode delimiters [image ...]
-      if (node.name === "ImageShortcode") {
-        const openEnd = node.from + 7; // after "[image "
-        const closeStart = node.to - 1; // before "]"
+      // 9. MDX self-closing tags: skip `<Name ` prefix and trailing `/>`
+      if (node.name === "MdxMediaTag" || node.name === "MdxContainerOpen" || node.name === "MdxContainerClose") {
+        const { openEnd, closeStart } = mdxTagSkipBounds(state, node);
 
         if (direction === "right") {
           if (cursor >= node.from && cursor < openEnd) {
@@ -232,92 +249,16 @@ function findSkipTarget(state, cursor, direction) {
           }
         }
       }
-      // 9b. VideoShortcode delimiters [video ...] / [youtube ...]
-      if (node.name === "VideoShortcode") {
-        const text = state.sliceDoc(node.from, node.to);
-        const tagMatch = text.match(/^\[([a-zA-Z0-9_-]+)/);
-        const tagLength = tagMatch ? tagMatch[1].length : 5;
-        const openEnd = node.from + 2 + tagLength; // after "[video " or "[youtube "
-        const closeStart = node.to - 1; // before "]"
-
-        if (direction === "right") {
-          if (cursor >= node.from && cursor < openEnd) {
-            best = { target: Math.min(node.to, openEnd), suppressRange: null };
-          }
-          if (cursor >= closeStart && cursor < node.to) {
-            best = { target: node.to, suppressRange: null };
-          }
-        } else {
-          if (cursor > closeStart && cursor <= node.to) {
-            best = { target: Math.max(node.from, closeStart), suppressRange: null };
-          }
-          if (cursor > node.from && cursor <= openEnd) {
-            best = { target: node.from, suppressRange: null };
-          }
-        }
-      }
-      // 9c. AudioShortcode delimiters [audio ...]
-      if (node.name === "AudioShortcode") {
-        const openEnd = node.from + 7; // after "[audio "
-        const closeStart = node.to - 1; // before "]"
-
-        if (direction === "right") {
-          if (cursor >= node.from && cursor < openEnd) {
-            best = { target: Math.min(node.to, openEnd), suppressRange: null };
-          }
-          if (cursor >= closeStart && cursor < node.to) {
-            best = { target: node.to, suppressRange: null };
-          }
-        } else {
-          if (cursor > closeStart && cursor <= node.to) {
-            best = { target: Math.max(node.from, closeStart), suppressRange: null };
-          }
-          if (cursor > node.from && cursor <= openEnd) {
-            best = { target: node.from, suppressRange: null };
-          }
-        }
-      }
-      // 9d. FigureShortcode delimiters: skip over [figure ...] and [/figure]
-      if (node.name === "FigureShortcode") {
+      // 10. MDX paired container: skip over open and close tags
+      if (node.name === "MdxContainerTag") {
         let openEnd = null;
         let closeStart = null;
-        
+
         const c = node.node.cursor();
         if (c.firstChild()) {
           do {
-            if (c.name === "FigureShortcodeOpen") openEnd = c.to;
-            if (c.name === "FigureShortcodeClose") closeStart = c.from;
-          } while (c.nextSibling());
-        }
-
-        if (openEnd !== null && closeStart !== null) {
-          if (direction === "right") {
-            if (cursor >= node.from && cursor < openEnd) {
-              best = { target: openEnd, suppressRange: null };
-            }
-            if (cursor >= closeStart && cursor < node.to) {
-              best = { target: node.to, suppressRange: null };
-            }
-          } else {
-            if (cursor > closeStart && cursor <= node.to) {
-              best = { target: closeStart, suppressRange: null };
-            }
-            if (cursor > node.from && cursor <= openEnd) {
-              best = { target: node.from, suppressRange: null };
-            }
-          }
-        }
-      }
-      // 10. ComponentShortcode delimiters: skip over [component ...] and [/component]
-      if (node.name === "ComponentShortcode") {
-        let openEnd = null;
-        let closeStart = null;
-        
-        const c = node.node.cursor();
-        if (c.firstChild()) {
-          do {
-            if (c.name === "ComponentShortcodeOpen") openEnd = c.to;
-            if (c.name === "ComponentShortcodeClose") closeStart = c.from;
+            if (c.name === "MdxContainerOpen") openEnd = c.to;
+            if (c.name === "MdxContainerClose") closeStart = c.from;
           } while (c.nextSibling());
         }
 

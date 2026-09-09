@@ -276,7 +276,7 @@ describe('Floating Toolbar and Modes', () => {
   it('after modal closes, selection bubble is not re-shown until next selectionSet', () => {
     const editor = new TravenEditor({
       element: container,
-      initialValue: '[image src="https://example.com/pic.jpg" align="right" size="medium" caption="My caption"]\nSome text',
+      initialValue: '<Image src="https://example.com/pic.jpg" align="right" size="medium" caption="My caption" />\nSome text',
       toolbarMode: 'floating'
     });
     editor.setSelection(editor.getValue().length, editor.getValue().length);

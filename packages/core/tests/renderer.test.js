@@ -156,25 +156,25 @@ describe('Traven Renderer Golden Tests', () => {
 
   describe('Shortcodes', () => {
     it('renders image shortcodes', () => {
-      const html = render('[image src="pic.jpg" caption="Caption" align="left" size="small"]');
+      const html = render('<Image src="pic.jpg" caption="Caption" align="left" size="small" />');
       expect(html).toContain('<figure class="traven-image-figure align-left size-small">');
       expect(html).toContain('<img src="pic.jpg" alt="Caption" class="traven-image-shortcode">');
       expect(html).toContain('<figcaption class="traven-image-caption">Caption</figcaption>');
     });
 
     it('renders video shortcodes', () => {
-      const html = render('[video src="vid.mp4" caption="Video"]');
+      const html = render('<Video src="vid.mp4" caption="Video" />');
       expect(html).toContain('<figure class="traven-video-figure align-center size-medium">');
       expect(html).toContain('<figcaption class="traven-video-caption">Video</figcaption>');
     });
 
     it('renders component shortcodes', () => {
-      const html = render('[component id="123" type="cta"][/component]');
+      const html = render('<Component id="123" type="cta"></Component>');
       expect(html).toContain('traven-component');
     });
     
     it('renders figure shortcodes', () => {
-      const html = render('[figure]\nContent\n[/figure]');
+      const html = render('<Figure>\nContent\n</Figure>');
       expect(html).toContain('<figure class="traven-figure-shortcode align-center">');
       expect(html).toContain('Content');
       expect(html).toContain('</figure>');

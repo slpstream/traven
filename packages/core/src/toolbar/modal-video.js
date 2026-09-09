@@ -168,16 +168,7 @@ export function openVideoModal(optionsOrEditor, triggerBtn = null) {
       attrParts.push(`class="${classVal}"`);
     }
 
-    let prefix = "video";
-    if (docFrom !== null) {
-      const docStr = v.state.doc.toString();
-      const rawText = docStr.slice(docFrom, docTo);
-      const tagMatch = rawText.match(/^\[([a-zA-Z0-9_-]+)/);
-      if (tagMatch && (tagMatch[1] === "youtube" || tagMatch[1] === "video")) {
-        prefix = tagMatch[1];
-      }
-    }
-    const insertion = `[${prefix} ${attrParts.join(" ")}]`;
+    const insertion = `<Video ${attrParts.join(" ")} />`;
 
     if (docFrom !== null) {
       v.dispatch({

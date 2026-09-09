@@ -3,7 +3,7 @@ import { openModal } from "./modal-base.js";
 
 /**
  * Renders the Insert Component Modal dialog.
- * Inserts a [component name="…"]…[/component] shortcode block at the cursor.
+ * Inserts an MDX component tag (`<Quote>`, `<Callout>`, or `<Component name="…">`) at the cursor.
  *
  * @param {Object} optionsOrEditor - The TravenEditor instance, or an options object with { editor, triggerElement, docFrom, docTo, attrs, bodyText }.
  * @param {HTMLElement} triggerBtn - The button that triggered the modal (used only when optionsOrEditor is the editor directly).
@@ -51,7 +51,11 @@ export function openComponentModal(optionsOrEditor, triggerBtn = null) {
     if (attrs.name) {
       initialName = attrs.name;
     } else if (attrs._tagName) {
-      initialName = attrs._tagName === "quote" ? "blockquote" : attrs._tagName;
+      const tag = String(attrs._tagName).toLowerCase();
+      if (tag === "quote" || tag === "blockquote") initialName = "blockquote";
+      else if (tag === "callout") initialName = attrs.type || "info";
+      else if (tag === "component") initialName = attrs.name || "component";
+      else initialName = tag;
     }
     // Append the legacy/editing name if not already in the normalized list to prevent data loss
     if (!componentList.some(c => c.name === initialName)) {
@@ -456,21 +460,21 @@ export function openComponentModal(optionsOrEditor, triggerBtn = null) {
 
           const slotContent = slotInput.value.replace(/^\r?\n|\r?\n$/g, "");
 
-          // Build opening tag
-          let openTag = `[component name="${name}"`;
-          if (extraAttrs) {
-            openTag += ` ${extraAttrs}`;
-          }
-          openTag += "]";
-
-          const closeTag = `[/component]`;
-
-          // Ensure slot content is surrounded by newlines for block formatting
           const inner = slotContent
             ? `\n${slotContent}\n`
             : "\n\n";
-
-          const snippet = `${openTag}${inner}${closeTag}`;
+          const extra = extraAttrs ? ` ${extraAttrs}` : "";
+          let snippet;
+          if (name === "blockquote" || name === "quote") {
+            snippet = `<Quote${extra}>${inner}</Quote>`;
+          } else if (name === "pullquote") {
+            snippet = `<Pullquote${extra}>${inner}</Pullquote>`;
+          } else if (name === "info" || name === "warning") {
+            const typeAttr = /\btype=/.test(extraAttrs) ? extra : ` type="${name}"${extra}`;
+            snippet = `<Callout${typeAttr}>${inner}</Callout>`;
+          } else {
+            snippet = `<Component name="${name}"${extra}>${inner}</Component>`;
+          }
 
           if (isEditing) {
             dispatchInsert(docFrom, docTo, snippet);

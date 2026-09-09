@@ -195,142 +195,52 @@ export function defaultNodeRenderer(node, childrenHtml, docText) {
       return `<${tag}>${childrenHtml}</${tag}>\n`;
     }
     
-    // Shortcodes
-    case "ImageShortcode": {
+    // MDX components
+    case "MdxMediaTag": {
+      const tagName = getMdxTagName(node, docText).toLowerCase();
       const attrs = parseShortcodeAttrs(docText.slice(node.from, node.to));
-      const src = escapeHtmlAttr(sanitizeUrl(attrs.src || ""));
-      const caption = escapeHtml(attrs.caption || "");
-      const alt = escapeHtmlAttr(attrs.alt || attrs.caption || "");
-      const align = escapeHtmlAttr(attrs.align || "center");
-      const size = escapeHtmlAttr(attrs.size || "medium");
-      const customClass = attrs.class ? ` ${escapeHtmlAttr(attrs.class)}` : "";
-
-      if (caption) {
-        return `<figure class="traven-image-figure align-${align} size-${size}${customClass}"><img src="${src}" alt="${alt}" class="traven-image-shortcode"><figcaption class="traven-image-caption">${caption}</figcaption></figure>\n`;
-      } else {
-        return `<img src="${src}" alt="${alt}" class="traven-image-shortcode align-${align} size-${size}${customClass}">\n`;
-      }
+      if (tagName === "image") return renderImageHtml(attrs);
+      if (tagName === "video") return renderVideoHtml(attrs);
+      if (tagName === "audio") return renderAudioHtml(attrs);
+      return renderComponentHtml(tagName, attrs, "");
     }
-    case "VideoShortcode": {
-      const attrs = parseShortcodeAttrs(docText.slice(node.from, node.to));
-      const src = escapeHtmlAttr(sanitizeUrl(attrs.src || ""));
-      const caption = escapeHtml(attrs.caption || "");
-      const align = escapeHtmlAttr(attrs.align || "center");
-      const size = escapeHtmlAttr(attrs.size || "medium");
-      const customClass = attrs.class ? ` ${escapeHtmlAttr(attrs.class)}` : "";
-      
-      const tagNameChild = node.getChild("VideoShortcodeTagName");
-      const tagName = tagNameChild ? docText.slice(tagNameChild.from, tagNameChild.to).toLowerCase() : "video";
-      
-      let parsed = parseVideoUrl(src);
-      
-      if (parsed.platform === "unknown" && tagName === "youtube") {
-        parsed = { platform: "youtube", id: src };
-      } else if (parsed.platform === "unknown" && tagName === "vimeo") {
-        parsed = { platform: "vimeo", id: src };
-      }
-
-      let videoHtml = "";
-      if (parsed.platform === "youtube") {
-        videoHtml = `<iframe src="https://www.youtube.com/embed/${parsed.id}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
-      } else if (parsed.platform === "vimeo") {
-        videoHtml = `<iframe src="https://player.vimeo.com/video/${parsed.id}" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
-      } else {
-        videoHtml = `<video src="${src}" controls class="traven-video-shortcode"></video>`;
-      }
-
-      if (caption) {
-        return `<figure class="traven-video-figure align-${align} size-${size}${customClass}"><div class="traven-video-container">${videoHtml}</div><figcaption class="traven-video-caption">${caption}</figcaption></figure>\n`;
-      } else {
-        return `<div class="traven-video-container align-${align} size-${size}${customClass}">${videoHtml}</div>\n`;
-      }
-    }
-    case "AudioShortcode": {
-      const attrs = parseShortcodeAttrs(docText.slice(node.from, node.to));
-      const src = escapeHtmlAttr(sanitizeUrl(attrs.src || ""));
-      const caption = escapeHtml(attrs.caption || "");
-      const align = escapeHtmlAttr(attrs.align || "center");
-      const size = escapeHtmlAttr(attrs.size || "medium");
-      const customClass = attrs.class ? ` ${escapeHtmlAttr(attrs.class)}` : "";
-      
-      const audioHtml = `<audio src="${src}" controls class="traven-audio-shortcode"></audio>`;
-      
-      if (caption) {
-        return `<figure class="traven-audio-figure align-${align} size-${size}${customClass}"><div class="traven-audio-container">${audioHtml}</div><figcaption class="traven-audio-caption">${caption}</figcaption></figure>\n`;
-      } else {
-        return `<div class="traven-audio-container align-${align} size-${size}${customClass}">${audioHtml}</div>\n`;
-      }
-    }
-    case "ComponentShortcode": {
-      const openNode = node.getChild("ComponentShortcodeOpen");
-      const bodyNode = node.getChild("ComponentShortcodeBody");
-      
-      const openRaw = openNode ? docText.slice(openNode.from, openNode.to) : "";
+    case "MdxContainerTag": {
+      const tagName = getMdxTagName(node, docText);
+      const openNode = node.getChild("MdxContainerOpen");
+      const bodyNode = node.getChild("MdxContainerBody");
+      const openRaw = openNode ? docText.slice(openNode.from, openNode.to) : docText.slice(node.from, node.to);
       const attrs = parseShortcodeAttrs(openRaw);
-      
-      const tagNameChild = openNode ? openNode.getChild("ComponentShortcodeTagName") : null;
-      const tagName = tagNameChild ? docText.slice(tagNameChild.from, tagNameChild.to).toLowerCase() : "";
-      
-      let compName = attrs.name || "";
-      if (!compName) {
-        if (tagName === "quote" || tagName === "blockquote") {
-          compName = "blockquote";
-        } else if (tagName === "pullquote") {
-          compName = "pullquote";
-        } else {
-          compName = tagName || "blockquote";
-        }
+      if (tagName.toLowerCase() === "figure") {
+        const align = escapeHtmlAttr(attrs.align || "center");
+        return `<figure class="traven-figure-shortcode align-${align}">\n${childrenHtml}</figure>\n`;
       }
-      if (compName === "quote") {
-        compName = "blockquote";
-      }
-
       const bodyText = bodyNode ? docText.slice(bodyNode.from, bodyNode.to) : "";
-      const contentLines = bodyText.split(/\r?\n/).map(line => line.trim()).filter(line => line.length > 0);
-      let bodyHtml = `<div class="component-body">\n`;
-      contentLines.forEach(line => {
-        bodyHtml += `<p>${renderInlineMarkdown(line)}</p>\n`;
-      });
-      bodyHtml += `</div>\n`;
-
-      let html = "";
-      
-      if (compName === "blockquote") {
-        html += `<blockquote class="traven-component-blockquote">\n${bodyHtml}`;
-        const author = attrs.author || "";
-        const source = attrs.source || "";
-        if (author || source) {
-          let citeText = "— ";
-          if (author && source) { citeText += `${author}, ${source}`; }
-          else { citeText += author || source; }
-          html += `<cite>${escapeHtml(citeText)}</cite>\n`;
-        }
-        html += `</blockquote>\n`;
-      } else if (compName === "pullquote") {
-        html += `<blockquote class="traven-component-pullquote">\n${bodyHtml}</blockquote>\n`;
-      } else if (compName === "highlight") {
-        let markHtml = renderInlineMarkdown(bodyText.trim().replace(/\r?\n/g, "<br>"));
-        return `<mark>${markHtml}</mark>`;
-      } else {
-        html += `<div class="traven-component traven-component-${compName}">\n`;
-        const title = attrs.title || "";
-        const collapsible = attrs.collapsible === "true";
-        const displayTitle = title || (collapsible ? (compName.charAt(0).toUpperCase() + compName.slice(1)) : "");
-
-        if (collapsible) {
-          html += `<details open>\n<summary class="component-header"><span class="component-title">${escapeHtml(displayTitle)}</span><span class="component-toggle-icon"></span></summary>\n${bodyHtml}</details>\n`;
-        } else {
-          if (displayTitle) {
-            html += `<div class="component-header"><span class="component-title">${escapeHtml(displayTitle)}</span></div>\n`;
-          }
-          html += bodyHtml;
-        }
-        html += `</div>\n`;
-      }
-      return html;
+      return renderComponentHtml(tagName, attrs, bodyText);
     }
-    case "FigureShortcode": {
-      return `<figure class="traven-figure-shortcode align-center">\n${childrenHtml}</figure>\n`;
+    case "MdxContainerOpen": {
+      const tagName = getMdxTagName(node, docText);
+      const attrs = parseShortcodeAttrs(docText.slice(node.from, node.to));
+      const lower = tagName.toLowerCase();
+      if (lower === "figure") {
+        const align = escapeHtmlAttr(attrs.align || "center");
+        return `<figure class="traven-figure-shortcode align-${align}">\n`;
+      }
+      if (lower === "quote" || lower === "blockquote") {
+        return `<blockquote class="traven-component-blockquote">\n`;
+      }
+      if (lower === "pullquote") {
+        return `<blockquote class="traven-component-pullquote">\n`;
+      }
+      const compName = resolveCompName(tagName, attrs);
+      return `<div class="traven-component traven-component-${escapeHtmlAttr(compName)}">\n`;
+    }
+    case "MdxContainerClose": {
+      const tagName = getMdxTagName(node, docText).toLowerCase();
+      if (tagName === "figure") return `</figure>\n`;
+      if (tagName === "quote" || tagName === "blockquote" || tagName === "pullquote") {
+        return `</blockquote>\n`;
+      }
+      return `</div>\n`;
     }
     case "HTMLBlock":
       return docText.slice(node.from, node.to) + "\n";
@@ -353,6 +263,12 @@ export function defaultNodeRenderer(node, childrenHtml, docText) {
     case "URL":
     case "LinkTitle":
     case "TableDelimiter":
+    case "MdxMark":
+    case "MdxTagName":
+    case "MdxAttribute":
+    case "MdxAttributeName":
+    case "MdxAttributeValue":
+    case "MdxContainerBody":
       return ""; // Hide the markdown syntax markers
 
     default:
@@ -365,4 +281,139 @@ export function defaultNodeRenderer(node, childrenHtml, docText) {
 
 function parseShortcodeAttrs(raw) {
   return parseAttrMap(raw);
+}
+
+/**
+ * @param {import("@lezer/common").SyntaxNode} node
+ * @param {string} docText
+ */
+function getMdxTagName(node, docText) {
+  const direct = node.getChild("MdxTagName");
+  if (direct) return docText.slice(direct.from, direct.to);
+  const open = node.getChild("MdxContainerOpen");
+  if (open) {
+    const nested = open.getChild("MdxTagName");
+    if (nested) return docText.slice(nested.from, nested.to);
+  }
+  return "";
+}
+
+/**
+ * @param {string} tagName
+ * @param {Record<string, string>} attrs
+ */
+function resolveCompName(tagName, attrs) {
+  const tag = (tagName || "").toLowerCase();
+  if (attrs.name) return attrs.name === "quote" ? "blockquote" : attrs.name;
+  if (tag === "quote" || tag === "blockquote") return "blockquote";
+  if (tag === "pullquote") return "pullquote";
+  if (tag === "callout") return attrs.type || "info";
+  if (tag === "highlight") return "highlight";
+  return tag || "blockquote";
+}
+
+/** @param {Record<string, string>} attrs */
+function renderImageHtml(attrs) {
+  const src = escapeHtmlAttr(sanitizeUrl(attrs.src || ""));
+  const caption = escapeHtml(attrs.caption || "");
+  const alt = escapeHtmlAttr(attrs.alt || attrs.caption || "");
+  const align = escapeHtmlAttr(attrs.align || "center");
+  const size = escapeHtmlAttr(attrs.size || "medium");
+  const customClass = attrs.class ? ` ${escapeHtmlAttr(attrs.class)}` : "";
+
+  if (caption) {
+    return `<figure class="traven-image-figure align-${align} size-${size}${customClass}"><img src="${src}" alt="${alt}" class="traven-image-shortcode"><figcaption class="traven-image-caption">${caption}</figcaption></figure>\n`;
+  }
+  return `<img src="${src}" alt="${alt}" class="traven-image-shortcode align-${align} size-${size}${customClass}">\n`;
+}
+
+/** @param {Record<string, string>} attrs */
+function renderVideoHtml(attrs) {
+  const src = escapeHtmlAttr(sanitizeUrl(attrs.src || ""));
+  const caption = escapeHtml(attrs.caption || "");
+  const align = escapeHtmlAttr(attrs.align || "center");
+  const size = escapeHtmlAttr(attrs.size || "medium");
+  const customClass = attrs.class ? ` ${escapeHtmlAttr(attrs.class)}` : "";
+
+  const parsed = parseVideoUrl(src);
+  let videoHtml = "";
+  if (parsed.platform === "youtube") {
+    videoHtml = `<iframe src="https://www.youtube.com/embed/${parsed.id}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+  } else if (parsed.platform === "vimeo") {
+    videoHtml = `<iframe src="https://player.vimeo.com/video/${parsed.id}" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
+  } else {
+    videoHtml = `<video src="${src}" controls class="traven-video-shortcode"></video>`;
+  }
+
+  if (caption) {
+    return `<figure class="traven-video-figure align-${align} size-${size}${customClass}"><div class="traven-video-container">${videoHtml}</div><figcaption class="traven-video-caption">${caption}</figcaption></figure>\n`;
+  }
+  return `<div class="traven-video-container align-${align} size-${size}${customClass}">${videoHtml}</div>\n`;
+}
+
+/** @param {Record<string, string>} attrs */
+function renderAudioHtml(attrs) {
+  const src = escapeHtmlAttr(sanitizeUrl(attrs.src || ""));
+  const caption = escapeHtml(attrs.caption || "");
+  const align = escapeHtmlAttr(attrs.align || "center");
+  const size = escapeHtmlAttr(attrs.size || "medium");
+  const customClass = attrs.class ? ` ${escapeHtmlAttr(attrs.class)}` : "";
+  const audioHtml = `<audio src="${src}" controls class="traven-audio-shortcode"></audio>`;
+
+  if (caption) {
+    return `<figure class="traven-audio-figure align-${align} size-${size}${customClass}"><div class="traven-audio-container">${audioHtml}</div><figcaption class="traven-audio-caption">${caption}</figcaption></figure>\n`;
+  }
+  return `<div class="traven-audio-container align-${align} size-${size}${customClass}">${audioHtml}</div>\n`;
+}
+
+/**
+ * @param {string} tagName
+ * @param {Record<string, string>} attrs
+ * @param {string} bodyText
+ */
+function renderComponentHtml(tagName, attrs, bodyText) {
+  const compName = resolveCompName(tagName, attrs);
+  const contentLines = bodyText.split(/\r?\n/).map(line => line.trim()).filter(line => line.length > 0);
+  let bodyHtml = `<div class="component-body">\n`;
+  contentLines.forEach(line => {
+    bodyHtml += `<p>${renderInlineMarkdown(line)}</p>\n`;
+  });
+  bodyHtml += `</div>\n`;
+
+  if (compName === "blockquote") {
+    let html = `<blockquote class="traven-component-blockquote">\n${bodyHtml}`;
+    const author = attrs.author || "";
+    const source = attrs.source || "";
+    if (author || source) {
+      let citeText = "— ";
+      if (author && source) { citeText += `${author}, ${source}`; }
+      else { citeText += author || source; }
+      html += `<cite>${escapeHtml(citeText)}</cite>\n`;
+    }
+    html += `</blockquote>\n`;
+    return html;
+  }
+  if (compName === "pullquote") {
+    return `<blockquote class="traven-component-pullquote">\n${bodyHtml}</blockquote>\n`;
+  }
+  if (compName === "highlight") {
+    const markHtml = renderInlineMarkdown(bodyText.trim().replace(/\r?\n/g, "<br>"));
+    return `<mark>${markHtml}</mark>`;
+  }
+
+  let html = `<div class="traven-component traven-component-${compName}">\n`;
+  const title = attrs.title || "";
+  const collapsible = attrs.collapsible === "true";
+  const displayTitle = title || (collapsible ? (compName.charAt(0).toUpperCase() + compName.slice(1)) : "");
+
+  if (collapsible) {
+    html += `<details open>\n<summary class="component-header"><span class="component-title">${escapeHtml(displayTitle)}</span><span class="component-toggle-icon"></span></summary>\n${bodyHtml}</details>\n`;
+  } else {
+    if (displayTitle) {
+      html += `<div class="component-header"><span class="component-title">${escapeHtml(displayTitle)}</span></div>\n`;
+    }
+    html += bodyHtml;
+  }
+  html += `</div>\n`;
+  return html;
 }

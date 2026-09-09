@@ -69,4 +69,12 @@ describe('attr-parser (linear time attribute parser)', () => {
     expect(elapsed).toBeLessThan(50); // Must complete in under 50ms
     expect(map.caption).toBe('-'.repeat(100000));
   });
+
+  it('stops unquoted values at self-closing MDX delimiters', () => {
+    const res = parseAttrMap('src=pic.jpg align=center/>');
+    expect(res).toEqual({
+      src: 'pic.jpg',
+      align: 'center',
+    });
+  });
 });

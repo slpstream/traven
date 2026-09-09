@@ -385,7 +385,7 @@ describe('ImageShortcode', () => {
   it('compiles shortcode to proper HTML in fallback renderer', () => {
     const editor = new TravenEditor({
       element: container,
-      initialValue: '[image src="https://example.com/pic.jpg" align="right" size="medium" caption="My caption"]',
+      initialValue: '<Image src="https://example.com/pic.jpg" align="right" size="medium" caption="My caption" />',
     });
     const html = editor.getContentHtml();
     expect(html).toContain('<figure class="traven-image-figure align-right size-medium">');
@@ -407,7 +407,7 @@ describe('ImageShortcode', () => {
   it('handles single quoted and unquoted attributes correctly', () => {
     const editor = new TravenEditor({
       element: container,
-      initialValue: "[image src='https://example.com/pic.jpg' align=left size='small' caption='Single quotes']",
+      initialValue: "<Image src='https://example.com/pic.jpg' align=left size='small' caption='Single quotes' />",
     });
     const html = editor.getContentHtml();
     expect(html).toContain('<figure class="traven-image-figure align-left size-small">');
@@ -418,7 +418,7 @@ describe('ImageShortcode', () => {
   it('handles attributes containing quotes (both unescaped and escaped) correctly', () => {
     const editor = new TravenEditor({
       element: container,
-      initialValue: '[image src="https://example.com/pic.jpg" alt="The \\"beautiful\\" Ada" caption="The "beautiful" Ada"]',
+      initialValue: '<Image src="https://example.com/pic.jpg" alt="The \\"beautiful\\" Ada" caption="The "beautiful" Ada" />',
     });
     const html = editor.getContentHtml();
     expect(html).toContain('alt="The &quot;beautiful&quot; Ada"');
@@ -428,7 +428,7 @@ describe('ImageShortcode', () => {
   it('compiles shortcode without caption to HTML without figure wrapper in fallback renderer', () => {
     const editor = new TravenEditor({
       element: container,
-      initialValue: '[image src="https://example.com/pic.jpg" align="right" size="medium"]',
+      initialValue: '<Image src="https://example.com/pic.jpg" align="right" size="medium" />',
     });
     const html = editor.getContentHtml();
     expect(html).not.toContain('<figure');
@@ -438,7 +438,7 @@ describe('ImageShortcode', () => {
   it('renders ImageShortcodeWidget inside WYSIWYM editor when cursor is outside', () => {
     const editor = new TravenEditor({
       element: container,
-      initialValue: '[image src="https://example.com/pic.jpg" align="center" size="large" caption="WYSIWYM check"]\nSome text here',
+      initialValue: '<Image src="https://example.com/pic.jpg" align="center" size="large" caption="WYSIWYM check" />\nSome text here',
     });
     // Set selection cursor to the very end of the document, outside the shortcode
     editor.setSelection(editor.getValue().length, editor.getValue().length);
@@ -454,7 +454,7 @@ describe('ImageShortcode', () => {
     expect(badge).toBeNull();
     
     // Native tooltip contains the raw shortcode
-    expect(widgetEl.title).toBe('[image src="https://example.com/pic.jpg" align="center" size="large" caption="WYSIWYM check"]');
+    expect(widgetEl.title).toBe('<Image src="https://example.com/pic.jpg" align="center" size="large" caption="WYSIWYM check" />');
     
     const captionEl = widgetEl.querySelector('.meta-caption');
     expect(captionEl).not.toBeNull();
@@ -464,7 +464,7 @@ describe('ImageShortcode', () => {
   it('compiles shortcode with explicit alt, class and custom attributes, and defaults align and size', () => {
     const editor = new TravenEditor({
       element: container,
-      initialValue: '[image src="https://example.com/pic.jpg" alt="Custom Alt" class="my-custom-class shadow-md"]',
+      initialValue: '<Image src="https://example.com/pic.jpg" alt="Custom Alt" class="my-custom-class shadow-md" />',
     });
     const html = editor.getContentHtml();
     expect(html).toContain('<img src="https://example.com/pic.jpg"');
@@ -475,7 +475,7 @@ describe('ImageShortcode', () => {
   it('renders ImageShortcodeWidget with custom class and uploading state inside WYSIWYM', () => {
     const editor = new TravenEditor({
       element: container,
-      initialValue: '[image src="https://example.com/pic.jpg" align="left" size="small" class="custom-wysiwym-style"]\n[image alt="Uploading photo.jpg..."]\nSome text',
+      initialValue: '<Image src="https://example.com/pic.jpg" align="left" size="small" class="custom-wysiwym-style" />\n<Image alt="Uploading photo.jpg..." />\nSome text',
     });
     editor.setSelection(editor.getValue().length, editor.getValue().length);
 
@@ -499,7 +499,7 @@ describe('ImageShortcode', () => {
   it('opens editing modal when clicking ImageShortcodeWidget, and saving updates document', async () => {
     const editor = new TravenEditor({
       element: container,
-      initialValue: '[image src="https://example.com/pic.jpg" align="right" size="medium" caption="My caption"]\nSome text',
+      initialValue: '<Image src="https://example.com/pic.jpg" align="right" size="medium" caption="My caption" />\nSome text',
     });
     // Set cursor outside the image so the widget renders
     editor.setSelection(editor.getValue().length, editor.getValue().length);
@@ -541,7 +541,7 @@ describe('ImageShortcode', () => {
     expect(document.querySelector('.traven-modal-overlay')).toBeNull();
 
     // Verify value is updated in editor
-    expect(editor.getValue()).toBe('[image src="https://example.com/pic.jpg" align="left" size="medium" alt="New Alt" caption="My caption"]\nSome text');
+    expect(editor.getValue()).toBe('<Image src="https://example.com/pic.jpg" align="left" size="medium" alt="New Alt" caption="My caption" />\nSome text');
 
     // Verify focus is restored to editor
     expect(document.activeElement).toBe(editor.getView().contentDOM);
@@ -590,7 +590,7 @@ describe('ImageShortcode', () => {
     saveBtn.click();
 
     // Verify value is updated in editor to advanced shortcode format since we toggled it
-    expect(editor.getValue()).toBe('[image src="https://example.com/pic.jpg" align="left" alt="New Alt Text"]\nSome text');
+    expect(editor.getValue()).toBe('<Image src="https://example.com/pic.jpg" align="left" alt="New Alt Text" />\nSome text');
   });
 
   it('populated URL renders thumbnail preview, hides prompt, and clicking remove clears it', async () => {
@@ -754,7 +754,7 @@ describe('ImageShortcode', () => {
           '[XSS 2](data:text/html,<script>alert(1)</script>)',
           '[XSS 3](vbscript:msgbox(1))',
           '![Image XSS](javascript:alert(1))',
-          '[image src="javascript:alert(1)" caption="Shortcode XSS"]',
+          '<Image src="javascript:alert(1)" caption="Shortcode XSS" />',
         ].join('\n\n'),
       });
       const html = editor.getContentHtml();
@@ -828,7 +828,7 @@ describe('VideoShortcode', () => {
   it('compiles youtube video shortcode to proper iframe in fallback renderer', () => {
     const editor = new TravenEditor({
       element: container,
-      initialValue: '[video src="https://www.youtube.com/watch?v=dQw4w9WgXcQ" align="right" size="medium" caption="Never Gonna Give You Up"]',
+      initialValue: '<Video src="https://www.youtube.com/watch?v=dQw4w9WgXcQ" align="right" size="medium" caption="Never Gonna Give You Up" />',
     });
     const html = editor.getContentHtml();
     expect(html).toContain('<figure class="traven-video-figure align-right size-medium">');
@@ -839,7 +839,7 @@ describe('VideoShortcode', () => {
   it('compiles vimeo video shortcode to proper iframe in fallback renderer', () => {
     const editor = new TravenEditor({
       element: container,
-      initialValue: '[video src="https://vimeo.com/12345678" align="left" size="small" caption="Vimeo video"]',
+      initialValue: '<Video src="https://vimeo.com/12345678" align="left" size="small" caption="Vimeo video" />',
     });
     const html = editor.getContentHtml();
     expect(html).toContain('<figure class="traven-video-figure align-left size-small">');
@@ -849,7 +849,7 @@ describe('VideoShortcode', () => {
   it('renders youtube shortcode alias widget platform as YouTube', () => {
     const editor = new TravenEditor({
       element: container,
-      initialValue: '[youtube src="dQw4w9WgXcQ"]\nText',
+      initialValue: '<Video src="https://www.youtube.com/watch?v=dQw4w9WgXcQ" />\nText',
     });
     editor.setSelection(editor.getValue().length, editor.getValue().length);
     const widgetEl = container.querySelector('.cm-wysiwym-video-shortcode-container');
@@ -861,7 +861,7 @@ describe('VideoShortcode', () => {
   it('renders VideoShortcodeWidget inside WYSIWYM editor when cursor is outside', () => {
     const editor = new TravenEditor({
       element: container,
-      initialValue: '[video src="https://www.youtube.com/watch?v=dQw4w9WgXcQ" align="center" size="large" caption="Video check"]\nSome text here',
+      initialValue: '<Video src="https://www.youtube.com/watch?v=dQw4w9WgXcQ" align="center" size="large" caption="Video check" />\nSome text here',
     });
     editor.setSelection(editor.getValue().length, editor.getValue().length);
     
@@ -870,7 +870,7 @@ describe('VideoShortcode', () => {
     expect(widgetEl.classList.contains('align-center')).toBe(true);
     expect(widgetEl.classList.contains('size-large')).toBe(true);
     
-    expect(widgetEl.title).toBe('[video src="https://www.youtube.com/watch?v=dQw4w9WgXcQ" align="center" size="large" caption="Video check"]');
+    expect(widgetEl.title).toBe('<Video src="https://www.youtube.com/watch?v=dQw4w9WgXcQ" align="center" size="large" caption="Video check" />');
     
     const platformEl = widgetEl.querySelector('.video-placeholder-platform');
     expect(platformEl).not.toBeNull();
@@ -888,7 +888,7 @@ describe('VideoShortcode', () => {
   it('handles cursor delimiter skipping for video shortcode', () => {
     const editor = new TravenEditor({
       element: container,
-      initialValue: '[video src="https://example.com/movie.mp4"]',
+      initialValue: '<Video src="https://example.com/movie.mp4" />',
     });
     editor.focus();
     
@@ -899,7 +899,7 @@ describe('VideoShortcode', () => {
     expect(editor.getView().state.selection.main.head).toBe(7);
 
     const value = editor.getValue();
-    const closePos = value.indexOf(']');
+    const closePos = value.lastIndexOf('>');
     editor.setSelection(closePos, closePos);
 
     const skipped2 = skipDelimiter(editor.getView(), 'right');
@@ -910,7 +910,7 @@ describe('VideoShortcode', () => {
   it('opens editing modal when clicking VideoShortcodeWidget, and saving updates document', async () => {
     const editor = new TravenEditor({
       element: container,
-      initialValue: '[video src="https://example.com/movie.mp4" align="right" size="medium" caption="My movie"]\nSome text',
+      initialValue: '<Video src="https://example.com/movie.mp4" align="right" size="medium" caption="My movie" />\nSome text',
     });
     editor.setSelection(editor.getValue().length, editor.getValue().length);
 
@@ -941,13 +941,13 @@ describe('VideoShortcode', () => {
 
     expect(document.querySelector('.traven-modal-overlay')).toBeNull();
 
-    expect(editor.getValue()).toBe('[video src="https://example.com/movie.mp4" align="left" caption="Updated movie"]\nSome text');
+    expect(editor.getValue()).toBe('<Video src="https://example.com/movie.mp4" align="left" caption="Updated movie" />\nSome text');
   });
 
   it('neutralizes dangerous protocols like javascript: in video shortcode', () => {
     const editor = new TravenEditor({
       element: container,
-      initialValue: '[video src="javascript:alert(1)" caption="Video XSS"]',
+      initialValue: '<Video src="javascript:alert(1)" caption="Video XSS" />',
     });
     const html = editor.getContentHtml();
     expect(html).toContain('src="about:blank"');
@@ -970,7 +970,7 @@ describe('AudioShortcode', () => {
   it('renders AudioShortcodeWidget inside WYSIWYM editor when cursor is outside', () => {
     const editor = new TravenEditor({
       element: container,
-      initialValue: '[audio src="https://example.com/song.mp3" align="center" size="large" caption="Audio check"]\nSome text here',
+      initialValue: '<Audio src="https://example.com/song.mp3" align="center" size="large" caption="Audio check" />\nSome text here',
     });
     editor.setSelection(editor.getValue().length, editor.getValue().length);
     
@@ -979,7 +979,7 @@ describe('AudioShortcode', () => {
     expect(widgetEl.classList.contains('align-center')).toBe(true);
     expect(widgetEl.classList.contains('size-large')).toBe(true);
     
-    expect(widgetEl.title).toBe('[audio src="https://example.com/song.mp3" align="center" size="large" caption="Audio check"]');
+    expect(widgetEl.title).toBe('<Audio src="https://example.com/song.mp3" align="center" size="large" caption="Audio check" />');
     
     const platformEl = widgetEl.querySelector('.audio-placeholder-platform');
     expect(platformEl).not.toBeNull();
@@ -997,7 +997,7 @@ describe('AudioShortcode', () => {
   it('handles cursor delimiter skipping for audio shortcode', () => {
     const editor = new TravenEditor({
       element: container,
-      initialValue: '[audio src="https://example.com/song.mp3"]',
+      initialValue: '<Audio src="https://example.com/song.mp3" />',
     });
     editor.focus();
     
@@ -1008,7 +1008,7 @@ describe('AudioShortcode', () => {
     expect(editor.getView().state.selection.main.head).toBe(7);
 
     const value = editor.getValue();
-    const closePos = value.indexOf(']');
+    const closePos = value.lastIndexOf('>');
     editor.setSelection(closePos, closePos);
 
     const skipped2 = skipDelimiter(editor.getView(), 'right');
@@ -1019,7 +1019,7 @@ describe('AudioShortcode', () => {
   it('opens editing modal when clicking AudioShortcodeWidget, and saving updates document', async () => {
     const editor = new TravenEditor({
       element: container,
-      initialValue: '[audio src="https://example.com/song.mp3" align="right" size="medium" caption="My song"]\nSome text',
+      initialValue: '<Audio src="https://example.com/song.mp3" align="right" size="medium" caption="My song" />\nSome text',
     });
     editor.setSelection(editor.getValue().length, editor.getValue().length);
 
@@ -1050,7 +1050,7 @@ describe('AudioShortcode', () => {
 
     expect(document.querySelector('.traven-modal-overlay')).toBeNull();
 
-    expect(editor.getValue()).toBe('[audio src="https://example.com/song.mp3" align="left" caption="Updated song"]\nSome text');
+    expect(editor.getValue()).toBe('<Audio src="https://example.com/song.mp3" align="left" caption="Updated song" />\nSome text');
   });
 
   });
@@ -1104,7 +1104,7 @@ describe('ComponentShortcode', () => {
   it('renders ComponentShortcodeWidget inside WYSIWYM editor when cursor is outside', () => {
     const editor = new TravenEditor({
       element: container,
-      initialValue: '[quote author="Alice"]Widget quote[/quote]\nSome text here',
+      initialValue: '<Quote author="Alice">Widget quote</Quote>\nSome text here',
     });
     // Set selection cursor to the very end of the document, outside the shortcode
     editor.setSelection(editor.getValue().length, editor.getValue().length);
@@ -1126,7 +1126,7 @@ describe('ComponentShortcode', () => {
   it('opens editing modal when clicking ComponentShortcodeWidget, and saving updates document', async () => {
     const editor = new TravenEditor({
       element: container,
-      initialValue: '[quote author="John"]Click me[/quote]\nText',
+      initialValue: '<Quote author="John">Click me</Quote>\nText',
     });
     editor.focus();
     // Put cursor outside
@@ -1167,7 +1167,7 @@ describe('ComponentShortcode', () => {
     expect(document.querySelector('.traven-modal-overlay')).toBeNull();
 
     // Verify value in editor is updated
-    expect(editor.getValue()).toBe('[component name="pullquote" author="Jane"]\nNew content\n[/component]\nText');
+    expect(editor.getValue()).toBe('<Pullquote author="Jane">\nNew content\n</Pullquote>\nText');
   });
 
   it('opens component modal and populates dropdown options from default schema', () => {
@@ -1430,7 +1430,7 @@ describe('ComponentShortcode', () => {
       modal.querySelector('.traven-modal-btn.btn-primary').click();
 
       // Verify generated component markup in editor
-      expect(editor.getValue()).toBe('[component name="card" theme="ocean" dark="true"]\n\n[/component]\n');
+      expect(editor.getValue()).toBe('<Component name="card" theme="ocean" dark="true">\n\n</Component>\n');
     });
 
     it('Option A: dynamically adds key-value rows and saves attributes correctly', () => {
@@ -1461,7 +1461,7 @@ describe('ComponentShortcode', () => {
       // Click save
       modal.querySelector('.traven-modal-btn.btn-primary').click();
 
-      expect(editor.getValue()).toBe('[component name="simple-comp" class="my-style"]\n\n[/component]\n');
+      expect(editor.getValue()).toBe('<Component name="simple-comp" class="my-style">\n\n</Component>\n');
     });
 
     it('Test Compatibility: respects direct modification of hidden #traven-component-attrs input', () => {
@@ -1480,7 +1480,7 @@ describe('ComponentShortcode', () => {
       // Click save
       modal.querySelector('.traven-modal-btn.btn-primary').click();
 
-      expect(editor.getValue()).toBe('[component name="simple-comp" custom="mutated-value"]\n\n[/component]\n');
+      expect(editor.getValue()).toBe('<Component name="simple-comp" custom="mutated-value">\n\n</Component>\n');
     });
   });
 });
@@ -1565,7 +1565,7 @@ describe('FigureShortcode', () => {
   it('renders FigureShortcodeWidget inside WYSIWYM editor when cursor is outside', () => {
     const editor = new TravenEditor({
       element: container,
-      initialValue: '[figure caption="Code block figure"]\n```js\nconst a = 1;\n```\n[/figure]\nSome text here',
+      initialValue: '<Figure caption="Code block figure">\n```js\nconst a = 1;\n```\n</Figure>\nSome text here',
     });
     editor.setSelection(editor.getValue().length, editor.getValue().length);
 
@@ -1574,7 +1574,7 @@ describe('FigureShortcode', () => {
     expect(widgetEl.classList.contains('align-center')).toBe(true);
     expect(widgetEl.classList.contains('size-medium')).toBe(true);
 
-    expect(widgetEl.title).toBe('[figure caption="Code block figure"]\n```js\nconst a = 1;\n```\n[/figure]');
+    expect(widgetEl.title).toBe('<Figure caption="Code block figure">\n```js\nconst a = 1;\n```\n</Figure>');
 
     const captionEl = widgetEl.querySelector('.figure-caption');
     expect(captionEl).not.toBeNull();
@@ -1584,7 +1584,7 @@ describe('FigureShortcode', () => {
   it('opens editing modal when clicking FigureShortcodeWidget, and saving updates document', async () => {
     const editor = new TravenEditor({
       element: container,
-      initialValue: '[figure caption="Initial Caption" align="left"]\nSome inner content\n[/figure]\nSome text',
+      initialValue: '<Figure caption="Initial Caption" align="left">\nSome inner content\n</Figure>\nSome text',
     });
     // Set cursor outside the figure so the widget renders
     editor.setSelection(editor.getValue().length, editor.getValue().length);
@@ -1626,7 +1626,7 @@ describe('FigureShortcode', () => {
     expect(document.querySelector('.traven-modal-overlay')).toBeNull();
 
     // Verify value is updated in editor
-    expect(editor.getValue()).toBe('[figure caption="Updated Caption" align="right"]\nUpdated inner content\n[/figure]\nSome text');
+    expect(editor.getValue()).toBe('<Figure caption="Updated Caption" align="right">\nUpdated inner content\n</Figure>\nSome text');
 
     // Verify focus is restored to editor
     expect(document.activeElement).toBe(editor.getView().contentDOM);

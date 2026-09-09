@@ -29,11 +29,7 @@ import { classHighlighter } from "@lezer/highlight";
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { Strikethrough, TaskList, Table, Autolink, Subscript, Superscript } from "@lezer/markdown";
 import { Highlight } from "./highlight-parser.js";
-import { Shortcode } from "./shortcode-parser.js";
-import { VideoShortcode } from "./video-parser.js";
-import { AudioShortcode } from "./audio-parser.js";
-import { FigureShortcode } from "./figure-parser.js";
-import { ComponentShortcode } from "./component-parser.js";
+import { MdxComponents } from "./mdx-parser.js";
 import { MathExtension, ensureKatex, configureKatex } from "./math-parser.js";
 import {
   configureMermaid,
@@ -64,7 +60,7 @@ import { TravenPluginsFacet, travenViewPlugin, TravenPlugin,
   MathPlugin,
   MermaidPlugin,
   TablePlugin,
-  ShortcodePlugin,
+  ComponentPlugin,
   HTMLPlugin
 } from "./plugins/index.js";
 import { delimiterSkipKeymap } from "./delimiter-skip.js";
@@ -371,11 +367,7 @@ export class TravenEditor {
       Highlight,
       Subscript,
       Superscript,
-      Shortcode,
-      VideoShortcode,
-      AudioShortcode,
-      FigureShortcode,
-      ComponentShortcode,
+      MdxComponents,
       MathExtension,
       { remove: ["SetextHeading"] },
     ];
@@ -396,7 +388,7 @@ export class TravenEditor {
       new MathPlugin(),
       new MermaidPlugin(),
       new TablePlugin(),
-      new ShortcodePlugin(),
+      new ComponentPlugin(),
       new HTMLPlugin(),
       ...hostPlugins,
     ];

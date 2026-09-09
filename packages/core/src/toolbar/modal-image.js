@@ -673,7 +673,7 @@ export function openImageModal(optionsOrEditor, triggerBtn = null) {
       if (captionText) attrParts.push(`caption="${captionText}"`);
       if (classVal) attrParts.push(`class="${classVal}"`);
 
-      insertion = `[image ${attrParts.join(" ")}]`;
+      insertion = `<Image ${attrParts.join(" ")} />`;
     }
 
     if (docFrom !== null) {

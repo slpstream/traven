@@ -236,17 +236,45 @@ export const focusField = StateField.define({
 
 export function getActiveFigureRanges(state, cursorHead) {
   const activeFigureRanges = [];
-  const docText = state.doc.toString();
-  const figureRegex = /\[figure((?:\s+[^\]]*|=\s*(?:"[^"]*"|'[^']*'|[^\s\]]+)(?:\s+[^\]]*)?)?)\]([\s\S]*?)\[\/figure\]/g;
-  let match;
-  while ((match = figureRegex.exec(docText)) !== null) {
-    const from = match.index;
-    const to = from + match[0].length;
-    const isCursorInside = cursorHead > from && cursorHead < to;
-    if (!isCursorInside) {
-      activeFigureRanges.push({ from, to });
+  /** @type {{ from: number }[]} */
+  const openStack = [];
+
+  syntaxTree(state).iterate({
+    enter(node) {
+      if (node.name === "MdxContainerTag") {
+        const tagNode = node.node.getChild("MdxContainerOpen")?.getChild("MdxTagName")
+          || node.node.getChild("MdxTagName");
+        const tag = tagNode ? state.sliceDoc(tagNode.from, tagNode.to) : "";
+        if (tag === "Figure") {
+          const isCursorInside = cursorHead > node.from && cursorHead < node.to;
+          if (!isCursorInside) {
+            activeFigureRanges.push({ from: node.from, to: node.to });
+          }
+        }
+        return false;
+      }
+      if (node.name === "MdxContainerOpen") {
+        const tagNode = node.node.getChild("MdxTagName");
+        const tag = tagNode ? state.sliceDoc(tagNode.from, tagNode.to) : "";
+        if (tag === "Figure") {
+          openStack.push({ from: node.from });
+        }
+        return false;
+      }
+      if (node.name === "MdxContainerClose") {
+        const tagNode = node.node.getChild("MdxTagName");
+        const tag = tagNode ? state.sliceDoc(tagNode.from, tagNode.to) : "";
+        if (tag === "Figure" && openStack.length > 0) {
+          const open = openStack.pop();
+          const isCursorInside = cursorHead > open.from && cursorHead < node.to;
+          if (!isCursorInside) {
+            activeFigureRanges.push({ from: open.from, to: node.to });
+          }
+        }
+        return false;
+      }
     }
-  }
+  });
   return activeFigureRanges;
 }
 

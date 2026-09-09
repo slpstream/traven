@@ -1,11 +1,7 @@
 import { markdownLanguage } from "@codemirror/lang-markdown";
 import { Strikethrough, TaskList, Table, Autolink, Subscript, Superscript } from "@lezer/markdown";
 import { Highlight } from "./highlight-parser.js";
-import { Shortcode } from "./shortcode-parser.js";
-import { VideoShortcode } from "./video-parser.js";
-import { AudioShortcode } from "./audio-parser.js";
-import { FigureShortcode } from "./figure-parser.js";
-import { ComponentShortcode } from "./component-parser.js";
+import { MdxComponents } from "./mdx-parser.js";
 import { MathExtension } from "./math-parser.js";
 import { TravenRenderer } from "./renderer/index.js";
 import {
@@ -20,7 +16,7 @@ import {
   MathPlugin,
   MermaidPlugin,
   TablePlugin,
-  ShortcodePlugin,
+  ComponentPlugin,
   HTMLPlugin
 } from "./plugins/index.js";
 
@@ -59,11 +55,7 @@ export function renderMarkdown(markdownText, extraPlugins = []) {
     Highlight,
     Subscript,
     Superscript,
-    Shortcode,
-    VideoShortcode,
-    AudioShortcode,
-    FigureShortcode,
-    ComponentShortcode,
+    MdxComponents,
     MathExtension,
     { remove: ["SetextHeading"] },
   ];
@@ -87,7 +79,7 @@ export function renderMarkdown(markdownText, extraPlugins = []) {
     new MathPlugin(),
     new MermaidPlugin(),
     new TablePlugin(),
-    new ShortcodePlugin(),
+    new ComponentPlugin(),
     new HTMLPlugin(),
     ...hostPlugins,
   ];

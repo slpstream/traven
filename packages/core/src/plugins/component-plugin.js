@@ -4,9 +4,25 @@ import { syntaxTree } from "@codemirror/language";
 import { TravenPlugin } from "./TravenPlugin.js";
 import { highlightDeco, collapseDeco, renderInlineMarkdown } from "../wysiwym.js";
 import { openImageModal, openComponentModal, openVideoModal, openAudioModal, openFigureModal } from "../toolbar/modal.js";
-import { sanitizeUrl, parseVideoUrl } from "../security.js";
-import { parseAttrMap } from "../attr-parser.js";
+import { parseVideoUrl } from "../security.js";
 import { viewToEditor } from "../bridge.js";
+
+/**
+ * @param {Record<string, string>} attrs
+ * @returns {string}
+ */
+export function normalizeComponentName(attrs) {
+  const tag = (attrs._tagName || "").toLowerCase();
+  if (attrs.name) {
+    return attrs.name === "quote" ? "blockquote" : attrs.name;
+  }
+  if (tag === "quote" || tag === "blockquote") return "blockquote";
+  if (tag === "pullquote") return "pullquote";
+  if (tag === "callout") return attrs.type || "info";
+  if (tag === "highlight") return "highlight";
+  if (tag === "component") return "component";
+  return tag || "blockquote";
+}
 
 export class ImageShortcodeWidget extends WidgetType {
   constructor(attrs, nodeFrom, rawText) {
@@ -366,19 +382,7 @@ export class ComponentShortcodeWidget extends WidgetType {
       container.title = this.rawText;
     }
 
-    let compName = this.attrs.name || "";
-    if (!compName) {
-      if (this.attrs._tagName === "quote" || this.attrs._tagName === "blockquote") {
-        compName = "blockquote";
-      } else if (this.attrs._tagName === "pullquote") {
-        compName = "pullquote";
-      } else {
-        compName = this.attrs._tagName || "blockquote";
-      }
-    }
-    if (compName === "quote") {
-      compName = "blockquote";
-    }
+    let compName = normalizeComponentName(this.attrs);
 
     container.classList.add(`component-${compName}`);
 
@@ -586,280 +590,204 @@ export class FigureShortcodeWidget extends WidgetType {
   ignoreEvent() { return false; }
 }
 
-export class ShortcodePlugin extends TravenPlugin {
-  name = "shortcode";
-  requiredNodes = ["ImageShortcode", "VideoShortcode", "AudioShortcode", "ComponentShortcode"];
+/**
+ * @param {import("@codemirror/state").EditorState} state
+ * @param {import("@lezer/common").SyntaxNode} node
+ * @returns {Record<string, string>}
+ */
+function collectMdxAttrs(state, node) {
+  /** @type {Record<string, string>} */
+  const attrs = {};
+  const c = node.cursor();
+  if (c.firstChild()) {
+    do {
+      if (c.name === "MdxAttribute") {
+        const cc = c.node.cursor();
+        let name = "";
+        let val = "";
+        if (cc.firstChild()) {
+          do {
+            if (cc.name === "MdxAttributeName") {
+              name = state.sliceDoc(cc.from, cc.to);
+            }
+            if (cc.name === "MdxAttributeValue") {
+              val = state.sliceDoc(cc.from, cc.to);
+              val = val.replace(/^["']|["']$/g, "");
+              val = val.replace(/\\"/g, '"').replace(/\\'/g, "'");
+            }
+          } while (cc.nextSibling());
+        }
+        if (name) attrs[name] = val;
+      } else if (c.name === "MdxContainerOpen") {
+        Object.assign(attrs, collectMdxAttrs(state, c.node));
+      }
+    } while (c.nextSibling());
+  }
+  return attrs;
+}
+
+/**
+ * @param {import("@codemirror/state").EditorState} state
+ * @param {import("@lezer/common").SyntaxNode} node
+ * @returns {string}
+ */
+function getMdxTagName(state, node) {
+  const direct = node.getChild("MdxTagName");
+  if (direct) return state.sliceDoc(direct.from, direct.to);
+  const open = node.getChild("MdxContainerOpen");
+  if (open) {
+    const nested = open.getChild("MdxTagName");
+    if (nested) return state.sliceDoc(nested.from, nested.to);
+  }
+  return "";
+}
+
+/**
+ * @param {import("@codemirror/state").EditorState} state
+ * @param {import("@lezer/common").SyntaxNode} node
+ * @returns {string}
+ */
+function getMdxBodyText(state, node) {
+  const body = node.getChild("MdxContainerBody");
+  if (body) return state.sliceDoc(body.from, body.to);
+  return "";
+}
+
+/**
+ * @param {import("./TravenPlugin.js").DecorationContext} ctx
+ * @param {number} from
+ * @param {number} to
+ * @param {string} tagName
+ * @param {Record<string, string>} attrs
+ * @param {string} bodyText
+ * @param {string} rawText
+ */
+function mountContainerWidget(ctx, from, to, tagName, attrs, bodyText, rawText) {
+  const { decorations, cursorHead, suppressed } = ctx;
+  const isCursorInside = cursorHead > from && cursorHead < to;
+  const lower = tagName.toLowerCase();
+
+  if (lower === "highlight") {
+    const isSuppressed = suppressed && suppressed.some((s) => s.from === from && s.to === to);
+    if (!isCursorInside || isSuppressed) {
+      const openLen = rawText.indexOf(">") + 1;
+      const closeStart = rawText.lastIndexOf("</");
+      if (openLen > 0 && closeStart >= 0) {
+        decorations.push({ from, to: from + openLen, deco: collapseDeco });
+        decorations.push({ from: from + closeStart, to, deco: collapseDeco });
+        decorations.push({ from: from + openLen, to: from + closeStart, deco: highlightDeco });
+      }
+    }
+    return;
+  }
+
+  if (isCursorInside) return;
+
+  attrs._tagName = tagName;
+  if (lower === "figure") {
+    decorations.push({
+      from,
+      to,
+      deco: Decoration.replace({
+        widget: new FigureShortcodeWidget(attrs, from, bodyText, rawText),
+        block: true,
+      }),
+    });
+    return;
+  }
+
+  decorations.push({
+    from,
+    to,
+    deco: Decoration.replace({
+      widget: new ComponentShortcodeWidget(attrs, from, bodyText, rawText),
+      block: true,
+    }),
+  });
+}
+
+export class ComponentPlugin extends TravenPlugin {
+  name = "component";
+  requiredNodes = ["MdxMediaTag", "MdxContainerTag", "MdxContainerOpen", "MdxContainerClose"];
   decorationPriority = 100;
 
   /**
-   * @param {import("./TravenPlugin.js").DecorationContext} ctx 
+   * @param {import("./TravenPlugin.js").DecorationContext} ctx
    */
   buildDecorations(ctx) {
-    const { state, decorations, cursorHead, suppressed, suppressedFigureRanges } = ctx;
+    const { state, decorations, cursorHead } = ctx;
 
-    // 1. Process FigureShortcodes first via regex since they can contain blocks.
-    // They are technically parsed as paragraphs by default if not supported by an AST node.
-    // But we suppress the inner contents using suppressedFigureRanges.
-    const docText = state.doc.toString();
-    const figureRegex = /\[figure((?:\s+[^\]]*|=\s*(?:"[^"]*"|'[^']*'|[^\s\]]+)(?:\s+[^\]]*)?)?)\]([\s\S]*?)\[\/figure\]/g;
-    let match;
-    while ((match = figureRegex.exec(docText)) !== null) {
-      const from = match.index;
-      const to = from + match[0].length;
-      const attrsStr = match[1] || "";
-      const bodyText = match[2] || "";
+    /** @type {{ tag: string, from: number, to: number, attrs: Record<string, string> }[]} */
+    const openStack = [];
 
-      const isCursorInside = cursorHead > from && cursorHead < to;
-      if (!isCursorInside) {
-        const attrs = parseAttrMap(attrsStr);
-        
-        const rawText = match[0];
-        const widget = new FigureShortcodeWidget(attrs, from, bodyText, rawText);
-        decorations.push({
-          from,
-          to,
-          deco: Decoration.replace({ widget, block: true })
-        });
-      }
-    }
-
-    // 2. Process AST for inline shortcodes
     syntaxTree(state).iterate({
       enter(node) {
-        // Skip processing any AST nodes inside replaced figures
-        if (suppressedFigureRanges.some(r => node.from >= r.from && node.to <= r.to)) {
+        if (node.name === "MdxMediaTag") {
+          const isCursorInside = cursorHead > node.from && cursorHead < node.to;
+          if (!isCursorInside) {
+            const attrs = collectMdxAttrs(state, node.node);
+            const tagName = getMdxTagName(state, node.node);
+            attrs._tagName = tagName;
+            const rawText = state.sliceDoc(node.from, node.to);
+            const lower = tagName.toLowerCase();
+            /** @type {import("@codemirror/view").WidgetType} */
+            let widget;
+            if (lower === "image") {
+              widget = new ImageShortcodeWidget(attrs, node.from, rawText);
+            } else if (lower === "video") {
+              widget = new VideoShortcodeWidget(attrs, node.from, rawText);
+            } else if (lower === "audio") {
+              widget = new AudioShortcodeWidget(attrs, node.from, rawText);
+            } else {
+              widget = new ComponentShortcodeWidget(attrs, node.from, "", rawText);
+            }
+            decorations.push({
+              from: node.from,
+              to: node.to,
+              deco: Decoration.replace({ widget, block: true }),
+            });
+          }
           return false;
         }
 
-        if (node.name === "ImageShortcode") {
-          const isCursorInside = cursorHead > node.from && cursorHead < node.to;
-          if (!isCursorInside) {
-            const attrs = {};
-            const c = node.node.cursor();
-            if (c.firstChild()) {
-              do {
-                if (c.name === "ShortcodeAttribute") {
-                  const cc = c.node.cursor();
-                  let name = "";
-                  let val = "";
-                  if (cc.firstChild()) {
-                    do {
-                      if (cc.name === "ShortcodeAttributeName") {
-                        name = state.sliceDoc(cc.from, cc.to);
-                      }
-                      if (cc.name === "ShortcodeAttributeValue") {
-                        val = state.sliceDoc(cc.from, cc.to);
-                        val = val.replace(/^["']|["']$/g, "");
-                        val = val.replace(/\\"/g, '"').replace(/\\'/g, "'");
-                      }
-                    } while (cc.nextSibling());
-                  }
-                  if (name) {
-                    attrs[name] = val;
-                  }
-                }
-              } while (c.nextSibling());
-            }
-
-            const rawText = state.sliceDoc(node.from, node.to);
-            const widget = new ImageShortcodeWidget(attrs, node.from, rawText);
-            decorations.push({
-              from: node.from,
-              to: node.to,
-              deco: Decoration.replace({ widget, block: true })
-            });
-            return false;
-          }
+        if (node.name === "MdxContainerTag") {
+          const tagName = getMdxTagName(state, node.node);
+          const attrs = collectMdxAttrs(state, node.node);
+          const bodyText = getMdxBodyText(state, node.node);
+          const rawText = state.sliceDoc(node.from, node.to);
+          mountContainerWidget(ctx, node.from, node.to, tagName, attrs, bodyText, rawText);
+          return false;
         }
 
-        if (node.name === "VideoShortcode") {
-          const isCursorInside = cursorHead > node.from && cursorHead < node.to;
-          if (!isCursorInside) {
-            const attrs = {};
-            const c = node.node.cursor();
-            if (c.firstChild()) {
-              do {
-                if (c.name === "VideoShortcodeAttribute") {
-                  const cc = c.node.cursor();
-                  let name = "";
-                  let val = "";
-                  if (cc.firstChild()) {
-                    do {
-                      if (cc.name === "VideoShortcodeAttributeName") {
-                        name = state.sliceDoc(cc.from, cc.to);
-                      }
-                      if (cc.name === "VideoShortcodeAttributeValue") {
-                        val = state.sliceDoc(cc.from, cc.to);
-                        val = val.replace(/^["']|["']$/g, "");
-                        val = val.replace(/\\"/g, '"').replace(/\\'/g, "'");
-                      }
-                    } while (cc.nextSibling());
-                  }
-                  if (name) {
-                    attrs[name] = val;
-                  }
-                }
-              } while (c.nextSibling());
-            }
-
-            const rawText = state.sliceDoc(node.from, node.to);
-            let tagName = "video";
-            const tagNode = node.node.getChild("VideoShortcodeTagName");
-            if (tagNode) {
-              tagName = state.sliceDoc(tagNode.from, tagNode.to);
-            }
-            attrs._tagName = tagName;
-            const widget = new VideoShortcodeWidget(attrs, node.from, rawText);
-
-            decorations.push({
-              from: node.from,
-              to: node.to,
-              deco: Decoration.replace({ widget, block: true })
-            });
-            return false;
-          }
+        if (node.name === "MdxContainerOpen") {
+          const tagName = getMdxTagName(state, node.node);
+          const attrs = collectMdxAttrs(state, node.node);
+          openStack.push({ tag: tagName, from: node.from, to: node.to, attrs });
+          return false;
         }
 
-        if (node.name === "AudioShortcode") {
-          const isCursorInside = cursorHead > node.from && cursorHead < node.to;
-          if (!isCursorInside) {
-            const attrs = {};
-            const c = node.node.cursor();
-            if (c.firstChild()) {
-              do {
-                if (c.name === "AudioShortcodeAttribute") {
-                  const cc = c.node.cursor();
-                  let name = "";
-                  let val = "";
-                  if (cc.firstChild()) {
-                    do {
-                      if (cc.name === "AudioShortcodeAttributeName") {
-                        name = state.sliceDoc(cc.from, cc.to);
-                      }
-                      if (cc.name === "AudioShortcodeAttributeValue") {
-                        val = state.sliceDoc(cc.from, cc.to);
-                        val = val.replace(/^["']|["']$/g, "");
-                        val = val.replace(/\\"/g, '"').replace(/\\'/g, "'");
-                      }
-                    } while (cc.nextSibling());
-                  }
-                  if (name) {
-                    attrs[name] = val;
-                  }
-                }
-              } while (c.nextSibling());
+        if (node.name === "MdxContainerClose") {
+          const tagName = getMdxTagName(state, node.node);
+          for (let i = openStack.length - 1; i >= 0; i--) {
+            if (openStack[i].tag === tagName) {
+              const open = openStack[i];
+              openStack.splice(i);
+              const rawText = state.sliceDoc(open.from, node.to);
+              const bodyText = state.sliceDoc(open.to, node.from);
+              mountContainerWidget(ctx, open.from, node.to, tagName, { ...open.attrs }, bodyText, rawText);
+              break;
             }
-
-            const rawText = state.sliceDoc(node.from, node.to);
-            const widget = new AudioShortcodeWidget(attrs, node.from, rawText);
-            decorations.push({
-              from: node.from,
-              to: node.to,
-              deco: Decoration.replace({ widget, block: true })
-            });
-            return false;
           }
+          return false;
         }
-
-        if (node.name === "ComponentShortcode") {
-          let tagName = "";
-          let openEnd = null;
-          let closeStart = null;
-          const c = node.node.cursor();
-          if (c.firstChild()) {
-            do {
-              if (c.name === "ComponentShortcodeOpen") {
-                openEnd = c.to;
-                const cc = c.node.cursor();
-                if (cc.firstChild()) {
-                  do {
-                    if (cc.name === "ComponentShortcodeTagName") {
-                      tagName = state.sliceDoc(cc.from, cc.to);
-                    }
-                  } while (cc.nextSibling());
-                }
-              }
-              if (c.name === "ComponentShortcodeClose") {
-                closeStart = c.from;
-              }
-            } while (c.nextSibling());
-          }
-
-          if (tagName === "highlight") {
-            const isCursorInside = cursorHead > node.from && cursorHead < node.to;
-            const isSuppressed = suppressed && suppressed.some(s => s.from === node.from && s.to === node.to);
-            if (!isCursorInside || isSuppressed) {
-              if (openEnd !== null && closeStart !== null) {
-                decorations.push({ from: node.from, to: openEnd, deco: collapseDeco });
-                decorations.push({ from: closeStart, to: node.to, deco: collapseDeco });
-                decorations.push({ from: openEnd, to: closeStart, deco: highlightDeco });
-              }
-            }
-            return false;
-          }
-
-          const isCursorInside = cursorHead > node.from && cursorHead < node.to;
-          if (!isCursorInside) {
-            const attrs = {};
-            let bodyText = "";
-
-            const c2 = node.node.cursor();
-            if (c2.firstChild()) {
-              do {
-                if (c2.name === "ComponentShortcodeOpen") {
-                  const cc = c2.node.cursor();
-                  if (cc.firstChild()) {
-                    do {
-                      if (cc.name === "ComponentShortcodeAttribute") {
-                        const ccc = cc.node.cursor();
-                        let name = "";
-                        let val = "";
-                        if (ccc.firstChild()) {
-                          do {
-                            if (ccc.name === "ComponentShortcodeAttributeName") {
-                              name = state.sliceDoc(ccc.from, ccc.to) || "name";
-                            }
-                            if (ccc.name === "ComponentShortcodeAttributeValue") {
-                              val = state.sliceDoc(ccc.from, ccc.to);
-                              val = val.replace(/^["']|["']$/g, "");
-                              val = val.replace(/\\"/g, '"').replace(/\\'/g, "'");
-                            }
-                          } while (ccc.nextSibling());
-                        }
-                        if (name) {
-                          attrs[name] = val;
-                        }
-                      }
-                    } while (cc.nextSibling());
-                  }
-                }
-                if (c2.name === "ComponentShortcodeBody") {
-                  bodyText = state.sliceDoc(c2.from, c2.to);
-                }
-              } while (c2.nextSibling());
-            }
-
-            attrs._tagName = tagName;
-
-            const rawText = state.sliceDoc(node.from, node.to);
-            const widget = new ComponentShortcodeWidget(attrs, node.from, bodyText, rawText);
-            decorations.push({
-              from: node.from,
-              to: node.to,
-              deco: Decoration.replace({ widget, block: true })
-            });
-            return false;
-          }
-        }
-
-      }
+      },
     });
   }
 
   /**
-   * @param {import("@lezer/common").SyntaxNode} _node 
-   * @param {string} _childrenHtml 
-   * @param {any} _ctx 
+   * @param {import("@lezer/common").SyntaxNode} _node
+   * @param {string} _childrenHtml
+   * @param {any} _ctx
    */
   renderToHTML(_node, _childrenHtml, _ctx) {
     return null; // Fall through to default renderer
