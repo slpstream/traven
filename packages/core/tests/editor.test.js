@@ -382,7 +382,7 @@ describe('ImageShortcode', () => {
     document.body.appendChild(container);
   });
 
-  it('compiles shortcode to proper HTML in fallback renderer', () => {
+  it('compiles Image tag to proper HTML in fallback renderer', () => {
     const editor = new TravenEditor({
       element: container,
       initialValue: '<Image src="https://example.com/pic.jpg" align="right" size="medium" caption="My caption" />',
@@ -393,7 +393,7 @@ describe('ImageShortcode', () => {
     expect(html).toContain('<figcaption class="traven-image-caption">My caption</figcaption>');
   });
 
-  it('compiles standard Markdown image to HTML styled like shortcode in fallback renderer', () => {
+  it('compiles standard Markdown image to HTML styled like Image tags in fallback renderer', () => {
     const editor = new TravenEditor({
       element: container,
       initialValue: '![Alt Text](https://example.com/pic.jpg)',
@@ -425,7 +425,7 @@ describe('ImageShortcode', () => {
     expect(html).toContain('<figcaption class="traven-image-caption">The "beautiful" Ada</figcaption>');
   });
 
-  it('compiles shortcode without caption to HTML without figure wrapper in fallback renderer', () => {
+  it('compiles Image tag without caption to HTML without figure wrapper in fallback renderer', () => {
     const editor = new TravenEditor({
       element: container,
       initialValue: '<Image src="https://example.com/pic.jpg" align="right" size="medium" />',
@@ -440,10 +440,10 @@ describe('ImageShortcode', () => {
       element: container,
       initialValue: '<Image src="https://example.com/pic.jpg" align="center" size="large" caption="WYSIWYM check" />\nSome text here',
     });
-    // Set selection cursor to the very end of the document, outside the shortcode
+    // Set selection cursor to the very end of the document, outside the tag
     editor.setSelection(editor.getValue().length, editor.getValue().length);
     
-    // Check if the shortcode container widget is rendered
+    // Check if the MDX widget is rendered
     const widgetEl = container.querySelector('.cm-wysiwym-image-container');
     expect(widgetEl).not.toBeNull();
     expect(widgetEl.classList.contains('align-center')).toBe(true);
@@ -453,7 +453,7 @@ describe('ImageShortcode', () => {
     const badge = widgetEl.querySelector('.tag-name');
     expect(badge).toBeNull();
     
-    // Native tooltip contains the raw shortcode
+    // Native tooltip contains the raw MDX tag
     expect(widgetEl.title).toBe('<Image src="https://example.com/pic.jpg" align="center" size="large" caption="WYSIWYM check" />');
     
     const captionEl = widgetEl.querySelector('.meta-caption');
@@ -461,7 +461,7 @@ describe('ImageShortcode', () => {
     expect(captionEl.textContent).toBe('WYSIWYM check');
   });
 
-  it('compiles shortcode with explicit alt, class and custom attributes, and defaults align and size', () => {
+  it('compiles Image tag with explicit alt, class and custom attributes, and defaults align and size', () => {
     const editor = new TravenEditor({
       element: container,
       initialValue: '<Image src="https://example.com/pic.jpg" alt="Custom Alt" class="my-custom-class shadow-md" />',
@@ -589,7 +589,7 @@ describe('ImageShortcode', () => {
     const saveBtn = modal.querySelector('.traven-modal-btn.btn-primary');
     saveBtn.click();
 
-    // Verify value is updated in editor to advanced shortcode format since we toggled it
+    // Verify value is updated in editor to advanced <Image /> format since we toggled it
     expect(editor.getValue()).toBe('<Image src="https://example.com/pic.jpg" align="left" alt="New Alt Text" />\nSome text');
   });
 
@@ -825,7 +825,7 @@ describe('VideoShortcode', () => {
     document.body.removeChild(container);
   });
 
-  it('compiles youtube video shortcode to proper iframe in fallback renderer', () => {
+  it('compiles youtube Video tag to proper iframe in fallback renderer', () => {
     const editor = new TravenEditor({
       element: container,
       initialValue: '<Video src="https://www.youtube.com/watch?v=dQw4w9WgXcQ" align="right" size="medium" caption="Never Gonna Give You Up" />',
@@ -836,7 +836,7 @@ describe('VideoShortcode', () => {
     expect(html).toContain('<figcaption class="traven-video-caption">Never Gonna Give You Up</figcaption>');
   });
 
-  it('compiles vimeo video shortcode to proper iframe in fallback renderer', () => {
+  it('compiles vimeo Video tag to proper iframe in fallback renderer', () => {
     const editor = new TravenEditor({
       element: container,
       initialValue: '<Video src="https://vimeo.com/12345678" align="left" size="small" caption="Vimeo video" />',
@@ -846,7 +846,7 @@ describe('VideoShortcode', () => {
     expect(html).toContain('<iframe src="https://player.vimeo.com/video/12345678"');
   });
 
-  it('renders youtube shortcode alias widget platform as YouTube', () => {
+  it('renders youtube Video widget platform as YouTube', () => {
     const editor = new TravenEditor({
       element: container,
       initialValue: '<Video src="https://www.youtube.com/watch?v=dQw4w9WgXcQ" />\nText',
@@ -885,7 +885,7 @@ describe('VideoShortcode', () => {
     expect(metaEl.textContent).toContain('Video check');
   });
 
-  it('handles cursor delimiter skipping for video shortcode', () => {
+  it('handles cursor delimiter skipping for Video tags', () => {
     const editor = new TravenEditor({
       element: container,
       initialValue: '<Video src="https://example.com/movie.mp4" />',
@@ -944,7 +944,7 @@ describe('VideoShortcode', () => {
     expect(editor.getValue()).toBe('<Video src="https://example.com/movie.mp4" align="left" caption="Updated movie" />\nSome text');
   });
 
-  it('neutralizes dangerous protocols like javascript: in video shortcode', () => {
+  it('neutralizes dangerous protocols like javascript: in Video tags', () => {
     const editor = new TravenEditor({
       element: container,
       initialValue: '<Video src="javascript:alert(1)" caption="Video XSS" />',
@@ -994,7 +994,7 @@ describe('AudioShortcode', () => {
     expect(metaEl.textContent).toContain('Audio check');
   });
 
-  it('handles cursor delimiter skipping for audio shortcode', () => {
+  it('handles cursor delimiter skipping for Audio tags', () => {
     const editor = new TravenEditor({
       element: container,
       initialValue: '<Audio src="https://example.com/song.mp3" />',
@@ -1106,10 +1106,10 @@ describe('ComponentShortcode', () => {
       element: container,
       initialValue: '<Quote author="Alice">Widget quote</Quote>\nSome text here',
     });
-    // Set selection cursor to the very end of the document, outside the shortcode
+    // Set selection cursor to the very end of the document, outside the tag
     editor.setSelection(editor.getValue().length, editor.getValue().length);
     
-    // Check if the shortcode container widget is rendered
+    // Check if the MDX widget is rendered
     const widgetEl = container.querySelector('.cm-wysiwym-component');
     expect(widgetEl).not.toBeNull();
     expect(widgetEl.classList.contains('component-blockquote')).toBe(true);
@@ -1198,11 +1198,11 @@ describe('ComponentShortcode', () => {
 
     const modal = document.querySelector('.traven-modal-overlay');
     expect(modal).not.toBeNull();
-    const tabBtn = modal.querySelector('[data-tab="shortcodes"]');
+    const tabBtn = modal.querySelector('[data-tab="components"]');
     expect(tabBtn).not.toBeNull();
     expect(tabBtn.textContent).toBe('Components');
 
-    const tab = modal.querySelector('#help-tab-shortcodes');
+    const tab = modal.querySelector('#help-tab-components');
     expect(tab).not.toBeNull();
     expect(tab.textContent).toContain('<Image');
     expect(tab.textContent).toContain('<Callout');

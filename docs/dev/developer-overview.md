@@ -30,7 +30,7 @@ Key architectural consequences:
 - **Flat-string document model.** The document is a single string in CM6's `EditorState`. There is no parse-to-AST-then-serialize-back cycle. Traven decorates tokens in place to hide/show Markdown syntax; it never roundtrips through an intermediate representation.
 - **Virtual viewport rendering.** Only the visible portion of the document is mounted to the DOM. This is what lets Traven handle 10,000+ line files without cursor stutter or input lag.
 - **Industrial-grade editor state.** Native undo/redo history, precise cursor and selection tracking, and robust IME support for multilingual input come from CM6 for free.
-- **Decoupled update pipeline.** Formatting markers, checklist states, and shortcode widgets run on CM6's transaction pipeline, so decorative updates don't fight document edits.
+- **Decoupled update pipeline.** Formatting markers, checklist states, and MDX component widgets run on CM6's transaction pipeline, so decorative updates don't fight document edits.
 
 ### Build & packaging
 
@@ -129,7 +129,7 @@ const editor = new TravenEditor(options);
 | `readOnly` | `boolean` | `false` | Read-only for both panes. |
 | `keybindings` | `object` | `{}` | Override default tool keybindings (e.g. `{ bold: "Ctrl-Shift-b" }`). |
 | `katex` | `boolean \| string \| object` | `false` | `false` = use preloaded `window.katex`; `true` = load from jsDelivr; `string`/`object` = custom self-hosted paths. |
-| `components` | `Array<string \| object>` | *(presets)* | Custom component schemas for the shortcode system. |
+| `components` | `Array<string \| object>` | *(presets)* | Custom MDX component schemas for the Insert Component modal. |
 | `componentsUrl` | `string \| boolean` | `"assets/components.json"` | URL to load component schemas from, or `false` to disable. |
 | `codeLanguages` | `Array` | `null` | CM6 `LanguageDescription[]` for fenced-block syntax highlighting. |
 | `autoLoadStyles` | `boolean` | `true` | Auto-inject core CSS. Set `false` for strict CSP; you ship the stylesheet yourself. |
@@ -276,7 +276,7 @@ new TravenEditor({
 });
 ```
 
-…which produces parseable shortcodes like `[component name="callout" type="warning"]…[/component]` that your backend can render safely.
+…which produces parseable MDX like `<Callout type="warning">…</Callout>` that your backend can render safely.
 
 ### `registerRenderer()` — custom HTML output
 

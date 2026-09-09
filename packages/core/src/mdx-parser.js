@@ -245,6 +245,12 @@ function findMatchingCloseInline(cx, from, tagName) {
   return null;
 }
 
+/**
+ * Lezer MarkdownConfig for capitalized MDX tags (`<[A-Z]\w+>`).
+ * Self-closing tags become `MdxMediaTag`; paired tags become `MdxContainerTag`
+ * (`MdxContainerOpen` / `MdxContainerBody` / `MdxContainerClose`).
+ * Lowercase HTML (`<video>`, `<audio>`, `<image>`) is left to CommonMark.
+ */
 export const MdxComponents = {
   defineNodes: [
     { name: "MdxMediaTag" },

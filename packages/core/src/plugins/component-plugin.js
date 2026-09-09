@@ -24,6 +24,7 @@ export function normalizeComponentName(attrs) {
   return tag || "blockquote";
 }
 
+/** Editor widget for `<Image />`. DOM class: `.cm-wysiwym-image-container`. */
 export class ImageShortcodeWidget extends WidgetType {
   constructor(attrs, nodeFrom, rawText) {
     super();
@@ -85,7 +86,7 @@ export class ImageShortcodeWidget extends WidgetType {
 
     const img = document.createElement("img");
     img.src = src || "data:image/svg+xml;charset=utf-8,%3Csvg xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg' viewBox%3D'0 0 100 100'%3E%3Crect width%3D'100' height%3D'100' fill%3D'%23eee'%2F%3E%3Ctext x%3D'50%25' y%3D'50%25' dominant-baseline%3D'middle' text-anchor%3D'middle' font-family%3D'sans-serif' font-size%3D'10' fill%3D'%23999'%3ENo Image%3C%2Ftext%3E%3C%2Fsvg%3E";
-    img.alt = alt || caption || "Image shortcode";
+    img.alt = alt || caption || "Image";
     img.draggable = false;
     
     img.onerror = () => {
@@ -149,6 +150,7 @@ export class ImageShortcodeWidget extends WidgetType {
   ignoreEvent() { return false; }
 }
 
+/** Editor widget for `<Video />`. DOM class: `.cm-wysiwym-video-container`. */
 export class VideoShortcodeWidget extends WidgetType {
   constructor(attrs, nodeFrom, rawText) {
     super();
@@ -261,6 +263,7 @@ export class VideoShortcodeWidget extends WidgetType {
   ignoreEvent() { return false; }
 }
 
+/** Editor widget for `<Audio />`. DOM class: `.cm-wysiwym-audio-container`. */
 export class AudioShortcodeWidget extends WidgetType {
   constructor(attrs, nodeFrom, rawText) {
     super();
@@ -365,6 +368,7 @@ export class AudioShortcodeWidget extends WidgetType {
   ignoreEvent() { return false; }
 }
 
+/** Editor widget for `<Quote>`, `<Callout>`, `<Component>`, and other paired tags. DOM class: `.cm-wysiwym-component`. */
 export class ComponentShortcodeWidget extends WidgetType {
   constructor(attrs, nodeFrom, bodyText, rawText) {
     super();
@@ -502,6 +506,7 @@ export class ComponentShortcodeWidget extends WidgetType {
   ignoreEvent() { return false; }
 }
 
+/** Editor widget for `<Figure>`. DOM class: `.cm-wysiwym-figure`. */
 export class FigureShortcodeWidget extends WidgetType {
   constructor(attrs, nodeFrom, bodyText, rawText) {
     super();
@@ -706,6 +711,11 @@ function mountContainerWidget(ctx, from, to, tagName, attrs, bodyText, rawText) 
   });
 }
 
+/**
+ * WYSIWYM folding for capitalized MDX tags (`<Image />`, `<Quote>`, …).
+ * Widget DOM classes use `cm-wysiwym-*-container` / `cm-wysiwym-component`;
+ * JS class names keep the historical `*ShortcodeWidget` identifiers.
+ */
 export class ComponentPlugin extends TravenPlugin {
   name = "component";
   requiredNodes = ["MdxMediaTag", "MdxContainerTag", "MdxContainerOpen", "MdxContainerClose"];

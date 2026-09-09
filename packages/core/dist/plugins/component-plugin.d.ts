@@ -3,6 +3,7 @@
  * @returns {string}
  */
 export function normalizeComponentName(attrs: Record<string, string>): string;
+/** Editor widget for `<Image />`. DOM class: `.cm-wysiwym-image-container`. */
 export class ImageShortcodeWidget extends WidgetType {
     constructor(attrs: any, nodeFrom: any, rawText: any);
     attrs: any;
@@ -12,6 +13,7 @@ export class ImageShortcodeWidget extends WidgetType {
     eq(other: any): boolean;
     ignoreEvent(): boolean;
 }
+/** Editor widget for `<Video />`. DOM class: `.cm-wysiwym-video-container`. */
 export class VideoShortcodeWidget extends WidgetType {
     constructor(attrs: any, nodeFrom: any, rawText: any);
     attrs: any;
@@ -21,6 +23,7 @@ export class VideoShortcodeWidget extends WidgetType {
     eq(other: any): boolean;
     ignoreEvent(): boolean;
 }
+/** Editor widget for `<Audio />`. DOM class: `.cm-wysiwym-audio-container`. */
 export class AudioShortcodeWidget extends WidgetType {
     constructor(attrs: any, nodeFrom: any, rawText: any);
     attrs: any;
@@ -30,6 +33,7 @@ export class AudioShortcodeWidget extends WidgetType {
     eq(other: any): boolean;
     ignoreEvent(): boolean;
 }
+/** Editor widget for `<Quote>`, `<Callout>`, `<Component>`, and other paired tags. DOM class: `.cm-wysiwym-component`. */
 export class ComponentShortcodeWidget extends WidgetType {
     constructor(attrs: any, nodeFrom: any, bodyText: any, rawText: any);
     attrs: any;
@@ -40,6 +44,7 @@ export class ComponentShortcodeWidget extends WidgetType {
     eq(other: any): boolean;
     ignoreEvent(): boolean;
 }
+/** Editor widget for `<Figure>`. DOM class: `.cm-wysiwym-figure`. */
 export class FigureShortcodeWidget extends WidgetType {
     constructor(attrs: any, nodeFrom: any, bodyText: any, rawText: any);
     attrs: any;
@@ -50,6 +55,11 @@ export class FigureShortcodeWidget extends WidgetType {
     eq(other: any): boolean;
     ignoreEvent(): boolean;
 }
+/**
+ * WYSIWYM folding for capitalized MDX tags (`<Image />`, `<Quote>`, …).
+ * Widget DOM classes use `cm-wysiwym-*-container` / `cm-wysiwym-component`;
+ * JS class names keep the historical `*ShortcodeWidget` identifiers.
+ */
 export class ComponentPlugin extends TravenPlugin {
     requiredNodes: string[];
     /**

@@ -65,7 +65,7 @@ traven/
 │   │   ├── tools.js    # Built-in toolbar tool definitions
 │   │   ├── toolbar.js  # Toolbar state and layout manager
 │   │   └── modal-*.js  # Modals for links, tables, images, video, etc.
-│   ├── *parser.js      # Parser/compilers for shortcodes (image, video, math, etc.)
+│   ├── mdx-parser.js   # Capitalized MDX tag tokenizer (<Image />, <Quote>, …)
 │   ├── delimiter-skip.js # CodeMirror syntax delimiter collapsing / skipping logic
 │   └── style.css       # Core structural layout CSS
 ├── tests/              # Vitest suite for unit and integration testing

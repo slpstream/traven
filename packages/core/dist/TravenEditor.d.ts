@@ -25,8 +25,8 @@ export const DEFAULT_TOOLBAR: string[];
  * @property {function(string): void} [onSave] - Callback fired on manual save command (Cmd+S / Ctrl+S).
  * @property {function(File): Promise<string>} [onUploadImage] - Callback handling image uploads.
  * @property {function(): Promise<{url: string, alt?: string, caption?: string}|null>} [onPickImage] - Optional host callback to pick an existing image from the host media library. When set, the Insert/Edit Image modal shows a "Choose from library" control. Resolve with `{ url, alt?, caption? }` or `null` if cancelled.
- * @property {function(string): Promise<{title: string, url: string, slug?: string}[]>} [onSuggestLinks] - Optional host callback for link-modal autocomplete. When set, typing in the URL field requests suggestions (e.g. site pages). Hosts that omit it keep the classic text+URL modal.
- * @property {{value: string, label: string}[]} [imageAspectOptions] - Optional host-declared aspect choices for the Edit/Insert Image modal (e.g. theme scrapbook crops). When set and non-empty, the advanced image modal shows an Aspect pill row; selected values are managed as class tokens on `[image class="…"]`. Omit or pass [] to leave the modal unchanged.
+ * @property {function(string): Promise<{title: string, url: string, slug?: string}[]>} [onSuggestLinks] - Optional host callback for Insert Link modal autocomplete. When `@freedomware/traven-expand-embed` is loaded, the same handler also powers Expand/Embed slug typeahead and in-editor `[[` wikilink completion. Hosts that omit it keep the classic text+URL modal.
+ * @property {{value: string, label: string}[]} [imageAspectOptions] - Optional host-declared aspect choices for the Edit/Insert Image modal (e.g. theme scrapbook crops). When set and non-empty, the advanced image modal shows an Aspect pill row; selected values are managed as class tokens on `<Image class="…" />`. Omit or pass [] to leave the modal unchanged.
  * @property {function(string): Promise<{title: string, level?: number}[]>} [onListHeadings] - Optional host callback for Expand/Embed heading picker: given a post/page slug, return section headings. When set, the expand-embed modal uses a dropdown instead of free-text.
  * @property {function(string): Promise<{summary?: string|null, deck?: string|null, headings: {title: string, level?: number}[]}>} [onListExpandTargets] - Optional richer Expand/Embed target picker: return frontmatter summary and/or deck (if any) plus section headings. When set, the expand-embed modal offers Whole post | Summary | Deck | sections.
  * @property {import("./plugins/TravenPlugin.js").TravenPlugin[]} [plugins] - Additional TravenPlugin instances registered at init (grammar, decorations, keymap, extensions, HTML render). Core built-ins always load; host plugins are appended.
@@ -469,7 +469,7 @@ export type TravenOptions = {
         caption?: string;
     } | null>;
     /**
-     * - Optional host callback for link-modal autocomplete. When set, typing in the URL field requests suggestions (e.g. site pages). Hosts that omit it keep the classic text+URL modal.
+     * - Optional host callback for Insert Link modal autocomplete. When `@freedomware/traven-expand-embed` is loaded, the same handler also powers Expand/Embed slug typeahead and in-editor `[[` wikilink completion. Hosts that omit it keep the classic text+URL modal.
      */
     onSuggestLinks?: (arg0: string) => Promise<{
         title: string;
@@ -477,7 +477,7 @@ export type TravenOptions = {
         slug?: string;
     }[]>;
     /**
-     * - Optional host-declared aspect choices for the Edit/Insert Image modal (e.g. theme scrapbook crops). When set and non-empty, the advanced image modal shows an Aspect pill row; selected values are managed as class tokens on `[image class="…"]`. Omit or pass [] to leave the modal unchanged.
+     * - Optional host-declared aspect choices for the Edit/Insert Image modal (e.g. theme scrapbook crops). When set and non-empty, the advanced image modal shows an Aspect pill row; selected values are managed as class tokens on `<Image class="…" />`. Omit or pass [] to leave the modal unchanged.
      */
     imageAspectOptions?: {
         value: string;

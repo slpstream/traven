@@ -1,3 +1,8 @@
+/**
+ * `@freedomware/traven-expand-embed` — wikilinks for internal links and transclusion.
+ * `[[slug]]` / `[[slug|Label]]` (link), `[[!slug]]` (embed), `[[>slug]]` (expand).
+ * `ExpandEmbedShortcode`, `parseExpandEmbedAttrs`, and `buildExpandEmbedShortcode` are compatibility aliases.
+ */
 export {
   ExpandEmbedPlugin,
   Wikilink,

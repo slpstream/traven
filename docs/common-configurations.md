@@ -6,7 +6,7 @@ Ready-made configurations for common use cases. Pick the one closest to your sit
 
 ## What's Included in the Bundle vs. What's Optional
 
-Traven's distribution bundle is intentionally lean. The compiled `traven.js` includes CodeMirror 6, the Vim emulation module, the toolbar system, and the shortcode parsers. The compiled `traven.css` includes `skin-starter.css` and `toolbar-default.css`. That's everything you need for a fully working editor.
+Traven's distribution bundle is intentionally lean. The compiled `traven.js` includes CodeMirror 6, the Vim emulation module, the toolbar system, and the MDX / Markdown parsers. The compiled `traven.css` includes `skin-starter.css` and `toolbar-default.css`. That's everything you need for a fully working editor.
 
 However, the following features are **not in the bundle** and must be loaded explicitly by your page if you want them:
 
@@ -318,7 +318,7 @@ This is a **WYSIWYM editor** — formatting appears as you type.
 - **Markdown**: Raw source with line numbers
 - **Preview**: Rendered HTML output
 
-> Blockquotes, code blocks, tables, and shortcodes all render in the preview pane.`,
+> Blockquotes, code blocks, tables, and MDX components all render in the preview pane.`,
       toolbar: DEFAULT_TOOLBAR,
       katex: true,
       theme: "light"

@@ -12,6 +12,7 @@ export { FrontmatterPlugin } from "./frontmatter-plugin.js";
 export { MathPlugin } from "./math-plugin.js";
 export { MermaidPlugin } from "./mermaid-plugin.js";
 export { TablePlugin } from "./table-plugin.js";
+/** `ShortcodePlugin` is a compatibility alias for {@link ComponentPlugin}. */
 export { ComponentPlugin, ComponentPlugin as ShortcodePlugin } from "./component-plugin.js";
 export { HTMLPlugin } from "./html-plugin.js";
 

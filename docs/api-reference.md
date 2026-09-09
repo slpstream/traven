@@ -288,6 +288,16 @@ Scans the specified container element and renders any uninitialized Mermaid diag
 
 ---
 
+## MDX components
+
+Toolbar insert modals and the default renderer emit capitalized tags (`<Image />`, `<Video />`, `<Audio />`, `<Figure>`, `<Quote>`, `<Callout>`, `<Component>`). Only `<[A-Z]\w+>` is an MDX component; lowercase `<video>` / `<audio>` / `<image>` stay HTML. Standard Markdown `![alt](src)` remains the non-advanced image path.
+
+`onSuggestLinks` also drives in-editor `[[` completion when `@freedomware/traven-expand-embed` is loaded. Expand/Embed insert saves `[[>slug]]` / `[[!slug]]` (optional `#Heading`, `^summary` / `^deck`, `|Label`).
+
+Skin authors: preview and widget CSS class names no longer contain `shortcode` (`.traven-image`, `.cm-wysiwym-image-container`, `.widget-meta`, …). JS identifiers `ImageShortcodeWidget` and the `ShortcodePlugin` export alias are unchanged. See [Theme Development](dev/theme-development.md#3-the-selector-reference) and [MDX Components](shortcodes.md).
+
+---
+
 ## Standalone Markdown Compiler API
 
 Traven provides standalone utilities for compiling Markdown directly to HTML outside of the editor environment.

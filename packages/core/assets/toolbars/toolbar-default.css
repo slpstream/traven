@@ -1083,7 +1083,7 @@ button.btn-snippet {
   display: none !important;
 }
 
-/* .btn-component — Insert Component shortcode button.
+/* .btn-component — Insert Component button.
    No custom rules needed; .toolbar-btn defaults apply.
    To hide this button, use: .toolbar-btn.btn-component { display: none; } */
 

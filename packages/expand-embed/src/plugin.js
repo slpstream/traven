@@ -129,7 +129,8 @@ class ExpandEmbedWidget extends WidgetType {
 }
 
 /**
- * Host-agnostic wikilink / expand / embed plugin.
+ * Host-agnostic wikilink / expand / embed plugin (`[[slug]]`, `[[!slug]]`, `[[>slug]]`).
+ * Registers Lezer `Wikilink` grammar, WYSIWYM chips, and in-editor `[[` typeahead via `onSuggestLinks`.
  */
 export class ExpandEmbedPlugin extends TravenPlugin {
   name = "expand-embed";
@@ -286,8 +287,10 @@ function escapeAttr(text) {
 
 export {
   Wikilink,
+  /** @deprecated Use {@link Wikilink}. */
   Wikilink as ExpandEmbedShortcode,
   parseWikilinkAttrs,
+  /** @deprecated Use {@link parseWikilinkAttrs}. */
   parseWikilinkAttrs as parseExpandEmbedAttrs,
   expandEmbedLabel,
 };

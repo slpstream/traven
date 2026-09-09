@@ -155,3 +155,7 @@ Developers can extend Traven with additional capitalized MDX tags using its deco
 3.  **Themes (`packages/core/assets/skins/*.css`)**: Visual tokens for classes like `.cm-wysiwym-component`.
 
 See [Building Custom MDX Components](dev/building-custom-shortcodes.md) for the extension blueprint.
+
+## Preview HTML classes
+
+Compiled preview markup uses `.traven-image`, `.traven-video`, `.traven-audio`, `.traven-figure`, and `.traven-component-*` (plus alignment/size modifiers). Editor widgets use `.cm-wysiwym-image-container`, `.cm-wysiwym-video-container`, `.cm-wysiwym-audio-container`, `.cm-wysiwym-component`, `.cm-wysiwym-figure`, and `.widget-meta`. These names no longer contain `shortcode`. The full selector list is in [Theme Development](dev/theme-development.md#3-the-selector-reference).

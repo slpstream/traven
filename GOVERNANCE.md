@@ -2,7 +2,7 @@
 
 This document states what Traven is and how it will be run. It exists so that anyone building on Traven can know exactly what they are dealing with.
 
-**What Traven is**: Traven is a free, open-source tool. It was built to fill a gap for a full-featured, framework-agnostic Markdown editor in the browser with WYSIWYG/WYSIWYM. It is licensed under MIT. You can drop it in anywhere you need to edit Markdown as rich text and it just works. There are lots of ways to customize how the editor looks and behaves with toolbar configurations, themes, typefaces, and the ability to extend with custom shortcodes to fill pretty much any need you can imagine from a powerful editor. It works great on long documents and is not brittle. 
+**What Traven is**: Traven is a free, open-source tool. It was built to fill a gap for a full-featured, framework-agnostic Markdown editor in the browser with WYSIWYG/WYSIWYM. It is licensed under MIT. You can drop it in anywhere you need to edit Markdown as rich text and it just works. There are lots of ways to customize how the editor looks and behaves with toolbar configurations, themes, typefaces, and the ability to extend with custom MDX components to fill pretty much any need you can imagine from a powerful editor. It works great on long documents and is not brittle. 
 
 **What Traven is not**: Traven is not a paid product, SaaS, startup, platform, or service requiring API keys.
 

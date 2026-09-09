@@ -294,6 +294,11 @@ export function defaultNodeRenderer(node, childrenHtml, docText) {
   }
 }
 
+/**
+ * Extract attributes from a raw MDX/HTML tag string (historical name; wraps {@link parseAttrMap}).
+ * @param {string} raw
+ * @returns {Record<string, string>}
+ */
 function parseShortcodeAttrs(raw) {
   return parseAttrMap(raw);
 }

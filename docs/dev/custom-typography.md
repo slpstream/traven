@@ -12,7 +12,7 @@ The bundled `skin-starter.css` and the parameterized `skin-custom.css` define th
 
 | Variable | Role | Default Fallback |
 |----------|------|------------------|
-| `--traven-font-display` | Headings, component headers, pullquote shortcodes | System sans-serif stack |
+| `--traven-font-display` | Headings, component headers, pullquotes | System sans-serif stack |
 | `--traven-font-body` | Paragraphs, list items, blockquotes | Georgia / serif stack |
 | `--traven-font-mono` | Inline code, fenced code blocks, YAML frontmatter | System monospace stack |
 

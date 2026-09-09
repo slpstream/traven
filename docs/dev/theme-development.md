@@ -2,7 +2,7 @@
 
 Guide for theme designers, UI/UX designers, and front-end engineers who want to build Traven themes from scratch, customize an existing skin, or ship a Traven-aware theme for a CMS or static site.
 
-Traven's skinning model is intentionally decoupled: themes are **plain CSS files** with no JavaScript and no build step. The editor engine and the shortcode widgets are class-driven, so every visual decision — fonts, colors, borders, spacing, alignment, and dark-mode behavior — lives in your theme. The trade-off is that the WYSIWYM (live) editor and the HTML preview share the same content but use **two different DOM scopes**, and a complete theme must style both.
+Traven's skinning model is intentionally decoupled: themes are **plain CSS files** with no JavaScript and no build step. The editor engine and the MDX component widgets are class-driven, so every visual decision — fonts, colors, borders, spacing, alignment, and dark-mode behavior — lives in your theme. The trade-off is that the WYSIWYM (live) editor and the HTML preview share the same content but use **two different DOM scopes**, and a complete theme must style both.
 
 This document is a comprehensive guide to styling Traven, detailing the side-by-side skin comparisons, the canonical selector reference, a "what every theme must include" QA checklist, and recipes for styling elements in both the editor and preview DOM scopes (including the raw Markdown pane, Vim's fat cursor, scrollbars, and LaTeX math widgets).
 
@@ -138,7 +138,7 @@ The list below covers every selector a complete theme should consider. Anything 
 | `.cm-wysiwym-image-container` | Advanced `<Image />` widget. Same alignment helpers (`.align-left`, etc.) as the preview. |
 | `.cm-wysiwym-image-caption` | Caption text under the legacy image widget. |
 | `.cm-wysiwym-image-container .widget-meta` | The meta row under the advanced Image widget. |
-| `.cm-wysiwym-image-container .meta-badge` | "Tag name" pill (`[IMAGE]`, etc.). Use `.tag-name` for the first badge. |
+| `.cm-wysiwym-image-container .meta-badge` | "Tag name" pill (`IMAGE`, etc.). Use `.tag-name` for the first badge. |
 | `.cm-wysiwym-image-uploading` | Optimistic upload pill (green dashed border). |
 | `.cm-wysiwym-video-container` | `<Video />` widget. |
 | `.cm-wysiwym-video-container .video-placeholder`, `.video-placeholder-icon-wrap`, `.video-placeholder-details`, `.video-placeholder-platform`, `.video-placeholder-url` | Pieces of the video placeholder card. |
@@ -164,6 +164,8 @@ All block widgets have an absolute-positioned icon that appears on hover:
 * `.cm-wysiwym-figure .figure-edit-icon`
 
 Style them like 24 × 24 px round buttons with a subtle border, hidden by `opacity: 0` and shown on `:hover` of the parent.
+
+> **Skin upgrade from ≤ 0.2.28:** widget and preview classes dropped the `shortcode` token. `.cm-wysiwym-image-shortcode-container` → `.cm-wysiwym-image-container` (same for video/audio); `.cm-wysiwym-component-shortcode` → `.cm-wysiwym-component`; `.cm-wysiwym-figure-shortcode` → `.cm-wysiwym-figure`; `.shortcode-meta` → `.widget-meta`; `.traven-image-shortcode` → `.traven-image` (same for video/audio/figure). Markdown `![alt](src)` still uses `.cm-wysiwym-image-widget-container`. JS widget class names (`ImageShortcodeWidget`, `ShortcodePlugin`) are unchanged.
 
 #### Syntax highlighting (optional)
 The CodeMirror Markdown highlighter tags tokens with classes in two parallel namespaces: `tok-*` and `cmt-*`. Style both for safety. The complete list is short:
@@ -861,13 +863,13 @@ The minimum viable skin is short:
 .traven-preview a    { color: #8a5a2c; text-decoration: underline; }
 .traven-preview hr   { border: none; border-top: 1px solid #e6dfd1; margin: 24px 0; }
 .traven-preview mark { background-color: rgba(247, 200, 80, 0.45); border-radius: 3px; padding: 1px 4px; }
-/* …and one block per preview shortcode, mirroring the editor rules. */
+/* …and one block per preview MDX component, mirroring the editor rules. */
 
 /* 12. Dark mode — re-declare each rule under .cm-editor.cm-wysiwym-dark
    and .traven-preview.cm-wysiwym-dark, or use CSS variables (see §7.2). */
 ```
 
-That is the entire skeleton. A real theme fills in the remaining shortcodes, the bullet list marker, the frontmatter / table styles, the syntax highlighting tokens, the modal overlay overrides, and the dark variants.
+That is the entire skeleton. A real theme fills in the remaining MDX components, the bullet list marker, the frontmatter / table styles, the syntax highlighting tokens, the modal overlay overrides, and the dark variants.
 
 ### 8.3 Theme checklist
 Use this when reviewing a finished theme before publishing it.
@@ -949,7 +951,7 @@ If you just want to recolor or restyle a few elements without forking the file:
    }
    ```
 
-4. If you need a custom alignment or size (say `size-hero`), add the new utility classes to your overrides and add the corresponding attribute to the toolbar modal for that shortcode.
+4. If you need a custom alignment or size (say `size-hero`), add the new utility classes to your overrides and add the corresponding attribute to the toolbar modal for that component.
 
 ---
 
@@ -1004,8 +1006,8 @@ document.fonts.ready.then(() => {
 You can sanity-check a finished skin without writing tests:
 
 1. **Static check.** Open the file and grep for the rules in the [§8.3](#83-theme-checklist) checklist. Any miss is a bug.
-2. **Visual check.** Load the theme in one of the demos (`demo-inline.php`, `demo-form.php`, `demo-hybrid.php`, `demo-unified.php`, `demo-editorial.php`). The default dropdown at the top will list the new file automatically. Toggle dark mode, scroll a long document, and visit each shortcode.
-3. **Cursor accuracy.** Click around headings, blockquotes, and the shortcode widgets. The cursor should land precisely on the character under the mouse. If it doesn't, you almost certainly introduced a vertical margin or a `float` somewhere — see [§4](#4-codemirror-6-layout-engine-rules).
+2. **Visual check.** Load the theme in one of the demos (`demo-inline.php`, `demo-form.php`, `demo-hybrid.php`, `demo-unified.php`, `demo-editorial.php`). The default dropdown at the top will list the new file automatically. Toggle dark mode, scroll a long document, and visit each MDX component.
+3. **Cursor accuracy.** Click around headings, blockquotes, and the MDX component widgets. The cursor should land precisely on the character under the mouse. If it doesn't, you almost certainly introduced a vertical margin or a `float` somewhere — see [§4](#4-codemirror-6-layout-engine-rules).
 4. **Preview parity.** Toggle the preview tab (or open the split-pane demo) and compare. Headings should align; first-child headings should not jump; blockquote spacing should match the editor.
 5. **Build pipeline.** The theme is referenced by `<link>` tags in the demo pages only. The `dist/traven.css` bundle (built from `src/style.css`) provides **only** the dark-mode base styles and the math / Vim / scrollbar rules; the live themes live entirely in `packages/core/assets/skins/`. So you can iterate on a theme without ever running `npm run build`.
 

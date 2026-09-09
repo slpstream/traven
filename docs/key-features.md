@@ -23,7 +23,7 @@ Traven integrates natively with standard web workflows:
 Unlike editors built on top of standard textareas or simple contenteditable wrappers that degrade under load, Traven is powered by a customized CodeMirror 6 engine:
 
 *   **Virtual Viewport Rendering:** CodeMirror only mounts the visible portion of the document into the DOM, allowing Traven to handle files with **10,000+ lines of text** with zero input lag, cursor stuttering, or browser freezing.
-*   **Smart Rendering Pipeline:** Updates to formatting markers, checklist states, and shortcode widgets are decoupled and run on CodeMirror's fast state transaction pipeline.
+*   **Smart Rendering Pipeline:** Updates to formatting markers, checklist states, and MDX component widgets are decoupled and run on CodeMirror's fast state transaction pipeline.
 *   **Robust Editor State:** Leverages CodeMirror's industrial-grade document representation, guaranteeing flawless native undo/redo history, precise cursor and selection tracking, and robust support for international Input Method Editors (IMEs) for multilingual text input.
 
 ---
@@ -70,7 +70,7 @@ Accessibility is built directly into Traven’s core:
 
 *   **Vim Emulation:** Users can toggle Vim normal, visual, and insert mode bindings dynamically at runtime.
 *   **Bi-directional Syncing:** Synchronizes cursor positions and edit history across multi-pane split-screen configurations without infinite recursive event loops.
-*   **Custom Renderers:** Allows developers to register custom compilation callbacks for specific tags and shortcodes, making it easy to adapt markdown exports to any CMS database scheme.
+*   **Custom Renderers:** Allows developers to register custom compilation callbacks for specific tags, making it easy to adapt markdown exports to any CMS database scheme.
 *   **LaTeX KaTeX Integration:** Includes native folding and KaTeX rendering for math equations, both in the visual editor and the fallback HTML compile modes.
 *   **Zero Peer Dependencies:** Bundled cleanly as a standalone ES module and stylesheet, requiring zero external bundlers or node_modules to run.
 

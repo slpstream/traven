@@ -17,7 +17,7 @@ export function openHelpModal(editor, triggerBtn) {
   helpContent.innerHTML = `
     <div class="help-tabs">
       <button class="help-tab-btn active" data-tab="markdown">Markdown</button>
-      <button class="help-tab-btn" data-tab="shortcodes">Components</button>
+      <button class="help-tab-btn" data-tab="components">Components</button>
       <button class="help-tab-btn" data-tab="shortcuts">Shortcuts</button>
     </div>
     <div class="help-tab-contents">
@@ -53,7 +53,7 @@ export function openHelpModal(editor, triggerBtn) {
       </div>
 
       <!-- Components Content -->
-      <div class="help-tab-content" id="help-tab-shortcodes" style="display: none;">
+      <div class="help-tab-content" id="help-tab-components" style="display: none;">
         <div class="help-grid">
           <div class="help-section-title">Callouts & Quotes</div>
           <div class="help-row"><span class="help-key">Callout Info</span><span class="help-value">&lt;Callout type="info" title="Title"&gt;text&lt;/Callout&gt;</span></div>

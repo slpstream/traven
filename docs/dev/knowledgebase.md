@@ -54,7 +54,7 @@ When hiding elements or editing syntax markers (like `**` or `_`), CodeMirror mu
 * **Fix:** When sorting decorations before building, use a multi-tiered comparator that compares `from` first, then `deco.startSide` (defaulting to 0 if not present), and finally `to` descending (larger range first).
 
 ### E. Custom Lezer Inline Parsers (Delimiter Resolution)
-* **API Pattern**: To implement custom inline formatting or shortcode wrappers (like `==highlight==`), utilize Lezer's `cx.addDelimiter` API rather than manually scanning/splitting strings.
+* **API Pattern**: To implement custom inline formatting (like `==highlight==`), utilize Lezer's `cx.addDelimiter` API rather than manually scanning/splitting strings.
 * **Automatic Balancing**: Register a delimiter object (e.g., `{ resolve: "Highlight", mark: "HighlightMark" }`). Lezer's engine will automatically match opening/closing boundaries, parse inner content recursively, and wrap the matched region in the `resolve` node type.
 * **Boundary Guards**: Always check for consecutive characters to avoid false matches (e.g. check `cx.char(pos + 2) == 61` to avoid parsing `===` as highlight delimiter `==`).
 * **Flanking Rules**: For delimiter activation to behave predictably at word boundaries and punctuation, implement flanking validation (checking if the characters immediately preceding and succeeding the delimiter match whitespace or Unicode punctuation).
@@ -405,7 +405,7 @@ When converting or adapting a normal CSS stylesheet from a standard HTML website
   3. Ensure the Preview Mode preformatted block (`.traven-preview pre`) has matching margins (`margin-top: 1.5em; margin-bottom: 1.5em;`) to maintain proportional layout parity.
 
 ### E. Editor Block Widgets and Floats (Coordinate Mapping Errors)
-* **Problem**: Block replacement decorations (`Decoration.replace({ widget: ..., block: true })`) like the image shortcode widget will completely throw off cursor positioning for any content below them if CSS `float: left` or `float: right` or vertical `margin` is applied in the editor.
+* **Problem**: Block replacement decorations (`Decoration.replace({ widget: ..., block: true })`) like the MDX Image widget will completely throw off cursor positioning for any content below them if CSS `float: left` or `float: right` or vertical `margin` is applied in the editor.
   - Floats remove elements from the normal document flow. CodeMirror's coordinate mapping (`posAtCoords`) expects all blocks to be stacked sequentially. A floated element makes text wrap beside it, which confuses CodeMirror, causing mouse clicks below/beside it to map to the wrong character offsets (typically landing on lines earlier in the document).
   - Vertical margins are not measured by CodeMirror's layout manager and create vertical displacement errors.
 * **Fix**: Never use `float` or vertical `margin` on block widgets in the editor skins.
@@ -414,7 +414,7 @@ When converting or adapting a normal CSS stylesheet from a standard HTML website
   - Floats are still fully supported and recommended in the HTML Preview (`.traven-preview`) stylesheet definitions where CodeMirror coordinate calculations do not apply.
 
 ### F. Font Family Inheritance on Nested Paragraphs (The CSS Cascade Override)
-* **Problem**: `skin-starter.css` (which is bundled inside `dist/traven.css`) defines a high-priority `.traven-preview p { font-family: var(--traven-font-body) !important; }` rule. Because standard blockquotes, blockquote components (`[component="blockquote"]`), and info/warning notice components (`[info]`, `[warning]`) contain nested paragraph (`p`) elements, the nested `p` tags will inherit/use the starter skin's default body typeface (`Georgia` or `var(--traven-font-body)`), completely overriding any custom font-family declared on the parent container elements (such as `skin-editorial`'s `'Goudy Bookletter 1911'`, `skin-modern`'s `'Epunda Slab'`, or other custom skin stacks).
+* **Problem**: `skin-starter.css` (which is bundled inside `dist/traven.css`) defines a high-priority `.traven-preview p { font-family: var(--traven-font-body) !important; }` rule. Because standard blockquotes, `<Quote>` / `<Component name="blockquote">` blocks, and `<Callout type="info">` / `<Callout type="warning">` cards contain nested paragraph (`p`) elements, the nested `p` tags will inherit/use the starter skin's default body typeface (`Georgia` or `var(--traven-font-body)`), completely overriding any custom font-family declared on the parent container elements (such as `skin-editorial`'s `'Goudy Bookletter 1911'`, `skin-modern`'s `'Epunda Slab'`, or other custom skin stacks).
 * **Fix**: When styling custom components, blockquotes, or any notice cards that contain paragraphs in both the editor and preview DOM scopes, target the container element and *all* its descendants (using the universal selector `*`) to apply the skin's custom typography with `!important`:
   ```css
   .cm-wysiwym-component.component-info,
@@ -439,7 +439,7 @@ To protect against URI-based XSS attacks—specifically through Markdown links `
 
 * **Mechanism**: The exported `sanitizeUrl(url)` function normalizes input URLs by resolving HTML entity encodings (e.g. `j&#97;vascript:`) and percent encodings (e.g. `java%0ascript:`). It blocks dangerous URI schemes like `javascript:`, `data:`, and `vbscript:`, replacing them with `about:blank`.
 * **Allowed Schemes**: The function explicitly allows safe protocols (`http:`, `https:`, `mailto:`, `tel:`), relative paths (e.g., `/about`), hashtag anchors (e.g., `#id`), and raw blog slugs (e.g., `my-slug-name`), ensuring users have complete freedom for local and internal routing.
-* **Reusability**: Future features that parse or output links (such as the planned custom `[link]` / `[/link]` shortcode) should import and wrap URLs using `sanitizeUrl`:
+* **Reusability**: Future features that parse or output links (including wikilinks) should import and wrap URLs using `sanitizeUrl`:
   ```javascript
   import { sanitizeUrl } from "./security.js";
   

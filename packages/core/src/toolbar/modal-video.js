@@ -125,7 +125,7 @@ export function openVideoModal(optionsOrEditor, triggerBtn = null) {
     const v = editor.getView();
 
     if (!url) {
-      // If clearing URL during edit, remove the shortcode entirely
+      // If clearing URL during edit, remove the tag entirely
       if (docFrom !== null) {
         const docStr = v.state.doc.toString();
         let idxBefore = docFrom - 1;

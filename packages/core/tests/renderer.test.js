@@ -146,7 +146,7 @@ describe('Traven Renderer Golden Tests', () => {
       expect(render('[Text](https://example.com "Title")')).toContain('<a href="https://example.com" title="Title" target="_blank" rel="noopener noreferrer">Text</a>');
     });
 
-    it('renders standard markdown images as traven image shortcodes by default', () => {
+    it('renders standard markdown images with traven-image classes by default', () => {
       const html = render('![Alt Text](https://example.com/pic.jpg)');
       expect(html).toContain('<img src="https://example.com/pic.jpg"');
       expect(html).toContain('alt="Alt Text"');
@@ -154,29 +154,29 @@ describe('Traven Renderer Golden Tests', () => {
     });
   });
 
-  describe('Shortcodes', () => {
-    it('renders image shortcodes', () => {
+  describe('MDX components', () => {
+    it('renders Image tags', () => {
       const html = render('<Image src="pic.jpg" caption="Caption" align="left" size="small" />');
       expect(html).toContain('<figure class="traven-image-figure align-left size-small">');
       expect(html).toContain('<img src="pic.jpg" alt="Caption" class="traven-image">');
       expect(html).toContain('<figcaption class="traven-image-caption">Caption</figcaption>');
     });
 
-    it('renders video shortcodes', () => {
+    it('renders Video tags', () => {
       const html = render('<Video src="vid.mp4" caption="Video" />');
       expect(html).toContain('<figure class="traven-video-figure align-center size-medium">');
       expect(html).toContain('<video src="vid.mp4" controls class="traven-video"></video>');
       expect(html).toContain('<figcaption class="traven-video-caption">Video</figcaption>');
     });
 
-    it('renders audio shortcodes', () => {
+    it('renders Audio tags', () => {
       const html = render('<Audio src="song.mp3" caption="Audio" />');
       expect(html).toContain('<figure class="traven-audio-figure align-center size-medium">');
       expect(html).toContain('<audio src="song.mp3" controls class="traven-audio"></audio>');
       expect(html).toContain('<figcaption class="traven-audio-caption">Audio</figcaption>');
     });
 
-    it('renders component shortcodes', () => {
+    it('renders Component tags', () => {
       const html = render('<Component id="123" type="cta"></Component>');
       expect(html).toContain('traven-component');
     });
@@ -202,7 +202,7 @@ describe('Traven Renderer Golden Tests', () => {
       expect(html.indexOf('<cite>— Ada, Notes</cite>')).toBeLessThan(html.indexOf('</blockquote>'));
     });
     
-    it('renders figure shortcodes', () => {
+    it('renders Figure tags', () => {
       const html = render('<Figure>\nContent\n</Figure>');
       expect(html).toContain('<figure class="traven-figure align-center">');
       expect(html).toContain('Content');

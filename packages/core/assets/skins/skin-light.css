@@ -528,7 +528,7 @@
     padding: 0 !important;
 }
 
-/* Video shortcode container styling */
+/* Video widget container styling */
 .cm-wysiwym-video-container {
     display: flex;
     flex-direction: column;
@@ -667,7 +667,7 @@
     width: 100%;
 }
 
-/* Audio shortcode container styling */
+/* Audio widget container styling */
 .cm-wysiwym-audio-container {
     display: flex;
     flex-direction: column;
@@ -1469,7 +1469,7 @@
     text-decoration: none;
 }
 
-/* Image shortcode compiled HTML styles in preview */
+/* Image compiled HTML styles in preview */
 .traven-preview img.traven-image,
 .traven-preview figure.traven-image-figure {
     max-width: 100%;
@@ -2484,7 +2484,7 @@ details:not([open]) .component-header {
 }
 
 
-/* Ensure shortcode containers cascade the body typeface to their child elements */
+/* Ensure widget containers cascade the body typeface to their child elements */
 .cm-wysiwym-image-container,
 .cm-wysiwym-video-container,
 .cm-wysiwym-audio-container,

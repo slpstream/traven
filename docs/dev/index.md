@@ -13,7 +13,7 @@ These guides are for developers who want to dig deeper and extend, customize, or
 
 ## Theming & Styling
 
-- **[Theme Development Guide](theme-development.md)** — The complete guide to building or extending a Traven skin from scratch. Covers the two CSS scopes (editor and preview), the full selector reference, CodeMirror 6 layout-engine rules, WYSIWYM/preview parity, shortcode markup for skins, dark mode strategies, a zero-to-working-skin walkthrough, and a validation checklist.
+- **[Theme Development Guide](theme-development.md)** — The complete guide to building or extending a Traven skin from scratch. Covers the two CSS scopes (editor and preview), the full selector reference, CodeMirror 6 layout-engine rules, WYSIWYM/preview parity, MDX component markup for skins, dark mode strategies, a zero-to-working-skin walkthrough, and a validation checklist.
 - **[Custom Typography](custom-typography.md)** — Control heading, body, and code fonts through CSS custom properties (`--traven-font-display`, `--traven-font-body`, `--traven-font-mono`). Covers runtime font switching, Google Fonts integration, local `@font-face`, static overrides, and using the parameterized `skin-custom.css`.
 
 ---

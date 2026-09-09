@@ -1,8 +1,7 @@
 // @ts-check
 
 /**
- * Build a wikilink. When `source` is set, `heading` is omitted
- * (same rule as the legacy shortcode builder).
+ * Build a `[[…]]` wikilink. When `source` is set (`summary` / `deck`), `heading` is omitted.
  *
  * @param {'expand'|'embed'|'link'} mode
  * @param {string} slug
