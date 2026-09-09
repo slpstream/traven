@@ -150,7 +150,7 @@ describe('Traven Renderer Golden Tests', () => {
       const html = render('![Alt Text](https://example.com/pic.jpg)');
       expect(html).toContain('<img src="https://example.com/pic.jpg"');
       expect(html).toContain('alt="Alt Text"');
-      expect(html).toContain('class="traven-image-shortcode align-center size-medium"');
+      expect(html).toContain('class="traven-image align-center size-medium"');
     });
   });
 
@@ -158,14 +158,22 @@ describe('Traven Renderer Golden Tests', () => {
     it('renders image shortcodes', () => {
       const html = render('<Image src="pic.jpg" caption="Caption" align="left" size="small" />');
       expect(html).toContain('<figure class="traven-image-figure align-left size-small">');
-      expect(html).toContain('<img src="pic.jpg" alt="Caption" class="traven-image-shortcode">');
+      expect(html).toContain('<img src="pic.jpg" alt="Caption" class="traven-image">');
       expect(html).toContain('<figcaption class="traven-image-caption">Caption</figcaption>');
     });
 
     it('renders video shortcodes', () => {
       const html = render('<Video src="vid.mp4" caption="Video" />');
       expect(html).toContain('<figure class="traven-video-figure align-center size-medium">');
+      expect(html).toContain('<video src="vid.mp4" controls class="traven-video"></video>');
       expect(html).toContain('<figcaption class="traven-video-caption">Video</figcaption>');
+    });
+
+    it('renders audio shortcodes', () => {
+      const html = render('<Audio src="song.mp3" caption="Audio" />');
+      expect(html).toContain('<figure class="traven-audio-figure align-center size-medium">');
+      expect(html).toContain('<audio src="song.mp3" controls class="traven-audio"></audio>');
+      expect(html).toContain('<figcaption class="traven-audio-caption">Audio</figcaption>');
     });
 
     it('renders component shortcodes', () => {
@@ -196,7 +204,7 @@ describe('Traven Renderer Golden Tests', () => {
     
     it('renders figure shortcodes', () => {
       const html = render('<Figure>\nContent\n</Figure>');
-      expect(html).toContain('<figure class="traven-figure-shortcode align-center">');
+      expect(html).toContain('<figure class="traven-figure align-center">');
       expect(html).toContain('Content');
       expect(html).toContain('</figure>');
     });

@@ -389,7 +389,7 @@ describe('ImageShortcode', () => {
     });
     const html = editor.getContentHtml();
     expect(html).toContain('<figure class="traven-image-figure align-right size-medium">');
-    expect(html).toContain('<img src="https://example.com/pic.jpg" alt="My caption" class="traven-image-shortcode">');
+    expect(html).toContain('<img src="https://example.com/pic.jpg" alt="My caption" class="traven-image">');
     expect(html).toContain('<figcaption class="traven-image-caption">My caption</figcaption>');
   });
 
@@ -401,7 +401,7 @@ describe('ImageShortcode', () => {
     const html = editor.getContentHtml();
     expect(html).toContain('<img src="https://example.com/pic.jpg"');
     expect(html).toContain('alt="Alt Text"');
-    expect(html).toContain('class="traven-image-shortcode align-center size-medium"');
+    expect(html).toContain('class="traven-image align-center size-medium"');
   });
 
   it('handles single quoted and unquoted attributes correctly', () => {
@@ -411,7 +411,7 @@ describe('ImageShortcode', () => {
     });
     const html = editor.getContentHtml();
     expect(html).toContain('<figure class="traven-image-figure align-left size-small">');
-    expect(html).toContain('<img src="https://example.com/pic.jpg" alt="Single quotes" class="traven-image-shortcode">');
+    expect(html).toContain('<img src="https://example.com/pic.jpg" alt="Single quotes" class="traven-image">');
     expect(html).toContain('<figcaption class="traven-image-caption">Single quotes</figcaption>');
   });
 
@@ -432,7 +432,7 @@ describe('ImageShortcode', () => {
     });
     const html = editor.getContentHtml();
     expect(html).not.toContain('<figure');
-    expect(html).toContain('<img src="https://example.com/pic.jpg" alt="" class="traven-image-shortcode align-right size-medium">');
+    expect(html).toContain('<img src="https://example.com/pic.jpg" alt="" class="traven-image align-right size-medium">');
   });
 
   it('renders ImageShortcodeWidget inside WYSIWYM editor when cursor is outside', () => {
@@ -444,7 +444,7 @@ describe('ImageShortcode', () => {
     editor.setSelection(editor.getValue().length, editor.getValue().length);
     
     // Check if the shortcode container widget is rendered
-    const widgetEl = container.querySelector('.cm-wysiwym-image-shortcode-container');
+    const widgetEl = container.querySelector('.cm-wysiwym-image-container');
     expect(widgetEl).not.toBeNull();
     expect(widgetEl.classList.contains('align-center')).toBe(true);
     expect(widgetEl.classList.contains('size-large')).toBe(true);
@@ -469,7 +469,7 @@ describe('ImageShortcode', () => {
     const html = editor.getContentHtml();
     expect(html).toContain('<img src="https://example.com/pic.jpg"');
     expect(html).toContain('alt="Custom Alt"');
-    expect(html).toContain('class="traven-image-shortcode align-center size-medium my-custom-class shadow-md"');
+    expect(html).toContain('class="traven-image align-center size-medium my-custom-class shadow-md"');
   });
 
   it('renders ImageShortcodeWidget with custom class and uploading state inside WYSIWYM', () => {
@@ -479,7 +479,7 @@ describe('ImageShortcode', () => {
     });
     editor.setSelection(editor.getValue().length, editor.getValue().length);
 
-    const activeWidget = container.querySelector('.cm-wysiwym-image-shortcode-container');
+    const activeWidget = container.querySelector('.cm-wysiwym-image-container');
     expect(activeWidget).not.toBeNull();
     expect(activeWidget.classList.contains('custom-wysiwym-style')).toBe(true);
 
@@ -504,7 +504,7 @@ describe('ImageShortcode', () => {
     // Set cursor outside the image so the widget renders
     editor.setSelection(editor.getValue().length, editor.getValue().length);
 
-    const widgetEl = container.querySelector('.cm-wysiwym-image-shortcode-container');
+    const widgetEl = container.querySelector('.cm-wysiwym-image-container');
     expect(widgetEl).not.toBeNull();
 
     // Dispatch mousedown on widget
@@ -852,7 +852,7 @@ describe('VideoShortcode', () => {
       initialValue: '<Video src="https://www.youtube.com/watch?v=dQw4w9WgXcQ" />\nText',
     });
     editor.setSelection(editor.getValue().length, editor.getValue().length);
-    const widgetEl = container.querySelector('.cm-wysiwym-video-shortcode-container');
+    const widgetEl = container.querySelector('.cm-wysiwym-video-container');
     expect(widgetEl).not.toBeNull();
     const platformEl = widgetEl.querySelector('.video-placeholder-platform');
     expect(platformEl.textContent).toBe('YouTube');
@@ -865,7 +865,7 @@ describe('VideoShortcode', () => {
     });
     editor.setSelection(editor.getValue().length, editor.getValue().length);
     
-    const widgetEl = container.querySelector('.cm-wysiwym-video-shortcode-container');
+    const widgetEl = container.querySelector('.cm-wysiwym-video-container');
     expect(widgetEl).not.toBeNull();
     expect(widgetEl.classList.contains('align-center')).toBe(true);
     expect(widgetEl.classList.contains('size-large')).toBe(true);
@@ -880,7 +880,7 @@ describe('VideoShortcode', () => {
     expect(urlEl).not.toBeNull();
     expect(urlEl.textContent).toBe('https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 
-    const metaEl = widgetEl.querySelector('.shortcode-meta');
+    const metaEl = widgetEl.querySelector('.widget-meta');
     expect(metaEl).not.toBeNull();
     expect(metaEl.textContent).toContain('Video check');
   });
@@ -914,7 +914,7 @@ describe('VideoShortcode', () => {
     });
     editor.setSelection(editor.getValue().length, editor.getValue().length);
 
-    const widgetEl = container.querySelector('.cm-wysiwym-video-shortcode-container');
+    const widgetEl = container.querySelector('.cm-wysiwym-video-container');
     expect(widgetEl).not.toBeNull();
 
     widgetEl.dispatchEvent(new window.MouseEvent('mousedown', { bubbles: true, cancelable: true }));
@@ -974,7 +974,7 @@ describe('AudioShortcode', () => {
     });
     editor.setSelection(editor.getValue().length, editor.getValue().length);
     
-    const widgetEl = container.querySelector('.cm-wysiwym-audio-shortcode-container');
+    const widgetEl = container.querySelector('.cm-wysiwym-audio-container');
     expect(widgetEl).not.toBeNull();
     expect(widgetEl.classList.contains('align-center')).toBe(true);
     expect(widgetEl.classList.contains('size-large')).toBe(true);
@@ -989,7 +989,7 @@ describe('AudioShortcode', () => {
     expect(urlEl).not.toBeNull();
     expect(urlEl.textContent).toBe('https://example.com/song.mp3');
 
-    const metaEl = widgetEl.querySelector('.shortcode-meta');
+    const metaEl = widgetEl.querySelector('.widget-meta');
     expect(metaEl).not.toBeNull();
     expect(metaEl.textContent).toContain('Audio check');
   });
@@ -1023,7 +1023,7 @@ describe('AudioShortcode', () => {
     });
     editor.setSelection(editor.getValue().length, editor.getValue().length);
 
-    const widgetEl = container.querySelector('.cm-wysiwym-audio-shortcode-container');
+    const widgetEl = container.querySelector('.cm-wysiwym-audio-container');
     expect(widgetEl).not.toBeNull();
 
     widgetEl.dispatchEvent(new window.MouseEvent('mousedown', { bubbles: true, cancelable: true }));
@@ -1110,7 +1110,7 @@ describe('ComponentShortcode', () => {
     editor.setSelection(editor.getValue().length, editor.getValue().length);
     
     // Check if the shortcode container widget is rendered
-    const widgetEl = container.querySelector('.cm-wysiwym-component-shortcode');
+    const widgetEl = container.querySelector('.cm-wysiwym-component');
     expect(widgetEl).not.toBeNull();
     expect(widgetEl.classList.contains('component-blockquote')).toBe(true);
     
@@ -1132,7 +1132,7 @@ describe('ComponentShortcode', () => {
     // Put cursor outside
     editor.setSelection(editor.getValue().length, editor.getValue().length);
 
-    const widgetEl = container.querySelector('.cm-wysiwym-component-shortcode');
+    const widgetEl = container.querySelector('.cm-wysiwym-component');
     expect(widgetEl).not.toBeNull();
 
     // Dispatch mousedown on widget
@@ -1178,7 +1178,7 @@ describe('ComponentShortcode', () => {
     editor.focus();
     editor.setSelection(editor.getValue().length, editor.getValue().length);
 
-    const widgetEl = container.querySelector('.cm-wysiwym-component-shortcode');
+    const widgetEl = container.querySelector('.cm-wysiwym-component');
     expect(widgetEl).not.toBeNull();
 
     const event = new window.MouseEvent('mousedown', { bubbles: true, cancelable: true });
@@ -1611,7 +1611,7 @@ describe('FigureShortcode', () => {
     });
     editor.setSelection(editor.getValue().length, editor.getValue().length);
 
-    const widgetEl = container.querySelector('.cm-wysiwym-figure-shortcode');
+    const widgetEl = container.querySelector('.cm-wysiwym-figure');
     expect(widgetEl).not.toBeNull();
     expect(widgetEl.classList.contains('align-center')).toBe(true);
     expect(widgetEl.classList.contains('size-medium')).toBe(true);
@@ -1631,7 +1631,7 @@ describe('FigureShortcode', () => {
     // Set cursor outside the figure so the widget renders
     editor.setSelection(editor.getValue().length, editor.getValue().length);
 
-    const widgetEl = container.querySelector('.cm-wysiwym-figure-shortcode');
+    const widgetEl = container.querySelector('.cm-wysiwym-figure');
     expect(widgetEl).not.toBeNull();
 
     // Dispatch mousedown on widget

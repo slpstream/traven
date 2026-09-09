@@ -135,19 +135,19 @@ The list below covers every selector a complete theme should consider. Anything 
 | `.cm-wysiwym-codeblock-line` | One line inside a fenced code block. Use `-first` / `-last` modifiers for rounded corners. |
 | `.cm-wysiwym-collapsed-fence` | A fence line whose text is hidden but the empty container still occupies space. **Set `height: 0 !important`.** |
 | `.cm-wysiwym-image-widget-container` | Legacy plain `![alt](src)` Markdown image widget. |
-| `.cm-wysiwym-image-shortcode-container` | Advanced `<Image />` widget. Same alignment helpers (`.align-left`, etc.) as the preview. |
+| `.cm-wysiwym-image-container` | Advanced `<Image />` widget. Same alignment helpers (`.align-left`, etc.) as the preview. |
 | `.cm-wysiwym-image-caption` | Caption text under the legacy image widget. |
-| `.cm-wysiwym-image-shortcode-container .shortcode-meta` | The meta row under the advanced shortcode widget. |
-| `.cm-wysiwym-image-shortcode-container .meta-badge` | "Tag name" pill (`[IMAGE]`, etc.). Use `.tag-name` for the first badge. |
+| `.cm-wysiwym-image-container .widget-meta` | The meta row under the advanced Image widget. |
+| `.cm-wysiwym-image-container .meta-badge` | "Tag name" pill (`[IMAGE]`, etc.). Use `.tag-name` for the first badge. |
 | `.cm-wysiwym-image-uploading` | Optimistic upload pill (green dashed border). |
-| `.cm-wysiwym-video-shortcode-container` | `<Video />` widget. |
-| `.cm-wysiwym-video-shortcode-container .video-placeholder`, `.video-placeholder-icon-wrap`, `.video-placeholder-details`, `.video-placeholder-platform`, `.video-placeholder-url` | Pieces of the video placeholder card. |
-| `.cm-wysiwym-audio-shortcode-container` | `<Audio />` widget, same shape as the video container. |
-| `.cm-wysiwym-component-shortcode` | Generic `<Component>` / `<Callout>` / `<Quote>` block, plus variants `.component-blockquote`, `.component-pullquote`, `.component-info`, `.component-warning`. |
-| `.cm-wysiwym-component-shortcode .component-body` | Inner body container. |
-| `.cm-wysiwym-component-shortcode .component-body p` | Paragraphs inside the body. |
-| `.cm-wysiwym-component-shortcode cite` | The "— Author, Source" line on blockquote components. |
-| `.cm-wysiwym-figure-shortcode` | `<Figure>` widget. Contains `.component-body` and `.figure-caption`. |
+| `.cm-wysiwym-video-container` | `<Video />` widget. |
+| `.cm-wysiwym-video-container .video-placeholder`, `.video-placeholder-icon-wrap`, `.video-placeholder-details`, `.video-placeholder-platform`, `.video-placeholder-url` | Pieces of the video placeholder card. |
+| `.cm-wysiwym-audio-container` | `<Audio />` widget, same shape as the video container. |
+| `.cm-wysiwym-component` | Generic `<Component>` / `<Callout>` / `<Quote>` block, plus variants `.component-blockquote`, `.component-pullquote`, `.component-info`, `.component-warning`. |
+| `.cm-wysiwym-component .component-body` | Inner body container. |
+| `.cm-wysiwym-component .component-body p` | Paragraphs inside the body. |
+| `.cm-wysiwym-component cite` | The "— Author, Source" line on blockquote components. |
+| `.cm-wysiwym-figure` | `<Figure>` widget. Contains `.component-body` and `.figure-caption`. |
 | `.cm-wysiwym-table-row` | GFM table source line in raw editing mode. |
 | `.cm-wysiwym-table-widget` | Rendered WYSIWYM table (when the cursor is outside). Style `.cm-wysiwym-table-widget table`, `th`, `td` normally. |
 | `.cm-wysiwym-inline-math-widget` | Live LaTeX inline equation. |
@@ -157,11 +157,11 @@ The list below covers every selector a complete theme should consider. Anything 
 #### Hover-edit icons
 All block widgets have an absolute-positioned icon that appears on hover:
 
-* `.cm-wysiwym-image-shortcode-container .image-edit-icon`
-* `.cm-wysiwym-video-shortcode-container .video-edit-icon`
-* `.cm-wysiwym-audio-shortcode-container .audio-edit-icon`
-* `.cm-wysiwym-component-shortcode .image-edit-icon`
-* `.cm-wysiwym-figure-shortcode .figure-edit-icon`
+* `.cm-wysiwym-image-container .image-edit-icon`
+* `.cm-wysiwym-video-container .video-edit-icon`
+* `.cm-wysiwym-audio-container .audio-edit-icon`
+* `.cm-wysiwym-component .image-edit-icon`
+* `.cm-wysiwym-figure .figure-edit-icon`
 
 Style them like 24 × 24 px round buttons with a subtle border, hidden by `opacity: 0` and shown on `:hover` of the parent.
 
@@ -219,7 +219,7 @@ Targets compiled HTML. Almost all of these are standard selectors nested inside 
 | `.traven-preview mark` | `==highlight==` output. |
 | `.traven-preview hr` | Horizontal rule. |
 | `.traven-preview table`, `th`, `td` | GFM tables. Set `height: 38px` on `th`/`td` to keep blank cells from collapsing. |
-| `.traven-preview img.traven-image-shortcode` | The advanced `<Image />` tag, no caption. |
+| `.traven-preview img.traven-image` | The advanced `<Image />` tag, no caption. |
 | `.traven-preview figure.traven-image-figure` | The advanced `<Image />` tag, with caption. |
 | `.traven-preview figure.traven-image-figure figcaption.traven-image-caption` | Caption text. |
 | `.traven-preview .traven-video-container`, `figure.traven-video-figure` | `<Video />` output. |
@@ -243,14 +243,14 @@ Targets compiled HTML. Almost all of these are standard selectors nested inside 
 Every media component accepts `align="left|right|center|fullbleed"` and `size="small|medium|large|full"`. Both the editor widget and the preview HTML emit these as classes, so a single rule typically covers both scopes:
 
 ```css
-.cm-wysiwym-image-shortcode-container.align-left,
+.cm-wysiwym-image-container.align-left,
 .traven-preview figure.traven-image-figure.align-left { ... }
 
 /* Or in a combined block: */
-.cm-wysiwym-image-shortcode-container,
-.cm-wysiwym-video-shortcode-container,
-.cm-wysiwym-audio-shortcode-container,
-.cm-wysiwym-figure-shortcode {
+.cm-wysiwym-image-container,
+.cm-wysiwym-video-container,
+.cm-wysiwym-audio-container,
+.cm-wysiwym-figure {
   /* shared card chrome */
 }
 
@@ -338,17 +338,17 @@ A blank Markdown line directly after a heading renders as a full-height empty `.
 Apply the same pattern around blockquotes (`+ .cm-line:has(br:only-child)` before *and* after) and after code-block fences (see [§4.5](#45-fenced-code-blocks)).
 
 ### 4.4 No floats or vertical margins in the editor
-Block widgets (`.cm-wysiwym-image-shortcode-container`, `.cm-wysiwym-video-shortcode-container`, `.cm-wysiwym-audio-shortcode-container`, `.cm-wysiwym-figure-shortcode`, and the component shortcode variants) are rendered as CodeMirror block decorations. CodeMirror's coordinate mapping assumes they sit in the normal document flow.
+Block widgets (`.cm-wysiwym-image-container`, `.cm-wysiwym-video-container`, `.cm-wysiwym-audio-container`, `.cm-wysiwym-figure`, and the component widget variants) are rendered as CodeMirror block decorations. CodeMirror's coordinate mapping assumes they sit in the normal document flow.
 
 * **No `float: left` or `float: right`** — floated elements wrap text around themselves, which CodeMirror doesn't expect. The result: mouse clicks below a floated widget land on the wrong line.
 * **No `margin-top` or `margin-bottom`** — same family of issues as [§4.1](#41-never-use-vertical-margins-on-line-elements).
 * **Use auto-margins for horizontal alignment:**
 
   ```css
-  .cm-wysiwym-image-shortcode-container.align-left   { margin: 0 auto 0 0 !important; }
-  .cm-wysiwym-image-shortcode-container.align-right  { margin: 0 0 0 auto !important; }
-  .cm-wysiwym-image-shortcode-container.align-center { margin: 0 auto !important; }
-  .cm-wysiwym-image-shortcode-container.align-fullbleed {
+  .cm-wysiwym-image-container.align-left   { margin: 0 auto 0 0 !important; }
+  .cm-wysiwym-image-container.align-right  { margin: 0 0 0 auto !important; }
+  .cm-wysiwym-image-container.align-center { margin: 0 auto !important; }
+  .cm-wysiwym-image-container.align-fullbleed {
     width: 100% !important;
     margin: 0 !important;
     border: none !important;
@@ -356,7 +356,7 @@ Block widgets (`.cm-wysiwym-image-shortcode-container`, `.cm-wysiwym-video-short
   }
   ```
 
-* **In the preview, floats are fine.** `.traven-preview img.traven-image-shortcode.align-left { float: left; ... }` works without breaking anything, because the preview is plain HTML and never goes through CodeMirror's coordinate mapper.
+* **In the preview, floats are fine.** `.traven-preview img.traven-image.align-left { float: left; ... }` works without breaking anything, because the preview is plain HTML and never goes through CodeMirror's coordinate mapper.
 
 ### 4.5 Fenced code blocks
 When a fenced code block is collapsed (cursor outside), the opening and closing fence lines become empty `.cm-line` containers that still occupy vertical space. The shipping themes mark them with a `.cm-wysiwym-collapsed-fence` class and squash them:
@@ -449,8 +449,8 @@ If your custom theme has elements that wrap nested paragraphs — such as standa
 To enforce your theme's custom typography on all nested structures, apply the `font-family` declaration using a selector targeting both the parent container and all its descendants (using `*`) along with `!important`:
 ```css
 /* Editor scope */
-.cm-wysiwym-component-shortcode.component-info,
-.cm-wysiwym-component-shortcode.component-info * {
+.cm-wysiwym-component.component-info,
+.cm-wysiwym-component.component-info * {
   font-family: 'Atkinson Hyperlegible Next', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
 }
 
@@ -472,17 +472,17 @@ The fallback renderer emits **zero inline styles**; every visual decision is del
 
 ```html
 <!-- No caption -->
-<img class="traven-image-shortcode align-[alignment] size-[size] [custom]" src="..." alt="...">
+<img class="traven-image align-[alignment] size-[size] [custom]" src="..." alt="...">
 
 <!-- With caption -->
 <figure class="traven-image-figure align-[alignment] size-[size] [custom]">
-  <img class="traven-image-shortcode" src="..." alt="...">
+  <img class="traven-image" src="..." alt="...">
   <figcaption class="traven-image-caption">Caption</figcaption>
 </figure>
 ```
 
-* **Editor wrapper:** `.cm-wysiwym-image-shortcode-container`
-* **Preview wrapper:** `.traven-preview img.traven-image-shortcode`, `.traven-preview figure.traven-image-figure`
+* **Editor wrapper:** `.cm-wysiwym-image-container`
+* **Preview wrapper:** `.traven-preview img.traven-image`, `.traven-preview figure.traven-image-figure`
 * **Caption:** `figcaption.traven-image-caption`
 * **Alignment:** `align-left` / `align-right` / `align-center` / `align-fullbleed`
 * **Sizes:** `size-small` (~150 px), `size-medium` (~300 px), `size-large` (~600 px), `size-full` (100%)
@@ -490,7 +490,7 @@ The fallback renderer emits **zero inline styles**; every visual decision is del
 For `align-fullbleed`, use the standard 100vw breakout:
 
 ```css
-.traven-preview img.traven-image-shortcode.align-fullbleed,
+.traven-preview img.traven-image.align-fullbleed,
 .traven-preview figure.traven-image-figure.align-fullbleed {
   width: 100vw !important;
   max-width: 100vw !important;
@@ -522,7 +522,7 @@ For `align-fullbleed`, use the standard 100vw breakout:
 </figure>
 ```
 
-* **Editor wrapper:** `.cm-wysiwym-video-shortcode-container` (plus `.video-placeholder`, `.video-placeholder-icon-wrap`, `.video-placeholder-details`, `.video-placeholder-platform`, `.video-placeholder-url`).
+* **Editor wrapper:** `.cm-wysiwym-video-container` (plus `.video-placeholder`, `.video-placeholder-icon-wrap`, `.video-placeholder-details`, `.video-placeholder-platform`, `.video-placeholder-url`).
 * **Preview wrapper:** `.traven-preview .traven-video-container` (16:9 `aspect-ratio`), `.traven-preview figure.traven-video-figure`.
 * **Caption:** `figcaption.traven-video-caption`.
 
@@ -555,7 +555,7 @@ Wraps arbitrary block content (tables, code blocks, images, etc.) in a captioned
 </figure>
 ```
 
-* **Editor wrapper:** `.cm-wysiwym-figure-shortcode` (with `.component-body` and `.figure-caption`).
+* **Editor wrapper:** `.cm-wysiwym-figure` (with `.component-body` and `.figure-caption`).
 * **Preview wrapper:** `.traven-preview .traven-figure`.
 
 ### 6.5 `<Quote>`, `<Callout>`, `<Pullquote>`, and `<Component>`
@@ -804,10 +804,10 @@ The minimum viable skin is short:
 
 /* 9. Shortcode widgets — image, video, audio, figure, component. */
 /*    (Use the editor auto-margin alignment helpers from §4.4.) */
-.cm-wysiwym-image-shortcode-container,
-.cm-wysiwym-video-shortcode-container,
-.cm-wysiwym-audio-shortcode-container,
-.cm-wysiwym-figure-shortcode {
+.cm-wysiwym-image-container,
+.cm-wysiwym-video-container,
+.cm-wysiwym-audio-container,
+.cm-wysiwym-figure {
   display: flex; flex-direction: column; max-width: 100%;
   margin: 0 !important; padding: 12px 0;
   border: 1px solid #e6dfd1; border-radius: 12px; overflow: hidden;
@@ -823,21 +823,21 @@ The minimum viable skin is short:
 .align-fullbleed { width: 100% !important; margin: 0 !important; border: none !important; border-radius: 0 !important; }
 
 /* 10. Components. */
-.cm-wysiwym-component-shortcode {
+.cm-wysiwym-component {
   position: relative; margin: 0 !important; padding: 28px 16px !important;
   border-left: 4px solid #c8b78a; background-color: #fbfaf6; color: #1f1d1a;
 }
-.cm-wysiwym-component-shortcode.component-info {
+.cm-wysiwym-component.component-info {
   border: 1px solid #e6dfd1 !important; border-left: 4px solid #2f80ed !important;
   border-radius: 8px !important; background-color: #f3f8ff !important;
   color: #1f1d1a !important; padding: 16px !important; margin: 0 !important;
 }
-.cm-wysiwym-component-shortcode.component-warning {
+.cm-wysiwym-component.component-warning {
   border: 1px solid #f6e0a4 !important; border-left: 4px solid #d4a017 !important;
   border-radius: 8px !important; background-color: rgba(247, 200, 80, 0.18) !important;
   color: #1f1d1a !important; padding: 16px !important; margin: 0 !important;
 }
-.cm-wysiwym-component-shortcode.component-pullquote {
+.cm-wysiwym-component.component-pullquote {
   border-left: none !important; border-top: 2px solid #c8b78a !important;
   border-bottom: 2px solid #c8b78a !important; padding: 24px 16px !important;
   margin: 0 !important; font-size: 1.2em !important; font-weight: bold;
@@ -1042,7 +1042,7 @@ When you build a new theme, picking a "donor" from this table gets you 80% of th
 * **Scope** — a wrapper class that isolates CSS so the same selectors can mean different things in the live editor vs. the preview. The two scopes are `.cm-editor` and `.traven-preview`.
 * **Skin** — a single CSS file under `packages/core/assets/skins/` that styles a theme. Auto-discovered, hot-swappable at runtime.
 * **Toolbar** — a separate concern, governed by `packages/core/assets/toolbars/*.css`. Toolbar styles, presets, and JS runtime toggles live in their own files; see `../toolbars.md`.
-* **MDX component** — a capitalized tag (`<Image />`, `<Video />`, `<Audio />`, `<Figure>`, `<Quote>`, `<Callout>`, `<Component>`) parsed by `src/mdx-parser.js`. Components compile to clean semantic HTML in the preview. CSS class names still contain `shortcode` for theme compatibility.
+* **MDX component** — a capitalized tag (`<Image />`, `<Video />`, `<Audio />`, `<Figure>`, `<Quote>`, `<Callout>`, `<Component>`) parsed by `src/mdx-parser.js`. Components compile to clean semantic HTML in the preview.
 * **Decoration** — a CodeMirror 6 visual transformation of a range. Inlined in `wysiwym.js`. Decorations can be marks (`.cm-wysiwym-bold`) or block-replacement widgets (the `<Image />` card).
 * **Dark class** — `.cm-wysiwym-dark` toggled on the editor host DOM by `setTheme("dark")` and on the preview container by the demo's theme switcher.
 

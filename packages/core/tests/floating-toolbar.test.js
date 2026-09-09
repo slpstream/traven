@@ -282,7 +282,7 @@ describe('Floating Toolbar and Modes', () => {
     editor.setSelection(editor.getValue().length, editor.getValue().length);
     vi.advanceTimersByTime(50);
 
-    const widgetEl = container.querySelector('.cm-wysiwym-image-shortcode-container');
+    const widgetEl = container.querySelector('.cm-wysiwym-image-container');
     expect(widgetEl).not.toBeNull();
 
     // Open modal

@@ -69,7 +69,7 @@ Content
 </Figure>
 ```
 
-* Inner Markdown compiles inside a wrapping `<figure class="traven-figure-shortcode …">`.
+* Inner Markdown compiles inside a wrapping `<figure class="traven-figure …">`.
 * Opening/closing tags collapse to a preview panel with an edit pencil when the cursor is outside.
 
 ---
@@ -152,6 +152,6 @@ Developers can extend Traven with additional capitalized MDX tags using its deco
 
 1.  **Grammar & Parser (`src/mdx-parser.js`)**: Tokenizes `<[A-Z]\w+>` as `MdxMediaTag` (self-closing) or `MdxContainerOpen` / `MdxContainerClose` (paired).
 2.  **Replacement Widget (`src/plugins/component-plugin.js`)**: Mounts a CodeMirror `WidgetType` when the cursor is outside the tag range.
-3.  **Themes (`packages/core/assets/skins/*.css`)**: Visual tokens for classes like `.cm-wysiwym-component-shortcode`.
+3.  **Themes (`packages/core/assets/skins/*.css`)**: Visual tokens for classes like `.cm-wysiwym-component`.
 
 See [Building Custom MDX Components](dev/building-custom-shortcodes.md) for the extension blueprint.

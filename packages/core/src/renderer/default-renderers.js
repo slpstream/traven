@@ -154,7 +154,7 @@ export function defaultNodeRenderer(node, childrenHtml, docText) {
       if (endIdx === -1) endIdx = nodeText.lastIndexOf("]");
       const alt = escapeHtmlAttr(nodeText.slice(2, endIdx === -1 ? nodeText.length : endIdx));
 
-      return `<img src="${escapeHtmlAttr(sanitizeUrl(url))}" alt="${alt}" class="traven-image-shortcode align-center size-medium">`;
+      return `<img src="${escapeHtmlAttr(sanitizeUrl(url))}" alt="${alt}" class="traven-image align-center size-medium">`;
     }
     case "Autolink": {
       const url = docText.slice(node.from + 1, node.to - 1);
@@ -212,7 +212,7 @@ export function defaultNodeRenderer(node, childrenHtml, docText) {
       const attrs = parseShortcodeAttrs(openRaw);
       if (tagName.toLowerCase() === "figure") {
         const align = escapeHtmlAttr(attrs.align || "center");
-        return `<figure class="traven-figure-shortcode align-${align}">\n${childrenHtml}</figure>\n`;
+        return `<figure class="traven-figure align-${align}">\n${childrenHtml}</figure>\n`;
       }
       const bodyText = bodyNode ? docText.slice(bodyNode.from, bodyNode.to) : "";
       return renderComponentHtml(tagName, attrs, bodyText);
@@ -223,7 +223,7 @@ export function defaultNodeRenderer(node, childrenHtml, docText) {
       const lower = tagName.toLowerCase();
       if (lower === "figure") {
         const align = escapeHtmlAttr(attrs.align || "center");
-        return `<figure class="traven-figure-shortcode align-${align}">\n`;
+        return `<figure class="traven-figure align-${align}">\n`;
       }
       if (lower === "quote" || lower === "blockquote") {
         return `<blockquote class="traven-component-blockquote">\n`;
@@ -374,9 +374,9 @@ function renderImageHtml(attrs) {
   const customClass = attrs.class ? ` ${escapeHtmlAttr(attrs.class)}` : "";
 
   if (caption) {
-    return `<figure class="traven-image-figure align-${align} size-${size}${customClass}"><img src="${src}" alt="${alt}" class="traven-image-shortcode"><figcaption class="traven-image-caption">${caption}</figcaption></figure>\n`;
+    return `<figure class="traven-image-figure align-${align} size-${size}${customClass}"><img src="${src}" alt="${alt}" class="traven-image"><figcaption class="traven-image-caption">${caption}</figcaption></figure>\n`;
   }
-  return `<img src="${src}" alt="${alt}" class="traven-image-shortcode align-${align} size-${size}${customClass}">\n`;
+  return `<img src="${src}" alt="${alt}" class="traven-image align-${align} size-${size}${customClass}">\n`;
 }
 
 /** @param {Record<string, string>} attrs */
@@ -394,7 +394,7 @@ function renderVideoHtml(attrs) {
   } else if (parsed.platform === "vimeo") {
     videoHtml = `<iframe src="https://player.vimeo.com/video/${parsed.id}" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
   } else {
-    videoHtml = `<video src="${src}" controls class="traven-video-shortcode"></video>`;
+    videoHtml = `<video src="${src}" controls class="traven-video"></video>`;
   }
 
   if (caption) {
@@ -410,7 +410,7 @@ function renderAudioHtml(attrs) {
   const align = escapeHtmlAttr(attrs.align || "center");
   const size = escapeHtmlAttr(attrs.size || "medium");
   const customClass = attrs.class ? ` ${escapeHtmlAttr(attrs.class)}` : "";
-  const audioHtml = `<audio src="${src}" controls class="traven-audio-shortcode"></audio>`;
+  const audioHtml = `<audio src="${src}" controls class="traven-audio"></audio>`;
 
   if (caption) {
     return `<figure class="traven-audio-figure align-${align} size-${size}${customClass}"><div class="traven-audio-container">${audioHtml}</div><figcaption class="traven-audio-caption">${caption}</figcaption></figure>\n`;

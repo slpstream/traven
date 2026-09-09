@@ -29,7 +29,7 @@ graph TD
 * **Interactive DOM**: These widgets return DOM nodes representing the component output. They can fetch media previews asynchronously or display placeholder cards.
 
 ### C. Skins & Themes (`packages/core/assets/skins/*.css`)
-The DOM elements rendered by the widgets are assigned semantic classes (e.g. `.cm-wysiwym-component-shortcode`, `.cm-wysiwym-image-shortcode-container`). CSS class names are stable; do not rename them when adding new tags.
+The DOM elements rendered by the widgets are assigned semantic classes (e.g. `.cm-wysiwym-component`, `.cm-wysiwym-image-container`). These are the current widget and preview class names; do not churn them when adding a new tag.
 * **Skin Decoupling**: The CSS skins handle color palettes, border styling, transition animations, and shadow treatments.
 
 ---
@@ -72,7 +72,7 @@ class GalleryWidget extends WidgetType {
 
   toDOM() {
     const container = document.createElement("div");
-    container.className = "cm-wysiwym-component-shortcode";
+    container.className = "cm-wysiwym-component";
     container.innerHTML = `
       <div class="component-header">
         <span class="component-title">GALLERY</span>
@@ -93,11 +93,11 @@ If `getContentHtml()` should emit custom markup, handle the tag in `src/renderer
 
 ## 3. Styling Token Roadmap
 
-To support skinning, skins should declare definitions for the following selectors (existing class names; do not rename):
+To support skinning, skins should declare definitions for the following selectors (current class names; do not churn them when adding a new tag):
 
 ```css
 /* Base container for component widgets */
-.cm-wysiwym-component-shortcode {
+.cm-wysiwym-component {
   border-radius: 8px;
   padding: 12px 16px;
   font-family: inherit;
@@ -105,14 +105,14 @@ To support skinning, skins should declare definitions for the following selector
 }
 
 /* Neutral Skin Definitions */
-.neutral-theme-scope .cm-wysiwym-component-shortcode {
+.neutral-theme-scope .cm-wysiwym-component {
   background-color: #f8fafc;
   border: 1px solid #cbd5e1;
   color: #475569;
 }
 
 /* Colorful Skin Definitions */
-.colorful-theme-scope .cm-wysiwym-component-shortcode {
+.colorful-theme-scope .cm-wysiwym-component {
   background-color: #fff0e8; /* Rust wash tint */
   border: 1px dashed #cc4a0a; /* Rust accent dashed border */
   color: #a83808;
@@ -131,6 +131,6 @@ Traven features a native `<Image />` tag supporting advanced alignment, sizing, 
 
 ### Key Integration Points
 * **Fully backwards-compatible**: Optional. Standard Markdown `![alt](src)` continues to parse, render, and compile.
-* **Separation of presentation**: In fallback HTML (`getContentHtml()`), the tag compiles to a semantic `<img>` with **no inline style attributes**. Layout maps to class selectors (`.align-[alignment]`, `.size-[size]`, `.traven-image-shortcode`) in the theme CSS/skins.
+* **Separation of presentation**: In fallback HTML (`getContentHtml()`), the tag compiles to a semantic `<img>` with **no inline style attributes**. Layout maps to class selectors (`.align-[alignment]`, `.size-[size]`, `.traven-image`) in the theme CSS/skins.
 * **Toolbar insert toggle**: The image modal switches between Advanced mode (`<Image … />` with caption, classes, alignment, and size) and Legacy mode (`![alt](src)`).
 * **Lezer parser**: Attributes are parsed by `src/mdx-parser.js` into `MdxMediaTag` with `MdxAttribute` children, so delimiter-skip can jump tag boundaries during arrow navigation.

@@ -34,7 +34,7 @@ export class ImageShortcodeWidget extends WidgetType {
 
   toDOM(view) {
     const container = document.createElement("div");
-    container.className = "cm-wysiwym-image-shortcode-container";
+    container.className = "cm-wysiwym-image-container";
 
     if (this.rawText) {
       container.title = this.rawText;
@@ -95,7 +95,7 @@ export class ImageShortcodeWidget extends WidgetType {
     container.appendChild(img);
 
     const metaRow = document.createElement("div");
-    metaRow.className = "shortcode-meta";
+    metaRow.className = "widget-meta";
 
     if (caption) {
       const captionText = document.createElement("span");
@@ -159,7 +159,7 @@ export class VideoShortcodeWidget extends WidgetType {
 
   toDOM(view) {
     const container = document.createElement("div");
-    container.className = "cm-wysiwym-video-shortcode-container";
+    container.className = "cm-wysiwym-video-container";
 
     if (this.rawText) {
       container.title = this.rawText;
@@ -207,7 +207,7 @@ export class VideoShortcodeWidget extends WidgetType {
     container.appendChild(placeholderCard);
 
     const metaRow = document.createElement("div");
-    metaRow.className = "shortcode-meta";
+    metaRow.className = "widget-meta";
 
     if (caption) {
       const captionText = document.createElement("span");
@@ -271,7 +271,7 @@ export class AudioShortcodeWidget extends WidgetType {
 
   toDOM(view) {
     const container = document.createElement("div");
-    container.className = "cm-wysiwym-audio-shortcode-container";
+    container.className = "cm-wysiwym-audio-container";
 
     if (this.rawText) {
       container.title = this.rawText;
@@ -311,7 +311,7 @@ export class AudioShortcodeWidget extends WidgetType {
     container.appendChild(placeholderCard);
 
     const metaRow = document.createElement("div");
-    metaRow.className = "shortcode-meta";
+    metaRow.className = "widget-meta";
 
     if (caption) {
       const captionText = document.createElement("span");
@@ -376,7 +376,7 @@ export class ComponentShortcodeWidget extends WidgetType {
 
   toDOM(view) {
     const container = document.createElement("div");
-    container.className = "cm-wysiwym-component-shortcode";
+    container.className = "cm-wysiwym-component";
     
     if (this.rawText) {
       container.title = this.rawText;
@@ -513,7 +513,7 @@ export class FigureShortcodeWidget extends WidgetType {
 
   toDOM(view) {
     const container = document.createElement("div");
-    container.className = "cm-wysiwym-figure-shortcode";
+    container.className = "cm-wysiwym-figure";
 
     if (this.rawText) {
       container.title = this.rawText;

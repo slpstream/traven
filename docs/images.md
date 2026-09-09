@@ -221,7 +221,7 @@ The Image Insertion Modal features a sliders-icon toggle button to switch betwee
 ### CSS Styling & Theme Separation
 When parsing `<Image />` tags, the fallback HTML renderer generates clean semantic `<img>` tags with zero inline styling attributes:
 ```html
-<img src="photo.jpg" alt="Description" class="traven-image-shortcode align-right size-medium custom-class">
+<img src="photo.jpg" alt="Description" class="traven-image align-right size-medium custom-class">
 ```
 All layout styles (display type, margin, floats, width) are delegated entirely to the skin stylesheets (e.g., `skin-light.css`, `skin-dark.css`, `skin-colorful.css`, `skin-modern.css`) via these CSS selector classes.
 

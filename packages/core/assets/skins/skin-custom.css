@@ -27,13 +27,13 @@
 
 /* Ensure component headers use the custom Display font (700 bold weight) */
 .traven-component-header,
-.cm-wysiwym-component-shortcode .component-header {
+.cm-wysiwym-component .component-header {
   font-family: var(--traven-font-display) !important;
   font-weight: 700 !important;
 }
 
 /* Override Info component content to use the Body font (400 weight) */
-.cm-wysiwym-component-shortcode.component-info,
+.cm-wysiwym-component.component-info,
 .traven-preview .traven-component.traven-component-info,
 .traven-preview div.traven-component-info {
   font-family: var(--traven-font-body) !important;
@@ -41,7 +41,7 @@
 }
 
 /* Override Warning component content to use the Body font (700 bold weight) */
-.cm-wysiwym-component-shortcode.component-warning,
+.cm-wysiwym-component.component-warning,
 .traven-preview .traven-component.traven-component-warning,
 .traven-preview div.traven-component-warning {
   font-family: var(--traven-font-body) !important;

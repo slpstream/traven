@@ -124,7 +124,7 @@
 .traven-preview h2,
 .traven-preview h3,
 .traven-preview .traven-component-pullquote,
-.cm-wysiwym-component-shortcode,
+.cm-wysiwym-component,
 .traven-preview .traven-component,
 .traven-preview .traven-component-blockquote,
 .traven-preview .traven-component-info,
@@ -139,28 +139,28 @@
   font-family: var(--traven-font-display) !important;
 }
 
-.cm-wysiwym-image-shortcode-container,
-.cm-wysiwym-video-shortcode-container,
-.cm-wysiwym-audio-shortcode-container,
-.cm-wysiwym-figure-shortcode,
+.cm-wysiwym-image-container,
+.cm-wysiwym-video-container,
+.cm-wysiwym-audio-container,
+.cm-wysiwym-figure,
 .traven-preview figure.traven-image-figure,
 .traven-preview figure.traven-video-figure,
 .traven-preview figure.traven-audio-figure,
 .traven-preview .traven-figure,
 .cm-wysiwym-image-caption,
-.cm-wysiwym-image-shortcode-container .shortcode-meta,
-.cm-wysiwym-video-shortcode-container .shortcode-meta,
-.cm-wysiwym-audio-shortcode-container .shortcode-meta,
-.cm-wysiwym-figure-shortcode .figure-caption,
+.cm-wysiwym-image-container .widget-meta,
+.cm-wysiwym-video-container .widget-meta,
+.cm-wysiwym-audio-container .widget-meta,
+.cm-wysiwym-figure .figure-caption,
 .traven-preview figcaption {
   font-family: inherit !important;
 }
 
 /* Font Family Inheritance on Nested Elements (The CSS Cascade Override) */
-.cm-wysiwym-component-shortcode.component-info,
-.cm-wysiwym-component-shortcode.component-info *,
-.cm-wysiwym-component-shortcode.component-warning,
-.cm-wysiwym-component-shortcode.component-warning *,
+.cm-wysiwym-component.component-info,
+.cm-wysiwym-component.component-info *,
+.cm-wysiwym-component.component-warning,
+.cm-wysiwym-component.component-warning *,
 .traven-preview .traven-component-info,
 .traven-preview .traven-component-info *,
 .traven-preview .traven-component-warning,
@@ -471,9 +471,9 @@
 }
 
 /* Shortcode Widgets & Custom Components Layout Rules */
-.cm-wysiwym-video-shortcode-container,
-.cm-wysiwym-audio-shortcode-container,
-.cm-wysiwym-figure-shortcode {
+.cm-wysiwym-video-container,
+.cm-wysiwym-audio-container,
+.cm-wysiwym-figure {
   display: flex;
   flex-direction: column;
   max-width: 100%;
@@ -488,7 +488,7 @@
   position: relative;
 }
 
-.cm-wysiwym-image-shortcode-container,
+.cm-wysiwym-image-container,
 .cm-wysiwym-image-widget-container {
   display: flex;
   flex-direction: column;
@@ -501,16 +501,16 @@
   position: relative;
 }
 
-.cm-wysiwym-video-shortcode-container:hover,
-.cm-wysiwym-audio-shortcode-container:hover,
-.cm-wysiwym-figure-shortcode:hover {
+.cm-wysiwym-video-container:hover,
+.cm-wysiwym-audio-container:hover,
+.cm-wysiwym-figure:hover {
   box-shadow: var(--traven-widget-hover-shadow);
 }
 
 .cm-wysiwym-image-preview,
-.cm-wysiwym-image-shortcode-container img,
-.cm-wysiwym-video-shortcode-container img,
-.cm-wysiwym-audio-shortcode-container img {
+.cm-wysiwym-image-container img,
+.cm-wysiwym-video-container img,
+.cm-wysiwym-audio-container img {
   display: block;
   max-width: 100%;
   height: auto;
@@ -520,17 +520,17 @@
   box-sizing: border-box;
 }
 
-.cm-wysiwym-image-shortcode-container.align-center img,
-.cm-wysiwym-image-shortcode-container.align-fullbleed img {
+.cm-wysiwym-image-container.align-center img,
+.cm-wysiwym-image-container.align-fullbleed img {
   width: 100% !important;
   max-width: 100% !important;
   height: auto !important;
   padding: 0 !important;
 }
 
-.cm-wysiwym-video-shortcode-container .shortcode-meta,
-.cm-wysiwym-audio-shortcode-container .shortcode-meta,
-.cm-wysiwym-figure-shortcode .figure-caption {
+.cm-wysiwym-video-container .widget-meta,
+.cm-wysiwym-audio-container .widget-meta,
+.cm-wysiwym-figure .figure-caption {
   font-size: 0.82em;
   color: var(--traven-muted);
   padding: 10px 16px;
@@ -540,7 +540,7 @@
 }
 
 .cm-wysiwym-image-caption,
-.cm-wysiwym-image-shortcode-container .shortcode-meta {
+.cm-wysiwym-image-container .widget-meta {
   font-size: 0.82em;
   color: var(--traven-muted);
   padding: 10px 16px;
@@ -573,11 +573,11 @@
   z-index: 10;
 }
 
-[class*="-shortcode-container"]:hover .image-edit-icon,
-[class*="-shortcode-container"]:hover .video-edit-icon,
-[class*="-shortcode-container"]:hover .audio-edit-icon,
-.cm-wysiwym-figure-shortcode:hover .figure-edit-icon,
-.cm-wysiwym-component-shortcode:hover .image-edit-icon {
+.cm-wysiwym-image-container:hover .image-edit-icon,
+.cm-wysiwym-video-container:hover .video-edit-icon,
+.cm-wysiwym-audio-container:hover .audio-edit-icon,
+.cm-wysiwym-figure:hover .figure-edit-icon,
+.cm-wysiwym-component:hover .image-edit-icon {
   opacity: 1;
   pointer-events: auto;
 }
@@ -609,7 +609,7 @@
 }
 
 /* Custom Component Block Types styling */
-.cm-wysiwym-component-shortcode {
+.cm-wysiwym-component {
   display: flex;
   flex-direction: column;
   max-width: 100%;
@@ -620,19 +620,19 @@
 }
 
 /* Reset margins for inner elements inside custom component blocks */
-.cm-wysiwym-component-shortcode blockquote,
-.cm-wysiwym-component-shortcode p,
-.cm-wysiwym-figure-shortcode p {
+.cm-wysiwym-component blockquote,
+.cm-wysiwym-component p,
+.cm-wysiwym-figure p {
   margin: 0 !important;
   padding: 0 !important;
 }
 
-.cm-wysiwym-component-shortcode p + p,
-.cm-wysiwym-figure-shortcode p + p {
+.cm-wysiwym-component p + p,
+.cm-wysiwym-figure p + p {
   margin-top: 0.8em !important;
 }
 
-.cm-wysiwym-component-shortcode.component-blockquote {
+.cm-wysiwym-component.component-blockquote {
   border-left: 3px solid var(--traven-blockquote-border) !important;
   border-top: none !important;
   border-right: none !important;
@@ -644,7 +644,7 @@
   box-shadow: none !important;
 }
 
-.cm-wysiwym-component-shortcode.component-blockquote cite {
+.cm-wysiwym-component.component-blockquote cite {
   display: block;
   padding-top: 8px;
   font-size: 0.82em;
@@ -652,7 +652,7 @@
   font-style: normal;
 }
 
-.cm-wysiwym-component-shortcode.component-pullquote {
+.cm-wysiwym-component.component-pullquote {
   margin: 0 auto !important;
   padding: 16px 0 !important;
   border-top: 1.4px solid var(--traven-border) !important;
@@ -669,15 +669,15 @@
   box-shadow: none !important;
 }
 
-.cm-wysiwym-component-shortcode.component-pullquote blockquote,
-.cm-wysiwym-component-shortcode.component-pullquote p {
+.cm-wysiwym-component.component-pullquote blockquote,
+.cm-wysiwym-component.component-pullquote p {
   text-align: center;
   margin: 0 !important;
   font-style: inherit;
 }
 
 /* Custom left-border callout shapes */
-.cm-wysiwym-component-shortcode.component-info {
+.cm-wysiwym-component.component-info {
   background-color: var(--traven-info-bg) !important;
   border: none !important;
   border-left: 3px solid var(--traven-info-border) !important;
@@ -686,7 +686,7 @@
   box-shadow: none !important;
 }
 
-.cm-wysiwym-component-shortcode.component-warning {
+.cm-wysiwym-component.component-warning {
   background-color: var(--traven-warning-bg) !important;
   border: none !important;
   border-left: 3px solid var(--traven-warning-border) !important;
@@ -930,7 +930,7 @@
   box-shadow: none;
 }
 
-.traven-preview img.traven-image-shortcode,
+.traven-preview img.traven-image,
 .traven-preview .traven-video-container iframe,
 .traven-preview .traven-video-container video,
 .traven-preview .traven-audio-container audio {
@@ -1069,7 +1069,7 @@
 
 /* Component Headers (both preview and editor) */
 .traven-component-header,
-.cm-wysiwym-component-shortcode .component-header {
+.cm-wysiwym-component .component-header {
   font-family: var(--traven-font-display);
   font-weight: 700;
   font-size: 0.85em;

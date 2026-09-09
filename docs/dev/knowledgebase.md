@@ -300,7 +300,7 @@ Traven includes support for an optional, self-closing `<Image src="..." align=".
 * **Optional & Backwards-Compatible**: Completely optional. Traven remains fully backwards-compatible with standard Markdown image syntax (`![alt](src)`). Legacy images parse, render, and compile exactly as they did previously.
 * **Lezer Custom Parser (`src/mdx-parser.js`)**: A `@lezer/markdown` parser that detects `<` followed by an uppercase letter, scans key-value attributes, and builds a structured AST subtree (`MdxMediaTag`, `MdxMark`, `MdxTagName`, `MdxAttributeName`, `MdxAttributeValue`). It is integrated into the CodeMirror markdown configuration inside `src/index.js`. Lowercase `<image>` stays HTML.
 * **WYSIWYM Widget Rendering**: `ImageShortcodeWidget` in `src/plugins/component-plugin.js` collapses the tag into a styled block preview showing the thumbnail with custom sizing, alignment styling (via auto-margins to preserve CodeMirror coordinate mapping), and badges, while hiding the raw code when the cursor is outside.
-* **Fallback HTML Compilation**: The renderer compiles `<Image />` tags into semantic `<img>` elements with mapped attributes and class names (such as `.traven-image-shortcode`, `.align-[alignment]`, and `.size-[size]`). The renderer outputs **zero inline styles**, delegating layout, width, float, and margin styling entirely to the skin stylesheets.
+* **Fallback HTML Compilation**: The renderer compiles `<Image />` tags into semantic `<img>` elements with mapped attributes and class names (such as `.traven-image`, `.align-[alignment]`, and `.size-[size]`). The renderer outputs **zero inline styles**, delegating layout, width, float, and margin styling entirely to the skin stylesheets.
 * **Toolbar Toggle**: The Insert Image toolbar modal features a sliders-icon toggle to switch between Advanced mode (inserting `<Image … />` with fields for alt text, captions, class names, alignments, and sizes) and Legacy mode (inserting standard `![alt](src)` Markdown).
 * **Delimiter Skip Integration**: Delimiter skip logic in `src/delimiter-skip.js` detects `MdxMediaTag` syntax boundaries and allows arrow keys to skip across the delimiters.
 
@@ -345,7 +345,7 @@ Traven includes native support for an optional `<Figure align="..." size="..." c
 * **Lezer Parser (`src/mdx-parser.js`)**: Multi-line open/close become `MdxContainerOpen` / `MdxContainerClose`; inner Markdown is sibling nodes.
 * **WYSIWYM Widget Rendering**: `FigureShortcodeWidget` collapses the raw tags when the cursor is outside. It renders the figure's body content (nested images, code blocks, or tables) and displays a caption underneath if specified.
 * **Fallback HTML Compilation**: Compiles into a standard `<figure>` container with **zero inline styles**:
-  - `<figure class="traven-figure-shortcode align-[align]">[inner HTML]</figure>`
+  - `<figure class="traven-figure align-[align]">[inner HTML]</figure>`
 * **Toolbar Button**: The figure toolbar tool (`.btn-figure`) opens `openFigureModal()` from `src/toolbar/modal-figure.js`.
 * **Delimiter Skip Integration**: `src/delimiter-skip.js` skips MDX tag boundaries.
 
@@ -417,8 +417,8 @@ When converting or adapting a normal CSS stylesheet from a standard HTML website
 * **Problem**: `skin-starter.css` (which is bundled inside `dist/traven.css`) defines a high-priority `.traven-preview p { font-family: var(--traven-font-body) !important; }` rule. Because standard blockquotes, blockquote components (`[component="blockquote"]`), and info/warning notice components (`[info]`, `[warning]`) contain nested paragraph (`p`) elements, the nested `p` tags will inherit/use the starter skin's default body typeface (`Georgia` or `var(--traven-font-body)`), completely overriding any custom font-family declared on the parent container elements (such as `skin-editorial`'s `'Goudy Bookletter 1911'`, `skin-modern`'s `'Epunda Slab'`, or other custom skin stacks).
 * **Fix**: When styling custom components, blockquotes, or any notice cards that contain paragraphs in both the editor and preview DOM scopes, target the container element and *all* its descendants (using the universal selector `*`) to apply the skin's custom typography with `!important`:
   ```css
-  .cm-wysiwym-component-shortcode.component-info,
-  .cm-wysiwym-component-shortcode.component-info * {
+  .cm-wysiwym-component.component-info,
+  .cm-wysiwym-component.component-info * {
     font-family: 'Atkinson Hyperlegible Next', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
   }
   ```
