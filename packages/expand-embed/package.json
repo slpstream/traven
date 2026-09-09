@@ -4,6 +4,9 @@
   "description": "Traven plugin: [[wikilinks]] with expand / embed transclusion",
   "license": "MIT",
   "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "dist/expand-embed.js",
   "module": "dist/expand-embed.js",
   "files": [

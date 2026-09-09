@@ -13,6 +13,9 @@
   },
   "homepage": "https://github.com/slpstream/traven#readme",
   "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "dist/traven.js",
   "types": "dist/traven.d.ts",
   "unpkg": "dist/traven.js",
