@@ -1,5 +1,12 @@
 # @freedomware/traven
 
+## 0.3.0
+
+### Minor Changes
+
+- 5100fee: Replace bracket `[image]` / `[quote]` / `[component]` authoring with capitalized MDX tags (`<Image />`, `<Quote>`, `<Callout>`, `<Figure>`, `<Component>`). Only `<[A-Z]\w+>` is a component; lowercase `<video>` / `<audio>` stay HTML. `![alt](src)` remains the non-advanced image path. Help modal tab is now `data-tab="components"` / `#help-tab-components`.
+- 3fdba89: Rename leftover `shortcode` CSS classes on MDX widgets and preview HTML: `.cm-wysiwym-image-container`, `.cm-wysiwym-video-container`, `.cm-wysiwym-audio-container`, `.cm-wysiwym-component`, `.cm-wysiwym-figure`, `.widget-meta`, `.traven-image`, `.traven-video`, `.traven-audio`, `.traven-figure`. Markdown `![alt](src)` still uses `.cm-wysiwym-image-widget-container`. Skin authors must update selectors; JS widget class names (`ImageShortcodeWidget`, `ShortcodePlugin`) are unchanged.
+
 ## 0.2.28
 
 ### Patch Changes
