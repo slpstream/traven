@@ -1,5 +1,13 @@
 # @freedomware/traven-react
 
+## 1.0.0
+
+### Patch Changes
+
+- Updated dependencies [5100fee]
+- Updated dependencies [3fdba89]
+  - @freedomware/traven@0.3.0
+
 ## 0.2.2
 
 ### Patch Changes

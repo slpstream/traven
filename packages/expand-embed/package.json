@@ -1,6 +1,6 @@
 {
   "name": "@freedomware/traven-expand-embed",
-  "version": "0.1.13",
+  "version": "1.0.0",
   "description": "Traven plugin: [[wikilinks]] with expand / embed transclusion",
   "license": "MIT",
   "type": "module",
@@ -15,7 +15,7 @@
     "test": "vitest run"
   },
   "peerDependencies": {
-    "@freedomware/traven": ">=0.2.25"
+    "@freedomware/traven": ">=0.3.0"
   },
   "devDependencies": {
     "@freedomware/traven": "*",
