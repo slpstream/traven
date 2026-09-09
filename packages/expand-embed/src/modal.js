@@ -1,8 +1,8 @@
 // @ts-check
 import { openModal } from "@freedomware/traven";
-import { buildExpandEmbedShortcode } from "./shortcode-build.js";
+import { buildWikilink } from "./shortcode-build.js";
 
-export { buildExpandEmbedShortcode } from "./shortcode-build.js";
+export { buildWikilink, buildExpandEmbedShortcode } from "./shortcode-build.js";
 
 /**
  * Attach debounced typeahead under an input using editor.getSuggestLinks().
@@ -266,7 +266,7 @@ function fillHeadingSelect(select, headings, preserveValue = "") {
 }
 
 /**
- * Map select value → { heading, source } for shortcode-build.
+ * Map select value → { heading, source } for the wikilink builder.
  * @param {string} value
  * @returns {{ heading: string|null, source: string|null }}
  */
@@ -284,9 +284,11 @@ function targetValueToAttrs(value) {
  * @param {Object} editor
  * @param {HTMLElement|null} triggerBtn
  * @param {'expand'|'embed'} mode
+ * @param {{ from: number, to: number, attrs?: { slug?: string, heading?: string|null, text?: string|null, source?: string|null } }|null} [existing]
  */
-export function openExpandEmbedModal(editor, triggerBtn, mode = "expand") {
+export function openExpandEmbedModal(editor, triggerBtn, mode = "expand", existing = null) {
   const isEmbed = mode === "embed";
+  const isEdit = !!(existing && Number.isFinite(existing.from) && Number.isFinite(existing.to));
   const form = document.createElement("div");
 
   const textField = document.createElement("div");
@@ -359,15 +361,29 @@ export function openExpandEmbedModal(editor, triggerBtn, mode = "expand") {
     form.querySelector("#traven-expand-heading")
   );
 
-  // Pre-fill Link Text from selection (same pattern as Insert Link).
+  // Prefill from an existing wikilink, else Link Text from selection (same pattern as Insert Link).
   const view = typeof editor.getView === "function" ? editor.getView() : null;
-  if (view && view.state && view.state.selection) {
+  const existingAttrs = existing?.attrs || null;
+  if (existingAttrs) {
+    if (existingAttrs.text) textInput.value = existingAttrs.text;
+    if (existingAttrs.slug) slugInput.value = existingAttrs.slug;
+    if (!useHeadingSelect && existingAttrs.heading) {
+      headingControl.value = existingAttrs.heading;
+    }
+  } else if (view && view.state && view.state.selection) {
     const { from, to } = view.state.selection.main;
     const selectionText = from !== to ? view.state.sliceDoc(from, to) : "";
     if (selectionText) {
       textInput.value = selectionText;
     }
   }
+
+  const existingTargetValue = () => {
+    if (!existingAttrs) return "";
+    if (existingAttrs.source === "summary") return EXPAND_TARGET_SUMMARY;
+    if (existingAttrs.source === "deck") return EXPAND_TARGET_DECK;
+    return String(existingAttrs.heading || "").trim();
+  };
 
   let targetRequestId = 0;
   const refreshTargets = async (slug) => {
@@ -378,7 +394,7 @@ export function openExpandEmbedModal(editor, triggerBtn, mode = "expand") {
       resetTargetSelect(select, true);
       return;
     }
-    const preserve = select.value;
+    const preserve = select.value || existingTargetValue();
     const id = ++targetRequestId;
     select.disabled = true;
     try {
@@ -420,8 +436,18 @@ export function openExpandEmbedModal(editor, triggerBtn, mode = "expand") {
     },
   });
 
+  if (slugInput.value.trim()) {
+    refreshTargets(slugInput.value.trim());
+  }
+
   openModal({
-    title: isEmbed ? "Insert Embed" : "Insert Expand",
+    title: isEmbed
+      ? isEdit
+        ? "Edit Embed"
+        : "Insert Embed"
+      : isEdit
+        ? "Edit Expand"
+        : "Insert Expand",
     body: form,
     triggerElement: triggerBtn,
     className: "traven-modal-expand-embed",
@@ -441,7 +467,7 @@ export function openExpandEmbedModal(editor, triggerBtn, mode = "expand") {
         },
       },
       {
-        text: "Insert",
+        text: isEdit ? "Save" : "Insert",
         type: "primary",
         onClick: (_e, overlay) => {
           const slug = slugInput.value.trim();
@@ -455,8 +481,12 @@ export function openExpandEmbedModal(editor, triggerBtn, mode = "expand") {
             ? targetValueToAttrs(rawTarget)
             : { heading: rawTarget || null, source: null };
           const linkText = textInput.value.trim() || null;
-          const md = buildExpandEmbedShortcode(mode, slug, heading, linkText, source);
-          if (typeof editor.replaceSelection === "function") {
+          const md = buildWikilink(mode, slug, heading, linkText, source);
+          if (isEdit && view) {
+            view.dispatch({
+              changes: { from: existing.from, to: existing.to, insert: md },
+            });
+          } else if (typeof editor.replaceSelection === "function") {
             editor.replaceSelection(md);
           } else if (typeof editor.insertSnippet === "function") {
             editor.insertSnippet("", "", md);

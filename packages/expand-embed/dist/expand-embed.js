@@ -1,5 +1,5 @@
 // src/plugin.js
-import { TravenPlugin, Decorations, WidgetType, syntaxTree } from "@freedomware/traven";
+import { TravenPlugin, Decorations, WidgetType, syntaxTree as syntaxTree2 } from "@freedomware/traven";
 
 // ../../node_modules/@lezer/common/dist/index.js
 var DefaultBufferLength = 1024;
@@ -2044,89 +2044,42 @@ var classHighlighter = tagHighlighter([
 ]);
 
 // src/parser.js
-var ExpandEmbedShortcode = {
+var Wikilink = {
   defineNodes: [
-    { name: "ExpandEmbedShortcode" },
-    { name: "ExpandEmbedTagName", style: tags.className },
-    { name: "ExpandEmbedAttribute", style: tags.propertyName },
-    { name: "ExpandEmbedAttributeName", style: tags.propertyName },
-    { name: "ExpandEmbedAttributeValue", style: tags.string },
-    { name: "ExpandEmbedMark", style: tags.processingInstruction }
+    { name: "Wikilink" },
+    { name: "WikilinkMark", style: tags.processingInstruction },
+    { name: "WikilinkMode", style: tags.className }
   ],
   parseInline: [
     {
-      name: "ExpandEmbedShortcode",
+      name: "Wikilink",
       before: "Link",
       parse(cx, next, pos) {
         if (next !== 91) return -1;
-        const slice = cx.slice(pos + 1, pos + 10);
-        let tagName = "";
-        if (slice.startsWith("expand")) tagName = "expand";
-        else if (slice.startsWith("embed")) tagName = "embed";
-        else return -1;
-        const nextChar = cx.char(pos + 1 + tagName.length);
-        if (nextChar !== 32 && nextChar !== 93 && nextChar !== 61) return -1;
-        let scan = pos + 1 + tagName.length;
+        if (pos + 1 >= cx.end || cx.char(pos + 1) !== 91) return -1;
+        let scan = pos + 2;
         let endPos = -1;
-        let inDoubleQuote = false;
-        let inSingleQuote = false;
         while (scan < cx.end) {
           const ch = cx.char(scan);
           if (ch === 10) break;
-          if (ch === 34 && !inSingleQuote) inDoubleQuote = !inDoubleQuote;
-          else if (ch === 39 && !inDoubleQuote) inSingleQuote = !inSingleQuote;
-          else if (ch === 93 && !inDoubleQuote && !inSingleQuote) {
-            endPos = scan + 1;
+          if (ch === 93 && scan + 1 < cx.end && cx.char(scan + 1) === 93) {
+            endPos = scan + 2;
             break;
           }
           scan++;
         }
         if (endPos === -1) return -1;
         const children = [];
-        children.push(cx.elt("ExpandEmbedMark", pos, pos + 1));
-        children.push(
-          cx.elt("ExpandEmbedTagName", pos + 1, pos + 1 + tagName.length)
-        );
-        const attrStart = pos + 1 + tagName.length;
-        const attrEnd = endPos - 1;
-        const attrStr = cx.slice(attrStart, attrEnd);
-        const shorthand = attrStr.match(/^\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s\]]+))/);
-        if (shorthand) {
-          const valStr = shorthand[1] ?? shorthand[2] ?? shorthand[3] ?? "";
-          const matchStart = attrStart + (shorthand.index || 0);
-          const eqIdx = shorthand[0].indexOf("=");
-          const valIdxInMatch = shorthand[0].indexOf(valStr, eqIdx);
-          const valStart = matchStart + Math.max(0, valIdxInMatch);
-          const valEnd = valStart + valStr.length;
-          children.push(
-            cx.elt("ExpandEmbedAttribute", matchStart, matchStart + shorthand[0].length, [
-              cx.elt("ExpandEmbedAttributeValue", valStart, valEnd)
-            ])
-          );
+        children.push(cx.elt("WikilinkMark", pos, pos + 2));
+        const innerStart = pos + 2;
+        if (innerStart < endPos - 2) {
+          const modeCh = cx.char(innerStart);
+          if (modeCh === 33 || modeCh === 62) {
+            children.push(cx.elt("WikilinkMode", innerStart, innerStart + 1));
+          }
         }
-        const attrRegex = /\s*([a-zA-Z0-9_-]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s\]]+))/g;
-        let match;
-        while ((match = attrRegex.exec(attrStr)) !== null) {
-          if (shorthand && match.index < shorthand[0].length) continue;
-          const matchStart = attrStart + match.index;
-          const matchEnd = attrStart + attrRegex.lastIndex;
-          const nameStr = match[1];
-          const nameStart = matchStart + match[0].indexOf(nameStr);
-          const nameEnd = nameStart + nameStr.length;
-          const valStr = match[2] !== void 0 ? match[2] : match[3] !== void 0 ? match[3] : match[4] || "";
-          const eqIdx = match[0].indexOf("=");
-          const valIdxInMatch = match[0].indexOf(valStr, eqIdx);
-          const valStart = matchStart + valIdxInMatch;
-          const valEnd = valStart + valStr.length;
-          children.push(
-            cx.elt("ExpandEmbedAttribute", matchStart, matchEnd, [
-              cx.elt("ExpandEmbedAttributeName", nameStart, nameEnd),
-              cx.elt("ExpandEmbedAttributeValue", valStart, valEnd)
-            ])
-          );
-        }
-        children.push(cx.elt("ExpandEmbedMark", endPos - 1, endPos));
-        cx.addElement(cx.elt("ExpandEmbedShortcode", pos, endPos, children));
+        children.push(cx.elt("WikilinkMark", endPos - 2, endPos));
+        cx.addElement(cx.elt("Wikilink", pos, endPos, children));
         return endPos;
       }
     }
@@ -2140,190 +2093,103 @@ function expandEmbedLabel(attrs) {
   const slug = String(attrs?.slug || "").trim();
   return slug || "(missing slug)";
 }
-function parseExpandEmbedAttrs(raw) {
+function parseWikilinkAttrs(raw) {
+  const empty = {
+    mode: (
+      /** @type {const} */
+      "link"
+    ),
+    slug: "",
+    heading: null,
+    text: null,
+    source: null
+  };
   const text = String(raw || "").trim();
-  const mode = text.startsWith("[embed") ? "embed" : "expand";
-  const attrs = {};
-  const shorthand = text.match(/\[(?:expand|embed)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s\]]+))/i);
-  if (shorthand) {
-    attrs.default = shorthand[1] ?? shorthand[2] ?? shorthand[3] ?? "";
+  if (text.length < 4 || !text.startsWith("[[") || !text.endsWith("]]")) {
+    return empty;
   }
-  const attrRegex = /([a-zA-Z0-9_-]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s\]]+))/g;
-  let m;
-  while ((m = attrRegex.exec(text)) !== null) {
-    attrs[m[1]] = m[2] ?? m[3] ?? m[4] ?? "";
+  let inner = text.slice(2, -2);
+  let mode = "link";
+  if (inner.charCodeAt(0) === 33) {
+    mode = "embed";
+    inner = inner.slice(1);
+  } else if (inner.charCodeAt(0) === 62) {
+    mode = "expand";
+    inner = inner.slice(1);
   }
-  let slug = (attrs.slug || attrs.default || "").trim();
-  let heading2 = (attrs.heading || "").trim() || null;
-  const linkText = (attrs.text || "").trim() || null;
-  const source = (attrs.source || "").trim() || null;
-  if (slug.includes("#") && !heading2) {
-    const parts = slug.split("#");
-    slug = parts[0];
-    heading2 = parts.slice(1).join("#") || null;
+  const n = inner.length;
+  let i = 0;
+  while (i < n) {
+    const c = inner.charCodeAt(i);
+    if (c !== 32 && c !== 9) break;
+    i++;
   }
+  const slugStart = i;
+  while (i < n) {
+    const c = inner.charCodeAt(i);
+    if (c === 35 || c === 94 || c === 124) break;
+    i++;
+  }
+  const slug = inner.slice(slugStart, i).trim();
+  let heading2 = null;
+  let source = null;
+  let label = null;
+  while (i < n) {
+    const c = inner.charCodeAt(i);
+    if (c === 124) {
+      label = inner.slice(i + 1);
+      break;
+    }
+    if (c === 35) {
+      i++;
+      const hStart = i;
+      while (i < n) {
+        const d = inner.charCodeAt(i);
+        if (d === 94 || d === 124) break;
+        i++;
+      }
+      const h = inner.slice(hStart, i).trim();
+      if (h) heading2 = h;
+      continue;
+    }
+    if (c === 94) {
+      i++;
+      const sStart = i;
+      while (i < n) {
+        const d = inner.charCodeAt(i);
+        if (d < 97 || d > 122) break;
+        i++;
+      }
+      const s = inner.slice(sStart, i);
+      if (s) source = s;
+      continue;
+    }
+    i++;
+  }
+  const linkText = label != null ? label.trim() || null : null;
   return { mode, slug, heading: heading2, text: linkText, source };
-}
-
-// src/plugin.js
-var expandIdCounter = 0;
-function nextExpandId() {
-  expandIdCounter += 1;
-  return `traven-ee-${expandIdCounter}`;
-}
-var ExpandEmbedWidget = class _ExpandEmbedWidget extends WidgetType {
-  /**
-   * @param {{ mode: string, slug: string, heading: string|null, text: string|null, rawText: string, nodeFrom: number }} opts
-   */
-  constructor(opts) {
-    super();
-    this.mode = opts.mode;
-    this.slug = opts.slug;
-    this.heading = opts.heading;
-    this.text = opts.text;
-    this.rawText = opts.rawText;
-    this.nodeFrom = opts.nodeFrom;
-  }
-  toDOM(view) {
-    const el = document.createElement("span");
-    el.className = `traven-expand-chip traven-expand-chip--${this.mode}`;
-    el.dataset.mode = this.mode;
-    el.title = this.rawText;
-    el.textContent = expandEmbedLabel({
-      text: this.text,
-      heading: this.heading,
-      slug: this.slug
-    });
-    el.addEventListener("mousedown", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      view.dispatch({ selection: { anchor: this.nodeFrom } });
-      view.focus();
-    });
-    return el;
-  }
-  eq(other) {
-    return other instanceof _ExpandEmbedWidget && other.mode === this.mode && other.slug === this.slug && other.heading === this.heading && other.text === this.text && other.rawText === this.rawText;
-  }
-  ignoreEvent() {
-    return false;
-  }
-};
-var ExpandEmbedPlugin = class extends TravenPlugin {
-  name = "expand-embed";
-  requiredNodes = (
-    /** @type {const} */
-    ["ExpandEmbedShortcode"]
-  );
-  decorationPriority = 80;
-  /**
-   * @param {{ resolve?: ExpandResolver }} [options]
-   */
-  constructor(options = {}) {
-    super();
-    this.resolve = typeof options.resolve === "function" ? options.resolve : null;
-  }
-  getMarkdownConfig() {
-    return ExpandEmbedShortcode;
-  }
-  /**
-   * @param {import("@freedomware/traven").DecorationContext | any} ctx
-   */
-  buildDecorations(ctx) {
-    const { state, decorations, cursorInRange, selectionOverlapsRange } = ctx;
-    const tree = syntaxTree(state);
-    tree.iterate({
-      enter: (node) => {
-        if (node.name !== "ExpandEmbedShortcode") return;
-        if (cursorInRange(node.from, node.to) || selectionOverlapsRange(node.from, node.to)) {
-          return;
-        }
-        const rawText = state.doc.sliceString(node.from, node.to);
-        const attrs = parseExpandEmbedAttrs(rawText);
-        decorations.push({
-          from: node.from,
-          to: node.to,
-          deco: Decorations.replace({
-            widget: new ExpandEmbedWidget({
-              mode: attrs.mode,
-              slug: attrs.slug,
-              heading: attrs.heading,
-              text: attrs.text,
-              rawText,
-              nodeFrom: node.from
-            })
-            // Inline — must not use block:true (breaks mid-sentence flow).
-          })
-        });
-      }
-    });
-  }
-  /**
-   * @param {import("@lezer/common").SyntaxNode} node
-   * @param {string} _childrenHtml
-   * @param {{ sliceDoc: (from: number, to: number) => string }} ctx
-   * @returns {string|null}
-   */
-  renderToHTML(node, _childrenHtml, ctx) {
-    const rawText = ctx.sliceDoc(node.from, node.to);
-    const attrs = parseExpandEmbedAttrs(rawText);
-    if (!attrs.slug) return "";
-    let bodyHtml = null;
-    if (this.resolve) {
-      try {
-        bodyHtml = this.resolve({
-          slug: attrs.slug,
-          heading: attrs.heading,
-          source: attrs.source,
-          mode: attrs.mode
-        });
-      } catch (err) {
-        console.warn("ExpandEmbedPlugin resolve failed:", err);
-        bodyHtml = null;
-      }
-    }
-    if (bodyHtml === null && this.resolve) {
-      return "";
-    }
-    const label = escapeHtml(expandEmbedLabel(attrs));
-    const slugAttr = escapeAttr(attrs.slug);
-    const headingAttr = attrs.heading ? ` data-heading="${escapeAttr(attrs.heading)}"` : "";
-    const sourceAttr = attrs.source ? ` data-source="${escapeAttr(attrs.source)}"` : "";
-    const inner = bodyHtml != null && bodyHtml !== "" ? bodyHtml : `<p class="traven-expand-unresolved">Unresolved reference: ${escapeHtml(attrs.slug)}</p>`;
-    if (attrs.mode === "embed") {
-      return `<div class="traven-embed" data-slug="${slugAttr}"${headingAttr}${sourceAttr}><div class="traven-embed-content">${inner}</div></div>`;
-    }
-    const id = nextExpandId();
-    return `<button type="button" class="traven-expand-trigger" data-traven-expand="${id}" data-slug="${slugAttr}"${headingAttr}${sourceAttr} aria-expanded="false">${label}</button><template id="${id}">${inner}</template>`;
-  }
-};
-function escapeHtml(text) {
-  return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-}
-function escapeAttr(text) {
-  return escapeHtml(text).replace(/"/g, "&quot;");
 }
 
 // src/modal.js
 import { openModal } from "@freedomware/traven";
 
 // src/shortcode-build.js
-function escapeAttr2(value) {
-  return String(value || "").replace(/\\/g, "\\\\").replace(/"/g, '\\"');
-}
-function buildExpandEmbedShortcode(mode, slug, heading2 = null, text = null, source = null) {
+function buildWikilink(mode, slug, heading2 = null, text = null, source = null) {
   const s = String(slug || "").trim();
   const src = source ? String(source).trim() : "";
   const h = !src && heading2 ? String(heading2).trim() : "";
   const t2 = text ? String(text).trim() : "";
-  if (!s) return `[${mode} slug=""]`;
-  let out = `[${mode} slug="${escapeAttr2(s)}"`;
-  if (t2) out += ` text="${escapeAttr2(t2)}"`;
-  if (src) out += ` source="${escapeAttr2(src)}"`;
-  else if (h) out += ` heading="${escapeAttr2(h)}"`;
-  out += "]";
+  let prefix = "";
+  if (mode === "expand") prefix = ">";
+  else if (mode === "embed") prefix = "!";
+  let out = "[[" + prefix + s;
+  if (h) out += "#" + h;
+  if (src) out += "^" + src;
+  if (t2) out += "|" + t2;
+  out += "]]";
   return out;
 }
+var buildExpandEmbedShortcode = buildWikilink;
 
 // src/modal.js
 function attachSlugTypeahead(editor, slugInput, fieldWrap, opts = {}) {
@@ -2528,8 +2394,9 @@ function targetValueToAttrs(value) {
   if (v === EXPAND_TARGET_DECK) return { heading: null, source: "deck" };
   return { heading: v, source: null };
 }
-function openExpandEmbedModal(editor, triggerBtn, mode = "expand") {
+function openExpandEmbedModal(editor, triggerBtn, mode = "expand", existing = null) {
   const isEmbed = mode === "embed";
+  const isEdit = !!(existing && Number.isFinite(existing.from) && Number.isFinite(existing.to));
   const form = document.createElement("div");
   const textField = document.createElement("div");
   textField.className = "traven-modal-field";
@@ -2591,13 +2458,26 @@ function openExpandEmbedModal(editor, triggerBtn, mode = "expand") {
     form.querySelector("#traven-expand-heading")
   );
   const view = typeof editor.getView === "function" ? editor.getView() : null;
-  if (view && view.state && view.state.selection) {
+  const existingAttrs = existing?.attrs || null;
+  if (existingAttrs) {
+    if (existingAttrs.text) textInput.value = existingAttrs.text;
+    if (existingAttrs.slug) slugInput.value = existingAttrs.slug;
+    if (!useHeadingSelect && existingAttrs.heading) {
+      headingControl.value = existingAttrs.heading;
+    }
+  } else if (view && view.state && view.state.selection) {
     const { from, to } = view.state.selection.main;
     const selectionText = from !== to ? view.state.sliceDoc(from, to) : "";
     if (selectionText) {
       textInput.value = selectionText;
     }
   }
+  const existingTargetValue = () => {
+    if (!existingAttrs) return "";
+    if (existingAttrs.source === "summary") return EXPAND_TARGET_SUMMARY;
+    if (existingAttrs.source === "deck") return EXPAND_TARGET_DECK;
+    return String(existingAttrs.heading || "").trim();
+  };
   let targetRequestId = 0;
   const refreshTargets = async (slug) => {
     if (!useHeadingSelect) return;
@@ -2610,7 +2490,7 @@ function openExpandEmbedModal(editor, triggerBtn, mode = "expand") {
       resetTargetSelect(select, true);
       return;
     }
-    const preserve = select.value;
+    const preserve = select.value || existingTargetValue();
     const id = ++targetRequestId;
     select.disabled = true;
     try {
@@ -2647,8 +2527,11 @@ function openExpandEmbedModal(editor, triggerBtn, mode = "expand") {
       refreshTargets(slug);
     }
   });
+  if (slugInput.value.trim()) {
+    refreshTargets(slugInput.value.trim());
+  }
   openModal({
-    title: isEmbed ? "Insert Embed" : "Insert Expand",
+    title: isEmbed ? isEdit ? "Edit Embed" : "Insert Embed" : isEdit ? "Edit Expand" : "Insert Expand",
     body: form,
     triggerElement: triggerBtn,
     className: "traven-modal-expand-embed",
@@ -2668,7 +2551,7 @@ function openExpandEmbedModal(editor, triggerBtn, mode = "expand") {
         }
       },
       {
-        text: "Insert",
+        text: isEdit ? "Save" : "Insert",
         type: "primary",
         onClick: (_e, overlay) => {
           const slug = slugInput.value.trim();
@@ -2680,8 +2563,12 @@ function openExpandEmbedModal(editor, triggerBtn, mode = "expand") {
           const rawTarget = headingControl.value.trim();
           const { heading: heading2, source } = useExpandTargets ? targetValueToAttrs(rawTarget) : { heading: rawTarget || null, source: null };
           const linkText = textInput.value.trim() || null;
-          const md = buildExpandEmbedShortcode(mode, slug, heading2, linkText, source);
-          if (typeof editor.replaceSelection === "function") {
+          const md = buildWikilink(mode, slug, heading2, linkText, source);
+          if (isEdit && view) {
+            view.dispatch({
+              changes: { from: existing.from, to: existing.to, insert: md }
+            });
+          } else if (typeof editor.replaceSelection === "function") {
             editor.replaceSelection(md);
           } else if (typeof editor.insertSnippet === "function") {
             editor.insertSnippet("", "", md);
@@ -2695,6 +2582,463 @@ function openExpandEmbedModal(editor, triggerBtn, mode = "expand") {
     if (textInput.value.trim()) slugInput.focus();
     else textInput.focus();
   });
+}
+
+// src/autocomplete.js
+import { syntaxTree } from "@freedomware/traven";
+
+// src/wikilink-complete.js
+function findOpenWikilink(doc, pos) {
+  const text = String(doc || "");
+  if (pos < 2) return null;
+  const lineStart = text.lastIndexOf("\n", pos - 1) + 1;
+  const slice = text.slice(lineStart, pos);
+  const open = slice.lastIndexOf("[[");
+  if (open === -1) return null;
+  const after = slice.slice(open + 2);
+  if (after.includes("]]")) return null;
+  const lineEndIdx = text.indexOf("\n", pos);
+  const lineEnd = lineEndIdx === -1 ? text.length : lineEndIdx;
+  if (text.slice(pos, lineEnd).includes("]]")) return null;
+  let prefix = "";
+  let rest = after;
+  if (rest.startsWith("!")) {
+    prefix = "!";
+    rest = rest.slice(1);
+  } else if (rest.startsWith(">")) {
+    prefix = ">";
+    rest = rest.slice(1);
+  }
+  let cut = rest.length;
+  for (const ch of ["#", "^", "|"]) {
+    const idx = rest.indexOf(ch);
+    if (idx !== -1 && idx < cut) cut = idx;
+  }
+  return {
+    from: lineStart + open,
+    prefix,
+    query: rest.slice(0, cut)
+  };
+}
+function formatWikilinkCompletion(opts) {
+  const slug = String(opts?.slug || "").trim();
+  const rawPrefix = opts?.prefix || "";
+  const prefix = rawPrefix === "!" || rawPrefix === ">" ? rawPrefix : "";
+  const title = String(opts?.title || "").trim();
+  if (title) return `[[${prefix}${slug}|${title}]]`;
+  return `[[${prefix}${slug}]]`;
+}
+
+// src/autocomplete.js
+function isInCodeContext(state, pos) {
+  if (!state) return false;
+  let inCode = false;
+  syntaxTree(state).iterate({
+    from: pos,
+    to: pos,
+    enter(node) {
+      const name2 = node.name;
+      if (name2 === "InlineCode" || name2 === "FencedCode" || name2 === "CodeBlock" || name2 === "CodeText") {
+        inCode = true;
+        return false;
+      }
+    }
+  });
+  return inCode;
+}
+function isInsideWikilinkNode(state, pos) {
+  if (!state) return false;
+  let inside = false;
+  syntaxTree(state).iterate({
+    from: pos,
+    to: pos,
+    enter(node) {
+      if (node.name === "Wikilink" && pos > node.from && pos < node.to) {
+        inside = true;
+        return false;
+      }
+    }
+  });
+  return inside;
+}
+function attachWikilinkAutocomplete(editor) {
+  const suggestHandler = typeof editor.getSuggestLinks === "function" ? editor.getSuggestLinks() : null;
+  if (!suggestHandler) {
+    return { destroy() {
+    } };
+  }
+  const view = typeof editor.getView === "function" ? editor.getView() : null;
+  if (!view || !view.dom) {
+    return { destroy() {
+    } };
+  }
+  let suggestList = null;
+  let debounceTimer = null;
+  let requestId = 0;
+  let activeIndex = -1;
+  let current = [];
+  let open = null;
+  const hide = () => {
+    if (suggestList) {
+      suggestList.remove();
+      suggestList = null;
+    }
+    activeIndex = -1;
+    current = [];
+    open = null;
+  };
+  const apply = (item) => {
+    if (!open) return;
+    const slug = String(item.slug || "").trim();
+    if (!slug) return;
+    const insertion = formatWikilinkCompletion({
+      prefix: open.prefix,
+      slug,
+      title: item.title || null
+    });
+    const to = view.state.selection.main.head;
+    view.dispatch({
+      changes: { from: open.from, to, insert: insertion },
+      selection: { anchor: open.from + insertion.length }
+    });
+    view.focus();
+    hide();
+  };
+  const positionList = () => {
+    if (!suggestList || !open) return;
+    const coords = view.coordsAtPos(view.state.selection.main.head);
+    if (!coords) return;
+    suggestList.style.top = `${coords.bottom + 4}px`;
+    suggestList.style.left = `${coords.left}px`;
+  };
+  const render = (items) => {
+    if (suggestList) {
+      suggestList.remove();
+      suggestList = null;
+    }
+    activeIndex = -1;
+    current = Array.isArray(items) ? items.filter((i) => i && (i.slug || i.title)) : [];
+    if (current.length === 0 || !open) return;
+    suggestList = document.createElement("ul");
+    suggestList.className = "traven-link-suggest-list is-fixed";
+    suggestList.setAttribute("role", "listbox");
+    suggestList.id = "traven-wikilink-suggest-list";
+    current.forEach((item, index) => {
+      const li = document.createElement("li");
+      li.className = "traven-link-suggest-item";
+      li.setAttribute("role", "option");
+      li.id = `traven-wikilink-suggest-${index}`;
+      const titleEl = document.createElement("span");
+      titleEl.className = "traven-link-suggest-title";
+      titleEl.textContent = item.title || item.slug || item.url;
+      const metaEl = document.createElement("span");
+      metaEl.className = "traven-link-suggest-meta";
+      metaEl.textContent = item.slug || item.url || "";
+      li.appendChild(titleEl);
+      li.appendChild(metaEl);
+      li.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        apply(item);
+      });
+      suggestList.appendChild(li);
+    });
+    document.body.appendChild(suggestList);
+    positionList();
+  };
+  const setActive = (index) => {
+    if (!suggestList) return;
+    const items = suggestList.querySelectorAll(".traven-link-suggest-item");
+    items.forEach((el) => el.classList.remove("is-active"));
+    if (index < 0 || index >= items.length) {
+      activeIndex = -1;
+      return;
+    }
+    activeIndex = index;
+    items[index].classList.add("is-active");
+    items[index].scrollIntoView({ block: "nearest" });
+  };
+  const run = async (found) => {
+    const id = ++requestId;
+    try {
+      const result = await suggestHandler(found.query);
+      if (id !== requestId) return;
+      if (!open || open.from !== found.from) return;
+      render(Array.isArray(result) ? result : []);
+    } catch (err) {
+      if (id !== requestId) return;
+      hide();
+      console.warn("onSuggestLinks failed:", err);
+    }
+  };
+  const maybeSuggest = () => {
+    const state = view.state;
+    const pos = state.selection.main.head;
+    if (isInCodeContext(state, pos) || isInsideWikilinkNode(state, pos)) {
+      hide();
+      return;
+    }
+    const found = findOpenWikilink(state.doc.toString(), pos);
+    if (!found) {
+      hide();
+      return;
+    }
+    open = found;
+    if (debounceTimer) clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => run(found), 200);
+  };
+  const onKeyDown = (e) => {
+    if (!suggestList || current.length === 0) {
+      if (e.key === "Escape" && suggestList) {
+        e.preventDefault();
+        hide();
+      }
+      return;
+    }
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      e.stopPropagation();
+      setActive(activeIndex < current.length - 1 ? activeIndex + 1 : 0);
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      e.stopPropagation();
+      setActive(activeIndex <= 0 ? current.length - 1 : activeIndex - 1);
+    } else if (e.key === "Enter" && activeIndex >= 0) {
+      e.preventDefault();
+      e.stopPropagation();
+      apply(current[activeIndex]);
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      hide();
+    }
+  };
+  const onDocClick = (e) => {
+    if (suggestList && !suggestList.contains(
+      /** @type {Node} */
+      e.target
+    )) {
+      hide();
+    }
+  };
+  const onChange = () => maybeSuggest();
+  view.dom.addEventListener("keydown", onKeyDown);
+  view.dom.addEventListener("keyup", maybeSuggest);
+  document.addEventListener("mousedown", onDocClick);
+  if (typeof editor.on === "function") {
+    editor.on("change", onChange);
+  }
+  return {
+    destroy() {
+      if (debounceTimer) clearTimeout(debounceTimer);
+      view.dom.removeEventListener("keydown", onKeyDown);
+      view.dom.removeEventListener("keyup", maybeSuggest);
+      document.removeEventListener("mousedown", onDocClick);
+      hide();
+    }
+  };
+}
+
+// src/plugin.js
+var PENCIL_SVG = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`;
+var expandIdCounter = 0;
+function nextExpandId() {
+  expandIdCounter += 1;
+  return `traven-ee-${expandIdCounter}`;
+}
+var ExpandEmbedWidget = class _ExpandEmbedWidget extends WidgetType {
+  /**
+   * @param {{
+   *   mode: string,
+   *   slug: string,
+   *   heading: string|null,
+   *   text: string|null,
+   *   source: string|null,
+   *   rawText: string,
+   *   nodeFrom: number,
+   *   editor?: object|null,
+   * }} opts
+   */
+  constructor(opts) {
+    super();
+    this.mode = opts.mode;
+    this.slug = opts.slug;
+    this.heading = opts.heading;
+    this.text = opts.text;
+    this.source = opts.source;
+    this.rawText = opts.rawText;
+    this.nodeFrom = opts.nodeFrom;
+    this.editor = opts.editor || null;
+  }
+  toDOM(view) {
+    const el = document.createElement("span");
+    const chipMode = this.mode === "embed" || this.mode === "expand" ? this.mode : "link";
+    el.className = `traven-expand-chip traven-expand-chip--${chipMode}`;
+    el.dataset.mode = chipMode;
+    el.title = this.rawText;
+    const label = document.createElement("span");
+    label.className = "traven-expand-chip-label";
+    label.textContent = expandEmbedLabel({
+      text: this.text,
+      heading: this.heading,
+      slug: this.slug
+    });
+    el.appendChild(label);
+    if (chipMode === "expand" || chipMode === "embed") {
+      const pencil = document.createElement("button");
+      pencil.type = "button";
+      pencil.className = "traven-expand-chip-edit";
+      pencil.setAttribute("aria-label", chipMode === "embed" ? "Edit embed" : "Edit expand");
+      pencil.innerHTML = PENCIL_SVG;
+      pencil.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (this.editor) {
+          openExpandEmbedModal(this.editor, pencil, chipMode, {
+            from: this.nodeFrom,
+            to: this.nodeFrom + this.rawText.length,
+            attrs: {
+              mode: chipMode,
+              slug: this.slug,
+              heading: this.heading,
+              text: this.text,
+              source: this.source
+            }
+          });
+        }
+      });
+      el.appendChild(pencil);
+    }
+    el.addEventListener("mousedown", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      view.dispatch({ selection: { anchor: this.nodeFrom } });
+      view.focus();
+    });
+    return el;
+  }
+  eq(other) {
+    return other instanceof _ExpandEmbedWidget && other.mode === this.mode && other.slug === this.slug && other.heading === this.heading && other.text === this.text && other.source === this.source && other.rawText === this.rawText;
+  }
+  ignoreEvent() {
+    return false;
+  }
+};
+var ExpandEmbedPlugin = class extends TravenPlugin {
+  name = "expand-embed";
+  requiredNodes = (
+    /** @type {const} */
+    ["Wikilink"]
+  );
+  decorationPriority = 80;
+  /**
+   * @param {{ resolve?: ExpandResolver }} [options]
+   */
+  constructor(options = {}) {
+    super();
+    this.resolve = typeof options.resolve === "function" ? options.resolve : null;
+    this.editor = null;
+    this._autocomplete = null;
+  }
+  getMarkdownConfig() {
+    return Wikilink;
+  }
+  /**
+   * @param {import("@freedomware/traven").PluginContext | any} ctx
+   */
+  onRegister(ctx) {
+    this.editor = ctx?.editor || null;
+    const editor = this.editor;
+    if (!editor) return;
+    const attach = () => {
+      if (this._autocomplete) return;
+      this._autocomplete = attachWikilinkAutocomplete(editor);
+    };
+    if (typeof queueMicrotask === "function") {
+      queueMicrotask(attach);
+    } else {
+      setTimeout(attach, 0);
+    }
+  }
+  /**
+   * @param {import("@freedomware/traven").DecorationContext | any} ctx
+   */
+  buildDecorations(ctx) {
+    const { state, decorations, cursorInRange, selectionOverlapsRange } = ctx;
+    const tree = syntaxTree2(state);
+    tree.iterate({
+      enter: (node) => {
+        if (node.name !== "Wikilink") return;
+        if (cursorInRange(node.from, node.to) || selectionOverlapsRange(node.from, node.to)) {
+          return;
+        }
+        const rawText = state.doc.sliceString(node.from, node.to);
+        const attrs = parseWikilinkAttrs(rawText);
+        decorations.push({
+          from: node.from,
+          to: node.to,
+          deco: Decorations.replace({
+            widget: new ExpandEmbedWidget({
+              mode: attrs.mode,
+              slug: attrs.slug,
+              heading: attrs.heading,
+              text: attrs.text,
+              source: attrs.source,
+              rawText,
+              nodeFrom: node.from,
+              editor: this.editor
+            })
+            // Inline — must not use block:true (breaks mid-sentence flow).
+          })
+        });
+      }
+    });
+  }
+  /**
+   * @param {import("@lezer/common").SyntaxNode} node
+   * @param {string} _childrenHtml
+   * @param {{ sliceDoc: (from: number, to: number) => string }} ctx
+   * @returns {string|null}
+   */
+  renderToHTML(node, _childrenHtml, ctx) {
+    const rawText = ctx.sliceDoc(node.from, node.to);
+    const attrs = parseWikilinkAttrs(rawText);
+    if (!attrs.slug) return "";
+    const label = escapeHtml(expandEmbedLabel(attrs));
+    const slugAttr = escapeAttr(attrs.slug);
+    const headingAttr = attrs.heading ? ` data-heading="${escapeAttr(attrs.heading)}"` : "";
+    const sourceAttr = attrs.source ? ` data-source="${escapeAttr(attrs.source)}"` : "";
+    if (attrs.mode === "link") {
+      return `<a class="traven-wikilink" href="#" data-slug="${slugAttr}"${headingAttr}${sourceAttr}>${label}</a>`;
+    }
+    let bodyHtml = null;
+    if (this.resolve) {
+      try {
+        bodyHtml = this.resolve({
+          slug: attrs.slug,
+          heading: attrs.heading,
+          source: attrs.source,
+          mode: attrs.mode
+        });
+      } catch (err) {
+        console.warn("ExpandEmbedPlugin resolve failed:", err);
+        bodyHtml = null;
+      }
+    }
+    if (bodyHtml === null && this.resolve) {
+      return "";
+    }
+    const inner = bodyHtml != null && bodyHtml !== "" ? bodyHtml : `<p class="traven-expand-unresolved">Unresolved reference: ${escapeHtml(attrs.slug)}</p>`;
+    if (attrs.mode === "embed") {
+      return `<div class="traven-embed" data-slug="${slugAttr}"${headingAttr}${sourceAttr}><div class="traven-embed-content">${inner}</div></div>`;
+    }
+    const id = nextExpandId();
+    return `<button type="button" class="traven-expand-trigger" data-traven-expand="${id}" data-slug="${slugAttr}"${headingAttr}${sourceAttr} aria-expanded="false">${label}</button><template id="${id}">${inner}</template>`;
+  }
+};
+function escapeHtml(text) {
+  return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+function escapeAttr(text) {
+  return escapeHtml(text).replace(/"/g, "&quot;");
 }
 
 // src/tools.js
@@ -2836,11 +3180,17 @@ if (typeof document !== "undefined") {
 export {
   EXPAND_EMBED_TOOLBAR,
   ExpandEmbedPlugin,
-  ExpandEmbedShortcode,
+  Wikilink as ExpandEmbedShortcode,
+  Wikilink,
+  attachWikilinkAutocomplete,
   buildExpandEmbedShortcode,
+  buildWikilink,
   expandEmbedLabel,
   expandEmbedTools,
+  findOpenWikilink,
+  formatWikilinkCompletion,
   initExpandEmbed,
   openExpandEmbedModal,
-  parseExpandEmbedAttrs
+  parseWikilinkAttrs as parseExpandEmbedAttrs,
+  parseWikilinkAttrs
 };

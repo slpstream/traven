@@ -1,7 +1,7 @@
 {
   "name": "@freedomware/traven-expand-embed",
   "version": "0.1.13",
-  "description": "Traven plugin: [expand] / [embed] shortcodes for site-owned post transclusion",
+  "description": "Traven plugin: [[wikilinks]] with expand / embed transclusion",
   "license": "MIT",
   "type": "module",
   "main": "dist/expand-embed.js",

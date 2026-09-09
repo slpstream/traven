@@ -23,10 +23,10 @@ Initializes a new editor instance.
 | `onSave` | `function` | `null` | Callback fired on Save command (Cmd+S / Ctrl+S): `(value: string) => void`. |
 | `onUploadImage` | `function` | `null` | Callback returning a promise of the uploaded image's URL: `(file: File) => Promise<string>`. |
 | `onPickImage` | `function` | `null` | Optional host media-library picker: `() => Promise<{ url: string, alt?: string, caption?: string } \| null>`. When set, the Insert/Edit Image modal shows **Or choose from library**. Resolve with an asset or `null` if cancelled. Does not replace the OS file dropzone. |
-| `onSuggestLinks` | `function` | `null` | Optional host callback for Insert Link modal autocomplete: `(query: string) => Promise<{ title: string, url: string, slug?: string }[]>`. When omitted, the modal stays text + URL only. Also powers Expand/Embed slug typeahead when those plugin tools are loaded. |
+| `onSuggestLinks` | `function` | `null` | Optional host callback for Insert Link modal autocomplete: `(query: string) => Promise<{ title: string, url: string, slug?: string }[]>`. When omitted, the modal stays text + URL only. Also powers Expand/Embed slug typeahead and in-editor `[[` wikilink completion when `@freedomware/traven-expand-embed` is loaded. |
 | `imageAspectOptions` | `Array<{ value: string, label: string }>` | `null` | Optional host-declared aspect choices for the Edit/Insert Image modal. When set and non-empty, advanced mode shows an Aspect pill row between Layout and CSS Class; selected values are managed as `class` tokens on `<Image class="…">`. Omit or pass `[]` to leave the modal unchanged. |
-| `onListHeadings` | `function` | `null` | Optional host callback for Expand/Embed Heading dropdown: `(slug: string) => Promise<{ title: string, level?: number }[]>`. When set (and `onListExpandTargets` is omitted), the expand-embed insert modal uses a `<select>` (Whole post + sections) instead of free-text. |
-| `onListExpandTargets` | `function` | `null` | Optional richer Expand/Embed target picker: `(slug: string) => Promise<{ summary?: string\|null, deck?: string\|null, headings: { title: string, level?: number }[] }>`. When set, the modal offers Whole post \| Summary (if summary non-empty) \| Deck (if deck non-empty) \| section headings. Preferred over `onListHeadings`. |
+| `onListHeadings` | `function` | `null` | Optional host callback for Expand/Embed Heading dropdown: `(slug: string) => Promise<{ title: string, level?: number }[]>`. When set (and `onListExpandTargets` is omitted), the expand-embed insert modal uses a `<select>` (Whole post + sections) instead of free-text. Insert Expand saves `[[>slug]]`; Insert Embed saves `[[!slug]]`. |
+| `onListExpandTargets` | `function` | `null` | Optional richer Expand/Embed target picker: `(slug: string) => Promise<{ summary?: string\|null, deck?: string\|null, headings: { title: string, level?: number }[] }>`. When set, the modal offers Whole post \| Summary (if summary non-empty) \| Deck (if deck non-empty) \| section headings, serialized as `[[>slug^summary]]` / `[[!slug^deck]]` (and `#heading` for sections). Preferred over `onListHeadings`. |
 | `onStatsUpdate` | `function` | `null` | Callback fired when document stats change: `(stats: { words: number, characters: number, readTime: number }) => void`. |
 | `theme` | `"light" \| "dark"`| `"light"` | Configures baseline cursor theme variables and dark mode class triggers. |
 | `caretColor` | `string` | `""` | Custom hex color for the editor caret overrides. |
@@ -174,7 +174,7 @@ Opens the Insert Image modal, optionally prefilled (e.g. from a CMS sidebar gall
 *   **Returns:** `void`
 
 ### `getSuggestLinks()`
-Returns the configured link-suggestion handler for the Insert Link modal, or `null` if not configured.
+Returns the configured link-suggestion handler for the Insert Link modal (and expand-embed `[[` typeahead), or `null` if not configured.
 *   **Returns:** `(query: string) => Promise<{ title: string, url: string, slug?: string }[]>` or `null`
 
 ### `getImageAspectOptions()`
@@ -182,11 +182,11 @@ Returns host-declared image aspect options for the Edit/Insert Image modal, or `
 *   **Returns:** `{ value: string, label: string }[]` or `null`
 
 ### `getListHeadings()`
-Returns the configured heading-list handler for the Expand/Embed insert modal, or `null` if not configured.
+Returns the configured heading-list handler for the Expand/Embed insert modal (`[[>slug]]` / `[[!slug]]`), or `null` if not configured.
 *   **Returns:** `(slug: string) => Promise<{ title: string, level?: number }[]>` or `null`
 
 ### `getListExpandTargets()`
-Returns the configured expand-target handler (summary + deck + headings) for the Expand/Embed insert modal, or `null` if not configured. Prefer this over `getListHeadings()` when the host can supply frontmatter summary and/or deck.
+Returns the configured expand-target handler (summary + deck + headings) for the Expand/Embed insert modal (`[[>slug^summary]]` / `[[!slug^deck]]`), or `null` if not configured. Prefer this over `getListHeadings()` when the host can supply frontmatter summary and/or deck.
 *   **Returns:** `(slug: string) => Promise<{ summary?: string|null, deck?: string|null, headings: { title: string, level?: number }[] }>` or `null`
 
 ### `getComponents()`

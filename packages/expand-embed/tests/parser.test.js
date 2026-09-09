@@ -1,65 +1,80 @@
 import { describe, it, expect } from "vitest";
-import { parseExpandEmbedAttrs, expandEmbedLabel } from "../src/parser.js";
-import { buildExpandEmbedShortcode } from "../src/shortcode-build.js";
+import { parseWikilinkAttrs, expandEmbedLabel } from "../src/parser.js";
+import { buildWikilink, buildExpandEmbedShortcode } from "../src/shortcode-build.js";
 
-describe("parseExpandEmbedAttrs", () => {
-  it("parses slug and heading attributes", () => {
-    const r = parseExpandEmbedAttrs('[expand slug="the-spark" heading="The Spark"]');
-    expect(r.mode).toBe("expand");
+describe("parseWikilinkAttrs", () => {
+  it("parses a plain wikilink", () => {
+    const r = parseWikilinkAttrs("[[the-spark]]");
+    expect(r.mode).toBe("link");
     expect(r.slug).toBe("the-spark");
-    expect(r.heading).toBe("The Spark");
-    expect(r.text).toBeNull();
-  });
-
-  it("parses shorthand expand=slug#heading", () => {
-    const r = parseExpandEmbedAttrs('[expand="the-spark#section-one"]');
-    expect(r.slug).toBe("the-spark");
-    expect(r.heading).toBe("section-one");
-  });
-
-  it("parses embed mode", () => {
-    const r = parseExpandEmbedAttrs('[embed slug="other-post"]');
-    expect(r.mode).toBe("embed");
-    expect(r.slug).toBe("other-post");
     expect(r.heading).toBeNull();
     expect(r.text).toBeNull();
-  });
-
-  it("parses text alone", () => {
-    const r = parseExpandEmbedAttrs('[expand slug="christmas-in-finland" text="Finland"]');
-    expect(r.slug).toBe("christmas-in-finland");
-    expect(r.text).toBe("Finland");
-    expect(r.heading).toBeNull();
-  });
-
-  it("parses text and heading independently", () => {
-    const r = parseExpandEmbedAttrs(
-      '[expand slug="christmas-in-finland" text="Click to expand…" heading="Rovaniemi: The Official Home of Santa Claus"]'
-    );
-    expect(r.slug).toBe("christmas-in-finland");
-    expect(r.text).toBe("Click to expand…");
-    expect(r.heading).toBe("Rovaniemi: The Official Home of Santa Claus");
     expect(r.source).toBeNull();
   });
 
-  it("parses source=deck", () => {
-    const r = parseExpandEmbedAttrs(
-      '[expand slug="finland" text="Finland" source="deck"]'
+  it("parses a labeled wikilink", () => {
+    const r = parseWikilinkAttrs("[[christmas-in-finland|Finland]]");
+    expect(r.mode).toBe("link");
+    expect(r.slug).toBe("christmas-in-finland");
+    expect(r.text).toBe("Finland");
+  });
+
+  it("parses embed bang prefix", () => {
+    const r = parseWikilinkAttrs("[[!other-post]]");
+    expect(r.mode).toBe("embed");
+    expect(r.slug).toBe("other-post");
+  });
+
+  it("parses expand gt prefix with heading and label", () => {
+    const r = parseWikilinkAttrs(
+      "[[>christmas-in-finland#Rovaniemi: The Official Home of Santa Claus|Click to expand…]]"
     );
+    expect(r.mode).toBe("expand");
+    expect(r.slug).toBe("christmas-in-finland");
+    expect(r.heading).toBe("Rovaniemi: The Official Home of Santa Claus");
+    expect(r.text).toBe("Click to expand…");
+    expect(r.source).toBeNull();
+  });
+
+  it("parses heading on a plain link", () => {
+    const r = parseWikilinkAttrs("[[the-spark#The Spark]]");
+    expect(r.mode).toBe("link");
+    expect(r.slug).toBe("the-spark");
+    expect(r.heading).toBe("The Spark");
+  });
+
+  it("parses source=deck", () => {
+    const r = parseWikilinkAttrs("[[>finland^deck|Finland]]");
     expect(r.slug).toBe("finland");
     expect(r.text).toBe("Finland");
     expect(r.source).toBe("deck");
     expect(r.heading).toBeNull();
+    expect(r.mode).toBe("expand");
   });
 
   it("parses source=summary", () => {
-    const r = parseExpandEmbedAttrs(
-      '[expand slug="finland" text="Finland" source="summary"]'
-    );
-    expect(r.slug).toBe("finland");
-    expect(r.text).toBe("Finland");
+    const r = parseWikilinkAttrs("[[>finland^summary|Finland]]");
     expect(r.source).toBe("summary");
     expect(r.heading).toBeNull();
+  });
+
+  it("parses embed with source", () => {
+    const r = parseWikilinkAttrs("[[!finland^deck]]");
+    expect(r.mode).toBe("embed");
+    expect(r.source).toBe("deck");
+  });
+
+  it("keeps both heading and source when written together", () => {
+    const r = parseWikilinkAttrs("[[>finland#Origins^deck|Finland]]");
+    expect(r.heading).toBe("Origins");
+    expect(r.source).toBe("deck");
+    expect(r.text).toBe("Finland");
+  });
+
+  it("does not treat legacy shortcodes as wikilinks", () => {
+    const r = parseWikilinkAttrs('[expand slug="the-spark"]');
+    expect(r.slug).toBe("");
+    expect(r.mode).toBe("link");
   });
 });
 
@@ -71,47 +86,47 @@ describe("expandEmbedLabel", () => {
   });
 });
 
-describe("buildExpandEmbedShortcode", () => {
+describe("buildWikilink", () => {
   it("builds expand with slug only", () => {
-    expect(buildExpandEmbedShortcode("expand", "hello")).toBe('[expand slug="hello"]');
+    expect(buildWikilink("expand", "hello")).toBe("[[>hello]]");
   });
 
   it("builds embed with heading", () => {
-    expect(buildExpandEmbedShortcode("embed", "hello", "Sec")).toBe(
-      '[embed slug="hello" heading="Sec"]'
-    );
+    expect(buildWikilink("embed", "hello", "Sec")).toBe("[[!hello#Sec]]");
   });
 
-  it("builds expand with text only", () => {
-    expect(buildExpandEmbedShortcode("expand", "hello", null, "Finland")).toBe(
-      '[expand slug="hello" text="Finland"]'
-    );
+  it("builds a labeled link", () => {
+    expect(buildWikilink("link", "hello", null, "Finland")).toBe("[[hello|Finland]]");
   });
 
   it("builds expand with text and heading", () => {
-    expect(
-      buildExpandEmbedShortcode("expand", "hello", "Section One", "Click here")
-    ).toBe('[expand slug="hello" text="Click here" heading="Section One"]');
+    expect(buildWikilink("expand", "hello", "Section One", "Click here")).toBe(
+      "[[>hello#Section One|Click here]]"
+    );
   });
 
   it("builds expand with source=deck", () => {
-    expect(
-      buildExpandEmbedShortcode("expand", "finland", null, "Finland", "deck")
-    ).toBe('[expand slug="finland" text="Finland" source="deck"]');
+    expect(buildWikilink("expand", "finland", null, "Finland", "deck")).toBe(
+      "[[>finland^deck|Finland]]"
+    );
   });
 
   it("builds expand with source=summary", () => {
-    expect(
-      buildExpandEmbedShortcode("expand", "finland", null, "Finland", "summary")
-    ).toBe('[expand slug="finland" text="Finland" source="summary"]');
+    expect(buildWikilink("expand", "finland", null, "Finland", "summary")).toBe(
+      "[[>finland^summary|Finland]]"
+    );
   });
 
   it("omits heading when source is set", () => {
-    expect(
-      buildExpandEmbedShortcode("embed", "finland", "Origins", "Finland", "deck")
-    ).toBe('[embed slug="finland" text="Finland" source="deck"]');
-    expect(
-      buildExpandEmbedShortcode("embed", "finland", "Origins", "Finland", "summary")
-    ).toBe('[embed slug="finland" text="Finland" source="summary"]');
+    expect(buildWikilink("embed", "finland", "Origins", "Finland", "deck")).toBe(
+      "[[!finland^deck|Finland]]"
+    );
+    expect(buildWikilink("embed", "finland", "Origins", "Finland", "summary")).toBe(
+      "[[!finland^summary|Finland]]"
+    );
+  });
+
+  it("keeps buildExpandEmbedShortcode as an alias", () => {
+    expect(buildExpandEmbedShortcode("expand", "hello")).toBe("[[>hello]]");
   });
 });

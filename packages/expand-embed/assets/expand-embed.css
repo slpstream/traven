@@ -1,4 +1,4 @@
-/* Expand / embed shortcode — default skin (host may override) */
+/* Expand / embed / wikilink — default skin (host may override) */
 
 /* --- Editor WYSIWYM inline chips (CodeMirror: no vertical margin) --- */
 
@@ -19,6 +19,36 @@
 
 .traven-expand-chip--embed {
   text-decoration-style: solid;
+}
+
+.traven-expand-chip--link {
+  text-decoration-style: solid;
+  color: var(--traven-wikilink, var(--traven-expand-link, #64748b));
+}
+
+.traven-expand-chip-edit {
+  display: inline;
+  margin: 0 0 0 0.2em;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  opacity: 0.4;
+  vertical-align: super;
+  line-height: 0;
+  font: inherit;
+}
+
+.traven-expand-chip-edit svg {
+  display: inline;
+  vertical-align: baseline;
+}
+
+.traven-expand-chip:hover .traven-expand-chip-edit,
+.traven-expand-chip-edit:focus-visible {
+  opacity: 1;
+  outline: none;
 }
 
 /* --- Reader: Nutshell-style expand trigger (phrasing-safe) --- */
@@ -100,6 +130,14 @@
 
 .traven-expand-panel > :last-child {
   margin-bottom: 0;
+}
+
+/* --- Reader: internal wikilink --- */
+
+a.traven-wikilink {
+  color: var(--traven-wikilink, inherit);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
 }
 
 /* --- Always-on embed (block by nature) --- */

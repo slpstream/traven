@@ -1,5 +1,11 @@
 # @freedomware/traven-expand-embed
 
+## 0.2.0
+
+### Minor Changes
+
+- Replace `[expand]` / `[embed]` shortcodes with wikilinks: `[[slug]]`, `[[slug|Label]]`, `[[!slug]]` (embed), `[[>slug]]` (expand). Headings use `#Section`; Summary/Deck use `^summary` / `^deck`. Typing `[[` opens in-editor typeahead via `onSuggestLinks`.
+
 ## 0.1.13
 
 ### Patch Changes
